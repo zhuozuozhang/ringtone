@@ -91,9 +91,11 @@ function showTable() {
 }
 
 // 获取号码信息 批量刷新、彩铃功能、企业彩铃以及操作刷新都使用此方法
-
+// type 标识是否是批量操作 1、批量操作/2、单个操作
+// data 数据 type为1时，data为父级订单ID；type为2时，data为子订单ID
 function getPhoneInfo(type,data) {
-    AjaxPut("/threenets/getPhoneInfo/" + id, {
+    AjaxPut("/threenets/getPhoneInfo", {
+        data:$('#parentOrderId').val(),
         type:type
     }, function (res) {
         if (res.code == 200 && res.data) {
@@ -173,7 +175,7 @@ function deleteTel(id) {
     layer.confirm("你确定要删除此行记录吗?", {
         btn: ["确定", "取消"] //按钮
     }, function () {
-        AjaxDevare("/threenets/devareThreeNetsChildOrder", {"id": id}, function (result) {
+        AjaxDelete("/threenets/deleteThreeNetsChildOrder", {"id": id}, function (result) {
             layer.closeAll('dialog');//关闭弹层
             layer.msg(result.msg + "!", {icon: result.code == 500 ? 2 : 1, time: 1000});
             $('#set').DataTable().ajax.reload(null, false);

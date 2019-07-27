@@ -96,15 +96,16 @@ public class ThreeNetsChildOrderController {
     /**
      * 获取号码信息
      *
-     * @param id
+     * @param type 标识是否是批量操作 1、批量操作/2、单个操作
+     * @param data 数据 type为1时，data为父级订单ID；type为2时，data为子订单ID
      * @return
      */
-    @PutMapping("/threenets/getPhoneInfo/{id}")
+    @PutMapping("/threenets/getPhoneInfo")
     @ResponseBody
     @Log(title = "获取号码信息功能", businessType = BusinessType.UPDATE, operatorLogType = OperatorLogType.THREENETS)
-    public AjaxResult getPhoneInfo(Integer type, @PathVariable Integer id) {
+    public AjaxResult getPhoneInfo(Integer type, Integer data) {
         try {
-            return threeNetsChildOrderService.getPhoneInfo(id);
+            return threeNetsChildOrderService.getPhoneInfo(type,data);
         } catch (Exception e) {
             log.error("获取号码信息 方法：getPhoneInfo 错误信息", e);
             return AjaxResult.error(e.getMessage());

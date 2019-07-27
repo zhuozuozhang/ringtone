@@ -145,15 +145,24 @@ public class ThreeNetsChildOrderService {
     /**
      * 获取号码信息
      *
-     * @param id
+     * @param type 标识是否是批量操作 1、批量操作/2、单个操作
+     * @param data 数据 type为1时，data为父级订单ID；type为2时，data为子订单ID
      * @return
      */
-    public AjaxResult getPhoneInfo(Integer id) throws Exception {
-        if (StringUtils.isNotNull(id) && id > 0) {
-            // 根据ID查询子订单信息
-            ThreenetsChildOrder threenetsChildOrder = threenetsChildOrderMapper.selectByPrimaryKey(id);
-            if (StringUtils.isNotNull(threenetsChildOrder)){
-                return apiUtils.getPhoneInfo(threenetsChildOrder);
+    public AjaxResult getPhoneInfo(Integer type,Integer data) throws Exception {
+        if ( StringUtils.isNotNull(type) && StringUtils.isNotNull(data) && data > 0) {
+            List<ThreenetsChildOrder> threenetsChildOrderList = new ArrayList<>();
+            if (type == 1){ // 批量刷新操作 根据父级ID获取子订单
+                ThreenetsChildOrder threenetsChildOrder = new ThreenetsChildOrder();
+                threenetsChildOrder.setParentOrderId(data);
+                threenetsChildOrderList = threenetsChildOrderMapper.selectThreeNetsTaskList(null,threenetsChildOrder);
+            }else {
+                // 根据ID查询子订单信息
+                ThreenetsChildOrder threenetsChildOrder = threenetsChildOrderMapper.selectByPrimaryKey(data);
+                threenetsChildOrderList.add(threenetsChildOrder);
+            }
+            if (threenetsChildOrderList.size() > 0){
+                return apiUtils.getPhoneInfo(threenetsChildOrderList);
             }else {
                 return AjaxResult.success(false,"查询不到数据！");
             }
