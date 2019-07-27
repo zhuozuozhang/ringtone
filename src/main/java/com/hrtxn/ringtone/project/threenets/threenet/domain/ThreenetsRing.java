@@ -42,5 +42,7 @@ public class ThreenetsRing implements Serializable {
     private String userName;
     // 商户名称
     private String companyName;
+    // 铃音数量
+    private Integer ringCount;
 
 }

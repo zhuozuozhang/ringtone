@@ -45,10 +45,17 @@ public class ThreeNetsRingController {
      * @return
      */
     @GetMapping("/threenets/toMerchantsRingPage/{orderId}")
-    public String toMerchantsChildPage(ModelMap map, @PathVariable Integer orderId) {
-        ThreenetsOrder order = threeNetsOrderService.getById(orderId);
-        map.put("orderId", orderId);
-        map.put("companyName", order.getCompanyName());
+    public String toMerchantsChildPage(ModelMap map, @PathVariable Integer orderId){
+        try {
+            ThreenetsOrder order = threeNetsOrderService.getById(orderId);
+            map.put("orderId", orderId);
+            map.put("companyName", order.getCompanyName());
+            // 根据父级ID获取铃音运营商
+            String ringOperate = threeNetsRingService.getRingOperate(orderId);
+            map.put("ringOperate",ringOperate);
+        } catch (Exception e) {
+            log.error("进入铃音列表 方法：toMerchantsChildPage 错误信息",e);
+        }
         return "threenets/threenet/merchants/ring_list";
     }
 
@@ -73,14 +80,14 @@ public class ThreeNetsRingController {
     }
 
     /**
-     * 进入铃音页面
+     * 进入添加铃音页面
      * @return
      */
     @GetMapping("/threenets/toAddMerchantsRingPage")
     public String toAddMerchantsRingPage(ModelMap map,BaseRequest request){
         map.put("orderId", request.getOrderId());
         map.put("operate", request.getOperate());
-        return "threenets/threenet/merchants/Addring";
+        return "threenets/threenet/merchants/addring";
     }
 
     /**

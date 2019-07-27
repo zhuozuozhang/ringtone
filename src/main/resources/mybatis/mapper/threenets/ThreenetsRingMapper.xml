@@ -47,12 +47,11 @@
         from tb_threenets_ring
         where order_id = #{id,jdbcType=INTEGER}
     </select>
-
+    <!-- 根据铃音ID删除铃音信息 -->
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
         delete from tb_threenets_ring
         where id = #{id,jdbcType=INTEGER}
     </delete>
-
     <!-- 添加三网铃音 -->
     <insert id="insertThreeNetsRing" parameterType="ThreenetsRing" useGeneratedKeys="true" keyProperty="id" >
         INSERT INTO tb_threenets_ring
@@ -121,7 +120,7 @@
             </if>
         </trim>
     </insert>
-
+    <!-- 修改铃音信息 -->
     <update id="updateByPrimaryKeySelective" parameterType="ThreenetsRing">
         update tb_threenets_ring
         <set>
@@ -155,22 +154,29 @@
         </set>
         where id = #{id,jdbcType=INTEGER}
     </update>
-
+    <!-- 根据条件获取铃音信息 -->
     <select id="getRingList" resultMap="BaseResultMap">
         select
-        <include refid="Base_Column_List"/>
-        from tb_threenets_ring r
+            <include refid="Base_Column_List"/>
+        from
+            tb_threenets_ring r
         where 1=1
-        <include refid="parameters"/>
+            <include refid="parameters"/>
         ORDER BY id DESC
-        LIMIT #{page.page},#{page.pagesize}
+            <include refid="page"/>
     </select>
-
+    <!-- 根据条件获取铃音数量 -->
     <select id="getCount" resultType="java.lang.Integer">
         select count(*) from tb_threenets_ring r
         where 1=1
         <include refid="parameters"/>
     </select>
+    <!-- 分页 -->
+    <sql id="page">
+        <if test="page!=null and page.page != null and page.pagesize != null">
+            LIMIT #{page.page},#{page.pagesize}
+        </if>
+    </sql>
 
     <sql id="parameters">
         <if test="param != null and param.operate != null and param.operate != ''">
@@ -180,7 +186,7 @@
             AND r.order_id = #{param.id}
         </if>
     </sql>
-    <!--删除铃音-->
+    <!-- 根据父级ID删除铃音 -->
     <delete id="deleteByParadeOrderId" parameterType="java.lang.Integer">
         delete from tb_threenets_ring
         where order_id = #{id,jdbcType=INTEGER}

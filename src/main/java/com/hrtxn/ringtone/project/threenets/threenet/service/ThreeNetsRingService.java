@@ -3,11 +3,8 @@ package com.hrtxn.ringtone.project.threenets.threenet.service;
 import com.hrtxn.ringtone.common.constant.AjaxResult;
 import com.hrtxn.ringtone.common.domain.BaseRequest;
 import com.hrtxn.ringtone.common.domain.Page;
-import com.hrtxn.ringtone.common.utils.FileUtil;
-import com.hrtxn.ringtone.project.system.File.mapper.UploadfileMapper;
 import com.hrtxn.ringtone.project.system.File.service.FileService;
 import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreenetsRing;
-import com.hrtxn.ringtone.project.threenets.threenet.mapper.ThreenetsOrderMapper;
 import com.hrtxn.ringtone.project.threenets.threenet.mapper.ThreenetsRingMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -123,5 +120,22 @@ public class ThreeNetsRingService {
         ThreenetsRing ring = threenetsRingMapper.selectByPrimaryKey(id);
         ring.setRingStatus(1);
         threenetsRingMapper.insertThreeNetsRing(ring);
+    }
+
+    public String getRingOperate(Integer orderId) throws Exception {
+        List<ThreenetsRing> threenetsRings = threenetsRingMapper.selectByOrderId(orderId);
+        String operate = "";
+        if (threenetsRings.size() > 0){
+            for (ThreenetsRing threenetsRing:threenetsRings) {
+                if (threenetsRing.getOperate() == 1){
+                    operate += threenetsRing.getOperate()+",";
+                } else if(threenetsRing.getOperate() == 2){
+                    operate += threenetsRing.getOperate()+",";
+                } else {
+                    operate += threenetsRing.getOperate()+",";
+                }
+            }
+        }
+        return operate;
     }
 }
