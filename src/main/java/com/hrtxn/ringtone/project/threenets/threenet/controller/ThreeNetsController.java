@@ -98,8 +98,9 @@ public class ThreeNetsController {
      *
      * @return
      */
-    @GetMapping("/threenets/toAddMerchantsPhonePage")
-    public String toAddMerchantsPhonePage() {
+    @GetMapping("/threenets/toAddMerchantsPhonePage/{orderId}")
+    public String toAddMerchantsPhonePage(ModelMap map,@PathVariable("orderId")Integer orderId) {
+        map.put("orderId",orderId);
         return "threenets/threenet/merchants/Addnumber";
     }
 

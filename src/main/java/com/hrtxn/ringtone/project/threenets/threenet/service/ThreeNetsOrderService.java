@@ -1,5 +1,6 @@
 package com.hrtxn.ringtone.project.threenets.threenet.service;
 
+import com.hrtxn.ringtone.common.api.MiguApi;
 import com.hrtxn.ringtone.common.constant.AjaxResult;
 import com.hrtxn.ringtone.common.domain.BaseRequest;
 import com.hrtxn.ringtone.common.domain.OrderRequest;
@@ -13,6 +14,8 @@ import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreenetsOrder;
 import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreenetsRing;
 import com.hrtxn.ringtone.project.threenets.threenet.mapper.ThreenetsChildOrderMapper;
 import com.hrtxn.ringtone.project.threenets.threenet.mapper.ThreenetsOrderMapper;
+import com.hrtxn.ringtone.project.threenets.threenet.utils.ApiUtils;
+import lombok.Synchronized;
 import org.apache.commons.beanutils.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -35,7 +38,7 @@ public class ThreeNetsOrderService {
     @Autowired
     private ThreenetsOrderMapper threenetsOrderMapper;
     @Autowired
-    private ThreenetsChildOrderMapper threenetsChildOrderMapper;
+    private ThreeNetsChildOrderService threeNetsChildOrderService;
     @Autowired
     private ThreeNetsRingService threeNetsRingService;
 
@@ -79,7 +82,7 @@ public class ThreeNetsOrderService {
         //删除铃音
         threeNetsRingService.delete(id);
         //删除子订单
-        threenetsChildOrderMapper.deleteByParadeOrderId(id);
+        threeNetsChildOrderService.delete(id);
         //删除订单
         int sum = threenetsOrderMapper.deleteByPrimaryKey(id);
         if (sum > 0) {
@@ -163,11 +166,18 @@ public class ThreeNetsOrderService {
      *
      * @param order
      */
+    @Transactional
     public AjaxResult save(OrderRequest order) throws Exception {
         //验证订单是否修改
         ThreenetsOrder threenetsOrder = threenetsOrderMapper.selectByPrimaryKey(order.getId());
         if (!threenetsOrder.getLinkmanTel().equals(order.getLinkmanTel())) {
             //如果更改手机号则更改手机号归属地
+            threenetsOrder = JuhePhoneUtils.getPhone(threenetsOrder);
+            if (threenetsOrder.getOperator() == 1) {
+                threenetsOrder.setPaymentPrice(Integer.parseInt(order.getMobilePay() != null ? order.getMobilePay() : order.getSpecialPrice()));
+            } else if (threenetsOrder.getOperator() == 3) {
+                threenetsOrder.setPaymentPrice(Integer.parseInt(order.getUmicomPay()));
+            }
         }
         //保存本地
         BeanUtils.copyProperties(threenetsOrder, order);
@@ -175,31 +185,34 @@ public class ThreeNetsOrderService {
 
         //查询铃音是否存在
         List<ThreenetsRing> rings = threeNetsRingService.listByOrderId(order.getId());
-
+        if (order.getMemberTels().indexOf(order.getLinkmanTel()) < 0) {
+            String tels = order.getMemberTels();
+            tels = tels + '\n' + order.getLinkmanTel();
+            order.setMemberTels(tels);
+        }
         //子订单手机号验证
-        List<ThreenetsChildOrder> childOrderList = new ArrayList<>();
-        String regR = "\n\r";
-        String regN = "\n";
-        String phones = order.getMemberTels().replace(regR, "br").replace(regN, "br");
-        String[] phone = phones.split("br");
-        //保存子订单
-        for (String tel : phone) {
-            ThreenetsChildOrder childOrder = new ThreenetsChildOrder();
-            childOrder.setLinkmanTel(tel);
-            childOrder.setParentOrderId(order.getId());
-            childOrder = initChildOrder(childOrder);
-            order.setOperate(childOrder.getOperate());
-            //如果铃音为空则添加新铃音，如果不为空则添加对应铃音，文件指向同一个位置
+        List<ThreenetsChildOrder> childOrderList = threeNetsChildOrderService.formattedPhone(order.getMemberTels(), order.getId());
+        for (int i = 0; i < childOrderList.size(); i++) {
+            ThreenetsChildOrder childOrder = childOrderList.get(i);
             ThreenetsRing ring = getRingByOperate(rings, order, childOrder.getOperate());
             childOrder.setRingId(ring.getId());
             childOrder.setIsVideoUser(ring.getRingType().equals("视频") ? true : false);
             //保存子订单
-            threenetsChildOrderMapper.insertThreeNetsChildOrder(childOrder);
-            childOrderList.add(childOrder);
+            childOrderList.add(i, childOrder);
         }
+        //批量保存
+        threeNetsChildOrderService.batchChindOrder(childOrderList);
         return AjaxResult.success(threenetsOrder, "保存成功！");
     }
 
+    /**
+     * 转存铃音
+     *
+     * @param rings
+     * @param order
+     * @param operate
+     * @return
+     */
     private ThreenetsRing getRingByOperate(List<ThreenetsRing> rings, OrderRequest order, Integer operate) {
         if (rings.isEmpty()) {
             ThreenetsRing ring = initRing(order);
@@ -226,33 +239,6 @@ public class ThreeNetsOrderService {
         }
     }
 
-    /**
-     * 初始化子订单
-     *
-     * @param childOrder
-     * @return
-     * @throws Exception
-     */
-    private ThreenetsChildOrder initChildOrder(ThreenetsChildOrder childOrder) throws Exception {
-        //子订单用户名
-        childOrder.setLinkman(childOrder.getLinkmanTel());
-        //未包月
-        childOrder.setIsMonthly(1);
-        //未回复短信
-        childOrder.setIsReplyMessage(false);
-        //手机号验证
-        JuhePhone juhePhone = JuhePhoneUtils.getPhone(childOrder.getLinkmanTel());
-        JuhePhoneResult result = (JuhePhoneResult) juhePhone.getResult();
-        //运营商
-        childOrder.setOperate(JuhePhoneUtils.getOperate(result));
-        childOrder.setProvince(result.getProvince());
-        childOrder.setCity(result.getCity());
-        //设置代理商
-        childOrder.setUserId(ShiroUtils.getSysUser().getId());
-        childOrder.setCreateDate(new Date());
-        childOrder.setStatus("审核通过");
-        return childOrder;
-    }
 
     /**
      * 添加新铃音
@@ -276,8 +262,24 @@ public class ThreeNetsOrderService {
      *
      * @param order
      */
+    @Synchronized
     private void saveOnlineOrder(ThreenetsOrder order) {
+        switch (order.getOperator()) {
+            //移动
+            case 1:
+                ApiUtils utils = new ApiUtils();
+                utils.saveOrderByYd(order);
+                break;
+            //电信
+            case 2:
+                break;
+            //联通
+            case 3:
 
+                break;
+            default:
+                break;
+        }
     }
 
     /**

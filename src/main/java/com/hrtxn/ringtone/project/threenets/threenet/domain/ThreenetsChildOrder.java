@@ -57,4 +57,6 @@ public class ThreenetsChildOrder implements Serializable {
     private String start;
 
     private String end;
+
+    private String memberTels;
 }

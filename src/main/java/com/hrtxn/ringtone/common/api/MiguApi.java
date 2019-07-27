@@ -1,8 +1,15 @@
 package com.hrtxn.ringtone.common.api;
 
+import com.alibaba.druid.util.StringUtils;
 import com.hrtxn.ringtone.common.exception.NoLoginException;
+import com.hrtxn.ringtone.common.json.MiguAddGroupRespone;
 import com.hrtxn.ringtone.common.utils.ChaoJiYing;
 import com.hrtxn.ringtone.common.utils.ShiroUtils;
+import com.hrtxn.ringtone.common.utils.json.JsonUtil;
+import com.hrtxn.ringtone.project.system.user.domain.User;
+import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreenetsOrder;
+import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreenetsRing;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -15,10 +22,15 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.mime.MultipartEntity;
+import org.apache.http.entity.mime.content.FileBody;
+import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.params.CoreProtocolPNames;
+import org.apache.http.params.HttpParams;
 import org.apache.http.util.EntityUtils;
 import org.apache.shiro.crypto.hash.Md5Hash;
 
@@ -26,6 +38,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
+import java.nio.charset.Charset;
 import java.util.*;
 
 /**
@@ -312,12 +325,12 @@ public class MiguApi implements Serializable {
      * @param phoneMiguId
      * @param groupId
      * @param smsConfirm
-     * @return 始终返回{"ret":"000000"}，无错误信息提示
+     * @return
      * @throws IOException
      * @throws NoLoginException
      */
     public String remindOrderCrbtAndMonth(String phoneNo, String phoneMiguId, String groupId, boolean smsConfirm) throws IOException, NoLoginException {
-        String reslut;
+        String reslut = null;
         String msisdnList = phoneNo + "|" + phoneMiguId + ",";
         HashMap map = new HashMap();
         map.put("allFlag", "0");
@@ -328,7 +341,8 @@ public class MiguApi implements Serializable {
         } else {
             reslut = sendPost(map, remindOrderCrbtAndMonth_URL); // 短信下发
         }
-        log.info("移动发送短信 参数：{},{},{},{} 结果：{}",phoneNo,phoneMiguId,groupId,smsConfirm,reslut);
+
+        log.info("移动发送短信 参数：{},{},{} 结果：{}",phoneNo,phoneMiguId,groupId,smsConfirm);
         return reslut;
     }
 
@@ -374,9 +388,7 @@ public class MiguApi implements Serializable {
      */
     private String sendGet(String getUrl) throws NoLoginException, IOException {
         String result = null;
-        CloseableHttpClient httpclient = HttpClients.custom()
-                .setDefaultCookieStore(this.getCookieStore())
-                .build();
+        CloseableHttpClient httpclient = HttpClients.custom().setDefaultCookieStore(this.getCookieStore()).build();
         HttpGet httpGet = new HttpGet(getUrl);
         CloseableHttpResponse response = httpclient.execute(httpGet);// 进入
         try {
@@ -406,9 +418,7 @@ public class MiguApi implements Serializable {
      */
     private String sendPost(HashMap<String, String> paramMap, String url) throws IOException, NoLoginException {
         String result = null;
-        CloseableHttpClient httpclient = HttpClients.custom()
-                .setDefaultCookieStore(this.getCookieStore())
-                .build();
+        CloseableHttpClient httpclient = HttpClients.custom().setDefaultCookieStore(this.getCookieStore()).build();
         HttpPost httppost = new HttpPost(url);
         List<NameValuePair> formparams = new ArrayList<NameValuePair>();
         for (String key : paramMap.keySet()) {
@@ -433,6 +443,65 @@ public class MiguApi implements Serializable {
             }
         }
         return result;
+    }
+    // 增加商户(短信回复类型)，带管理员手机。（不含铃音，和手机号码）
+    public MiguAddGroupRespone add(ThreenetsOrder ringOrder) throws IOException,NoLoginException {
+        User user = ShiroUtils.getSysUser();
+        MiguAddGroupRespone addGroupRespone = null;
+        String vcode = getCodeString();
+        DefaultHttpClient httpclient = new DefaultHttpClient();
+        HttpPost httppost = new HttpPost(addGroup_url);
+        httpclient.setCookieStore(this.getCookieStore());
+        try {
+            MultipartEntity reqEntity = new MultipartEntity();
+            HttpParams params = httpclient.getParams();
+            params.setParameter(CoreProtocolPNames.HTTP_CONTENT_CHARSET, Charset.forName("UTF-8"));
+            reqEntity.addPart("vcode", new StringBody(vcode));// 集团简介
+            reqEntity.addPart("circle.ID", new StringBody(""));
+            reqEntity.addPart("circle.name",new StringBody(ringOrder.getCompanyName(), Charset.forName("UTF-8")));// 集团名称
+            reqEntity.addPart("circle.cmName",new StringBody(user.getUserName(), Charset.forName("UTF-8")));// 客户经理姓名
+            reqEntity.addPart("circle.cmMsisdn", new StringBody(user.getUserTel()));// 客服号码
+            reqEntity.addPart("groupManagerName", new StringBody(user.getUserName(), Charset.forName("UTF-8")));// 管理员姓名
+            reqEntity.addPart("circle.owner.msisdn",new StringBody(ringOrder.getLinkmanTel(), Charset.forName("UTF-8")));// 集团管理员手机号
+            reqEntity.addPart("manager.password",new StringBody(ringOrder.getLinkmanTel(), Charset.forName("UTF-8")));// 集团管理员登陆密码
+            reqEntity.addPart("manager.status", new StringBody("1"));// 0启用集团管理员账户1禁止集团管理员账户
+            reqEntity.addPart("province",new StringBody("福建省", Charset.forName("UTF-8")));// 省
+            reqEntity.addPart("city",new StringBody("福州市", Charset.forName("UTF-8")));// 市
+            reqEntity.addPart("county",new StringBody("鼓楼区", Charset.forName("UTF-8")));// 区
+            reqEntity.addPart("groupStreet",new StringBody("六一北路92号", Charset.forName("UTF-8")));// 集团所在街道
+            reqEntity.addPart("circle.payType", new StringBody("0"));// 集团统付
+            if (ringOrder.getPaymentPrice() != 0) {
+                reqEntity.addPart("circle.price",new StringBody(ringOrder.getPaymentPrice() + ""));// 资费，默认值为0
+                reqEntity.addPart("circle.specialPrice",new StringBody(""));// 资费，默认值为0
+            }else{
+                reqEntity.addPart("circle.specialPrice",new StringBody(ringOrder.getPaymentPrice() + ""));// 资费，默认值为0
+            }
+            reqEntity.addPart("circle.specialDiscount", new StringBody(""));// 折扣
+            reqEntity.addPart("circle.applyForSmsNotification", new StringBody("0"));// 申请免短信
+            reqEntity.addPart("circle.isNormal", new StringBody("0"));// 集团类型、正式
+            reqEntity.addPart("circle.trialTimeType", new StringBody(""));// 试用时间
+            reqEntity.addPart("circle.memo", new StringBody(""));// 集团简介
+            if (ringOrder.getUpLoadAgreement() != null) {
+                reqEntity.addPart("file",new FileBody(ringOrder.getUpLoadAgreement()));
+            }
+            httppost.setEntity(reqEntity);
+            HttpResponse response1 = httpclient.execute(httppost);
+            int statusCode = response1.getStatusLine().getStatusCode();
+            if (statusCode == HttpStatus.SC_OK) {
+                log.debug("服务器正常响应.....");
+                HttpEntity resEntity = response1.getEntity();
+                String res = EntityUtils.toString(resEntity);
+                System.out.println("res" + res);
+                addGroupRespone = (MiguAddGroupRespone) JsonUtil.getObject4JsonString(res, MiguAddGroupRespone.class);
+                this.setMiguCookie(httpclient.getCookieStore());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            httppost.abort();
+            httpclient.getConnectionManager().shutdown();
+        }
+        return addGroupRespone;
     }
 
     public static void main(String[] args) throws NoLoginException, IOException {

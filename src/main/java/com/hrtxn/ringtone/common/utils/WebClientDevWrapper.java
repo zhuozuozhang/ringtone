@@ -18,9 +18,9 @@ import java.security.cert.X509Certificate;
  * Description:避免HttpClient的”SSLPeerUnverifiedException: peer not authenticated”异常不用导入SSL证书
  */
 @SuppressWarnings("deprecation")
-public class WebClientDevWrapper {
+public  class WebClientDevWrapper {
 
-    public static DefaultHttpClient wrapClient(org.apache.http.client.HttpClient base) {
+	public static DefaultHttpClient wrapClient(org.apache.http.client.HttpClient base) {
         try {
             SSLContext ctx = SSLContext.getInstance("TLS");
             X509TrustManager tm = new X509TrustManager() {
@@ -30,7 +30,7 @@ public class WebClientDevWrapper {
                 public void checkClientTrusted(X509Certificate[] arg0, String arg1) throws CertificateException {}
                 public void checkServerTrusted(X509Certificate[] arg0, String arg1) throws CertificateException {}
             };
-            ctx.init(null, new TrustManager[]{tm}, null);
+            ctx.init(null, new TrustManager[] { tm }, null);
             SSLSocketFactory ssf = new SSLSocketFactory(ctx, SSLSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
             SchemeRegistry registry = new SchemeRegistry();
             registry.register(new Scheme("https", 443, ssf));
