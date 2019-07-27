@@ -75,12 +75,8 @@ public class ThreeNetsChildOrderController {
     @ResponseBody
     @Log(title = "添加子订单", businessType = BusinessType.INSERT, operatorLogType = OperatorLogType.THREENETS)
     public AjaxResult insterThreeNetsChildOrder(ThreenetsChildOrder threenetsChildOrder) {
-        try {
-            return threeNetsChildOrderService.insterThreeNetsChildOrder(threenetsChildOrder);
-        }catch (Exception e){
-            log.error("批量保存 方法：insterThreeNetsChildOrder 错误信息", e);
-            return AjaxResult.error("保存失败");
-        }
+        System.out.println(threenetsChildOrder);
+        return null;
     }
 
 
@@ -135,7 +131,6 @@ public class ThreeNetsChildOrderController {
 
     /**
      * 发送短信
-     * @param type
      * @param flag
      * @param data
      * @return

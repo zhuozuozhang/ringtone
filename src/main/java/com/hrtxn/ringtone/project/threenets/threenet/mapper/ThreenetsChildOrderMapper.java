@@ -19,7 +19,6 @@ public interface ThreenetsChildOrderMapper {
 
     /**
      * 查询三网订单
-     *
      * @param id
      * @return
      * @throws Exception
@@ -28,7 +27,6 @@ public interface ThreenetsChildOrderMapper {
 
     /**
      * 删除
-     *
      * @param id
      * @return
      */
@@ -36,7 +34,6 @@ public interface ThreenetsChildOrderMapper {
 
     /**
      * 新增
-     *
      * @param ThreenetsChildOrder
      * @return
      */
@@ -44,7 +41,6 @@ public interface ThreenetsChildOrderMapper {
 
     /**
      * 修改
-     *
      * @param ThreenetsChildOrder
      * @return
      */
@@ -52,7 +48,6 @@ public interface ThreenetsChildOrderMapper {
 
     /**
      * 根据条件查询列表
-     *
      * @param page
      * @param param
      * @return
@@ -62,7 +57,6 @@ public interface ThreenetsChildOrderMapper {
 
     /**
      * 获取总条数
-     *
      * @param param
      * @return
      */
@@ -70,7 +64,6 @@ public interface ThreenetsChildOrderMapper {
 
     /**
      * 获取近5日信息
-     *
      * @param id
      * @return
      */
@@ -78,34 +71,23 @@ public interface ThreenetsChildOrderMapper {
 
     /**
      * 查询某月数据统计
-     *
      * @param param
      * @return
      */
-    List<PlotBarPhone> getMonthData(@Param("param") BaseRequest param);
+    List<PlotBarPhone> getMonthData(@Param("param")BaseRequest param);
 
     /**
      * 查询某年数据统计
-     *
      * @param param
      * @return
      */
-    List<PlotBarPhone> getYearData(@Param("param") BaseRequest param);
+    List<PlotBarPhone> getYearData(@Param("param")BaseRequest param);
 
 
     /**
      * 根据父级订单id删除
-     *
      * @param id
      * @return
      */
     int deleteByParadeOrderId(Integer id);
-
-    /**
-     * 批量保存
-     *
-     * @param list
-     * @return
-     */
-    int batchChindOrder(@Param("list") List<ThreenetsChildOrder> list);
 }

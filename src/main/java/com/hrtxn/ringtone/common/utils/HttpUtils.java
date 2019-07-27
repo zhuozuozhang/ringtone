@@ -237,26 +237,4 @@ public class HttpUtils
             return true;
         }
     }
-
-    public static void downloadNet(InputStream inStream) {
-        // 下载网络文件
-        int bytesum = 0;
-        int byteread = 0;
-
-
-        try {
-            @SuppressWarnings("resource")
-            FileOutputStream fs = new FileOutputStream("c:/abc.jpg");
-            byte[] buffer = new byte[1204];
-            while ((byteread = inStream.read(buffer)) != -1) {
-                bytesum += byteread;
-                System.out.println(bytesum);
-                fs.write(buffer, 0, byteread);
-            }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
 }

@@ -17,17 +17,14 @@
     <script type="text/javascript" th:src="@{/public/layui/layui.js}"></script>
     <script type="text/javascript" th:src="@{/public/layui/lay/modules/layer.js}"></script>
     <script type="text/javascript" th:src="@{/public/js/numASMD.js}"></script>
-    <script type="text/javascript" th:src="@{/public/js/ajax.js}"></script>
     <style>
         .layui-input-block {
             text-align: right;
         }
-
         .addBell {
             margin-top: 0;
-            padding: 0;
+            padding:0;
         }
-
         .layui-form-select .layui-input {
             padding-right: 30px;
             cursor: pointer;
@@ -38,26 +35,26 @@
 </head>
 
 <body>
-    <form action="/threenets/insterThreeNetsChildOrder" name="Form" id="Form" method="post" class="layui-form">
+    <form action="" name="Form" id="Form" method="post" class="layui-form">
         <div id="newBlocPage" style="padding-bottom: 20px;">
             <div class="newBlocPage-con4 clear">
                 <div class="right-newBlocPage-con4">
                     <div style="font-size: 12px; color: #333;line-height: 20px;text-align: left;">
                         温馨提示：</br>
-                        1.若要添加多个号码，号码之间使用“换行符（回车）”分隔，单次最多支持20个用户。</br>
-                        2.当输入框号码后面出现"#错误消息"，比如"#号码不正确"时，代表该行的号码格式错误，需要修改。修改完成后请注意去掉"#错误消息"的标识。
+                        1.若要添加多个号码，号码之间使用“换行符（回车）”分隔，单次最多支持50个用户。</br>
+                        2.当输入框号码后面出现"#错误消息"，比如"#号码不正确"时，代表该行的号码格式错误或者非移动号码， 需要修改。修改完成后请注意去掉"#错误消息"的标识。
                     </div>
                 </div>
-                <textarea onchange="mykeyup()" name="memberTels" id="member_phone" required lay-verify="required"></textarea>
+                <textarea onchange="mykeyup()" name="member_phone" id="member_phone" required lay-verify="required"></textarea>
                 <h6><i style="color: red">*</i>成员号码</h6>
                 <div style="display: block;" class="footer-newBlocPage-con4 clear" id="rs"></div>
-                <div class="radio-newBlocPage-con4" id="fee" style="display:none">
+                <div class="radio-newBlocPage-con4" id="fee" style="display:block">
                     <div class="layui-form-item" style="position: relative;">
                         <label class="layui-form-label" style="width:120px;">
                             <i style="color: red">*</i>移动资费:
                         </label>
                         <div class="layui-input-block" style='width: 150px;margin-left: 150px;'>
-                            <input checked="" type="radio" name="mobilePay" id="PayPrice" value="5" title="5元/月">
+                            <input checked="" type="radio" name="PayPrice" id="PayPrice" value="5" title="5元/月">
                         </div>
                         <span style="position: absolute;top: 11px;right: 90px;text-decoration: none;color: black;">申请高资费：</span>
                         <div class="layui-input-block" style="width: 80px;position: absolute;top: 0;right: 0;">
@@ -68,46 +65,43 @@
                             </select>
                         </div>
                     </div>
-                </div>
-                <div class="radio-newBlocPage-con4" id="fee1" style="display:none">
                     <div class="layui-form-item">
-                        <label class="layui-form-label" style="width:120px;color: #17a9ff;" onclick="dxcx('floatingWindows')">
+                        <label class="layui-form-label" style="width:120px;color: #17a9ff;"  onclick="dxcx('floatingWindows')">
                             <i style="color: red">*</i>电信资费
                         </label>
                     </div>
                 </div>
-                <div class="radio-newBlocPage-con4" id="fee2" style="display:none">
+                <div class="radio-newBlocPage-con4" id="fee8" style="display:block">
                     <div class="layui-form-item">
                         <label class="layui-form-label" style="width:120px;">
                             <i style="color: red">*</i>是否免短:
                         </label>
                         <div class="layui-input-block">
-                            <input type="radio" name="mianduan" value="否" title="否" checked="">
+                            <input type="radio" name="mianduan" value="否" title="否"  checked="">
                             <input type="radio" name="mianduan" value="是" title="是">
                         </div>
                     </div>
                 </div>
-                <div class="radio-newBlocPage-con4" id="fee3" style="display:none">
+                <div class="radio-newBlocPage-con4" id="fee3" style="display:block">
                     <div class="layui-form-item">
                         <label class="layui-form-label" style="width:120px;">
                             <i style="color: red">*</i>联通资费:
                         </label>
                         <div class="layui-input-block">
-                            <input type="radio" name="umicomPay" value="10" title="10元/月" checked="">
-                            <input type="radio" name="umicomPay" value="20" title="20元/月">
+                            <input type="radio" name="radio" value="10" title="10元/月"  checked="">
+                            <input type="radio" name="radio" value="20" title="20元/月">
                         </div>
                     </div>
                 </div>
 
             </div>
             <!-- 电信 -->
-            <div id="qyzzdiv" style="display:none">
+            <div id="qyzzdiv" style="display:block">
                 <div class="newBlocPage-con5 clear">
                     <div class="file_css2">
                         <div class="show_input_file" id="showqyzz5"></div>
                         <div class="file_css_button qiye">企业资质</div>
-                        <input type="file" class="input_file" id="qyzz5" name="companyFile" required>
-                        <input type="hidden" id="companyUrl" name="companyUrl" value="">
+                        <input type="file" class="input_file" id="qyzz5" name="companyFile" required lay-verify="required">
                     </div>
                     <h6><i style="color: red">*</i>上传企业资质</h6>
                 </div>
@@ -115,13 +109,12 @@
                     <div class="file_css2">
                         <div class="show_input_file" id="showqyzx5"></div>
                         <div class="file_css_button que">客户确认函</div>
-                        <input type="file" class="input_file" id="qyzx5" name="clientFile" required>
-                        <input type="hidden" name="clientUrl" id="clientUrl" value="">
+                        <input type="file" class="input_file" id="qyzx5" name="clientFile" required lay-verify="required">
+                        <input type="hidden" name="KNOWPAGEURI" id="KNOWPAGEURI" value="">
                     </div>
                     <h6><i style="color: red">*</i>上传客户确认函</h6>
                     <div class="footer-newBlocPage-con6 clear">
-                        <a href="http://xnh.xnhkfpt.com/uploadFiles/file/cringopenbusiness.docx"
-                           style="font-size: 12px; color:#17a9ff;">知晓函模板下载</a>，填完后盖章扫描上传，<span style="color:red;">电信已更换新的确认函模板，请点击下载</span>
+                        <a href="http://xnh.xnhkfpt.com/uploadFiles/file/cringopenbusiness.docx" style="font-size: 12px; color:#17a9ff;">知晓函模板下载</a>，填完后盖章扫描上传，<span style="color:red;">电信已更换新的确认函模板，请点击下载</span>
                     </div>
                 </div>
 
@@ -129,20 +122,20 @@
                     <div class="file_css2">
                         <div class="show_input_file" id="IDCARDURLinput"></div>
                         <div class="file_css_button zhu">主体证明</div>
-                        <input type="file" class="input_file" id="IDCARDURLfile" name="mainFile" required>
-                        <input type="hidden" name="mainUrl" id="mainUrl" value="">
+                        <input type="file" class="input_file" id="IDCARDURLfile" name="mainFile" required lay-verify="required">
+                        <input type="hidden" name="IDCARDURL" id="IDCARDURLPATH" value="">
                     </div>
                     <h6><i style="color: red">*</i>电信主体证明<b style="color:red;margin-top: 10px;">(非必传项)</b></h6>
                 </div>
             </div>
             <!-- 是否免短 -->
-            <div id="sfmd" style="display:none;">
+            <div id="sfmd" style="display:block;">
                 <div class="newBlocPage-con6 clear">
                     <div class="file_css2">
                         <div class="show_input_file" id="showmdxy"></div>
                         <div class="file_css_button mds">上传免短协议</div>
-                        <input type="file" class="input_file" id="mdxy" name="protocolFile" required>
-                        <input type="hidden" name="protocolUrl" id="protocolUrl" value="">
+                        <input type="file" class="input_file" id="mdxy" name="protocolFile" required lay-verify="required">
+                        <input type="hidden" name="mdxys" id="mdxys" value="">
                     </div>
                     <h6><i style="color: red">*</i>上传免短协议</h6>
                     <div class="footer-newBlocPage-con6 clear" style="text-align: right;">
@@ -150,7 +143,48 @@
                     </div>
                 </div>
             </div>
-            <input type="hidden" id="parentOrderId" name="parentOrderId">
+            <div class="addBell" style="margin-left:90px;background: none;width:auto;">
+                <ul>
+                    <li class="clearfix equally" style="margin-bottom:0;">
+                        <span class="fl"><i style="color: red;width:auto;">*</i>铃音类型</span>
+                        <div class="fl clearfix">
+                            <p class="fl">
+                                <i style="color: #000;">自带铃音</i>
+                            </p>
+                            <input type="hidden" id="RINGTYPE" name="RINGTYPE" value="2">
+                        </div>
+                    </li>
+                    <li class="clearfix bellType">
+                        <span class="fl"><i style="color: red">*</i>铃音名称</span>
+                        <div class="fl">
+                            <input style="margin-left: 5px;" required lay-verify="required" type="text" onchange="findbyringname()" name="RINGNAME" id="RINGNAME" autocomplete="off">
+                        </div>
+                    </li>
+                    <div id="ringdiv" style="display:block;">
+                        <li class="clearfix upload" style="margin-left: -33px;">
+                            <span class="fl"><i style="color: red">*</i>铃音上传文件</span>
+                            <div class="fl selected">
+                                <input type="file" name="ringfile" id="ringfile" class="" style="width:388px;" required lay-verify="required"  accept=".mp3,.wav,.mp4,.mov">
+                                <div class="clearfix">
+                                    <p class="fr choose" style="width:388px;font-size: 14px;">点击上传铃音文件</p>
+                                    <input type="hidden" id="ringurl" name="ringurl">
+                                    <div style="margin-top:20px;" class="show_input_file" id="showringurl"></div>
+                                </div>
+                            </div>
+                        </li>
+                        铃音文件上传 （<span style="color: red">仅wav,mp3格式音频，时长≤48秒
+                     <br>移动 支持铃音文件和视频文件上传 <br>1. 铃音文件&lt;1M，时长&lt;48秒，格式需为mp3或wav
+                     <br>2.视频文件&lt;40M，时长&lt;48秒，格式需为mp4或mov
+                     </span>）
+                    </div>
+                    <li class="clearfix bellContent">
+                        <span class="fl" style="margin-right: 5px;"><i style="color: red">*</i>铃音内容</span>
+                        <div class="fl">
+                            <textarea placeholder="请输入铃音内容......" name="RING_CONTENT" id="RING_CONTENT" maxlength="200" required lay-verify="required"></textarea>
+                        </div>
+                    </li>
+                </ul>
+            </div>
             <div id="tijiao" class="newBlocPage-button" lay-submit lay-filter="formDemo">确定提交</div>
         </div>
     </form>
@@ -158,8 +192,7 @@
     <div id="floatingWindows" style="height: 1743px;">
         <div class="floatingWindows parents" style="display: block">
             <div class="fw-DianXin parents" style="display: block;top: 15px !important;">
-                <div class="close" onclick="CloseDxcx('floatingWindows');"><img
-                        src="../../client/threenets/images/floating_ico_1.png"></div>
+                <div class="close" onclick="CloseDxcx('floatingWindows');"><img src="../../client/threenets/images/floating_ico_1.png"></div>
                 <div class="dianxin1">电信资费说明</div>
                 <div class="dianxin2 clear">
                     <div>北京、河北、山西、吉林、黑龙江、上海、福建、广西、海南、重庆、四川、西藏、宁夏、辽宁、河南、陕西</div>
@@ -175,9 +208,7 @@
                         <p>固话和手机号都需要上传需客户确认函</p>
                     </div>
                 </div>
-                <div class="dianxin3">
-                    新疆，广东，江苏平台暂未开通这些地区，如有需要开通，江苏电信<span>10+0</span>，浙江电信<span>10+10</span>，安徽电信<span>3+5</span>请直接联系群内客服免费开通,湖南资费另见电信提单详细说明
-                </div>
+                <div class="dianxin3">新疆，广东，江苏平台暂未开通这些地区，如有需要开通，江苏电信<span>10+0</span>，浙江电信<span>10+10</span>，安徽电信<span>3+5</span>请直接联系群内客服免费开通,湖南资费另见电信提单详细说明</div>
             </div>
         </div>
     </div>
@@ -203,10 +234,6 @@
         //设置弹窗
         var floatingWindows = document.getElementById('floatingWindows');
         floatingWindows.style.height = '1000px';
-        //初始化
-        $(document).ready(function () {
-
-        });
         //成员号码验证
         function mykeyup() {
             var member_phone = $("#member_phone").val();
@@ -223,24 +250,19 @@
             }
             matchingOperate(member_phone);
         }
-
-        //验证手机号
         function matchingOperate(phones) {
-            AjaxPost('/threenets/getOperate', {"phone": phones}, function (result) {
-                if (result.code == 200) {
-                    //移动
-                    if (result.data[0] > 0) {
+            AjaxPost('/threenets/getOperate',{"phone":phones},function (result) {
+                if (result.code == 200){
+                    if (result.data[0]>0){
                         $("#fee").show();
                     }
-                    //电信
-                    if (result.data[1] > 0) {
-                        $("#fee1,#qyzzdiv").show();
+                    if (result.data[1]>0){
+                        $("#fee2,#qyzzdiv").show();
                     }
-                    //联通
-                    if (result.data[2] > 0) {
-                        $("#fee2,#sfmd").show();
+                    if (result.data[2]>0){
+                        $("#fee8,#fee3").show();
                     }
-                } else {
+                } else{
                     layer.msg(result.msg);
                 }
             })
@@ -254,50 +276,87 @@
             $("#" + tag).hide();
         }
         //上传企业资质
-        $("form").on("change", "#qyzz5", function (e) {
+        $("form").on("change", "#qyzz5", function(e) {
             $(".qiye").html(this.value);
             uploadFile("companyFile")
         })
         //上传客户确认函
-        $("form").on("change", "#qyzx5", function (e) {
+        $("form").on("change", "#qyzx5", function(e) {
             $(".que").html(this.value);
             uploadFile("clientFile")
         })
         //上传主体证明
-        $("form").on("change", "#IDCARDURLfile", function (e) {
+        $("form").on("change", "#IDCARDURLfile", function(e) {
             $(".zhu").html(this.value);
             uploadFile("mainFile")
         })
-
+        //上传铃音文件
+        $("form").on("change", "#ringfile", function(e) {
+            $(".choose").html(this.value);
+            //上传铃音文件
+            var obj_file = document.getElementById("ringfile");
+            var content = obj_file.files[0];
+            var url = URL.createObjectURL(content);
+            //获取录音时长
+            var audioElement = new Audio(url);
+            var duration;
+            audioElement.addEventListener("loadedmetadata", function (_event) {
+                duration = audioElement.duration;//时长,单位(秒)
+                if(duration>48){
+                    layer.msg("文件时长不能大于48秒");
+                }
+            });
+            //获取录音大小
+            var size = numDiv(content.size,numMulti(1024,1024));// 大小,单位(MB)
+            //获取文件类型
+            var file=document.getElementById("ringfile").value;
+            var ext = file.slice(file.lastIndexOf(".")+1).toLowerCase();
+            if(ext!="mp3" && ext!="wav"&& ext!="mp4" && ext!="wov"){
+                layer.msg("铃音文件格式为mp3或wav,视频文件格式为mp4或mov");
+            }else if(ext=="mp3" || ext=="wav"){
+                if(size>1){
+                    layer.msg("音频文件不能大于1M");
+                }
+            }else if(ext=="mp4" || ext=="wov"){
+                if(size>15){
+                    layer.msg("视频文件不能大于40M");
+                }
+            }
+            uploadFile("ringFile")
+        })
         ////上传主体证明
-        $("form").on("change", "#qyzz8", function (e) {
+        $("form").on("change", "#qyzz8", function(e) {
             $(".ying").html(this.value);
         })
         //免短协议
-        $("form").on("change", "#mdxy", function (e) {
+        $("form").on("change", "#mdxy", function(e) {
             $(".mds").html(this.value);
             uploadFile("protocolFile")
         })
         //申请高资费
         //表单提交
-        layui.use('form', function () {
+        layui.use('form', function() {
             var form = layui.form;
             //申请高资费
-            form.on('select(specialPrice)', function (data) {
-                if (data.value == 8 || data.value == 10) {
+            form.on('select(specialPrice)', function(data){
+                if(data.value == 8 || data.value == 10){
                     $("#PayPrice").prop('checked', false);
                     form.render();
-                } else if (data.value == "无") {
+                }else if(data.value == "无"){
                     $("#PayPrice").prop('checked', true);
                     form.render();
                 }
             });
             //监听提交
-            form.on('submit(formDemo)', function (data) {
-                $("#Form").submit();
-                let index = parent.layer.getFrameIndex(window.name); //获取窗口索引
-                parent.layer.close(index);
-                window.parent.location.reload();//刷新父页面
+            form.on('submit(formDemo)', function(data) {
+                //铃音
+                layer.open({
+                    type: 1,
+                    title: '提示',
+                    area: ['200px', '100px'],
+                    content: '铃音默认为当前集团铃音'
+                });
+                layer.msg(JSON.stringify(data));
                 return false;
             });
         });
@@ -305,7 +364,7 @@
         //上传文件
         function uploadFile(url) {
             $.ajax({
-                url: '/system/upload/' + url,
+                url: '/system/upload/'+url,
                 type: 'POST',
                 cache: false,
                 data: new FormData($('#Form')[0]),
@@ -313,15 +372,7 @@
                 contentType: false
             }).done(function (res) {
                 layer.msg(res.msg, {icon: 1, time: 1000});
-                if (url === "companyFile") {
-                    $("#companyUrl").val(res.data)
-                } else if (url === "clientFile") {
-                    $("#clientUrl").val(res.data)
-                } else if (url === "mainFile") {
-                    $("#mainUrl").val(res.data)
-                } else if (url === "protocolFile") {
-                    $("#protocolUrl").val(res.data)
-                }
+                //alert(res.data)
             }).fail(function (res) {
                 layer.msg(res.msg, {icon: 2, time: 1000});
             });

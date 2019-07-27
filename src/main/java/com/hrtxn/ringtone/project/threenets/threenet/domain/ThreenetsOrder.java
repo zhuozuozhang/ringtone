@@ -2,7 +2,6 @@ package com.hrtxn.ringtone.project.threenets.threenet.domain;
 
 import lombok.Data;
 
-import java.io.File;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -49,15 +48,4 @@ public class ThreenetsOrder implements Serializable {
     private String peopleNum;
     // 用户名称
     private String userName;
-
-
-    //-------------------------------提交三网文件--------------------------------------
-    private File serviceProtocolFile;
-
-    private File businesslicenseFile;
-
-    private String mcardId;//音乐名片系统id   和咪咕id
-    private String verifycode;//音乐名片 扣费验证码
-    private String feePhone;//音乐名片 扣费手机号
-    private String makeFee;//音乐名片制作费
 }

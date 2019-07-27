@@ -2,44 +2,26 @@ package com.hrtxn.ringtone.project.threenets.threenet.utils;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.hrtxn.ringtone.common.api.McardApi;
 import com.hrtxn.ringtone.common.api.MiguApi;
 import com.hrtxn.ringtone.common.api.SwxlApi;
 import com.hrtxn.ringtone.common.constant.AjaxResult;
 import com.hrtxn.ringtone.common.exception.NoLoginException;
-import com.hrtxn.ringtone.common.json.Attachment;
-import com.hrtxn.ringtone.common.json.MiguAddGroupRespone;
 import com.hrtxn.ringtone.common.utils.SpringUtils;
 import com.hrtxn.ringtone.common.utils.StringUtils;
 import com.hrtxn.ringtone.common.utils.json.JsonUtil;
-import com.hrtxn.ringtone.project.system.user.domain.User;
 import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreenetsChildOrder;
-import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreenetsOrder;
 import com.hrtxn.ringtone.project.threenets.threenet.json.migu.RefreshVbrtStatusResult;
 import com.hrtxn.ringtone.project.threenets.threenet.json.swxl.SwxlPhoneInfoResult;
 import com.hrtxn.ringtone.project.threenets.threenet.json.swxl.SwxlPubBackData;
 import com.hrtxn.ringtone.project.threenets.threenet.json.swxl.SwxlQueryPubRespone;
 import com.hrtxn.ringtone.project.threenets.threenet.mapper.ThreenetsChildOrderMapper;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.mime.MultipartEntity;
-import org.apache.http.entity.mime.content.FileBody;
-import org.apache.http.entity.mime.content.StringBody;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.params.HttpParams;
-import org.apache.http.util.EntityUtils;
-import org.apache.shiro.SecurityUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import java.io.File;
 import java.io.IOException;
-import java.nio.charset.Charset;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -52,9 +34,6 @@ public class ApiUtils {
 
     private static MiguApi miguApi = new MiguApi();
     private static SwxlApi swxlApi = new SwxlApi();
-
-    public String serviceProtocolFile; // 协议
-    public String businesslicenseFile;// 营业执照
 
     /**
      * 获取号码信息
@@ -119,8 +98,7 @@ public class ApiUtils {
             if (StringUtils.isNotEmpty(phoneInfo)) {
                 // 分发实体详情转换
                 ObjectMapper mapper = new ObjectMapper();
-                SwxlPubBackData<SwxlQueryPubRespone<SwxlPhoneInfoResult>> info = mapper.readValue(phoneInfo, new TypeReference<SwxlPubBackData<SwxlPhoneInfoResult>>() {
-                });
+                SwxlPubBackData<SwxlQueryPubRespone<SwxlPhoneInfoResult>> info = mapper.readValue(phoneInfo, new TypeReference<SwxlPubBackData<SwxlPhoneInfoResult>>() {});
                 if (StringUtils.isNotNull(info) && "000000".equals(info.getRecode())) {
                     SwxlQueryPubRespone<SwxlPhoneInfoResult> pageData = (SwxlQueryPubRespone) info.getData();
                     // 得到号码信息实体
@@ -216,91 +194,49 @@ public class ApiUtils {
     }
 
     /**
-     * 保存集团订单
+     * 发送短信
      *
-     * @param order
+     * @param threenetsChildOrderList
+     * @param flag 标识是否是下发链接短信 1、普通短信/2、链接短信
+     * @return
      */
-    public void saveThreenetsOrder(ThreenetsOrder order){
+    public AjaxResult sendMessage(List<ThreenetsChildOrder> threenetsChildOrderList, Integer flag) throws IOException, NoLoginException {
+        String msg = "发送成功！";
+        String msg2 = "错误信息：";
+        int falid = 0; // 发送失败数量
+        for (ThreenetsChildOrder t : threenetsChildOrderList) {
+            if (flag == 1) {
+                if (t.getOperate() == 1) { // 移动普通短信
+                    miguApi.remindOrderCrbtAndMonth(t.getLinkmanTel(), t.getOperateOrderId(), t.getOperateId(), false);
+                } else if (t.getOperate() == 2) { // 电信普通短信
 
-    }
-
-    public AjaxResult addRingWzzfOrderWeb(ThreenetsOrder ringOrder, List<Attachment> attachments, McardApi mcardApi, MiguApi miguApi, User user){
-        AjaxResult result = new AjaxResult();
-        int sendCount = 3;// 系统同步远程系统3次。解决网络慢的问题
-        // 1.增加附件
-        if (attachments != null && attachments.size() > 0) {
-            for (int i = 0; i < attachments.size(); i++) {
-                Attachment t = attachments.get(i);
-                if (StringUtils.isEmpty(t.getXh()) || StringUtils.isEmpty(t.getAttId())) {
-                    // 删除集合
-                    attachments.remove(i);
-                    --i;
+                } else { // 联通普通短信
+                    String result = swxlApi.remindOrderCrbtAndMonth(t.getLinkmanTel(), t.getOperateId(), false);
+                    if (StringUtils.isNotEmpty(result)){
+                        SwxlPubBackData info = (SwxlPubBackData) JsonUtil.getObject4JsonString(result, SwxlPubBackData.class);
+                        if (!"000000".equals(info.getRecode()) || !info.isSuccess()) {
+                            msg2 += "["+t.getLinkmanTel()+":"+info.getMessage()+"]";
+                            falid++;
+                        }
+                    }
+                }
+            } else {
+                if (t.getOperate() == 3) { // 链接短信，联通专属
+                    String res = swxlApi.swxlSendSMSByCRBTFail(t.getLinkmanTel());
+                    if (StringUtils.isNotEmpty(res)){
+                        SwxlPubBackData info = (SwxlPubBackData) JsonUtil.getObject4JsonString(res, SwxlPubBackData.class);
+                        if (!"000000".equals(info.getRecode()) || !info.isSuccess()) {
+                            msg2 += "["+t.getLinkmanTel()+":"+info.getMessage()+"]";
+                            falid++;
+                        }
+                    }
                 }
             }
         }
-        if (attachments != null && attachments.size() > 0) {
-            // 增加附件，应该由附件类去增加
-            //attachmentsRepository.addAttachments(attachments);
+        if (falid == 0){
+            return AjaxResult.success(true, msg);
+        }else{
+            return AjaxResult.success(false, msg2);
         }
-        // 添加到音乐名片系统
-        @SuppressWarnings("unused")
-        String mcardId = null;
-        if (2 == ringOrder.getOperator()) {
-            result = mcardApi.addRingWzzfOrder(ringOrder);
-            //mcardId = mes.getMessage();
-            if ((int)result.get("code")==200) {
-                ringOrder.setStatus("等待审核");
-                // 2.增加订单表
-                //ringOrderRepository.addRingOrder(ringOrder);
-            }
-        }
-        // 添加到咪咕平台
-        if (1 == ringOrder.getOperator()) {
-            // 1.先进行增加到本地数据库
-            // 2.在进行同步到服务器，同步3次。
-            MiguAddGroupRespone addGroupResponse = null;
-            for (int i = 0; i < sendCount; i++) {// 重试添加3次
-                //addGroupResponse = miguApi.add(null, ringOrder, user.getName(), user.getMobilephone(), null);
-                if (addGroupResponse != null) {
-                    break;
-                }
-            }
-            if (addGroupResponse.isSuccess()) {
-                // 设置集团id
-                ringOrder.setOperateId(addGroupResponse.getCircleId());
-                // 2.增加订单表
-                ringOrder.setStatus("审核通过");
-                // 获取登录用户信息
-//                if (miguApi.getBS().equals(MiguApi.LT)) {
-//                    ringOrder.setMiguzh(MiguApi.LT);
-//                } else if (miguApi.getBS().equals(MiguApi.HT)) {
-//                    ringOrder.setMiguzh(MiguApi.HT);
-//                }
-                //ringOrderRepository.addRingOrder(ringOrder);
-                // 查询号码id
-                // String phoneId=miguApi.getPhoneId(ringOrder.getLinkPhone(),
-                // addGroupResponse.getCircleId());
-                // 移动需要添加号码
-                ThreenetsChildOrder childOrder = new ThreenetsChildOrder();
-                //childOrder.setId(SecurityUtils.generateUUID());
-                childOrder.setLinkman(ringOrder.getCompanyLinkman());
-                childOrder.setLinkmanTel(ringOrder.getLinkmanTel());
-                // apersonnel.setMcardApersonId(phoneId);
-                childOrder.setOperateId(ringOrder.getMcardId());
-                childOrder.setParentOrderId(ringOrder.getId());
-                childOrder.setIsMonthly(1);
-                childOrder.setStatus("审核通过");
-                childOrder.setCreateDate(new Date());
-                childOrder.setOperate(ringOrder.getOperator());
-                // 添加到数据
-                //apersonnelRepository.add(apersonnel);
-                // 更新号码信息
-                // boolean getPhoneInfoResult=false;
-                // 通过异步同步号码
-                //reactor.notify("event.remindOrderCrbtAndMonth", Event.wrap(new UserUpdatePhones(apersonnel, apersonnelRepository, miguApi, true)));
-            }
-        }
-        return result;
     }
-
 }

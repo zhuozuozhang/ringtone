@@ -45,22 +45,22 @@ public class SwxlApi implements Serializable {
     public static String CODE_URL = "https://swxl.10155.com/swxlapi/web/login/code";// 验证码地址
     public static String swxlrefreshCrbtStatus_url = "https://swxl.10155.com/swxlapi/web/member/refreshStatus";//根据号码查询彩铃功能
     public static String getSwxlRingFenFa_URL = "https://swxl.10155.com/swxlapi/web/ring";// ring/ringId获取铃音分发详细
-    public static String getSetRingList_url = "https://swxl.10155.com/ring/getSetRingList.do"; // 获取铃音信息
     public static String getGroupRingInfo_URL = "https://swxl.10155.com/swxlapi/web/ring";// 获取铃音
     public static String ADD_PHONE_URL = "https://swxl.10155.com/swxlapi/web/member";// 增加号码地址
+    public static String remindOrderCrbtAndMonth_URL = "https://swxl.10155.com/swxlapi/web/member/openBusiness";// 短信提醒url
+    public static String orderCrbtAndMonth_URL = "https://swxl.10155.com/swxlapi/userpay/remindOrderCrbtAndMonth.do";// 直接开通包月url
+    public static String Send_SMS_SecondMsg_URL = "https://swxl.10155.com/swxlapi/web/member/openBizSpecialChannel";// 用户开通业务失败二次发送短信地址
 
+    public static String getSetRingList_url = "https://swxl.10155.com/ring/getSetRingList.do"; // 获取铃音信息
     public static String importRing_url = "https://swxl.10155.com/group/uploadRing.do";// 铃音上传url
     public static String deleteSwxlRing_URL = "https://swxl.10155.com/swxlapi/web/ring";// 删除铃音
     public static String DELETE_PHONE_URL = "https://swxl.10155.com/swxlapi/web/member";// 删除用户
     public static String groupSetRing_URL = "https://swxl.10155.com/swxlapi/web/ring/setRing.do";// 批量设置铃音
-    public static String remindOrderCrbtAndMonth_URL = "https://swxl.10155.com/swxlapi/web/member/openBusiness";// 短信提醒url
-    public static String orderCrbtAndMonth_URL = "https://swxl.10155.com/swxlapi/userpay/remindOrderCrbtAndMonth.do";// 直接开通包月url
     public static String Send_PHONESMS_URL = "https://swxl.10155.com/swxlapi/web/member";// 为集团下发开通短信
     public static String addGroup_url = "https://swxl.10155.com/swxlapi/web/group";// 增加商户url
     public static String importSwxlRing_URL = "https://swxl.10155.com/swxlapi/web/ring/add";// 上传铃音
     public static String PhoneSetRing_URL = "https://swxl.10155.com/swxlapi/web/ring/set";// 用户设置铃音
     public static String deleteGroup_url = "https://swxl.10155.com/swxlapi/web/group";
-    public static String Send_SMS_SecondMsg_URL = "https://swxl.10155.com/swxlapi/web/member/openBizSpecialChannel";// 用户开通业务失败二次发送短信地址
     public static String addChild_url = "https://swxl.10155.com/swxlapi/web/manager/child";// 增加商户url
     public static String silentMember_url = "https://swxl.10155.com/swxlapi/web/member/silentMember";//工具箱获取用户信息
     public static String systemLogList_url = "https://swxl.10155.com/swxlapi/web/systemLog/list";//工具箱获取用户信息
@@ -254,10 +254,9 @@ public class SwxlApi implements Serializable {
     public String getRingInfo(String operateId) throws NoLoginException, IOException {
         String url = getGroupRingInfo_URL + "?groupId=" + operateId;
         String result = sendGet(url);
-        log.info("获取铃音信息--->" + result);
+        log.info("获取铃音信息 参数：{} 结果：{}",operateId, result);
         return result;
     }
-
 
     /**
      * 根据号码查询彩铃功能
@@ -275,7 +274,7 @@ public class SwxlApi implements Serializable {
         }
         String url = swxlrefreshCrbtStatus_url + "?msisdn=" + msisdn + "&type=" + type;
         String result = sendGet(url);
-        log.info("联通根据号码查询彩铃功能--->" + result);
+        log.info("联通根据号码查询彩铃功能 参数：{},{} 结果：{}" ,msisdn,typeFlag,result);
         return result;
     }
 
@@ -290,7 +289,7 @@ public class SwxlApi implements Serializable {
     public String getSwxlRingFenFaAreaInfo(String ringid) throws NoLoginException, IOException {
         String getUrl = getSwxlRingFenFa_URL + "/" + ringid;
         String result = sendGet(getUrl);
-        log.info("联通获取铃音分发详细--->" + result);
+        log.info("联通获取铃音分发详细 参数：{} 结果：{}",ringid,result);
         return result;
     }
 
@@ -308,7 +307,7 @@ public class SwxlApi implements Serializable {
         formparams.add(new BasicNameValuePair("groupId", groupId));
         String url = ADD_PHONE_URL + "?" + URLEncodedUtils.format(formparams, "UTF-8");
         String result = sendGet(url);
-        log.info("联通查询用户信息--->" + result);
+        log.info("联通查询用户信息 参数：{},{} 结果：{}",phone,groupId,result);
         return result;
     }
 
@@ -341,7 +340,7 @@ public class SwxlApi implements Serializable {
      * 发送链接短信
      *
      * @param msisdn
-     * @return
+     * @return {"recode":"500002","message":"成员号码不存在","data":null,"success":false}
      * @throws NoLoginException
      * @throws IOException
      */
@@ -421,14 +420,6 @@ public class SwxlApi implements Serializable {
             response.close();
         }
         return result;
-    }
-
-
-    public static void main(String[] args) throws NoLoginException, IOException {
-//        SwxlApi swxlApi = new SwxlApi();
-//        String login = swxlApi.getRingInfo("9178900020190614589013");
-//        System.out.println("======================================");
-//        String s = swxlApi.swxlrefreshCrbtStatus("16607347601", 2);
     }
 
 }

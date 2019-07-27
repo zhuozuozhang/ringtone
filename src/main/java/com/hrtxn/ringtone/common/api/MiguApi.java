@@ -1,13 +1,8 @@
 package com.hrtxn.ringtone.common.api;
 
-import com.alibaba.druid.util.StringUtils;
 import com.hrtxn.ringtone.common.exception.NoLoginException;
-import com.hrtxn.ringtone.common.json.MiguAddGroupRespone;
 import com.hrtxn.ringtone.common.utils.ChaoJiYing;
 import com.hrtxn.ringtone.common.utils.ShiroUtils;
-import com.hrtxn.ringtone.common.utils.json.JsonUtil;
-import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreenetsOrder;
-import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreenetsRing;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -20,15 +15,10 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.mime.MultipartEntity;
-import org.apache.http.entity.mime.content.FileBody;
-import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
-import org.apache.http.params.CoreProtocolPNames;
-import org.apache.http.params.HttpParams;
 import org.apache.http.util.EntityUtils;
 import org.apache.shiro.crypto.hash.Md5Hash;
 
@@ -36,7 +26,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
-import java.nio.charset.Charset;
 import java.util.*;
 
 /**
@@ -323,12 +312,12 @@ public class MiguApi implements Serializable {
      * @param phoneMiguId
      * @param groupId
      * @param smsConfirm
-     * @return
+     * @return 始终返回{"ret":"000000"}，无错误信息提示
      * @throws IOException
      * @throws NoLoginException
      */
     public String remindOrderCrbtAndMonth(String phoneNo, String phoneMiguId, String groupId, boolean smsConfirm) throws IOException, NoLoginException {
-        String reslut = null;
+        String reslut;
         String msisdnList = phoneNo + "|" + phoneMiguId + ",";
         HashMap map = new HashMap();
         map.put("allFlag", "0");
@@ -339,8 +328,7 @@ public class MiguApi implements Serializable {
         } else {
             reslut = sendPost(map, remindOrderCrbtAndMonth_URL); // 短信下发
         }
-
-        log.info("移动发送短信 参数：{},{},{} 结果：{}",phoneNo,phoneMiguId,groupId,smsConfirm);
+        log.info("移动发送短信 参数：{},{},{},{} 结果：{}",phoneNo,phoneMiguId,groupId,smsConfirm,reslut);
         return reslut;
     }
 
@@ -386,7 +374,9 @@ public class MiguApi implements Serializable {
      */
     private String sendGet(String getUrl) throws NoLoginException, IOException {
         String result = null;
-        CloseableHttpClient httpclient = HttpClients.custom().setDefaultCookieStore(this.getCookieStore()).build();
+        CloseableHttpClient httpclient = HttpClients.custom()
+                .setDefaultCookieStore(this.getCookieStore())
+                .build();
         HttpGet httpGet = new HttpGet(getUrl);
         CloseableHttpResponse response = httpclient.execute(httpGet);// 进入
         try {
@@ -416,7 +406,9 @@ public class MiguApi implements Serializable {
      */
     private String sendPost(HashMap<String, String> paramMap, String url) throws IOException, NoLoginException {
         String result = null;
-        CloseableHttpClient httpclient = HttpClients.custom().setDefaultCookieStore(this.getCookieStore()).build();
+        CloseableHttpClient httpclient = HttpClients.custom()
+                .setDefaultCookieStore(this.getCookieStore())
+                .build();
         HttpPost httppost = new HttpPost(url);
         List<NameValuePair> formparams = new ArrayList<NameValuePair>();
         for (String key : paramMap.keySet()) {

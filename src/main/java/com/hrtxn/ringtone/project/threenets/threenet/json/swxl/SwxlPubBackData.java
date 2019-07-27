@@ -1,6 +1,7 @@
 package com.hrtxn.ringtone.project.threenets.threenet.json.swxl;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.io.Serializable;
 
@@ -9,13 +10,11 @@ import java.io.Serializable;
  * Date:2019-07-25 10:50
  * Description:顶级信息封装
  */
-@Data
 public class SwxlPubBackData<T> implements Serializable {
-    private static final long serialVersionUID = -5893793992171290021L;
-    private String recode;
-    private String message;
-    private boolean success;
-    private SwxlQueryPubRespone<T> data;
+    @Getter @Setter private String recode;
+    @Getter @Setter private String message;
+    @Getter @Setter private boolean success;
+    @Getter @Setter private SwxlQueryPubRespone<T> data;
 
 
 }
