@@ -1,15 +1,12 @@
 package com.hrtxn.ringtone.common.api;
 
-import com.alibaba.druid.util.StringUtils;
 import com.hrtxn.ringtone.common.exception.NoLoginException;
-import com.hrtxn.ringtone.common.json.MiguAddGroupRespone;
+import com.hrtxn.ringtone.project.threenets.threenet.json.migu.MiguAddGroupRespone;
 import com.hrtxn.ringtone.common.utils.ChaoJiYing;
 import com.hrtxn.ringtone.common.utils.ShiroUtils;
 import com.hrtxn.ringtone.common.utils.json.JsonUtil;
 import com.hrtxn.ringtone.project.system.user.domain.User;
 import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreenetsOrder;
-import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreenetsRing;
-import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;

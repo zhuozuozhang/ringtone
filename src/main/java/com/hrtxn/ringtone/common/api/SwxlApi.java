@@ -1,8 +1,14 @@
 package com.hrtxn.ringtone.common.api;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hrtxn.ringtone.common.exception.NoLoginException;
+import com.hrtxn.ringtone.project.threenets.threenet.json.swxl.*;
 import com.hrtxn.ringtone.common.utils.ChaoJiYing;
 import com.hrtxn.ringtone.common.utils.WebClientDevWrapper;
+import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreenetsOrder;
+import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreenetsRing;
+import jodd.util.StringUtil;
 import lombok.Getter;
 import lombok.Synchronized;
 import lombok.extern.slf4j.Slf4j;
@@ -12,22 +18,29 @@ import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.NameValuePair;
+import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.CookieStore;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.utils.URLEncodedUtils;
+import org.apache.http.entity.mime.MultipartEntity;
+import org.apache.http.entity.mime.content.FileBody;
+import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.params.CoreProtocolPNames;
+import org.apache.http.params.HttpParams;
 import org.apache.http.util.EntityUtils;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -353,7 +366,7 @@ public class SwxlApi implements Serializable {
         map.put("ringId", msisdn);
         map.put("confirmType", "CONFIRM_BY_WEB");
         result = sendPost(map, Send_SMS_SecondMsg_URL);
-        log.info("联通发送链接短信 参数：{} 结果：{}",msisdn,result);
+        log.info("联通发送链接短信 参数：{} 结果：{}", msisdn, result);
         return result;
     }
 
@@ -423,7 +436,240 @@ public class SwxlApi implements Serializable {
         return result;
     }
 
+    /**
+     * 增加商户
+     *
+     * @param ringOrder
+     * @param ring
+     * @return
+     * @throws IOException
+     * @throws NoLoginException
+     */
+    public SwxlGroupResponse addGroup(ThreenetsOrder ringOrder, ThreenetsRing ring) throws IOException, NoLoginException {
+        SwxlGroupResponse swxlAddGroupRespone = null;
+        DefaultHttpClient httpclient = WebClientDevWrapper.wrapClient(new DefaultHttpClient());
+        HttpPost httppost = new HttpPost(addGroup_url);
+        httpclient.setCookieStore(this.getCookieStore());
+        try {
+            MultipartEntity reqEntity = new MultipartEntity();
+            HttpParams params = httpclient.getParams();
+            params.setParameter(CoreProtocolPNames.HTTP_CONTENT_CHARSET, Charset.forName("UTF-8"));
+            reqEntity.addPart("groupName", new StringBody(ringOrder.getCompanyName(), Charset.forName("UTF-8")));// 集团名称
+            reqEntity.addPart("payType", new StringBody("0"));
+            reqEntity.addPart("applyForSmsNotification", new StringBody("0"));// 免短信
+            reqEntity.addPart("smsFile", new StringBody(""));
+            if (ringOrder.getPaymentPrice() == 10) {
+                reqEntity.addPart("productId", new StringBody("0000002499"));//价格10元
+            } else {
+                reqEntity.addPart("productId", new StringBody("0000002500"));//价格20元
+            }
+            reqEntity.addPart("ringName", new StringBody(ringOrder.getCompanyName(), Charset.forName("UTF-8")));// 铃音名称
+            if (ringOrder.getUpLoadAgreement() != null) {
+                reqEntity.addPart("ringFile", new FileBody(ringOrder.getUpLoadAgreement())); // 铃音文件
+            }
+            reqEntity.addPart("qualificationFile", new StringBody(""));
+            reqEntity.addPart("companyName", new StringBody(ringOrder.getCompanyName(), Charset.forName("UTF-8")));
+            if (StringUtil.isBlank(ring.getRingContent())) {
+                reqEntity.addPart("content", new StringBody("感谢您一直以来对我们的信任和支持，我们竭诚为您提供优质的产品和完善的服务，真诚期待与您的合作", Charset.forName("UTF-8")));
+            } else {
+                reqEntity.addPart("content", new StringBody(ring.getRingContent(), Charset.forName("UTF-8")));
+            }
+            reqEntity.addPart("msisdns", new StringBody(ringOrder.getLinkmanTel()));// 号码
+            reqEntity.addPart("bizCodes", new StringBody(""));
+            httppost.setEntity(reqEntity);
+            HttpResponse response1 = httpclient.execute(httppost);
+            int statusCode = response1.getStatusLine().getStatusCode();
+            if (statusCode == HttpStatus.SC_OK) {
+                log.debug("服务器正常响应.....");
+                HttpEntity resEntity = response1.getEntity();
+                String res = EntityUtils.toString(resEntity);
+                //res{"recode":"000000","message":"成功","data":{"groupId":"2e33a3e9c0e1452d83a6fa3e5a8ad2e2"},"success":true}
+                ObjectMapper mapper = new ObjectMapper();
+                if (res.contains("000000")) {
+                    // 创建集团成功
+                    // 查询集团信息
+                    for (int i = 0; i < 10; i++) {
+                        swxlAddGroupRespone = getGRoupInfo(ringOrder);
+                        if (swxlAddGroupRespone != null) {
+                            break;
+                        }
+                    }
+                    this.setSwxlCookie(httpclient.getCookieStore());
+                } else {
+                    SwxlBaseBackMessage<SwxlAddPhoneNewResult> createGroupInfo = mapper.readValue(res, new TypeReference<SwxlBaseBackMessage<SwxlAddPhoneNewResult>>() {
+                    });
+                    swxlAddGroupRespone = new SwxlGroupResponse();
+                    swxlAddGroupRespone.setStatus(1);
+                    if (createGroupInfo.getData() != null) {
+                        List<SwxlAddPhoneFailInfo> list = createGroupInfo.getData().getFailedList();
+                        StringBuffer msg = new StringBuffer("同步失败:");
+                        if (list != null && list.size() > 0) {
+                            for (SwxlAddPhoneFailInfo info : list) {
+                                msg.append(info.getMsisdn());
+                                msg.append(info.getInfo());
+                            }
+                        }
+                        if (list == null) {
+                            list = new ArrayList<SwxlAddPhoneFailInfo>();
+                            msg.append("创建集团失败！");
+                        }
+                        swxlAddGroupRespone.setRemark(msg.toString());
+                    } else {
+                        swxlAddGroupRespone.setRemark(createGroupInfo.getMessage());
+                    }
+                }
+            }
+        } catch (Exception e) {
+            swxlAddGroupRespone = new SwxlGroupResponse();
+            swxlAddGroupRespone.setStatus(1);
+            swxlAddGroupRespone.setRemark("添加商户异常");
+            log.error("添加商户异常[{}]", e.getMessage());
+        } finally {
+            httppost.abort();
+            httpclient.getConnectionManager().shutdown();
+        }
+        return swxlAddGroupRespone;
+    }
 
+    /**
+     * 查询商户（集团）信息
+     *
+     * @param order
+     * @return
+     * @throws IOException
+     * @throws NoLoginException
+     */
+    public SwxlGroupResponse getGRoupInfo(ThreenetsOrder order) throws IOException, NoLoginException {
+        SwxlGroupResponse content = null;
+        DefaultHttpClient httpclient = WebClientDevWrapper.wrapClient(new DefaultHttpClient());
+        long longTime = new Date().getTime();
+        String getUrl = "https://swxl.10155.com/swxlapi/web/group?order=asc&maxresult=15&offset=0&currentpage=1&draw=1&start=0&groupName=" + order.getCompanyName() + "&msisdn=" + order.getLinkmanTel() + "&status=&noSMS=&_=" + longTime;
+        HttpGet httpGet = new HttpGet(getUrl);
+        httpclient.setCookieStore(this.getCookieStore());
+        try {
+            HttpResponse response = httpclient.execute(httpGet);// 进入
+            int statusCode = response.getStatusLine().getStatusCode();
+            if (statusCode == HttpStatus.SC_OK) {
+                HttpEntity resEntity = response.getEntity();
+                String resStr = EntityUtils.toString(resEntity);
+                this.setSwxlCookie(httpclient.getCookieStore());
+                log.debug("更新号码，取得的内容：" + resStr);
+                if (resStr.contains("000000")) {
+                    ObjectMapper mapper = new ObjectMapper();
+                    SwxlPubBackData<SwxlQueryPubRespone<SwxlGroupResponse>> backData = mapper.readValue(resStr, new TypeReference<SwxlPubBackData<SwxlGroupResponse>>() {
+                    });
+                    @SuppressWarnings({"unchecked", "rawtypes"})
+                    SwxlQueryPubRespone<SwxlGroupResponse> dataList = (SwxlQueryPubRespone) backData.getData();
+                    if (dataList != null) {
+                        List<SwxlGroupResponse> groupList = dataList.getData();
+                        if (groupList.size() > 0) {
+                            for (SwxlGroupResponse groupInfo : groupList) {
+                                if (groupInfo.getGroupName().equals(order.getCompanyName().trim())) {
+                                    content = groupInfo;
+                                    content.setStatus(0);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (ClientProtocolException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            httpGet.abort();
+            httpclient.getConnectionManager().shutdown();
+        }
+        return content;
+    }
+
+
+    /**
+     * 为商务炫铃--整个集团下发 开通彩铃短信以及开通包月短信
+     *
+     * @param groupId
+     * @return
+     * @throws IOException
+     * @throws NoLoginException
+     */
+    public boolean SwxlSendPhoneSMS(String groupId) throws IOException, NoLoginException {
+        boolean result = false;
+        DefaultHttpClient httpclient = WebClientDevWrapper.wrapClient(new DefaultHttpClient());
+        HttpPost httppost = new HttpPost(Send_PHONESMS_URL + "/" + groupId);
+        List<NameValuePair> formparams = new ArrayList<NameValuePair>();
+        httpclient.setCookieStore(this.getCookieStore());
+        try {
+            UrlEncodedFormEntity entity = new UrlEncodedFormEntity(formparams, "utf-8");
+            httppost.setEntity(entity);
+            HttpResponse response = httpclient.execute(httppost);
+            HttpEntity resEntity = response.getEntity();
+            String responseStr = EntityUtils.toString(resEntity);
+            System.out.println("发送短信息结果:" + responseStr);
+            if (responseStr.contains("000000")) {
+                result = true;
+            }
+        } catch (Exception e) {
+            System.out.println(e);
+        } finally {
+            httppost.abort();
+            httpclient.getConnectionManager().shutdown();
+        }
+        return result;
+    }
+
+    /***
+     * 获取集团铃音信息--升级版本
+     *
+     * @param ring
+     * @return
+     * @throws NoLoginException
+     */
+    public SwxlRingMsg getRingInfo2(ThreenetsRing ring) throws NoLoginException {
+        SwxlRingMsg swxlRingInfo = null;
+        DefaultHttpClient httpclient = WebClientDevWrapper.wrapClient(new DefaultHttpClient());
+        try {
+            HttpGet httpGet = new HttpGet(getGroupRingInfo_URL + "?groupId="+ ring.getOperateId());
+            httpclient.setCookieStore(this.getCookieStore());
+            HttpResponse response = httpclient.execute(httpGet);// 进入
+            int statusCode = response.getStatusLine().getStatusCode();
+            if (statusCode == HttpStatus.SC_OK) {
+                HttpEntity resEntity = response.getEntity();
+                String content = EntityUtils.toString(resEntity);
+                this.setSwxlCookie(httpclient.getCookieStore());
+                System.out.println("查询铃音，取得的内容：" + content);
+                if (content.contains("000000")) {
+                    ObjectMapper mapper = new ObjectMapper();
+                    SwxlPubBackData<SwxlQueryPubRespone<SwxlRingMsg>> backData = mapper.readValue(content,new TypeReference<SwxlPubBackData<SwxlRingMsg>>() {});
+                    @SuppressWarnings({ "unchecked", "rawtypes" })
+                    SwxlQueryPubRespone<SwxlRingMsg> dataList = (SwxlQueryPubRespone) backData.getData();
+                    if (dataList != null) {
+                        List<SwxlRingMsg> ringList = dataList.getData();
+                        String ringName = ring.getRingName();
+                        ringName = ringName.split("\\.")[0];
+                        if (ringList.size() > 0) {
+                            for (SwxlRingMsg swxlRingMsg : ringList) {
+                                if (swxlRingMsg.getRingName().equals(ringName.trim())) {
+                                    swxlRingInfo = swxlRingMsg;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                    return swxlRingInfo;
+                }
+            }
+        } catch (NoLoginException e) {
+            e.printStackTrace();
+        } catch (ClientProtocolException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            httpclient.getConnectionManager().shutdown();
+        }
+        return swxlRingInfo;
+    }
     public static void main(String[] args) throws NoLoginException, IOException {
 //        SwxlApi swxlApi = new SwxlApi();
 //        String login = swxlApi.getRingInfo("9178900020190614589013");

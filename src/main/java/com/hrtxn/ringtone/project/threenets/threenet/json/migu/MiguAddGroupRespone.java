@@ -1,4 +1,4 @@
-package com.hrtxn.ringtone.common.json;
+package com.hrtxn.ringtone.project.threenets.threenet.json.migu;
 
 import lombok.Data;
 

@@ -92,4 +92,9 @@
         </set>
         where path = #{path,jdbcType=VARCHAR}
     </update>
+
+    <select id="selectByPath" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select * from tb_uploadfile
+        where path like '${path}%'
+    </select>
 </mapper>

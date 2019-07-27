@@ -21,4 +21,14 @@ public class Uploadfile {
     private Integer status;
     // 上传时间
     private Date createtime;
+
+
+
+    //---------------
+    private String tnId;
+    private String tnCheckId;
+    private String orderId;//协议id(审核通过意向单)
+    private String anthName;
+
+    private String xh;//判断新增成果的时候，删除行的标识。
 }

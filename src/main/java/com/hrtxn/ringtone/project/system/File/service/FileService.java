@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * Author:lile
@@ -34,7 +35,6 @@ public class FileService {
      */
     public AjaxResult upload(MultipartFile file, String fileName, String type, Integer orderId) {
         try {
-
             String path = FileUtil.uploadFile(file, orderId, fileName);
             //保存到数据库
             Uploadfile uploadfile = new Uploadfile();
@@ -58,6 +58,16 @@ public class FileService {
         uploadfile.setPath(path);
         uploadfile.setStatus(2);
         uploadfileMapper.updateByPath(uploadfile);
+    }
+
+    /**
+     * 获取附件
+     *
+     * @return
+     */
+    public List<Uploadfile> listUploadfile(Integer orderId){
+        String path = "\\"+orderId;
+        return uploadfileMapper.selectByPath(path);
     }
 
 }

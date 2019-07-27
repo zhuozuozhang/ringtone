@@ -5,13 +5,17 @@ import com.hrtxn.ringtone.common.constant.AjaxResult;
 import com.hrtxn.ringtone.common.domain.BaseRequest;
 import com.hrtxn.ringtone.common.domain.OrderRequest;
 import com.hrtxn.ringtone.common.domain.Page;
+import com.hrtxn.ringtone.common.utils.FileUtil;
 import com.hrtxn.ringtone.common.utils.ShiroUtils;
 import com.hrtxn.ringtone.common.utils.juhe.JuhePhoneUtils;
+import com.hrtxn.ringtone.project.system.File.domain.Uploadfile;
+import com.hrtxn.ringtone.project.system.File.service.FileService;
 import com.hrtxn.ringtone.project.system.json.JuhePhone;
 import com.hrtxn.ringtone.project.system.json.JuhePhoneResult;
 import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreenetsChildOrder;
 import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreenetsOrder;
 import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreenetsRing;
+import com.hrtxn.ringtone.project.threenets.threenet.json.swxl.Attachment;
 import com.hrtxn.ringtone.project.threenets.threenet.mapper.ThreenetsChildOrderMapper;
 import com.hrtxn.ringtone.project.threenets.threenet.mapper.ThreenetsOrderMapper;
 import com.hrtxn.ringtone.project.threenets.threenet.utils.ApiUtils;
@@ -41,6 +45,8 @@ public class ThreeNetsOrderService {
     private ThreeNetsChildOrderService threeNetsChildOrderService;
     @Autowired
     private ThreeNetsRingService threeNetsRingService;
+    @Autowired
+    private FileService fileService;
 
     /**
      * 根据id查询
@@ -263,11 +269,11 @@ public class ThreeNetsOrderService {
      * @param order
      */
     @Synchronized
-    private void saveOnlineOrder(ThreenetsOrder order) {
+    private void saveOnlineOrder(ThreenetsOrder order,ThreenetsRing ring) {
+        ApiUtils utils = new ApiUtils();
         switch (order.getOperator()) {
             //移动
             case 1:
-                ApiUtils utils = new ApiUtils();
                 utils.saveOrderByYd(order);
                 break;
             //电信
@@ -275,7 +281,8 @@ public class ThreeNetsOrderService {
                 break;
             //联通
             case 3:
-
+                List<Uploadfile> list = fileService.listUploadfile(order.getId());
+                utils.saveOrderByLt(order,list,ring);
                 break;
             default:
                 break;

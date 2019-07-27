@@ -1,6 +1,7 @@
 package com.hrtxn.ringtone.project.system.File.mapper;
 
 import com.hrtxn.ringtone.project.system.File.domain.Uploadfile;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -42,4 +43,12 @@ public interface UploadfileMapper {
      * @return
      */
     int updateByPath(Uploadfile uploadfile);
+
+    /**
+     * 根据id路径获取文件
+     *
+     * @param path
+     * @return
+     */
+    List<Uploadfile> selectByPath(@Param("path") String path);
 }

@@ -6,21 +6,20 @@ import com.hrtxn.ringtone.common.api.MiguApi;
 import com.hrtxn.ringtone.common.api.SwxlApi;
 import com.hrtxn.ringtone.common.constant.AjaxResult;
 import com.hrtxn.ringtone.common.exception.NoLoginException;
-import com.hrtxn.ringtone.common.json.MiguAddGroupRespone;
-import com.hrtxn.ringtone.common.utils.ShiroUtils;
+import com.hrtxn.ringtone.project.system.File.domain.Uploadfile;
+import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreenetsRing;
+import com.hrtxn.ringtone.project.threenets.threenet.json.migu.MiguAddGroupRespone;
 import com.hrtxn.ringtone.common.utils.SpringUtils;
 import com.hrtxn.ringtone.common.utils.StringUtils;
 import com.hrtxn.ringtone.common.utils.json.JsonUtil;
 import com.hrtxn.ringtone.project.system.user.domain.User;
 import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreenetsChildOrder;
 import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreenetsOrder;
-import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreenetsRing;
 import com.hrtxn.ringtone.project.threenets.threenet.json.migu.RefreshVbrtStatusResult;
-import com.hrtxn.ringtone.project.threenets.threenet.json.swxl.SwxlPhoneInfoResult;
-import com.hrtxn.ringtone.project.threenets.threenet.json.swxl.SwxlPubBackData;
-import com.hrtxn.ringtone.project.threenets.threenet.json.swxl.SwxlQueryPubRespone;
+import com.hrtxn.ringtone.project.threenets.threenet.json.swxl.*;
 import com.hrtxn.ringtone.project.threenets.threenet.mapper.ThreenetsChildOrderMapper;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.shiro.SecurityUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -300,6 +299,72 @@ public class ApiUtils {
             return AjaxResult.success(addGroupResponse,addGroupResponse.getMsg());
         }catch (Exception e){
             log.error("对接移动 方法：saveOrderByYd  错误信息", e);
+            return AjaxResult.error("保存失败");
+        }
+    }
+
+    /**
+     * 保存联通订单
+     *
+     * @param ringOrder
+     * @param attachments
+     * @param ring
+     * @return
+     * @throws IOException
+     * @throws NoLoginException
+     */
+    public AjaxResult saveOrderByLt(ThreenetsOrder ringOrder, List<Uploadfile> attachments, ThreenetsRing ring){
+        try{
+            // 1.增加附件
+            if (attachments != null && attachments.size() > 0) {
+                for (int i = 0; i < attachments.size(); i++) {
+                    Uploadfile t = attachments.get(i);
+                    if (StringUtils.isEmpty(t.getXh()) || t.getId()==null) {
+                        // 删除集合
+                        attachments.remove(i);
+                        --i;
+                    }
+                }
+            }
+            if (attachments != null && attachments.size() > 0) {
+                // 附件表已经删除了
+                //attachmentsRepository.addAttachments(attachments);
+            }
+            // 添加到音乐名片系统
+            SwxlGroupResponse swxlGroupResponse = null;
+            // 添加商户
+            for (int i = 0; i < 5; i++) {
+                swxlGroupResponse = swxlApi.addGroup(ringOrder, ring);
+                if (swxlGroupResponse != null && 0 == swxlGroupResponse.getStatus()) {
+                    break;
+                }
+            }
+            // status 0正常 1异常
+            if (swxlGroupResponse != null && 0 == swxlGroupResponse.getStatus()) {
+                // 向商户发送开通短信,发送短信的成功或者失败,不影响后续操作
+                boolean swxlSendPhoneSMS = swxlApi.SwxlSendPhoneSMS(swxlGroupResponse.getId());
+                /* 添加铃音 */
+                ring.setOperateId(ringOrder.getMcardId());
+                SwxlRingMsg swxlRingMsg = null;
+                for (int i = 0; i < 5; i++) {
+                    swxlRingMsg = swxlApi.getRingInfo2(ring);
+                    if (swxlRingMsg != null) {
+                        break;
+                    }
+                }
+                if (swxlRingMsg != null) {
+                    ring.setRemark(swxlRingMsg.getRemark());
+                    return AjaxResult.success(ring,"成功");
+                    // 添加铃音到数据库
+                    //ringRepository.saveRing(ring);
+                } else {
+                    return AjaxResult.error("获取铃音信息失败，至《铃音管理》页面刷新");
+                }
+            } else {
+                return AjaxResult.error(swxlGroupResponse.getRemark());
+            }
+        }catch (Exception e){
+            log.error("对接联通 方法：saveOrderByLt  错误信息", e);
             return AjaxResult.error("保存失败");
         }
     }
