@@ -1,0 +1,159 @@
+<!DOCTYPE>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>企业彩铃</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/public/css/common.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/system/center/css/center.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/system/home/css/homehead.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/public/dataTables/jquery.dataTables.min.css}">
+    <style>
+        table.dataTable thead th, table.dataTable thead td {
+            width: 20% !important;
+            padding: 0 !important;
+        }
+    </style>
+</head>
+
+<body>
+    <div th:include="system/common/include :: header"></div>
+    <div class="menu">
+        <div class="cdwbk">
+            <a th:href="@{/system/index}">首页</a>
+            <a th:href="@{/system/toClinetNoticeListPage}">公告</a>
+            <a th:href="@{/system/toCenterPage}" class="dqxx">个人中心</a>
+        </div>
+    </div>
+    <div class="wbk">
+        <div class="nbk">
+            <div class="yhxxbk">
+                <div class="bk_l"><img th:src="@{/public/images/test1.jpg}">
+                </div>
+                <div class="bk_r">
+                    <h3 th:text="${user.userName}">上网了测试账号</h3>
+                    <div class="yhxx">联系电话：<span th:text="${user.userTel}">123456789</span></div>
+                    <div class="yhxx">邮箱：<span th:text="${user.userEmail}">123456789</span></div>
+                    <div class="yhxx">代理编号：<span th:text="${user.id}">123456789</span></div>
+                    <div class="xgmm" id="cause">修改密码</div>
+                </div>
+                <div class="zsy"></div>
+            </div>
+            <div class="zcmxbk">
+                <div class="bgname"><span id="czjl" class="active">充值记录</span><span id="zcjl">支出记录</span></div>
+                <div class="recharge_record">
+                    <table id="example">
+                        <thead>
+                            <tr>
+                                <th>充值时间</th>
+                                <th>充值项目</th>
+                                <th>充值金额</th>
+                                <th>当前金额</th>
+                                <th>状态</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="rechargeLog:${rechargeLogList}">
+                                <td th:text="${#dates.format(rechargeLog.rechargeTime,'yyyy-MM-dd HH:mm:ss')}">2018-08-05 14:01:12</td>
+                                <td th:if="${rechargeLog.rechargeType} == 1">号码认证</td>
+                                <td th:text="${rechargeLog.rechargePrice}">100</td>
+                                <td th:text="${rechargeLog.rechargeMoney}">300</td>
+                                <td th:text="交易成功">交易成功</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="spending_record bxs">
+                    <table id="record">
+                        <thead>
+                            <tr>
+                                <th>支出时间</th>
+                                <th>支出项目</th>
+                                <th>支出金额</th>
+                                <th>剩余金额</th>
+                                <th>状态</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>2018-08-05 14:01:12</td>
+                                <td>联通座机彩铃(河北联通座机)</td>
+                                <td>100</td>
+                                <td>300</td>
+                                <td>交易成功</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--修改密码 -->
+    <div class="back display" id="pop">
+        <div class="pop_content">
+            <div class="xgtitle"><span>修改密码</span><i id="cancel"><img th:src="@{/system/center/images/del.png}" /></i>
+            </div>
+            <div class="xgmmbk">
+                <div class="xgmm"><span>新密码:</span>
+                    <input id="newpwd" type="password" placeholder="请输入新密码">
+                </div>
+                <div class="xgmm"><span>确认密码:</span>
+                    <input id="againpwd" type="password" placeholder="请确认新密码">
+                </div>
+                <div class="xgmm"><span>验证手机号:</span>
+                    <input id="phone" type="tel" placeholder="请输入手机号">
+                </div>
+                <div class="xgmm"><span>验证码:</span>
+                    <input id="code" type="text" placeholder="请输入验证码">
+                    <input class="yzmbk" type="button" id="tel_code" value="获取验证码" th:onclick="sendMessage()"/>
+                </div>
+            </div>
+            <div class="qdan" onClick="changepwd()">确认修改</div>
+        </div>
+    </div>
+</body>
+<div th:include="system/common/include :: foot"></div>
+<script type="text/javascript" th:src="@{/system/center/js/center.js}"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#example').DataTable({
+            "ordering": false,//禁止排序
+            "searching": false, //搜索框
+            "bLengthChange": false,
+            "language": {
+                "decimal": ",",
+                "thousands": ".",
+                "lengthMenu": " _MENU_ ",
+                "zeroRecords": "没有找到记录",
+                "info": "",
+                "infoEmpty": "",
+                "infoFiltered": "",
+                "paginate": {
+                    "sPrevious": "上一页",
+                    "sNext": "下一页"
+                }
+            }
+        });
+    });
+
+    $(document).ready(function () {
+        $('#record').DataTable({
+            "ordering": false,//禁止排序
+            "searching": false, //搜索框
+            "bLengthChange": false,
+            "language": {
+                "decimal": ",",
+                "thousands": ".",
+                "lengthMenu": " _MENU_ ",
+                "zeroRecords": "没有找到记录",
+                "info": "",
+                "infoEmpty": "",
+                "infoFiltered": "",
+                "paginate": {
+                    "sPrevious": "上一页",
+                    "sNext": "下一页"
+                }
+            }
+        });
+    });
+</script>
+</html>

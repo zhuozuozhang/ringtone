@@ -1,0 +1,81 @@
+<!DOCTYPE>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>企业彩铃-登录</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/public/css/common.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/system/login/css/login.css}">
+
+</head>
+
+<body>
+    <div class="header">
+        <div class="logo"><img th:src="@{/public/images/cllogo.jpg}"></div>
+    </div>
+    <div class="wbk">
+        <div class="nbk">
+            <div class="nbk_z">
+                企业彩铃 企业有声名片
+            </div>
+            <form class="login-form" th:action="@{/login}" th:method="post">
+                <div class="nbk_y">
+                    <div class="dltitle">欢迎登录</div>
+                    <div class="srbk phone">
+                        <input id="user_name" type="text" name="username" placeholder="请输入账号">
+                    </div>
+                    <div class="srbk psd">
+                        <input id="password" type="password" name="password" placeholder="请输入密码">
+                    </div>
+                    <div class="srbk yzm">
+                        <input type="text" id="imageCode" name="captchaCode" class="txtVerification" placeholder="请验证码">
+                        <div class="yzy">
+                            <span>
+                                <img class="yzmImage imgcode" th:src="@{/imageCode(type=char)}">
+                            </span>
+                        </div>
+                    </div>
+                    <div class="dlan login">登 录</div>
+                    <span th:text="${msg}" style="color: red;:none;"></span>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="dibu">Copyright © 2019 Zhong Gao Jun cong</div>
+</body>
+<div th:include="admin/common/include :: footer"></div>
+<script type="text/javascript" th:inline="javascript">
+    $(function () {
+        $("body").keydown(function(event) {
+            if (event.keyCode == "13") {//keyCode=13是回车键
+                $(".login").click();
+            }
+        });
+        // 点击执行登录
+        $(".login").click(function () {
+            check_login();
+            return false;
+        });
+        $('.imgcode').click(function () {
+            var url = ctx + "imageCode?type=char&s=" + Math.random();
+            $(".imgcode").attr("src", url);
+        });
+
+
+    });
+
+    // 检查用户名密码是否为空
+    function check_login() {
+        var name = $("#user_name").val();
+        var pass = $("#password").val();
+        if (!isNotEmpty(name)) {
+            layer.msg('登录名不能为空!', {icon: 5, time: 1000});
+            return;
+        }
+        if (!isNotEmpty(pass)) {
+            layer.msg('密码不能为空!', {icon: 5, time: 1000});
+            return;
+        }
+        $(".login-form").submit();
+    }
+</script>
+</html>

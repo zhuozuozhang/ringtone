@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hrtxn.ringtone.project.threenets.threenet.mapper.ThreenetsRingMapper">
+
+    <resultMap id="BaseResultMap" type="com.hrtxn.ringtone.project.threenets.threenet.domain.ThreenetsRing">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="ring_name" property="ringName" jdbcType="VARCHAR"/>
+        <result column="ring_type" property="ringType" jdbcType="VARCHAR"/>
+        <result column="ring_status" property="ringStatus" jdbcType="INTEGER"/>
+        <result column="operate" property="operate" jdbcType="INTEGER"/>
+        <result column="order_id" property="orderId" jdbcType="INTEGER"/>
+        <result column="operate_ring_id" property="operateRingId" jdbcType="VARCHAR"/>
+        <result column="ring_way" property="ringWay" jdbcType="LONGVARCHAR"/>
+        <result column="ring_content" property="ringContent" jdbcType="LONGVARCHAR"/>
+        <result column="remark" property="remark" jdbcType="LONGVARCHAR"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+          id, ring_name, ring_type, ring_status, operate, order_id, operate_ring_id,ring_way, ring_content, create_time, remark
+    </sql>
+
+    <select id="getRing" resultMap="BaseResultMap">
+        select
+            ttr.*,company_name as companyName,user_name as userName
+        from
+            tb_threenets_ring ttr
+        inner join
+            tb_threenets_order tto,tb_user tu
+        where
+            ttr.order_id = tto.id
+            and tu.id = tto.user_id
+            order by create_time desc
+            limit #{page.page},#{page.pagesize}
+    </select>
+
+
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+        select
+        <include refid="Base_Column_List"/>
+        from tb_threenets_ring
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+
+    <select id="selectByOrderId" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+        select
+        <include refid="Base_Column_List"/>
+        from tb_threenets_ring
+        where order_id = #{id,jdbcType=INTEGER}
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+        delete from tb_threenets_ring
+        where id = #{id,jdbcType=INTEGER}
+    </delete>
+
+    <!-- 添加三网铃音 -->
+    <insert id="insertThreeNetsRing" parameterType="ThreenetsRing" useGeneratedKeys="true" keyProperty="id" >
+        INSERT INTO tb_threenets_ring
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="ringName != null">
+                ring_name,
+            </if>
+            <if test="ringType != null">
+                ring_type,
+            </if>
+            <if test="ringStatus != null">
+                ring_status,
+            </if>
+            <if test="operate != null">
+                operate,
+            </if>
+            <if test="orderId != null">
+                order_id,
+            </if>
+            <if test="operateRingId != null">
+                operate_ring_id,
+            </if>
+            <if test="ringWay != null">
+                ring_way,
+            </if>
+            <if test="ringContent != null">
+                ring_content,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+            <if test="remark != null">
+                remark,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="ringName != null">
+                #{ringName,jdbcType=VARCHAR},
+            </if>
+            <if test="ringType != null">
+                #{ringType,jdbcType=VARCHAR},
+            </if>
+            <if test="ringStatus != null">
+                #{ringStatus,jdbcType=INTEGER},
+            </if>
+            <if test="operate != null">
+                #{operate,jdbcType=INTEGER},
+            </if>
+            <if test="orderId != null">
+                #{orderId,jdbcType=INTEGER},
+            </if>
+            <if test="operateRingId != null">
+                #{operateRingId,jdbcType=VARCHAR},
+            </if>
+            <if test="ringWay != null">
+                #{ringWay,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="ringContent != null">
+                #{ringContent,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="remark != null">
+                #{remark,jdbcType=LONGVARCHAR},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="updateByPrimaryKeySelective" parameterType="ThreenetsRing">
+        update tb_threenets_ring
+        <set>
+            <if test="ringName != null">
+                ring_name = #{ringName,jdbcType=VARCHAR},
+            </if>
+            <if test="ringType != null">
+                ring_type = #{ringType,jdbcType=VARCHAR},
+            </if>
+            <if test="ringStatus != null">
+                ring_status = #{ringStatus,jdbcType=INTEGER},
+            </if>
+            <if test="operate != null">
+                operate = #{operate,jdbcType=INTEGER},
+            </if>
+            <if test="orderId != null">
+                order_id = #{orderId,jdbcType=INTEGER},
+            </if>
+            <if test="operateRingId != null">
+                operate_ring_id = #{operateRingId,jdbcType=VARCHAR},
+            </if>
+            <if test="ringWay != null">
+                ring_way = #{ringWay,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="ringContent != null">
+                ring_content = #{ringContent,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="remark != null">
+                remark = #{remark,jdbcType=LONGVARCHAR},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+
+    <select id="getRingList" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from tb_threenets_ring r
+        where 1=1
+        <include refid="parameters"/>
+        ORDER BY id DESC
+        LIMIT #{page.page},#{page.pagesize}
+    </select>
+
+    <select id="getCount" resultType="java.lang.Integer">
+        select count(*) from tb_threenets_ring r
+        where 1=1
+        <include refid="parameters"/>
+    </select>
+
+    <sql id="parameters">
+        <if test="param != null and param.operate != null and param.operate != ''">
+            AND r.operate = #{param.operate}
+        </if>
+        <if test="param != null and param.id != null and param.id != ''">
+            AND r.order_id = #{param.id}
+        </if>
+    </sql>
+    <!--删除铃音-->
+    <delete id="deleteByParadeOrderId" parameterType="java.lang.Integer">
+        delete from tb_threenets_ring
+        where order_id = #{id,jdbcType=INTEGER}
+    </delete>
+</mapper>

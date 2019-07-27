@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head th:include="admin/common/include :: header"></head>
+<body>
+   <blockquote class="layui-elem-quote layui-quote-nm">
+        用户ID：<span th:text="${user.id}">11314562312</span><br><br>
+        用户名：<span th:text="${user.userName}">小明</span><br><br>
+        电话：<span th:text="${user.userGuhua}">0516-89807057</span><br><br>
+        手机号：<span th:text="${user.userTel}">15050840350</span><br><br>
+        角色：<span th:if="${user.userRole} == 1">管理员</span>
+             <span th:if="${user.userRole} == 2">代理商</span><br><br>
+        状态：<span th:if="${not user.userStatus}">已禁用</span>
+             <span th:if="${user.userStatus}">已启用</span><br><br>
+        所在省市：<span th:text="${user.province}">江苏省</span>/<span th:text="${user.city}">徐州市</span><br><br>
+        邮箱：<span th:text="${user.userEmail}">123@456.com</span><br><br>
+        QQ号：<span th:text="${user.userQq}">1659055323</span><br><br>
+        认证账户余额：<span th:text="${user.telcertificationAccount}">1000</span><br><br>
+        创建时间：<span th:text="${#dates.format(user.userTime,'yyyy-MM-dd HH:mm:ss')}">2019-06-21 12:13:26</span><br><br>
+        法人身份证正反面：
+        <span>
+            正面：<img src="../../public/images/test1.jpg" width="20%" height="10%;">
+            反面：<img src="../../public/images/test1.jpg" width="20%" height="10%;">
+        </span><br><br>
+    </blockquote>
+</body>
+</html>

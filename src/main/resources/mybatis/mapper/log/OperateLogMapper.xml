@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hrtxn.ringtone.project.system.log.mapper.OperateLogMapper" >
+
+    <resultMap id="BaseResultMap" type="com.hrtxn.ringtone.project.system.log.domain.OperateLog" >
+        <result column="operate_log_id" property="operateLogId" jdbcType="INTEGER" />
+        <result column="operate_log_user" property="operateLogUser" jdbcType="VARCHAR" />
+        <result column="ip_address" property="ipAddress" jdbcType="VARCHAR" />
+        <result column="operate_log_type" property="operateLogType" jdbcType="INTEGER" />
+        <result column="operate_log_classify" property="operateLogClassify" jdbcType="INTEGER" />
+        <result column="operate_log_url" property="operateLogUrl" jdbcType="VARCHAR" />
+        <result column="operate_log_time" property="operateLogTime" jdbcType="TIMESTAMP" />
+        <result column="operate_log_status" property="operateLogStatus" jdbcType="INTEGER" />
+        <result column="operate_log_title" property="operateLogTitle" jdbcType="VARCHAR" />
+        <result column="operate_log_method" property="operateLogMethod" jdbcType="VARCHAR" />
+        <result column="operate_log_location" property="operateLogLocation" jdbcType="VARCHAR" />
+        <result column="operate_log_param" property="operateLogParam" jdbcType="VARCHAR" />
+        <result column="error_msg" property="errorMsg" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <sql id="param">
+        operate_log_id,
+        operate_log_user,
+        ip_address,
+        operate_log_type,
+        operate_log_classify,
+        operate_log_url,
+        operate_log_time,
+        operate_log_status,
+        operate_log_title,
+        operate_log_method,
+        operate_log_location,
+        operate_log_param,
+        error_msg
+    </sql>
+
+    <!-- 查询所有操作记录 -->
+    <select id="findAllOperateLog" resultMap="BaseResultMap">
+        SELECT <include refid="param"/> FROM sys_operate_log
+    </select>
+
+    <!-- 根据操作记录ID获取记录详情 -->
+    <select id="findOperateLogById" parameterType="integer" resultMap="BaseResultMap">
+        SELECT <include refid="param"/> FROM sys_operate_log WHERE operate_log_id = #{operateLogId}
+    </select>
+
+    <!-- 添加操作记录 -->
+    <insert id="insertOperateLog" parameterType="com.hrtxn.ringtone.project.system.log.domain.OperateLog" >
+        INSERT INTO sys_operate_log
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="operateLogUser != null" >
+                operate_log_user,
+            </if>
+            <if test="ipAddress != null" >
+                ip_address,
+            </if>
+            <if test="operateLogType != null" >
+                operate_log_type,
+            </if>
+            <if test="operateLogClassify != null" >
+                operate_log_classify,
+            </if>
+            <if test="operateLogUrl != null" >
+                operate_log_url,
+            </if>
+            <if test="operateLogTime != null" >
+                operate_log_time,
+            </if>
+            <if test="operateLogStatus != null" >
+                operate_log_status,
+            </if>
+            <if test="operateLogTitle != null" >
+                operate_log_title,
+            </if>
+            <if test="operateLogMethod != null" >
+                operate_log_method,
+            </if>
+            <if test="operateLogLocation != null" >
+                operate_log_location,
+            </if>
+            <if test="operateLogParam != null" >
+                operate_log_param,
+            </if>
+            <if test="errorMsg != null" >
+                error_msg,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="operateLogUser != null" >
+                #{operateLogUser,jdbcType=VARCHAR},
+            </if>
+            <if test="ipAddress != null" >
+                #{ipAddress,jdbcType=VARCHAR},
+            </if>
+            <if test="operateLogType != null" >
+                #{operateLogType,jdbcType=INTEGER},
+            </if>
+            <if test="operateLogClassify != null" >
+                #{operateLogClassify,jdbcType=INTEGER},
+            </if>
+            <if test="operateLogUrl != null" >
+                #{operateLogUrl,jdbcType=VARCHAR},
+            </if>
+            <if test="operateLogTime != null" >
+                #{operateLogTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="operateLogStatus != null" >
+                #{operateLogStatus,jdbcType=INTEGER},
+            </if>
+            <if test="operateLogTitle != null" >
+                #{operateLogTitle,jdbcType=VARCHAR},
+            </if>
+            <if test="operateLogMethod != null" >
+                #{operateLogMethod,jdbcType=VARCHAR},
+            </if>
+            <if test="operateLogLocation != null" >
+                #{operateLogLocation,jdbcType=VARCHAR},
+            </if>
+            <if test="operateLogParam != null" >
+                #{operateLogParam,jdbcType=VARCHAR},
+            </if>
+            <if test="errorMsg != null" >
+                #{errorMsg,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+
+</mapper>

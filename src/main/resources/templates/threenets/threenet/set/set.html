@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<title>商户列表-号码管理</title>
+<head th:include="threenets/threenet/common/head :: linkcss"></head>
+<link rel="stylesheet" type="text/css" th:href="@{/client/threenets/css/number_list.css}">
+<style>
+    .dataTables_wrapper .dataTables_filter input {
+        height: 30px;
+    }
+    #mcontent .mconl{
+        border-right: solid #ddd 1px;
+    }
+</style>
+
+<body>
+    <!-- 头部 -->
+    <div th:include="threenets/threenet/common/include :: header"></div>
+    <div class="layui-row" id="mcontent">
+        <div class="layui-col-xs1 mconl">
+            <div class="grid-demo grid-demo-bg1">
+                <div id="page-aside" class="aside">
+                    <ul class="nav">
+                        <li class="management">
+                            <a class="banner" href="javascript:;">个人信息</a>
+                        </li>
+                        <li id="apersonnel" class="selected">
+                            <a th:href="@{/threenets/toPersonalInformation}">个人设置</a>
+                        </li>
+                        <li id="ring">
+                            <a th:href="@{/threenets/toUpdatePasswor}">修改密码</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="layui-col-xs11 mconr">
+            <div class="grid-demo">
+                <div class="layui-row contant" style="width:95%;">
+                    <form class="layui-form" style="margin-top:20px;">
+                        <div class="layui-form-item">
+                            <label class="layui-form-label"><i style="color: red">*</i>&nbsp;用户名</label>
+                            <div class="layui-input-inline">
+                                <input type="text" name="oldword" id="oldword" class="layui-input" th:value="${user.userName}" maxlength="4" disabled="">
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label"><i style="color: red">*</i>&nbsp;电子邮箱</label>
+                            <div class="layui-input-inline">
+                                <input type="text" name="email" id="userEmail" required  th:value="${user.userEmail}" lay-verify="userEmail" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">电话</label>
+                            <div class="layui-input-inline">
+                                <input type="text" name="userGuhua" id="userGuhua" required th:value="${user.userGuhua}" lay-verify="userGuhua" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">手机</label>
+                            <div class="layui-input-inline">
+                                <input type="text" disabled="disabled" th:value="${user.userTel}" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <div class="layui-input-block">
+                                <button class="layui-btn" lay-submit="" lay-filter="formDemo" style="background-color: #17a9ff!important;">立即提交</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<div th:include="threenets/threenet/common/head :: footer"></div>
+<script type="text/javascript">
+    $(".index10").addClass("active");
+    //表单提交
+    layui.use('form', function(){
+        var form = layui.form;
+        // form.verify({
+        //     userEmail: function(value){
+        //         if(!isEmail(value)){
+        //             return '请输入正确的邮箱';
+        //         }
+        //     },
+        //     userGuhua:function (value) {
+        //         if (!isNotEmpty(value)){
+        //             return "电话不能为空";
+        //         }
+        //     }
+        // });
+        //监听提交
+        form.on('submit(formDemo)', function(data){
+            var userEmail = $("#userEmail").val();
+            var userGuhua = $("#userGuhua").val();
+            AjaxPut("/threenets/personalInformation",{
+                userEmail:userEmail,
+                userGuhua:userGuhua
+            },function (res) {
+                if (res.code == 200 && res.data){
+                    layer.msg("修改成功",{icon: 1,time:1000});
+                }else{
+                    layer.msg("修改失败",{icon: 1,time:1000});
+                }
+            });
+            return false;
+        });
+    });
+</script>
+<!-- 头部 -->
+</html>

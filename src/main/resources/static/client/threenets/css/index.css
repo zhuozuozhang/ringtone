@@ -1,0 +1,57 @@
+.contant{
+	width: 80%;
+	margin:0 auto;
+	padding-top:20px;
+}
+.contant .layui-col-md9{
+	height: 100%;
+}
+.contant select{
+	width: 100%;
+    height: 30px;
+    line-height: 1.3;
+    border-width: 1px;
+    border-style: solid;
+    background-color: #fff;
+    border-radius: 2px;
+    display: block;
+    padding-left: 10px;
+}
+.per {
+    margin-top: 10px;
+    height: 30px;
+    line-height: 30px;
+}
+.per .lt {
+    padding-left: 20px;
+}
+.per .rg {
+    text-align: right;
+    padding-right: 20px;
+    cursor: pointer;
+}
+table td,th{text-align: center!important;}
+.dataTables_wrapper .dataTables_length, .dataTables_wrapper .dataTables_filter, .dataTables_wrapper .dataTables_info, .dataTables_wrapper .dataTables_processing, .dataTables_wrapper .dataTables_paginate {
+    width: 100% ;
+}
+/*.next{*/
+	/*margin-right: 50px;*/
+/*}*/
+.layui-card:last-child {
+    margin-bottom: 0;
+    border: 1px solid #e6e6e6;
+}
+.layui-card-header {
+    border-bottom: 1px solid #e6e6e6;
+}
+.moreg{
+	float: right;
+    color: #0074cc;
+}
+.operator {
+    border: none !important;
+    outline: none !important;
+    background: #F2F2F2 !important;
+    text-align: center !important;
+    text-align-last: center !important;
+}

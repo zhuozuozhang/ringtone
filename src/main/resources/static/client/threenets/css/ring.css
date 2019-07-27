@@ -1,0 +1,48 @@
+.dataTables_wrapper .dataTables_filter input {
+    height: 30px;
+}
+#mcontent .mconl{
+    border-right: solid #ddd 1px;
+}
+.InternetOperators>div {
+    width: 80px;
+    height: 36px;
+    line-height: 36px;
+    text-align: center;
+    float: left;
+    color: #ffffff;
+    background: #CCC;
+    box-sizing: border-box;
+    border: 1px solid #ffffff;
+    cursor: pointer;
+    font-size: 14px;
+    border-radius: 5px 5px 0 0;
+}
+#sears{
+    margin-bottom: 8px;
+    background-repeat: repeat-x;
+    border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+    color: white;
+    padding: 0 10px;
+    line-height: 25px;
+    border-radius: 5px;
+    margin-left: 10px;
+    height: 30px;
+}
+
+.InternetOperators-clicked {
+    color: #ffffff !important;
+    background: #17a9ff !important;
+}
+.dataTables_wrapper .dataTables_length, .dataTables_wrapper .dataTables_filter, .dataTables_wrapper .dataTables_info, .dataTables_wrapper .dataTables_processing, .dataTables_wrapper .dataTables_paginate {
+    color: #333;
+    width: 100% !important;
+    text-align: right;
+}
+.layui-icon{
+    cursor: pointer;
+}
+.layui-icon img{
+    width: 18px;
+    margin-top: -4px;
+}

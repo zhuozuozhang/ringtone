@@ -1,0 +1,298 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hrtxn.ringtone.project.system.user.mapper.UserMapper">
+
+    <resultMap id="BaseResultMap" type="com.hrtxn.ringtone.project.system.user.domain.User">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="user_name" property="userName" jdbcType="VARCHAR"/>
+        <result column="user_password" property="userPassword" jdbcType="VARCHAR"/>
+        <result column="user_email" property="userEmail" jdbcType="VARCHAR"/>
+        <result column="user_guhua" property="userGuhua" jdbcType="VARCHAR"/>
+        <result column="user_tel" property="userTel" jdbcType="VARCHAR"/>
+        <result column="user_reject" property="userReject" jdbcType="INTEGER"/>
+        <result column="user_time" property="userTime" jdbcType="TIMESTAMP"/>
+        <result column="login_IP" property="loginIp" jdbcType="VARCHAR"/>
+        <result column="login_time" property="loginTime" jdbcType="TIMESTAMP"/>
+        <result column="parent_id" property="parentId" jdbcType="INTEGER"/>
+        <result column="user_role" property="userRole" jdbcType="VARCHAR"/>
+        <result column="user_status" property="userStatus" jdbcType="BIT"/>
+        <result column="user_qq" property="userQq" jdbcType="VARCHAR"/>
+        <result column="telcertification_account" property="telcertificationAccount" jdbcType="REAL"/>
+        <result column="province" property="province" jdbcType="VARCHAR"/>
+        <result column="city" property="city" jdbcType="VARCHAR"/>
+        <result column="user_card_zhen" property="userCardZhen" jdbcType="VARCHAR"/>
+        <result column="user_card_fan" property="userCardFan" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <resultMap id="supResultMap" type="com.hrtxn.ringtone.project.system.user.domain.UserVo" extends="BaseResultMap">
+        <result column="parentUserName" property="parentUserName" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, user_name, user_password, user_email, user_guhua, user_tel, user_reject, user_time,
+        login_IP, login_time, parent_id, user_role, user_status, user_qq, telcertification_account,
+        province, city, user_card_zhen, user_card_fan,
+        (SELECT u1.user_name from tb_user u1 where u1.id = u.parent_id) as parentUserName,
+        (SELECT COUNT(*) from  tb_threenets_child_order where is_monthly = 2 and user_id = u.id) as openNum
+    </sql>
+
+    <!-- 根据用户名查询用户信息 -->
+    <select id="findUserByUserName" resultMap="BaseResultMap" parameterType="java.lang.String">
+        SELECT
+            <include refid="Base_Column_List"/>
+        FROM
+            tb_user u
+        WHERE
+            user_name = #{username}
+    </select>
+    <!-- 获取所有用户信息 -->
+    <select id="getUserList" resultMap="supResultMap">
+        SELECT
+            <include refid="Base_Column_List"/>
+        FROM
+            tb_user u
+        WHERE 1=1
+          <if test="baseRequest != null and baseRequest.name != null and baseRequest.name != '' ">
+              AND user_name LIKE '%${baseRequest.name}%'
+          </if>
+        ORDER BY user_time DESC
+        LIMIT #{page.page},#{page.pagesize}
+    </select>
+    <!-- 根据ID获取用户信息 -->
+    <select id="findUserById" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        SELECT
+            <include refid="Base_Column_List"/>
+        FROM
+            tb_user u
+        WHERE
+        id = #{id}
+    </select>
+    <!-- 根据电话号码获取用户信息 -->
+    <select id="findUserByUserTel" parameterType="java.lang.String" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM
+        tb_user u
+        WHERE
+        user_tel = #{phone}
+    </select>
+    <!-- 根据父级ID获取用户信息 -->
+    <select id="findUserByparentId" parameterType="java.lang.Integer" resultMap="supResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM
+        tb_user u
+        WHERE 1 = 1
+        <if test="id != null">
+            AND u.parent_id = #{id}
+        </if>
+        ORDER BY user_time DESC
+        LIMIT #{page},#{pagesize}
+    </select>
+
+    <select id="findChildUser" parameterType="java.lang.Integer" resultMap="supResultMap">
+        SELECT
+        id,user_name
+        FROM
+        tb_user u
+        WHERE 1=1
+        <if test="id != null and id !=''">
+            AND u.parent_id = #{id} or u.id = #{id}
+        </if>
+        <if test="name != null and name != ''">
+            AND user_name like '%${name}%'
+        </if>
+        ORDER BY user_time DESC
+    </select>
+    <!--获取子账号总数-->
+    <select id="getUserCount" resultType="int">
+        SELECT
+            COUNT(*)
+        FROM
+            tb_user
+        WHERE 1 = 1
+        <if test="parentId != null">
+            AND parent_id = #{parentId}
+        </if>
+    </select>
+    <!-- 根据条件获取代理商总数-->
+    <select id="getUserCountByCon" resultType="int">
+        SELECT
+            COUNT(*)
+        FROM
+            tb_user
+        WHERE 1 = 1
+        <if test="baseRequest != null and baseRequest.name != null and baseRequest.name != ''">
+            AND user_name LIKE '%${baseRequest.name}%'
+        </if>
+    </select>
+
+    <!-- 修改用户信息 -->
+    <update id="updateUserById" parameterType="com.hrtxn.ringtone.project.system.user.domain.User">
+        UPDATE tb_user
+        <set>
+            <if test="userName != null">
+                user_name = #{userName,jdbcType=VARCHAR},
+            </if>
+            <if test="userPassword != null">
+                user_password = #{userPassword,jdbcType=VARCHAR},
+            </if>
+            <if test="userEmail != null">
+                user_email = #{userEmail,jdbcType=VARCHAR},
+            </if>
+            <if test="userGuhua != null">
+                user_guhua = #{userGuhua,jdbcType=VARCHAR},
+            </if>
+            <if test="userTel != null">
+                user_tel = #{userTel,jdbcType=VARCHAR},
+            </if>
+            <if test="userReject != null">
+                user_reject = #{userReject,jdbcType=INTEGER},
+            </if>
+            <if test="loginIp != null">
+                login_IP = #{loginIp,jdbcType=VARCHAR},
+            </if>
+            <if test="loginTime != null">
+                login_time = #{loginTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="userRole != null">
+                user_role = #{userRole,jdbcType=INTEGER},
+            </if>
+            <if test="userStatus != null">
+                user_status = #{userStatus,jdbcType=BIT},
+            </if>
+            <if test="userQq != null">
+                user_qq = #{userQq,jdbcType=VARCHAR},
+            </if>
+            <if test="telcertificationAccount != null">
+                telcertification_account = #{telcertificationAccount,jdbcType=REAL},
+            </if>
+            <if test="userCardZhen != null">
+                user_card_zhen = #{userCardZhen,jdbcType=VARCHAR},
+            </if>
+            <if test="userCardFan != null">
+                user_card_fan = #{userCardFan,jdbcType=VARCHAR},
+            </if>
+            <if test="parentId != null">
+                parent_id = #{parentId,jdbcType=INTEGER},
+            </if>
+        </set>
+        WHERE id = #{id,jdbcType=INTEGER}
+    </update>
+    <!-- 添加账号 -->
+    <insert id="insertUser" parameterType="user">
+        insert into tb_user
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userName != null">
+                user_name,
+            </if>
+            <if test="userPassword != null">
+                user_password,
+            </if>
+            <if test="userEmail != null">
+                user_email,
+            </if>
+            <if test="userGuhua != null">
+                user_guhua,
+            </if>
+            <if test="userTel != null">
+                user_tel,
+            </if>
+            <if test="userReject != null">
+                user_reject,
+            </if>
+            <if test="userTime != null">
+                user_time,
+            </if>
+            <if test="loginIp != null">
+                login_IP,
+            </if>
+            <if test="loginTime != null">
+                login_time,
+            </if>
+            <if test="parentId != null">
+                parent_id,
+            </if>
+            <if test="userRole != null">
+                user_role,
+            </if>
+            <if test="userStatus != null">
+                user_status,
+            </if>
+            <if test="userQq != null">
+                user_qq,
+            </if>
+            <if test="telcertificationAccount != null">
+                telcertification_account,
+            </if>
+            <if test="province != null">
+                province,
+            </if>
+            <if test="city != null">
+                city,
+            </if>
+            <if test="userCardZhen != null">
+                user_card_zhen,
+            </if>
+            <if test="userCardFan != null">
+                user_card_fan,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userName != null">
+                #{userName,jdbcType=VARCHAR},
+            </if>
+            <if test="userPassword != null">
+                #{userPassword,jdbcType=VARCHAR},
+            </if>
+            <if test="userEmail != null">
+                #{userEmail,jdbcType=VARCHAR},
+            </if>
+            <if test="userGuhua != null">
+                #{userGuhua,jdbcType=VARCHAR},
+            </if>
+            <if test="userTel != null">
+                #{userTel,jdbcType=VARCHAR},
+            </if>
+            <if test="userReject != null">
+                #{userReject,jdbcType=INTEGER},
+            </if>
+            <if test="userTime != null">
+                #{userTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="loginIp != null">
+                #{loginIp,jdbcType=VARCHAR},
+            </if>
+            <if test="loginTime != null">
+                #{loginTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="parentId != null">
+                #{parentId,jdbcType=INTEGER},
+            </if>
+            <if test="userRole != null">
+                #{userRole,jdbcType=INTEGER},
+            </if>
+            <if test="userStatus != null">
+                #{userStatus,jdbcType=BIT},
+            </if>
+            <if test="userQq != null">
+                #{userQq,jdbcType=VARCHAR},
+            </if>
+            <if test="telcertificationAccount != null">
+                #{telcertificationAccount,jdbcType=REAL},
+            </if>
+            <if test="province != null">
+                #{province,jdbcType=VARCHAR},
+            </if>
+            <if test="city != null">
+                #{city,jdbcType=VARCHAR},
+            </if>
+            <if test="userCardZhen != null">
+                #{userCardZhen,jdbcType=VARCHAR},
+            </if>
+            <if test="userCardFan != null">
+                #{userCardFan,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+</mapper>

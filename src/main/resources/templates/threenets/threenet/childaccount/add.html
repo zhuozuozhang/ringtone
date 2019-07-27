@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<title>添加子账号</title>
+<head th:include="threenets/threenet/common/head :: linkcss"></head>
+<link rel="stylesheet" th:href="@{/client/threenets/css/adds.css}">
+<body>
+    <form class="layui-form" action="" style='width: 500px;margin: 30px auto;'>
+        <div class="layui-form-item">
+            <label class="layui-form-label">登录名</label>
+            <div class="layui-input-block">
+                <input type="text" name="id" required lay-verify="required" placeholder="请输入登录名" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">登录密码</label>
+            <div class="layui-input-block">
+                <input type="password" name="password" required lay-verify="required" placeholder="请输入登录密码" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">再次输入密码</label>
+            <div class="layui-input-block">
+                <input type="password" name="checkpwd" required lay-verify="required" placeholder="再次输入密码" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">客服号码</label>
+            <div class="layui-input-block">
+                <input type="text" name="mobilephone" required lay-verify="required" placeholder="请输入客服号码" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">QQ号</label>
+            <div class="layui-input-block">
+                <input type="text" name="qqNum" required lay-verify="required" placeholder="请输入QQ号" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">邮箱</label>
+            <div class="layui-input-block">
+                <input type="text" name="email" required lay-verify="required" placeholder="请输入邮箱" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">地区</label>
+            <div class="layui-input-block">
+                <select name="province" lay-verify="required" id="one">
+                    <option value="0">北京市</option>
+                    <option value="1">天津市</option>
+                    <option value="2">上海市</option>
+                    <option value="3">重庆市</option>
+                    <option value="4">河北省</option>
+                    <option value="5">河南省</option>
+                    <option value="6">云南省</option>
+                    <option value="7">辽宁省</option>
+                    <option value="8">黑龙江省</option>
+                    <option value="9">湖南省</option>
+                    <option value="10">安徽省</option>
+                    <option value="11">山东省</option>
+                    <option value="12">新疆维吾尔自治区</option>
+                    <option value="13">江苏省</option>
+                    <option value="14">浙江省</option>
+                    <option value="15">江西省</option>
+                    <option value="16">湖北省</option>
+                    <option value="17">广西壮族自治区</option>
+                    <option value="18">甘肃省</option>
+                    <option value="19">山西省</option>
+                    <option value="20">内蒙古自治区</option>
+                    <option value="21">陕西省</option>
+                    <option value="22">吉林省</option>
+                    <option value="23">福建省</option>
+                    <option value="24">贵州省</option>
+                    <option value="25">广东省</option>
+                    <option value="26">青海省</option>
+                    <option value="27">西藏</option>
+                    <option value="28">四川省</option>
+                    <option value="29">宁夏回族自治区</option>
+                    <option value="30">海南省</option>
+                    <option value="31">台湾省</option>
+                    <option value="32">香港</option>
+                    <option value="33">澳门</option>
+                </select>
+            </div>
+        </div>
+        <div class="layui-upload">
+            <label class="layui-form-label">上传法人身份证正面</label>
+            <button type="button" class="layui-btn imgs" id="IDpositive">上传法人身份证正面</button>
+            <div class="layui-upload-list">
+                <img class="layui-upload-img imgs_img" id="IDpositive_img" th:src="@{/public/images/addimg.png}" width="200px" height="100px">
+            </div>
+        </div>
+        <div class="layui-upload">
+            <label class="layui-form-label">上传法人身份证反面</label>
+            <button type="button" class="layui-btn imgs" id="IDreverse">上传法人身份证反面</button>
+            <div class="layui-upload-list">
+                <img class="layui-upload-img imgs_img" id="IDreverse_img" th:src="@{/public/images/addimg.png}" width="200px" height="100px">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button class="layui-btn" lay-submit lay-filter="formDemo" style='margin-left: 54px;'>立即提交</button>
+            </div>
+        </div>   
+    </form>
+</body>
+<div th:include="threenets/threenet/common/head :: footer"></div>
+<script type="text/javascript">
+    //照片上传
+    layui.use('upload', function(){
+        var upload = layui.upload;
+        //上传身份证正面照
+        var uploadInst = upload.render({
+            elem: '#IDpositive'
+            ,url: 'http://192.168.1.100:8080/addAdvertise'
+            ,before: function(obj){
+                //预读本地文件示例，不支持ie8
+                obj.preview(function(index, file, result){
+                    $('#IDpositive_img').attr('src', result); //图片链接（base64）
+                });
+            }
+            ,done: function(res){
+                //上传成功
+                console.log(res);
+                //如果上传失败
+                if(res.code > 0){
+                    return layer.msg('上传失败');
+                }
+            }
+            ,error: function(){
+                //演示失败状态，并实现重传
+                return layer.msg("上传失败,请重新上传");
+                demoText.find('.demo-reload').on('click', function(){
+                    uploadInst.upload();
+                });
+            }
+        });
+        //上传身份证反面照
+        var uploadInst = upload.render({
+            elem: '#IDreverse'
+            ,url: 'http://192.168.1.100:8080/addAdvertise'
+            ,before: function(obj){
+                //预读本地文件示例，不支持ie8
+                obj.preview(function(index, file, result){
+                    $('#IDreverse_img').attr('src', result); //图片链接（base64）
+                });
+            }
+            ,done: function(res){
+                //上传成功
+                console.log(res);
+                //如果上传失败
+                if(res.code > 0){
+                    return layer.msg('上传失败');
+                }
+            }
+            ,error: function(){
+                //演示失败状态，并实现重传
+                return layer.msg("上传失败,请重新上传");
+                demoText.find('.demo-reload').on('click', function(){
+                    uploadInst.upload();
+                });
+            }
+        });
+    });
+</script>
+</html>

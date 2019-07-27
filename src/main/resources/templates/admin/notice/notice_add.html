@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head th:include="admin/common/include :: header"></head>
+<script type="text/javascript" charset="utf-8" th:src="@{/admin/kindeditor/kindeditor-all.js}"></script>
+<script type="text/javascript" charset="utf-8" th:src="@{/admin/kindeditor/lang/zh-CN.js}"> </script>
+<style type="text/css">
+    .layui-input-inline{
+        width: 490px!important;
+    }
+</style>
+<body>
+    <div class="x-body layui-anim layui-anim-up">
+        <form class="layui-form">
+            <div class="layui-form-item">
+                <label for="noticeTitle" class="layui-form-label">
+                    <span class="x-red">*</span>标题
+                </label>
+                <div class="layui-input-inline">
+                    <input type="text" id="noticeTitle" name="noticeTile" required lay-verify="noticeTile" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label for="noticeContent" class="layui-form-label">
+                    <span class="x-red">*</span>正文
+                </label>
+                <div class="layui-input-inline">
+                    <textarea id="noticeContent" name="noticeContent" required lay-verify="noticeContent" autocomplete="off" placeholder="请输入" class="layui-textarea" style="height: 240px;"></textarea>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label for="noticeModule" class="layui-form-label">
+                    <span class="x-red">*</span>发布模块
+                </label>
+                <div class="layui-input-inline">
+                    <select name="noticeModule" id="noticeModule" lay-verify="required" lay-filter="aihao">
+                        <option value="0" selected>三网</option>
+                        <option value="1">号码认证</option>
+                        <option value="2">400</option>
+                        <option value="3">视频制作</option>
+                        <option value="4">号卡</option>
+                        <option value="5">铃音录制</option>
+                        <option value="6">企业秀</option>
+                        <option value="7">来去电名片</option>
+                    </select>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label for="noticeWeight" class="layui-form-label">
+                    <span class="x-red">*</span>权重
+                </label>
+                <div class="layui-input-inline">
+                    <input type="number" id="noticeWeight" name="noticeWeight" required lay-verify="noticeWeight" autocomplete="off" class="layui-input">
+                </div>
+                <div class="layui-form-mid layui-word-aux">
+                    数字越大，排序越靠前
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">
+                    <span class="x-red">*</span>是否开放
+                </label>
+                <div class="layui-input-inline">
+                    <input type="radio" name="noticeStatus" value="1" title="是" checked>
+                    <input type="radio" name="noticeStatus" value="0" title="否">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label"></label>
+                <button class="layui-btn" lay-filter="add" lay-submit="">增加</button>
+            </div>
+        </form>
+    </div>
+</body>
+<div th:include="admin/common/include :: footer"></div>
+<script type="text/javascript">
+    var editor;
+    KindEditor.ready(function(K) {
+        var options = {
+            items : [
+                'source', '|', 'undo', 'redo', '|', 'preview', 'print', 'template', 'code', 'cut', 'copy', 'paste',
+                'plainpaste', 'wordpaste', '|', 'justifyleft', 'justifycenter', 'justifyright',
+                'justifyfull', 'insertorderedlist', 'insertunorderedlist', 'indent', 'outdent',
+                'quickformat', 'selectall', '|', 'fullscreen', '/',
+                'formatblock', 'fontname', 'fontsize', '|', 'forecolor', 'hilitecolor', 'bold',
+                'italic', 'underline', 'strikethrough', 'lineheight', 'removeformat', '|',
+                'insertfile', 'table', 'hr','pagebreak','anchor', 'link', 'unlink', '|', 'about'
+            ],
+            filterMode : true,
+            allowFileManager: true,
+            //uploadJson: '${pageContext.request.contextPath }/server/upload'
+        };
+        editor = K.create('#noticeContent', options);
+    });
+
+    layui.use(['form','layer'], function(){
+        $ = layui.jquery;
+        var form = layui.form,layer = layui.layer;
+        //自定义验证规则
+        form.verify({
+            noticeTile: function(value){
+                if(value.length <= 0 || value.length > 10){
+                    return '标题10位以内';
+                }
+            },
+            noticeWeight:function(value){
+                if (value <= 0) {
+                    return "请输入大于0的整数";
+                }
+            }
+        });
+        //监听提交
+        form.on('submit(add)', function(data){
+            var noticeTitle = $("#noticeTitle").val();
+            var noticeContent = editor.html();
+            var noticeModule = $("#noticeModule").val();
+            var noticeWeight = $("#noticeWeight").val();
+            var noticeStatus = $("input[name='noticeStatus']:checked").val();
+
+            AjaxPost("/admin/insertNotice",{
+                noticeTitle:noticeTitle,
+                noticeContent:noticeContent,
+                noticeModule:noticeModule,
+                noticeWeight:noticeWeight,
+                noticeStatus:noticeStatus
+            },function (res) {
+                if (res.code == 200 && res.data){
+                    //发异步，把数据提交给后台
+                    layer.alert("增加成功", {icon: 6},function () {
+                        // 获得frame索引
+                        var index = parent.layer.getFrameIndex(window.name);
+                        //关闭当前frame
+                        parent.layer.close(index);
+                    });
+                }else{
+                    layer.msg("添加公告出错", {icon: 5, time: 1000});
+                }
+            });
+            return false;
+        });
+    });
+</script>
+</html>

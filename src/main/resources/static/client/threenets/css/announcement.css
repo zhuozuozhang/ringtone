@@ -1,0 +1,40 @@
+.contant{
+	width: 1200px;
+	margin:0 auto;
+	padding-top:20px;
+}
+.contant .layui-col-md9{
+	height: 100%;
+}
+#search input{
+	width: 200px;
+    height: 30px;
+    line-height: 1.3;
+    border-width: 1px;
+    border-style: solid;
+    background-color: #fff;
+    border-radius: 2px;
+    padding-left: 10px;
+    border-color: #e6e6e6;
+}
+table td,th{text-align: center!important;}
+.dataTables_wrapper .dataTables_length, .dataTables_wrapper .dataTables_filter, .dataTables_wrapper .dataTables_info, .dataTables_wrapper .dataTables_processing, .dataTables_wrapper .dataTables_paginate {
+    width: 100% ;
+}
+.articleTitle {
+    border-bottom: 1px dashed #A2A2A2;
+    clear: both;
+    height: 60px;
+    padding-top: 15px;
+    text-align: center;
+}
+.font04 {
+    font-size: 20px;
+    line-height: 50px;
+}
+.articleTitle_details {
+    color: #999999;
+    padding: 5px 0 15px;
+    text-align: center;
+}
+.ofo{cursor: pointer;}

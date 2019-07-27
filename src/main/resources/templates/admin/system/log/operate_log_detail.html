@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head th:include="admin/common/include :: header"></head>
+<body>
+   <blockquote class="layui-elem-quote layui-quote-nm">
+        ID：<span th:text="${operateLog.operateLogId}">1</span><br><br>
+        操作者：<span th:text="${operateLog.operateLogUser}">小明</span><br><br>
+        IP地址：<span th:text="${operateLog.ipAddress}">127.0.0.1</span><br><br>
+        操作地点：<span th:text="${operateLog.operateLogLocation}">江苏徐州</span><br><br>
+        业务类型：<span th:if="${operateLog.operateLogType} == 0">其它</span>
+                <span th:if="${operateLog.operateLogType} == 1">新增</span>
+                <span th:if="${operateLog.operateLogType} == 2">修改</span>
+                <span th:if="${operateLog.operateLogType} == 3">删除</span><br><br>
+        操作类型：<span th:if="${operateLog.operateLogClassify} == 0">其它</span>
+                <span th:if="${operateLog.operateLogClassify} == 1">三网</span>
+                <span th:if="${operateLog.operateLogClassify} == 2">号码认证</span>
+                <span th:if="${operateLog.operateLogClassify} == 3">科大网站</span>
+                <span th:if="${operateLog.operateLogClassify} == 4">公众号</span>
+                <span th:if="${operateLog.operateLogClassify} == 5">管理端</span><br><br>
+        操作URL：<span th:text="${operateLog.operateLogUrl}">江苏省</span><br><br>
+        状态：<span th:if="${operateLog.operateLogStatus} == 0">成功</span>
+             <span th:if="${operateLog.operateLogStatus} == 1" style="color:red">异常</span><br><br>
+        标题：<span th:text="${operateLog.operateLogTitle}">账户充值</span><br><br>
+       方法名：<span th:text="${operateLog.operateLogMethod}">add</span><br><br>
+       请求参数：<span th:text="${operateLog.operateLogParam}">{id=1}</span><br><br>
+       错误信息：<span th:text="${operateLog.errorMsg}">/ by zero</span><br><br>
+       操作时间：<span th:text="${#dates.format(operateLog.operateLogTime,'yyyy-MM-dd HH:mm:ss')}">2019-06-21 12:13:26</span><br><br>
+    </blockquote>
+</body>
+</html>

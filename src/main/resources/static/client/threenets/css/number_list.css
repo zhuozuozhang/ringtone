@@ -1,0 +1,103 @@
+body{
+    /*background: url(../images/aside_bg.png) no-repeat 0 111px;*/
+    /*background-size: 8.33% 100%;*/
+}
+#mcontent{
+	height:700px;
+    position: relative;
+    padding-top: 1px;
+}
+#mcontent .mconl{
+	height:100%;
+	/*background: url(../images/aside_bg.png) no-repeat 0;*/
+	/*background-size: 100% 100%;*/
+	text-align: center;
+	/*padding-right: 30px;*/
+}
+#mcontent .mconr{
+	height:100%;
+	/*background: yellowgreen;*/
+}
+.management{
+    font-weight: bolder;
+    padding-right: 20px;
+    line-height: 30px;
+    height: 30px;
+    display: block;
+    margin-bottom: 1px;
+    background-color: #f9f9f9;
+}
+.management a{color: #0965B8;}
+#apersonnel,#ring{
+	color: #6191d4;
+    line-height: 29px;
+    height: 29px;
+    display: inline-block;
+    width: 100%;
+}
+#page-aside .selected {
+    background-color: #EA764F;
+    border-right: 0px solid #E3563A;
+}
+#page-aside .selected a{color:white;}
+/*右侧*/
+.title-bar {
+    padding: 4px 10px;
+    line-height: 20px;
+    background-color: #f9f9f9;
+    border-bottom: 1px solid #eee;
+}
+
+.clearfix {
+    display: block;
+}
+.title-bar h1 {
+    font-size: 14px;
+    padding: 0;
+    color: #333;
+    font-weight: bolder;
+}
+.dataTables_wrapper .dataTables_filter{
+    margin-top: 10px;
+    padding-left: 10px;
+}
+#xiaF,#SMS,#links{
+    margin-bottom: 8px;
+    background-color: #17a9ff!important;
+    background-repeat: repeat-x;
+    border-color: #17a9ff!important;
+    color: white;
+    padding: 0 10px;
+    line-height: 25px;
+    border-radius: 5px;
+    margin-left: 10px;
+    height: 30px;
+    border:none;
+}
+#SMS,#links{
+    margin-left: 30px;
+}
+#addPhoneForm{
+    width: 400px;
+    height: auto;
+}
+.operator{
+    border: none;
+    outline: none;
+    background: #F2F2F2;
+    text-align:center;
+    text-align-last: center;
+}
+.sendMes span{
+    margin-left: 20px;
+    color: red;
+}
+.sendMes{margin: 50px 0;}
+.layui-icon{
+    cursor: pointer;
+    padding: 0 2px;
+}
+.layui-icon img{
+    width: 15px;
+    margin-top: -3px;
+}

@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <base href=".">
+    <title>添加商户</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link rel="stylesheet" type="text/css" th:href="@{/public/layui/css/layui.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/public/layui/css/modules/layer/default/layer.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/client/threenets/css/ThunderBase2.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/client/threenets/css/common.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/client/threenets/css/Addmerchants.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/client/threenets/css/enterpriseBell.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/client/threenets/css/MyPlus.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/client/threenets/css/Add.css}">
+    <script type="text/javascript" th:src="@{/public/js/jquery-2.1.4.min.js}"></script>
+    <script type="text/javascript" th:src="@{/public/layui/layui.js}"></script>
+    <script type="text/javascript" th:src="@{/public/layui/lay/modules/layer.js}"></script>
+    <script type="text/javascript" th:src="@{/public/js/numASMD.js}"></script>
+    <script type="text/javascript" th:src="@{/public/js/ajax.js}"></script>
+    <style>
+        .layui-input-block {
+            text-align: right;
+        }
+
+        .addBell {
+            margin-top: 0;
+            padding: 0;
+        }
+
+        .layui-form-select .layui-input {
+            padding-right: 30px;
+            cursor: pointer;
+            height: 25px;
+            margin-top: 7px;
+        }
+    </style>
+</head>
+
+<body>
+    <form action="/threenets/insterThreeNetsChildOrder" name="Form" id="Form" method="post" class="layui-form">
+        <div id="newBlocPage" style="padding-bottom: 20px;">
+            <div class="newBlocPage-con4 clear">
+                <div class="right-newBlocPage-con4">
+                    <div style="font-size: 12px; color: #333;line-height: 20px;text-align: left;">
+                        温馨提示：</br>
+                        1.若要添加多个号码，号码之间使用“换行符（回车）”分隔，单次最多支持20个用户。</br>
+                        2.当输入框号码后面出现"#错误消息"，比如"#号码不正确"时，代表该行的号码格式错误，需要修改。修改完成后请注意去掉"#错误消息"的标识。
+                    </div>
+                </div>
+                <textarea onchange="mykeyup()" name="memberTels" id="member_phone" required lay-verify="required"></textarea>
+                <h6><i style="color: red">*</i>成员号码</h6>
+                <div style="display: block;" class="footer-newBlocPage-con4 clear" id="rs"></div>
+                <div class="radio-newBlocPage-con4" id="fee" style="display:none">
+                    <div class="layui-form-item" style="position: relative;">
+                        <label class="layui-form-label" style="width:120px;">
+                            <i style="color: red">*</i>移动资费:
+                        </label>
+                        <div class="layui-input-block" style='width: 150px;margin-left: 150px;'>
+                            <input checked="" type="radio" name="mobilePay" id="PayPrice" value="5" title="5元/月">
+                        </div>
+                        <span style="position: absolute;top: 11px;right: 90px;text-decoration: none;color: black;">申请高资费：</span>
+                        <div class="layui-input-block" style="width: 80px;position: absolute;top: 0;right: 0;">
+                            <select name="specialPrice" id="specialPrice" lay-filter="specialPrice">
+                                <option value="无">无</option>
+                                <option value="8">8元</option>
+                                <option value="10">10元</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="radio-newBlocPage-con4" id="fee1" style="display:none">
+                    <div class="layui-form-item">
+                        <label class="layui-form-label" style="width:120px;color: #17a9ff;" onclick="dxcx('floatingWindows')">
+                            <i style="color: red">*</i>电信资费
+                        </label>
+                    </div>
+                </div>
+                <div class="radio-newBlocPage-con4" id="fee2" style="display:none">
+                    <div class="layui-form-item">
+                        <label class="layui-form-label" style="width:120px;">
+                            <i style="color: red">*</i>是否免短:
+                        </label>
+                        <div class="layui-input-block">
+                            <input type="radio" name="mianduan" value="否" title="否" checked="">
+                            <input type="radio" name="mianduan" value="是" title="是">
+                        </div>
+                    </div>
+                </div>
+                <div class="radio-newBlocPage-con4" id="fee3" style="display:none">
+                    <div class="layui-form-item">
+                        <label class="layui-form-label" style="width:120px;">
+                            <i style="color: red">*</i>联通资费:
+                        </label>
+                        <div class="layui-input-block">
+                            <input type="radio" name="umicomPay" value="10" title="10元/月" checked="">
+                            <input type="radio" name="umicomPay" value="20" title="20元/月">
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <!-- 电信 -->
+            <div id="qyzzdiv" style="display:none">
+                <div class="newBlocPage-con5 clear">
+                    <div class="file_css2">
+                        <div class="show_input_file" id="showqyzz5"></div>
+                        <div class="file_css_button qiye">企业资质</div>
+                        <input type="file" class="input_file" id="qyzz5" name="companyFile" required>
+                        <input type="hidden" id="companyUrl" name="companyUrl" value="">
+                    </div>
+                    <h6><i style="color: red">*</i>上传企业资质</h6>
+                </div>
+                <div class="newBlocPage-con6 clear">
+                    <div class="file_css2">
+                        <div class="show_input_file" id="showqyzx5"></div>
+                        <div class="file_css_button que">客户确认函</div>
+                        <input type="file" class="input_file" id="qyzx5" name="clientFile" required>
+                        <input type="hidden" name="clientUrl" id="clientUrl" value="">
+                    </div>
+                    <h6><i style="color: red">*</i>上传客户确认函</h6>
+                    <div class="footer-newBlocPage-con6 clear">
+                        <a href="http://xnh.xnhkfpt.com/uploadFiles/file/cringopenbusiness.docx"
+                           style="font-size: 12px; color:#17a9ff;">知晓函模板下载</a>，填完后盖章扫描上传，<span style="color:red;">电信已更换新的确认函模板，请点击下载</span>
+                    </div>
+                </div>
+
+                <div class="newBlocPage-con6 clear">
+                    <div class="file_css2">
+                        <div class="show_input_file" id="IDCARDURLinput"></div>
+                        <div class="file_css_button zhu">主体证明</div>
+                        <input type="file" class="input_file" id="IDCARDURLfile" name="mainFile" required>
+                        <input type="hidden" name="mainUrl" id="mainUrl" value="">
+                    </div>
+                    <h6><i style="color: red">*</i>电信主体证明<b style="color:red;margin-top: 10px;">(非必传项)</b></h6>
+                </div>
+            </div>
+            <!-- 是否免短 -->
+            <div id="sfmd" style="display:none;">
+                <div class="newBlocPage-con6 clear">
+                    <div class="file_css2">
+                        <div class="show_input_file" id="showmdxy"></div>
+                        <div class="file_css_button mds">上传免短协议</div>
+                        <input type="file" class="input_file" id="mdxy" name="protocolFile" required>
+                        <input type="hidden" name="protocolUrl" id="protocolUrl" value="">
+                    </div>
+                    <h6><i style="color: red">*</i>上传免短协议</h6>
+                    <div class="footer-newBlocPage-con6 clear" style="text-align: right;">
+                        <a th:href="@{/public/file/联通免短协议.docx}" style="font-size: 12px; color:#17a9ff;">免短协议下载</a>
+                    </div>
+                </div>
+            </div>
+            <input type="hidden" id="parentOrderId" name="parentOrderId">
+            <div id="tijiao" class="newBlocPage-button" lay-submit lay-filter="formDemo">确定提交</div>
+        </div>
+    </form>
+    <!--电信资费弹窗-->
+    <div id="floatingWindows" style="height: 1743px;">
+        <div class="floatingWindows parents" style="display: block">
+            <div class="fw-DianXin parents" style="display: block;top: 15px !important;">
+                <div class="close" onclick="CloseDxcx('floatingWindows');"><img
+                        src="../../client/threenets/images/floating_ico_1.png"></div>
+                <div class="dianxin1">电信资费说明</div>
+                <div class="dianxin2 clear">
+                    <div>北京、河北、山西、吉林、黑龙江、上海、福建、广西、海南、重庆、四川、西藏、宁夏、辽宁、河南、陕西</div>
+                    <div>
+                        <p>10元</p>
+                        <p>固话和手机号都需要上传需客户确认函</p>
+                    </div>
+                </div>
+                <div class="dianxin2 clear">
+                    <div>湖北、安徽、贵州、云南、江西、甘肃、山东、内蒙古、天津、青海</div>
+                    <div>
+                        <p>20元</p>
+                        <p>固话和手机号都需要上传需客户确认函</p>
+                    </div>
+                </div>
+                <div class="dianxin3">
+                    新疆，广东，江苏平台暂未开通这些地区，如有需要开通，江苏电信<span>10+0</span>，浙江电信<span>10+10</span>，安徽电信<span>3+5</span>请直接联系群内客服免费开通,湖南资费另见电信提单详细说明
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--引入弹窗组件end-->
+    <script type="text/javascript" src="../../client/threenets/js/jquery.tips.js"></script>
+    <!--铃音规范-->
+    <div class="ZL-rule" id="ZL-rule" style="display:none;">
+        <div class="ZL-ruleDel">
+            <h1>铃音规范</h1>
+            <p>1、铃音内容不能含有违法、赌博、淫秽、封建迷信、宗教宣传、政治反动等敏感信息；</p>
+            <p>2、铃音内容不能涉及国家机关（司法、行政及政府单位）、彩票、节目热线、贷款或货币、客服类、虚拟交易类等敏感信息；</p>
+            <p>3、铃音无法播放 、内容不完整、无法试听、静音及系统平台提示音等不予通过；</p>
+            <p>4、铃音为非普通话且难以听清的方言、低俗语言、无法确定内容含义的他国语言、各国国歌</p>
+            <p>5、内容包含国家领导人及知名党派、团体、公司等敏感类称谓不予通过；</p>
+            <p>6、铃音内容出现“您所呼叫的用户已关机”、“您所呼叫的用户暂时无法接通”等类似电信系统提示语，而且模仿的非常逼真一般人无法辨别，将无法通过审批；</p>
+            <p>7、若铃音内容涉及到公安机关、各大银行、医院、诊所、司法部门等，需客户提供相应机关单位给予的加盖公章的证明、营业执照，方可审核通过；</p>
+            <p>8、铃音背景须为纯音乐；</p>
+            <p>9、根据最新广告法，企业宣传铃音不能包含“最XX”“XX第一”等极限用词。</p>
+            <img src="../../client/threenets/images/floating_ico_1.png" alt="" onclick="CloseDxcx('ZL-rule')">
+        </div>
+    </div>
+    <script>
+        //设置弹窗
+        var floatingWindows = document.getElementById('floatingWindows');
+        floatingWindows.style.height = '1000px';
+        //初始化
+        $(document).ready(function () {
+
+        });
+        //成员号码验证
+        function mykeyup() {
+            var member_phone = $("#member_phone").val();
+            var phones = member_phone.split(/[\r\n]/g);
+            var myreg = /^[1][3,4,5,7,8,9][0-9]{9}$/;
+            var areg = /^0\d{2,3}-?\d{7,8}$/;
+            for (i = 0; i < phones.length; i++) {
+                if (!myreg.test(phones[i])) {
+                    if (!areg.test(phones[i])) {
+                        layer.msg('号码"' + phones[i] + '"不正确!');
+                        break;
+                    }
+                }
+            }
+            matchingOperate(member_phone);
+        }
+
+        //验证手机号
+        function matchingOperate(phones) {
+            AjaxPost('/threenets/getOperate', {"phone": phones}, function (result) {
+                if (result.code == 200) {
+                    //移动
+                    if (result.data[0] > 0) {
+                        $("#fee").show();
+                    }
+                    //电信
+                    if (result.data[1] > 0) {
+                        $("#fee1,#qyzzdiv").show();
+                    }
+                    //联通
+                    if (result.data[2] > 0) {
+                        $("#fee2,#sfmd").show();
+                    }
+                } else {
+                    layer.msg(result.msg);
+                }
+            })
+        }
+        //打开弹窗
+        function dxcx(tag, otag) {
+            $("#" + tag).show();
+        }
+        //关闭弹窗
+        function CloseDxcx(tag) {
+            $("#" + tag).hide();
+        }
+        //上传企业资质
+        $("form").on("change", "#qyzz5", function (e) {
+            $(".qiye").html(this.value);
+            uploadFile("companyFile")
+        })
+        //上传客户确认函
+        $("form").on("change", "#qyzx5", function (e) {
+            $(".que").html(this.value);
+            uploadFile("clientFile")
+        })
+        //上传主体证明
+        $("form").on("change", "#IDCARDURLfile", function (e) {
+            $(".zhu").html(this.value);
+            uploadFile("mainFile")
+        })
+
+        ////上传主体证明
+        $("form").on("change", "#qyzz8", function (e) {
+            $(".ying").html(this.value);
+        })
+        //免短协议
+        $("form").on("change", "#mdxy", function (e) {
+            $(".mds").html(this.value);
+            uploadFile("protocolFile")
+        })
+        //申请高资费
+        //表单提交
+        layui.use('form', function () {
+            var form = layui.form;
+            //申请高资费
+            form.on('select(specialPrice)', function (data) {
+                if (data.value == 8 || data.value == 10) {
+                    $("#PayPrice").prop('checked', false);
+                    form.render();
+                } else if (data.value == "无") {
+                    $("#PayPrice").prop('checked', true);
+                    form.render();
+                }
+            });
+            //监听提交
+            form.on('submit(formDemo)', function (data) {
+                $("#Form").submit();
+                let index = parent.layer.getFrameIndex(window.name); //获取窗口索引
+                parent.layer.close(index);
+                window.parent.location.reload();//刷新父页面
+                return false;
+            });
+        });
+
+        //上传文件
+        function uploadFile(url) {
+            $.ajax({
+                url: '/system/upload/' + url,
+                type: 'POST',
+                cache: false,
+                data: new FormData($('#Form')[0]),
+                processData: false,
+                contentType: false
+            }).done(function (res) {
+                layer.msg(res.msg, {icon: 1, time: 1000});
+                if (url === "companyFile") {
+                    $("#companyUrl").val(res.data)
+                } else if (url === "clientFile") {
+                    $("#clientUrl").val(res.data)
+                } else if (url === "mainFile") {
+                    $("#mainUrl").val(res.data)
+                } else if (url === "protocolFile") {
+                    $("#protocolUrl").val(res.data)
+                }
+            }).fail(function (res) {
+                layer.msg(res.msg, {icon: 2, time: 1000});
+            });
+        }
+    </script>
+</body>
+
+</html>

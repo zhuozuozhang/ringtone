@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head th:include="threenets/threenet/common/head :: linkcss"></head>
+<head>
+    <meta charset="utf-8">
+    <title>公告列表</title>
+    <link rel="stylesheet" th:href="@{client/threenets/css/announcement.css}">
+</head>
+
+<body>
+    <!-- 头部 -->
+    <div th:include="threenets/threenet/common/include :: header"></div>
+    <div class="layui-row contant">
+        <!-- 等待设置铃音 -->
+        <div class="layui-col-md12" id="search">
+            <table class="layui-table" id="set">
+                <thead>
+                    <tr>
+                        <th>序号</th>
+                        <th>公告标题</th>
+                        <th>发布日期</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="notice : ${noticeList}">
+                        <td><span th:text="${notice.noticeId}"></span></td>
+                        <td><span th:text="${notice.noticeTitle}" th:onclick="openDetails([[${notice}]]);"></span></td>
+                        <td><span th:text="${#dates.format(notice.noticeTime,'yyyy-MM-dd')}"></span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+<div th:include="threenets/threenet/common/head :: footer"></div>
+<script>
+    //分页
+    $(document).ready(function() {
+        $('#set').DataTable({
+            "ordering": true, //禁止排序
+            "searching": true, //搜索框
+            "bLengthChange": false,
+            "language": {
+                "decimal": ",",
+                "thousands": ".",
+                "lengthMenu": " _MENU_ ",
+                "zeroRecords": "没有找到记录",
+                "info": "",
+                "infoEmpty": "",
+                "infoFiltered": "",
+                "paginate": {
+                    // "first" : "",
+                    "sPrevious": "上一页",
+                    "sNext": "下一页",
+                    // "sLast" : ""
+                }
+            }
+        });
+    });
+    //发布日期
+    layui.use('laydate', function(){
+        var laydate = layui.laydate;
+
+        //日期范围
+        laydate.render({
+            elem: '#date'
+            ,range: true
+        });
+    });
+    //公告详情
+    function openDetails(notice){
+        let date = notice.noticeTime.toString().substring(0,10);
+        layer.open({
+            type: 1,
+            title: '公告详情',
+            area: ['850px', '400px'],
+            content: '<div class="content clearfix" style="width: 800px; line-height: 25px; margin-left: 20px;"><div class="articleTitle font04">'+notice.noticeTitle+'</div><div class="articleTitle_details">'+date+'</div><div>'+notice.noticeContent+'</div></div>'
+        });
+    }
+</script>
+</html>

@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>企业彩铃-号码认证</title>
+	<meta name="renderer" content="webkit">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta name="viewport" content="width=device-width,testUser-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi" />
+	<link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+	<link rel="stylesheet" href="../../admin/css/font.css">
+	<link rel="stylesheet" href="../../admin/css/xadmin.css">
+	<link rel="stylesheet" type="text/css" href="../../admin/dataTables/jquery.dataTables.min.css">
+</head>
+<body class="layui-anim layui-anim-up">
+	<div class="x-nav">
+		<span class="layui-breadcrumb">
+			<a href="">首页</a>
+			<a href="">号码认证</a>
+			<a>
+				<cite>充值记录</cite>
+			</a>
+		</span>
+		<a class="layui-btn layui-btn-primary layui-btn-small" style="line-height:1.6em;margin-top:3px;float:right" href="javascript:location.replace(location.href);" title="刷新">
+			<i class="layui-icon" style="line-height:38px">ဂ</i>
+		</a>
+	</div>
+	<div class="x-body">
+		<table class="layui-table" id="example">
+			<thead>
+				<tr>
+					<th>ID</th>
+					<th>用户名称</th>
+					<th>充值号码</th>
+					<th>充值金额</th>
+					<th>充值时间</th>
+					<th>操作者</th>
+					<th>备注</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>1</td>
+					<td>测试周</td>
+					<td>15050840350</td>
+					<td>160</td>
+					<td>2019-06-19 17:20:26</td>
+					<td>admin</td>
+					<td>首次充值</td>
+				</tr>
+				<tr>
+					<td>2</td>
+					<td>测试周1</td>
+					<td>15050840350</td>
+					<td>160</td>
+					<td>2019-06-12 17:20:26</td>
+					<td>admin</td>
+					<td>第一次续费，续费了160元</td>
+				</tr>
+				<tr>
+					<td>3</td>
+					<td>测试周2</td>
+					<td>15050840350</td>
+					<td>160</td>
+					<td>2019-06-19 17:20:26</td>
+					<td>admin</td>
+					<td>第一次续费，续费了160元</td>
+				</tr>
+				<tr>
+					<td>4</td>
+					<td>测试周3</td>
+					<td>15050840350</td>
+					<td>160</td>
+					<td>2019-06-20 17:20:26</td>
+					<td>admin</td>
+					<td>第一次续费，续费了160元</td>
+				</tr>
+				<tr>
+					<td>5</td>
+					<td>测试周4</td>
+					<td>15050840350</td>
+					<td>160</td>
+					<td>2019-06-13 17:20:26</td>
+					<td>admin</td>
+					<td>第一次续费，续费了160元</td>
+				</tr>
+				<tr>
+					<td>6</td>
+					<td>测试周</td>
+					<td>15050840350</td>
+					<td>160</td>
+					<td>2019-06-15 17:20:26</td>
+					<td>admin</td>
+					<td>第一次续费，续费了160元</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+</body>
+<script src="../../public/js/jquery.min.js"></script>
+<script type="text/javascript" src="../../admin/lib/layui/layui.js" charset="utf-8"></script>
+<script type="text/javascript" src="../../admin/js/xadmin.js"></script>
+<script type="text/javascript" src="../../admin/dataTables/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="../../public/js/page.js"></script>
+<script type="text/javascript">
+	$(document).ready(function() {
+	    page("#example",4);
+	} );
+</script>
+</html>

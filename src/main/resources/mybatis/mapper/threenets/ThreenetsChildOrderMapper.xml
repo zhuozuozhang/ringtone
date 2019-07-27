@@ -1,0 +1,358 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hrtxn.ringtone.project.threenets.threenet.mapper.ThreenetsChildOrderMapper">
+
+    <resultMap id="BaseResultMap" type="com.hrtxn.ringtone.project.threenets.threenet.domain.ThreenetsChildOrder">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="linkman" property="linkman" jdbcType="VARCHAR"/>
+        <result column="linkman_tel" property="linkmanTel" jdbcType="VARCHAR"/>
+        <result column="status" property="status" jdbcType="VARCHAR"/>
+        <result column="create_date" property="createDate" jdbcType="TIMESTAMP"/>
+        <result column="ring_name" property="ringName" jdbcType="VARCHAR"/>
+        <result column="ring_id" property="ringId" jdbcType="INTEGER"/>
+        <result column="parent_order_id" property="parentOrderId" jdbcType="INTEGER"/>
+        <result column="operate_id" property="operateId" jdbcType="VARCHAR"/>
+        <result column="operate_order_id" property="operateOrderId" jdbcType="VARCHAR"/>
+        <result column="is_monthly" property="isMonthly" jdbcType="INTEGER"/>
+        <result column="is_video_user" property="isVideoUser" jdbcType="BIT"/>
+        <result column="is_ringtone_user" property="isRingtoneUser" jdbcType="BIT"/>
+        <result column="is_reply_message" property="isReplyMessage" jdbcType="BIT"/>
+        <result column="province" property="province" jdbcType="VARCHAR"/>
+        <result column="city" property="city" jdbcType="VARCHAR"/>
+        <result column="operate" property="operate" jdbcType="INTEGER"/>
+        <result column="user_id" property="userId" jdbcType="INTEGER"/>
+        <result column="remark" property="remark" jdbcType="LONGVARCHAR"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, linkman, linkman_tel, status, create_date, ring_name, ring_id, parent_order_id,operate_order_id,
+        operate_id, is_monthly, is_video_user, is_ringtone_user, is_reply_message, province,
+        city, operate, user_id,remark
+    </sql>
+
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+        select
+        <include refid="Base_Column_List"/>
+        from tb_threenets_child_order
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+    <!-- 获取近5日信息-->
+    <select id="getFiveData" resultType="com.hrtxn.ringtone.project.threenets.threenet.domain.PlotBarPhone">
+        SELECT
+            DATE_FORMAT(create_date, '%Y-%m-%d') AS dateTimes,
+            COUNT(*) AS addUser
+        FROM
+            tb_threenets_child_order
+        WHERE
+            user_id = #{id}
+            AND is_monthly = 2
+        GROUP BY DATE_FORMAT(create_date, '%Y-%m-%d') DESC
+        LIMIT 0,5;
+    </select>
+
+    <select id="getMonthData" resultType="com.hrtxn.ringtone.project.threenets.threenet.domain.PlotBarPhone">
+        SELECT * FROM(
+        SELECT DATE_FORMAT( create_date, '%Y-%m-%d' ) AS dateTimes, COUNT( * ) AS allNumber, is_monthly as isMonthly
+        FROM tb_threenets_child_order o
+        left join tb_user b on o.user_id = b.id
+        WHERE 1=1
+        <if test="param.userId != null and param.userId != ''">
+            AND o.user_id = #{param.userId}
+        </if>
+        <if test="param.parentId != null and param.parentId != ''">
+            AND b.parent_id = #{param.parentId} or b.id = #{param.parentId}
+        </if>
+        <if test="param.operate != null and param.operate != ''">
+            AND operate = #{param.operate}
+        </if>
+        GROUP BY DATE_FORMAT( create_date, '%Y-%m-%d' ) DESC,is_monthly
+        ) a
+        where DATE_FORMAT(a.dateTimes, '%Y-%m' ) ='${param.month}'
+    </select>
+
+    <select id="getYearData" resultType="com.hrtxn.ringtone.project.threenets.threenet.domain.PlotBarPhone">
+        SELECT * FROM(
+        SELECT DATE_FORMAT( create_date, '%Y-%m' ) AS dateTimes, COUNT( * ) AS allNumber, is_monthly as isMonthly
+        FROM tb_threenets_child_order o
+        left join tb_user b on o.user_id = b.id
+        WHERE 1=1
+        <if test="param.userId != null and param.userId != ''">
+            AND o.user_id = #{param.userId}
+        </if>
+        <if test="param.parentId != null and param.parentId != ''">
+            AND b.parent_id = #{param.parentId} or b.id = #{param.parentId}
+        </if>
+        <if test="param.operate != null and param.operate != ''">
+            AND operate = #{param.operate}
+        </if>
+        GROUP BY DATE_FORMAT( create_date, '%Y-%m' ) DESC,is_monthly
+        ) a
+        where left( a.dateTimes, 4) ='${param.year}'
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+        delete from tb_threenets_child_order
+        where id = #{id,jdbcType=INTEGER}
+    </delete>
+    <!-- 添加三网子订单 -->
+    <insert id="insertThreeNetsChildOrder" parameterType="ThreenetsChildOrder">
+        insert into tb_threenets_child_order
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="linkman != null">
+                linkman,
+            </if>
+            <if test="linkmanTel != null">
+                linkman_tel,
+            </if>
+            <if test="status != null">
+                status,
+            </if>
+            <if test="createDate != null">
+                create_date,
+            </if>
+            <if test="ringName != null">
+                ring_name,
+            </if>
+            <if test="ringId != null">
+                ring_id,
+            </if>
+            <if test="parentOrderId != null">
+                parent_order_id,
+            </if>
+            <if test="operateId != null">
+                operate_id,
+            </if>
+            <if test="isMonthly != null">
+                is_monthly,
+            </if>
+            <if test="isVideoUser != null">
+                is_video_user,
+            </if>
+            <if test="isRingtoneUser != null">
+                is_ringtone_user,
+            </if>
+            <if test="isReplyMessage != null">
+                is_reply_message,
+            </if>
+            <if test="province != null">
+                province,
+            </if>
+            <if test="city != null">
+                city,
+            </if>
+            <if test="operate != null">
+                operate,
+            </if>
+            <if test="userId != null">
+                user_id,
+            </if>
+            <if test="remark != null">
+                remark,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="linkman != null">
+                #{linkman,jdbcType=VARCHAR},
+            </if>
+            <if test="linkmanTel != null">
+                #{linkmanTel,jdbcType=VARCHAR},
+            </if>
+            <if test="status != null">
+                #{status,jdbcType=VARCHAR},
+            </if>
+            <if test="createDate != null">
+                #{createDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="ringName != null">
+                #{ringName,jdbcType=VARCHAR},
+            </if>
+            <if test="ringId != null">
+                #{ringId,jdbcType=INTEGER},
+            </if>
+            <if test="parentOrderId != null">
+                #{parentOrderId,jdbcType=INTEGER},
+            </if>
+            <if test="operateId != null">
+                #{operateId,jdbcType=VARCHAR},
+            </if>
+            <if test="isMonthly != null">
+                #{isMonthly,jdbcType=INTEGER},
+            </if>
+            <if test="isVideoUser != null">
+                #{isVideoUser,jdbcType=BIT},
+            </if>
+            <if test="isRingtoneUser != null">
+                #{isRingtoneUser,jdbcType=BIT},
+            </if>
+            <if test="isReplyMessage != null">
+                #{isReplyMessage,jdbcType=BIT},
+            </if>
+            <if test="province != null">
+                #{province,jdbcType=VARCHAR},
+            </if>
+            <if test="city != null">
+                #{city,jdbcType=VARCHAR},
+            </if>
+            <if test="operate != null">
+                #{operate,jdbcType=INTEGER},
+            </if>
+            <if test="userId != null">
+                #{userId,jdbcType=INTEGER},
+            </if>
+            <if test="remark != null">
+                #{remark,jdbcType=LONGVARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <!-- 修改三网子订单信息-->
+    <update id="updateThreeNetsChidOrder" parameterType="ThreenetsChildOrder">
+        update tb_threenets_child_order
+        <set>
+            <if test="linkman != null">
+                linkman = #{linkman,jdbcType=VARCHAR},
+            </if>
+            <if test="linkmanTel != null">
+                linkman_tel = #{linkmanTel,jdbcType=VARCHAR},
+            </if>
+            <if test="status != null">
+                status = #{status,jdbcType=VARCHAR},
+            </if>
+            <if test="createDate != null">
+                create_date = #{createDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="ringName != null">
+                ring_name = #{ringName,jdbcType=VARCHAR},
+            </if>
+            <if test="ringId != null">
+                ring_id = #{ringId,jdbcType=INTEGER},
+            </if>
+            <if test="parentOrderId != null">
+                parent_order_id = #{parentOrderId,jdbcType=INTEGER},
+            </if>
+            <if test="operateId != null">
+                operate_id = #{operateId,jdbcType=VARCHAR},
+            </if>
+            <if test="operateOrderId != null">
+                operate_order_id = #{operateOrderId,jdbcType=VARCHAR},
+            </if>
+            <if test="isMonthly != null">
+                is_monthly = #{isMonthly,jdbcType=INTEGER},
+            </if>
+            <if test="isVideoUser != null">
+                is_video_user = #{isVideoUser,jdbcType=BIT},
+            </if>
+            <if test="isRingtoneUser != null">
+                is_ringtone_user = #{isRingtoneUser,jdbcType=BIT},
+            </if>
+            <if test="isReplyMessage != null">
+                is_reply_message = #{isReplyMessage,jdbcType=BIT},
+            </if>
+            <if test="province != null">
+                province = #{province,jdbcType=VARCHAR},
+            </if>
+            <if test="city != null">
+                city = #{city,jdbcType=VARCHAR},
+            </if>
+            <if test="operate != null">
+                operate = #{operate,jdbcType=INTEGER},
+            </if>
+            <if test="userId != null">
+                user_id = #{userId,jdbcType=INTEGER},
+            </if>
+            <if test="remark != null">
+                remark = #{remark,jdbcType=LONGVARCHAR},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+
+    <sql id="conditionChild">
+        <if test="childOrder.parentOrderId != null and childOrder.parentOrderId != ''">
+            AND parent_order_id = '${childOrder.parentOrderId}'
+        </if>
+        <if test="childOrder.ringId != null and childOrder.ringId != ''">
+            AND ring_id = '${childOrder.ringId}'
+        </if>
+        <if test="childOrder.linkman != null and childOrder.linkman != ''">
+            AND linkman like '%${childOrder.linkman}%'
+        </if>
+        <if test="childOrder.linkmanTel != null and childOrder.linkmanTel != ''">
+            AND linkman_tel like '%${childOrder.linkmanTel}%'
+        </if>
+
+        <if test="childOrder.isVideoUser != null and childOrder.isVideoUser != ''">
+            AND is_video_user = '${childOrder.isVideoUser}'
+        </if>
+        <if test="childOrder.isMonthly != null and childOrder.isMonthly != ''">
+            AND is_monthly = '${childOrder.isMonthly}'
+        </if>
+        <if test="childOrder.isReplyMessage != null and childOrder.isReplyMessage != ''">
+            AND is_reply_message = '${childOrder.isReplyMessage}'
+        </if>
+    </sql>
+    <sql id="dates">
+        <if test="start != null and start != '' and end != '' and end != null">
+            AND create_date &gt;= '${start}' AND create_date &lt;= '${end}'
+        </if>
+    </sql>
+
+    <select id="selectThreeNetsTaskList" resultMap="BaseResultMap">
+        select c.*,p.company_name as companyLinkman from tb_threenets_order p
+        left join tb_threenets_child_order c on p.id = c.parent_order_id
+        where 1=1
+        <include refid="parameters"/>
+        order by create_date desc
+        <include refid="page"/>
+    </select>
+
+    <select id="getCount" resultType="java.lang.Integer"
+            parameterType="com.hrtxn.ringtone.project.threenets.threenet.domain.ThreenetsChildOrder">
+        select count(*) from tb_threenets_child_order p
+        where 1=1
+        <include refid="parameters"/>
+        order by create_date desc
+    </select>
+
+    <sql id="parameters">
+        <if test="param != null and param.userId != null and param.userId != ''">
+            AND p.user_id = ${param.userId}
+        </if>
+        <if test="param != null and param.isMonthly != null and param.isMonthly != ''">
+            AND is_monthly = ${param.isMonthly}
+        </if>
+        <if test="param != null and param.parentOrderId != null and param.parentOrderId != ''">
+            AND parent_order_id = ${param.parentOrderId}
+        </if>
+        <if test="param != null and param.start != null and param.start != '' and param.end != '' and param.end != null">
+            AND create_date &gt;= '${param.start}' AND create_date &lt;= '${param.end}'
+        </if>
+        <if test="param != null and param.operate != null and param.operate != ''">
+            AND operate = ${param.operate}
+        </if>
+    </sql>
+
+    <sql id="page">
+        <if test="page!=null and page.page != null and page.pagesize != null">
+            LIMIT #{page.page},#{page.pagesize}
+        </if>
+    </sql>
+
+    <delete id="deleteByParadeOrderId" parameterType="java.lang.Integer">
+        delete from tb_threenets_child_order
+        where parent_order_id = #{id,jdbcType=INTEGER}
+    </delete>
+
+    <insert id="batchChindOrder" parameterType="java.util.List">
+        insert into tb_threenets_child_order
+        (linkman, linkman_tel, status, create_date, ring_name, ring_id, parent_order_id,operate_order_id,operate_id, is_monthly, is_video_user, is_ringtone_user, is_reply_message, province,city, operate, user_id,remark)
+        values
+        <foreach collection="list" item="child" index="index" separator=",">
+            (
+            #{child.linkman}, #{child.linkmanTel},#{child.status},#{child.createDate},#{child.ringName},
+            #{child.ringId},#{child.parentOrderId},#{child.operateOrderId},#{child.operateId},#{child.isMonthly},
+            #{child.isVideoUser},#{child.isRingtoneUser},#{child.isReplyMessage},#{child.province},
+            #{child.city}, #{child.operate}, #{child.userId}, #{child.remark}
+            )
+        </foreach>
+    </insert>
+</mapper>

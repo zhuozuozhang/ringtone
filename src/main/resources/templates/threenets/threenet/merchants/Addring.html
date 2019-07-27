@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <base href=".">
+    <title>添加铃音</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link rel="stylesheet" type="text/css" th:href="@{/public/layui/css/layui.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/public/layui/css/modules/layer/default/layer.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/client/threenets/css/ThunderBase2.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/client/threenets/css/common.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/client/threenets/css/Addmerchants.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/client/threenets/css/enterpriseBell.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/client/threenets/css/MyPlus.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/client/threenets/css/Add.css}">
+    <script type="text/javascript" th:src="@{/public/js/jquery-2.1.4.min.js}"></script>
+    <script type="text/javascript" th:src="@{/public/layui/layui.js}"></script>
+    <script type="text/javascript" th:src="@{/public/layui/lay/modules/layer.js}"></script>
+    <script type="text/javascript" th:src="@{/public/js/numASMD.js}"></script>
+    <script type="text/javascript" th:src="@{/public/js/ajax.js}"></script>
+    <style>
+        .bellContent textarea {
+            width: 400px !important;
+            height: 100px;
+            border: 1px solid #e1e1e1;
+            box-sizing: border-box;
+            resize: none;
+            padding: 18px 25px 0 25px;
+            margin-left: 35px!important;
+        }
+    </style>
+</head>
+
+<body>
+<form action="/threenets/insterThreeNetsRing" name="Form" id="Form" method="post" class="layui-form" enctype="multipart/form-data">
+    <div id="newBlocPage">
+        <div class="addBell" style="width: auto;background: none;">
+            <ul>
+                <li class="clearfix equally">
+                    <span class="fl"><i style="color: red;width:auto;">*</i>铃音类型</span>
+                    <div class="fl clearfix">
+                        <p class="fl" style="margin-left: 32px;">
+                            <i style="color: #000;">自带铃音</i>
+                        </p>
+                        <input type="hidden" id="RINGTYPE" name="RINGTYPE" value="2">
+                    </div>
+                </li>
+                <li class="clearfix bellType">
+                    <span class="fl"><i style="color: red">*</i>铃音名称</span>
+                    <div class="fl">
+                        <input style="margin-left: 38px;" required lay-verify="required" type="text" onchange="findbyringname()" name="ringName" id="ringName" autocomplete="off">
+                    </div>
+                </li>
+                <div id="ringdiv" style="display:block;">
+                    <li class="clearfix upload">
+                        <span class="fl"><i style="color: red">*</i>铃音上传文件</span>
+                        <div class="fl selected">
+                            <input type="file" name="ringFile" id="file" class="" style="width:388px;" required lay-verify="required" accept=".mp3,.wav,.mp4,.mov">
+                            <div class="clearfix">
+                                <p class="fr choose" style="width:388px;font-size: 14px;">点击上传铃音文件</p>
+                                <input type="hidden" id="ringurl" name="ringurl">
+                                <div style="margin-top:20px;" class="show_input_file" id="showringurl"></div>
+                            </div>
+                        </div>
+                    </li>
+                    铃音文件上传 （<span style="color: red">仅wav,mp3格式音频，时长≤48秒
+                 <br>移动 支持铃音文件和视频文件上传 <br>1. 铃音文件&lt;1M，时长&lt;48秒，格式需为mp3或wav
+                 <br>2.视频文件&lt;40M，时长&lt;48秒，格式需为mp4或mov
+                 </span>）
+                </div>
+                <li class="clearfix bellContent">
+                    <span class="fl" style="margin-right: 5px;"><i style="color: red">*</i>铃音内容</span>
+                    <div class="fl">
+                        <textarea placeholder="请输入铃音内容......" name="ringContent" id="ringContent" maxlength="200" required lay-verify="required"></textarea>
+                    </div>
+                </li>
+            </ul>
+        </div>
+        <div id="tijiao" class="newBlocPage-button" lay-submit lay-filter="formDemo">确定提交</div>
+        <input type="hidden" id="ringWay" name="ringWay">
+        <input type="hidden" id="operate" name="operate" th:value="${operate}">
+        <input type="hidden" id="orderId" name="orderId" th:value="${orderId}">
+    </div>
+    <script>
+        document.getElementById("file").addEventListener("mousedown", function () {
+            if ($("#ringName").val() == '') {
+                layer.msg("请填写铃音名称", {icon: 2, time: 1000});
+            }
+        });
+
+        //上传铃音文件
+        $("form").on("change", "#file", function (e) {
+            $(".choose").html(this.value);
+            //上传铃音文件
+            var obj_file = document.getElementById("file");
+            var content = obj_file.files[0];
+            var url = URL.createObjectURL(content);
+            //获取录音时长
+            var audioElement = new Audio(url);
+            var duration;
+            audioElement.addEventListener("loadedmetadata", function (_event) {
+                duration = audioElement.duration;//时长,单位(秒)
+                if (duration > 48) {
+                    layer.msg("文件时长不能大于48秒");
+                }
+            });
+            //获取录音大小
+            var size = numDiv(content.size, numMulti(1024, 1024));// 大小,单位(MB)
+            //获取文件类型
+            var file = document.getElementById("file").value;
+            var ext = file.slice(file.lastIndexOf(".") + 1).toLowerCase();
+            if (ext != "mp3" && ext != "wav" && ext != "mp4" && ext != "wov") {
+                layer.msg("铃音文件格式为mp3或wav,视频文件格式为mp4或mov");
+                return;
+            } else if (ext == "mp3" || ext == "wav") {
+                if (size > 1) {
+                    layer.msg("音频文件不能大于1M");
+                    return;
+                }
+            } else if (ext == "mp4" || ext == "wov") {
+                if (size > 15) {
+                    layer.msg("视频文件不能大于40M");
+                    return;
+                }
+            }
+            uploadRing();
+        })
+
+        function findbyringname() {
+
+        }
+
+        //表单提交
+        layui.use('form', function() {
+            var form = layui.form;
+            //监听提交
+            form.on('submit(formDemo)', function(data) {
+                layer.msg(JSON.stringify(data.field));
+                addRing();
+                return false;
+            });
+
+        });
+
+        //保存铃音
+        function addRing() {
+            let ringWay = $("#ringWay").val()
+            if (ringWay == '' || ringWay == null) {
+                layer.msg("文件上传失败", {icon: 2, time: 1000});
+            } else {
+                $("#Form").submit();
+                let index = parent.layer.getFrameIndex(window.name); //获取窗口索引
+                parent.layer.close(index);
+                window.parent.location.reload();//刷新父页面
+            }
+        }
+
+        //上传铃音
+        function uploadRing() {
+            let name = $("#ringName").val();
+            if (name == '' || name == null) {
+                return
+            }
+            $.ajax({
+                url: '/system/upload/ringFile',
+                type: 'POST',
+                cache: false,
+                data: new FormData($('#Form')[0]),
+                processData: false,
+                contentType: false
+            }).done(function (res) {
+                layer.msg(res.msg, {icon: 1, time: 1000});
+                $("#ringWay").val(res.data);
+            }).fail(function (res) {
+                layer.msg(res.msg, {icon: 2, time: 1000});
+            });
+        }
+    </script>
+</form>
+</body>
+
+</html>

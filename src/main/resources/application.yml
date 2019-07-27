@@ -1,0 +1,75 @@
+# 项目相关配置
+ringtone:
+  # 名称
+  name: ringtone
+  # 版本
+  version: 0.0.1
+  # 版权年份
+  copyrightYear: 2019
+  # 文件上传路径
+  profile: D:/profile
+  # 获取ip地址开关
+  addressEnabled: true
+
+
+# tomcate 基本配置
+server:
+  # tomcate 端口号
+  port: 80
+  servlet:
+    # tomcate 访问跟路径
+    context-path: /
+
+
+# 日志配置
+logging:
+  level:
+    com.hrtxn.ringtone: debug
+
+# MyBatis
+mybatis:
+    # 搜索指定包别名
+    typeAliasesPackage: com.hrtxn.ringtone.project
+    # 配置mapper的扫描，找到所有的mapper.xml映射文件
+    mapperLocations: classpath:mybatis/mapper/**/*Mapper.xml
+    # 加载全局的配置文件
+    configLocation: classpath:mybatis/mybatis-config.xml
+#    configuration:
+     # 驼峰命名规范
+#    map-underscore-to-camel-case: true
+
+# spring 配置
+spring:
+  # 选择环境
+  profiles:
+    active: dev
+  # 模板引擎
+  thymeleaf:
+    mode: HTML
+    encoding: UTF-8
+    # 禁用缓存
+    cache: false
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+# 是否开启springboot 调试模式
+#debug: true
+
+# Shiro
+shiro:
+  session:
+    # Session超时时间（默认30分钟）
+    expireTime: 30
+  cookie:
+    # 设置Cookie的过期时间，天为单位
+    maxAge: 30
+
+
+
+http:
+  maxTotal: 100
+  defaultMaxPerRoute: 20
+  connectTimeout: 1000
+  connectionRequestTimeout : 500
+  socketTimeout: 10000
+  staleConnectionCheckEnabled: true
+

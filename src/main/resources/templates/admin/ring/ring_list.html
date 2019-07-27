@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head th:include="admin/common/include :: header"></head>
+<body class="layui-anim layui-anim-up">
+	<div class="x-nav">
+		<span class="layui-breadcrumb">
+			<a href="">首页</a>
+			<a href="">铃音管理</a>
+			<a>
+				<cite>铃音列表</cite>
+			</a>
+		</span>
+		<a class="layui-btn layui-btn-primary layui-btn-small" style="line-height:1.6em;margin-top:3px;float:right" href="javascript:location.replace(location.href);" title="刷新">
+			<i class="layui-icon" style="line-height:38px">ဂ</i>
+		</a>
+	</div>
+	<div class="x-body">
+		<table class="layui-table" id="ring_table">
+			<thead>
+				<tr>
+					<th>序号</th>
+					<th>铃音名称</th>
+					<th>铃音类型</th>
+					<th>运营商</th>
+					<th>商户名称</th>
+					<th>渠道商</th>
+					<th>创建时间</th>
+					<th>操作</th>
+				</tr>
+			</thead>
+		</table>
+	</div>
+</body>
+<div th:include="admin/common/include :: footer"></div>
+<script type="text/javascript">
+	$(document).ready(function(){
+        showRingTable();
+	});
+    //获取铃音列表
+    function showRingTable() {
+        var columns = [
+            {"data":null},
+            {"data": "ringName"},
+            {"data": "ringType"},
+            {"data": "operate"},
+            {"data": "companyName"},
+            {"data": "userName"},
+            {"data": "createTime"}
+        ];
+        var columnDefs = [{
+            targets:[3],
+            render:function(data, type, row, meta){
+                var operate = row.operate;
+                var o = '';
+                if (operate == 1){
+                    o = "移动";
+                } else if (operate == 2){
+                    o = "电信";
+                } else {
+                    o = "联通";
+                }
+                return o;
+            }
+        },{
+            targets: [7],
+            render: function (data, type, row, meta) {
+                var id = row.id;
+                var ringType = row.ringType;
+                if ("音频" == ringType) {
+                    return "<div><audio style='height: 25px;width: 245px;' src='/threenets/playRing/"+id+"' controls>点击试听</audio></div>";
+                }else{
+                    return "<div><video style='height: 100px;width: 245px;' src='/threenets/playRing/"+id+"' controls>点击试听</video></div>";
+                }
+            }
+        }];
+        page("#ring_table", 15, {}, "/admin/getRingList", columns, columnDefs);
+    }
+</script>
+</html>

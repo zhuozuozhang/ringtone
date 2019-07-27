@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>企业彩铃-号码认证</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width,testUser-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi" />
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+    <link rel="stylesheet" href="../../admin/css/font.css">
+    <link rel="stylesheet" href="../../admin/css/xadmin.css">
+    <style type="text/css">
+        .layui-input-inline{
+            width: 490px!important;
+        }
+    </style>
+    
+</head>
+<body>
+    <div class="x-body layui-anim layui-anim-up">
+        <form class="layui-form">
+            <div class="layui-form-item">
+                <label for="telcertification" class="layui-form-label">
+                    <span class="x-red">*</span>价格
+                </label>
+                <div class="layui-input-inline">
+                    <input type="number" id="telcertification" name="telcertification" required lay-verify="telcertification" autocomplete="off" class="layui-input" value="80">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label for="L_repass" class="layui-form-label"></label>
+                <button class="layui-btn" lay-filter="add" lay-submit="">增加</button>
+            </div>
+        </form>
+    </div>
+</body>
+<script src="../../public/js/jquery.min.js"></script>
+<script type="text/javascript" src="../../admin/lib/layui/layui.js" charset="utf-8"></script>
+<script type="text/javascript" src="../../admin/js/xadmin.js"></script>
+<script data-cfasync="false" src="../../public/js/regular.js"></script>
+<script type="text/javascript">
+    layui.use(['form','layer'], function(){
+        $ = layui.jquery;
+        var form = layui.form,layer = layui.layer;
+        //自定义验证规则
+        form.verify({
+            telcertification: function(value){
+                if(!isNotEmpty(value)){
+                    return '请输入价格';
+                }
+            }
+        });
+        //监听提交
+        form.on('submit(add)', function(data){
+            console.log(data);
+            layer.msg('修改成功', {icon: 1});
+            return false;
+        });
+    });
+</script>
+</html>

@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head th:include="admin/common/include :: header"></head>
+<body>
+    <div class="x-body layui-anim layui-anim-up">
+        <blockquote class="layui-elem-quote layui-quote-nm">
+            标题：<span th:text="${notice.noticeTitle}">测试公告</span><br><br>
+            正文：<span th:utext="${notice.noticeContent}">测试公告测试公告测试公告测试公告测试公告测试公告</span><br><br>
+            创建时间：<span th:text="${#dates.format(notice.noticeTime,'yyyy-MM-dd HH:mm:ss')}">2019-06-20 12:13:26</span><br><br>
+            创建者：<span th:text="${notice.noticeAuthor}">admin</span><br><br>
+            发布模块：<span th:if="${notice.noticeModule} == 0">三网</span>
+                    <span th:if="${notice.noticeModule} == 1">号码认证</span>
+                    <span th:if="${notice.noticeModule} == 2">400</span>
+                    <span th:if="${notice.noticeModule} == 3">视频制作</span>
+                    <span th:if="${notice.noticeModule} == 4">号卡</span>
+                    <span th:if="${notice.noticeModule} == 5">铃音录制</span>
+                    <span th:if="${notice.noticeModule} == 6">企业秀</span>
+                    <span th:if="${notice.noticeModule} == 7">来去电名片</span><br><br>
+            是否开放：<span th:if="${notice.noticeStatus}">是</span>
+                    <span th:if="${not notice.noticeStatus}">否</span><br><br>
+            权重：<span th:text="${notice.noticeWeight}">1</span><br><br>
+        </blockquote>
+    </div>
+</body>
+</html>

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head th:include="admin/common/include :: header"></head>
+<body class="layui-anim layui-anim-up">
+	<div class="x-nav">
+		<span class="layui-breadcrumb">
+			<a href="">首页</a>
+			<a href="">系统管理</a>
+			<a href="">日志管理</a>
+			<a><cite>操作日志</cite></a>
+		</span>
+		<a class="layui-btn layui-btn-primary layui-btn-small" style="line-height:1.6em;margin-top:3px;float:right" href="javascript:location.replace(location.href);" title="刷新">
+			<i class="layui-icon" style="line-height:38px">ဂ</i>
+		</a>
+	</div>
+	<div class="x-body">
+		<table class="layui-table" id="example">
+			<thead>
+				<tr>
+					<th>ID</th>
+                    <th>操作标题</th>
+                    <th>操作者</th>
+                    <th>IP地址</th>
+                    <th>操作地点</th>
+                    <th>业务类型</th>
+                    <th>操作端</th>
+                    <th>操作时间</th>
+                    <th>操作状态</th>
+                    <th>操作URL</th>
+                    <th>操作</th>
+                </tr>
+			</thead>
+			<tbody>
+				<tr th:each="operateLog:${operateLogList}">
+					<td th:text="${operateLog.operateLogId}">1</td>
+                    <td th:text="${operateLog.operateLogTitle}">号码认证充值</td>
+					<td th:text="${operateLog.operateLogUser}">admin</td>
+					<td th:text="${operateLog.ipAddress}">127.0.0.1</td>
+                    <td th:text="${operateLog.operateLogLocation}">江苏省徐州市</td>
+
+                    <td th:if="${operateLog.operateLogType} == 0">其它</td>
+                    <td th:if="${operateLog.operateLogType} == 1">新增</td>
+                    <td th:if="${operateLog.operateLogType} == 2">修改</td>
+                    <td th:if="${operateLog.operateLogType} == 3">删除</td>
+
+                    <td th:if="${operateLog.operateLogClassify} == 0">其它</td>
+                    <td th:if="${operateLog.operateLogClassify} == 1">三网</td>
+                    <td th:if="${operateLog.operateLogClassify} == 2">号码认证</td>
+                    <td th:if="${operateLog.operateLogClassify} == 3">科大网站</td>
+                    <td th:if="${operateLog.operateLogClassify} == 4">公众号</td>
+                    <td th:if="${operateLog.operateLogClassify} == 5">管理端</td>
+
+                    <td th:text="${#dates.format(operateLog.operateLogTime, 'yyyy-MM-dd HH:mm:ss')}">2019-06-19 17:20:26</td>
+
+                    <td th:if="${operateLog.operateLogStatus} == 0">成功</td>
+                    <td th:if="${operateLog.operateLogStatus} == 1" th:title="${operateLog.errorMsg}"><span style="color: red;">异常</span></td>
+
+					<td th:text="${operateLog.operateLogUrl}">/testUser/userAdd</td>
+                    <td>
+                        <a title="查看" th:onclick="x_admin_show('详细信息','/admin/toOperateLogDetailPage/[[${operateLog.operateLogId}]]',800,700)" href="javascript:;">
+                            <i class="layui-icon">&#xe63c;</i>
+                        </a>
+                    </td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+</body>
+<div th:include="admin/common/include :: footer"></div>
+<script type="text/javascript">
+	$(document).ready(function() {
+	    page("#example",7);
+	} );
+</script>
+</html>

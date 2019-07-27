@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <head th:include="admin/common/include :: header"></head>
+    <style type="text/css">
+        .layui-input-inline{
+            width: 490px!important;
+        }
+    </style>
+</head>
+<body>
+    <div class="x-body layui-anim layui-anim-up">
+        <form class="layui-form">
+            <div class="layui-form-item">
+                <label for="telcertification" class="layui-form-label">
+                    <span class="x-red">*</span>充值金额：
+                </label>
+                <div class="layui-input-inline">
+                    <input type="number" id="telcertification" name="telcertification" required lay-verify="telcertification" autocomplete="off" class="layui-input" value="1">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label for="telcertification" class="layui-form-label">
+                    备注：
+                </label>
+                <div class="layui-input-inline">
+                    <textarea type="number" id="rechargeRemark" name="rechargeRemark" class="layui-textarea"></textarea>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label for class="layui-form-label"></label>
+                <button class="layui-btn" lay-filter="add" lay-submit="">增加</button>
+            </div>
+        </form>
+    </div>
+</body>
+<div th:include="admin/common/include :: footer"></div>
+<script type="text/javascript" th:inline="javascript">
+    var id = [[${id}]];
+    layui.use(['form','layer'], function(){
+        $ = layui.jquery;
+        var form = layui.form,layer = layui.layer;
+        //自定义验证规则
+        form.verify({
+            telcertification: function(value){
+                if(!isNotFloat(value)){
+                    return '请输入正确的金额';
+                }
+            }
+        });
+        //监听提交
+        form.on('submit(add)', function(data){
+            AjaxPut("/admin/updateTelcertificationAccount/"+id,{
+                telcertification:data.field.telcertification,
+                rechargeRemark:$("#rechargeRemark").val()
+            },function (res) {
+               if (res.code == 200 && res.data){
+                   //发异步，把数据提交给后台
+                   layer.alert("增加成功", {icon: 6},function () {
+                       // 获得frame索引
+                       var index = parent.layer.getFrameIndex(window.name);
+                       //关闭当前frame
+                       parent.layer.close(index);
+
+                   });
+               }else{
+                   layer.msg(res.msg,{icon: 6,time:1000});
+               }
+            });
+            return false;
+        });
+    });
+</script>
+</html>

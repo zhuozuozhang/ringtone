@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>头部</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" href="../../public/layui/css/layui.css">
+    <link rel="stylesheet" href="../../public/layui/css/modules/layer/default/layer.css">
+    <link rel="stylesheet" href="../../public/css/commer.css">
+    <link rel="stylesheet" href="../../client/threenets/css/head.css">
+</head>
+
+<body>
+    <div id="heads">
+        <div id="LAY_app" class="layadmin-tabspage-none" style="width:95%;margin:0 auto;">
+            <div class="layui-row" style="height:70px;">
+                <div class="layui-col-xs6">
+                    <div class="grid-demo grid-demo-bg1">
+                        <img src="../../public/images/index_logo.jpg" alt="" width="580px" height="60px" style='margin: 5px 20px;'>
+                    </div>
+                </div>
+                <div class="layui-col-xs6" id="navigation">
+                    <div class="grid-demo" style="margin-top: 15px;">
+                        <div class="layui-row layui-col-space5">
+                            <div class="layui-col-md2">
+                                <div class="grid-demo grid-demo-bg1" id="Mobile">移动工具箱</div>
+                            </div>
+                            <div class="layui-col-md2">
+                                <div class="grid-demo" id="unicom">|&nbsp;&nbsp;联通工具箱</div>
+                            </div>
+                            <div class="layui-col-md4">
+                                <div class="grid-demo grid-demo-bg1">您好,代理商，江苏中高俊聪</div>
+                            </div>
+                            <div class="layui-col-md1">
+                                <a href="../set/set.html">
+                                    <div class="grid-demo" style="cursor: pointer;">|&nbsp;&nbsp;设置</div>
+                                </a>
+                            </div>
+                            <div class="layui-col-md2">
+                                <a href="../set/change_pass.html">
+                                    <div class="grid-demo" style="cursor: pointer;">|&nbsp;&nbsp;修改密码</div>
+                                </a>
+                            </div>
+                            <div class="layui-col-md1">
+                                <div class="grid-demo grid-demo-bg1" style="cursor: pointer;">|&nbsp;&nbsp;退出</div>
+                            </div>
+                        </div>
+                        <!-- 移动工具箱 -->
+                        <div class="layui-row layui-col-space5 bxs" style="width: 65%;" id="Mobiles">
+                            <div class="layui-col-md3">
+                                <a href="javascript:;">
+                                    <div class="grid-demo grid-demo-bg1" onclick="DelRingtone();">删除铃音</div>
+                                </a>
+                            </div>
+                            <div class="layui-col-md3">
+                                <a href="javascript:;">
+                                    <div class="grid-demo" onclick="MobileUser();">用户信息</div>
+                                </a>
+                            </div>
+                            <div class="layui-col-md3">
+                                <a target="_blank" href="http://211.137.107.18:8888/artifact/sunshine!checkOpenBizStatusPage.action?token=kidUHNWDFDS87092">
+                                    <div class="grid-demo grid-demo-bg1">移动连接</div>
+                                </a>
+                            </div>
+                            <div class="layui-col-md3">
+                                <a target="_blank" href="http://211.137.107.18:8888/page/h5/index.html?token=iJ9eyJwYXlsb2FkIjp7InByaWNlIjo1MDB9LCJxZCI6Ijg0N2QyNGM5LTE1ZjEtNGJiMi1iYThlLWNmODQxMGY3NWM4Z#/">
+                                    <div class="grid-demo">下发验证码</div>
+                                </a>
+                            </div>
+                        </div>
+                        <!-- 联通工具箱 -->
+                        <div class="layui-row layui-col-space5 bxs" style="width: 45%;" id="unicoms">
+                            <div class="layui-col-md3">
+                                <a href="javascript:;">
+                                    <div class="grid-demo" onclick="UnicomUser();">用户信息</div>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- 导航栏tab切换 -->
+        <div class="layui-tab layui-tab-brief" lay-filter="docDemoTabBrief" style="margin:0 auto;">
+            <ul class="layui-tab-title" id="tabs">
+                <a href="../index/index.html"><li class='index1'>待办任务</li></a>
+                <a href="../merchants/merchants.html"><li class='index2'>商户列表</li></a>
+                <a href="../number_list/number_list.html"><li class='index3'>号码列表</li></a>
+                <a href="../childaccount/childaccount.html"><li class='index5'>子账号管理</li></a>
+                <a href="../business/Dbusiness.html"><li class='index6'>业务发展数据</li></a>
+                <a href="../set/set.html"><li class='index10'>个人信息</li></a>
+                <a href="../../hkust/index/index.html"><li class='index7'>疑难杂单</li></a>
+                <a href=""><li class='index8'>工具箱</li></a>
+            </ul>
+        </div>
+    </div>
+</body>
+<script src="../../public/js/jquery-2.1.4.min.js"></script>
+<script src="../../public/layui/layui.js"></script>
+<script src="../../public/layui/lay/modules/layer.js"></script>
+<script>
+    //移动工具箱
+    $("#Mobile").mouseover(function() {
+        $("#Mobiles").show();
+        $("#unicoms").hide();
+    });
+    //联通工具箱
+    $("#unicom").mouseover(function() {
+        $("#unicoms").show();
+        $("#Mobiles").hide();
+    });
+    //移动  删除铃音
+    function DelRingtone() {
+        layer.open({
+            type: 2,
+            title: '删除铃音设置',
+            content: './delringtone.html',
+            area: ['950px', '600px'],
+            maxmin: true
+        });
+    }
+    //移动  用户信息
+    function MobileUser() {
+        layer.open({
+            type: 2,
+            title: '用户信息',
+            content: './moblieuser.html',
+            area: ['950px', '600px'],
+            maxmin: true
+        });
+    }
+    //联通 用户信息
+    function UnicomUser() {
+        layer.open({
+            type: 2,
+            title: '用户信息',
+            content: './unicomuser.html',
+            area: ['950px', '600px'],
+            maxmin: true
+        });
+    }
+    //表单提交
+    function SubChangePass(){
+        var oldpass = $("#oldword").val();//原密码
+        var newpass = $("#newword").val();//新密码
+        var confirmpass = $("#confirmpass").val();//确认密码
+        if(newpass != confirmpass) {
+            layer.msg('新密码和确认密码不一致');
+            return;
+        }
+    }
+</script>
+
+</html>

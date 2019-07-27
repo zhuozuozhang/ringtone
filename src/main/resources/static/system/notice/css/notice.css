@@ -1,0 +1,93 @@
+@charset "utf-8";
+.wbk .nbk {
+	width: 1300px;
+	margin-right: auto;
+	margin-left: auto;
+}
+
+.wbk .nbk h2 {
+	height: 50px;
+	text-indent: 60px;
+	background: #f0f0f0;
+	color: #333;
+	line-height: 50px;
+	border: 1px solid #ddd;
+}
+
+.wbk .nbk .ggbk {
+	width: 900px;
+	padding-top: 20px;
+
+}
+.wbk .nbk .ggbk .ggxx {
+	width: 850px;
+	margin-right: auto;
+	margin-left: auto;
+	font-size: 14px;
+	margin-bottom: 10px;
+}
+.wbk .nbk .ggbk .ggxx h3 {
+	line-height: 40px;
+	font-size: 20px;
+}
+.wbk .nbk .ggbk .ggxx .ggnr {
+	padding-top: 10px;
+	padding-bottom: 10px;
+	/*line-height: 30px;*/
+	color:#5c5c5c;
+}
+.wbk .nbk .ggbk .ggxx .ggnr p {
+	padding-bottom: 5px;
+	color: #5c5c5c;
+}
+.wbk .nbk .ggbk .ggxx .ggnr img {
+	max-width:100%;
+}
+.wbk .nbk .ggtime  {
+	line-height: 60px;
+	color: #999;
+	text-align: center;
+	vertical-align: top;
+}
+.wbk .fy {
+	width: 500px;
+	margin-right: auto;
+	margin-left: auto;
+	padding-top: 50px;
+	padding-bottom: 50px;
+}
+
+.wbk {
+	padding-top: 50px;
+	padding-bottom: 50px;
+}
+.nbk table {
+	border-collapse: collapse;
+	width: 100%;
+}
+.nbk table tr{
+	border: 1px solid #ddd;
+}
+
+/*.nbk table tr td span {*/
+	/*display: block;*/
+	/*height: 80px;*/
+	/*width: 80px;*/
+	/*overflow: hidden;*/
+	/*margin-right: auto;*/
+	/*margin-left: auto;*/
+	/*margin-top: 30px;*/
+/*}*/
+.nbk table tr td span img {
+	height: 100px;
+}
+.nbk table tr th  {
+	background-color: #f0f0f0;
+	line-height: 50px;
+	text-align: left;
+	text-indent: 60px;
+}
+.nbk table tr .ggimg {
+	width: 180px;
+	vertical-align: top;
+}

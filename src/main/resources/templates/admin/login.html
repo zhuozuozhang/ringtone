@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head th:fragment="header">
+    <meta charset="UTF-8">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>企业彩铃</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/admin/css/login.css}">
+</head>
+<body>
+<div id="wrapper" class="login-page">
+    <div id="login_form" class="form">
+        <form class="login-form" th:action="@{/login}" th:method="post">
+            <h2>管理登录</h2>
+            <input type="text" placeholder="用户名" name="username" id="user_name"/>
+            <input type="password" placeholder="密码" name="password" id="password"/>
+            <div>
+                <input type="text" name="captchaCode" placeholder="验证码" style="width: 60%;float: left;">
+                <div style="width:33%;float:right;height:47px;">
+                    <img th:class="imgcode" th:src="@{/imageCode(type=char)}" width="100%" height="100%">
+                </div>
+            </div>
+            <button id="login">登　录</button>
+            <span th:text="${msg}" style="color: red;:none;"></span>
+        </form>
+    </div>
+</div>
+</body>
+<div th:include="admin/common/include :: footer"></div>
+<script type="text/javascript" th:inline="javascript">
+    $(function(){
+        // 点击执行登录
+        $("#login").click(function(){
+            check_login();
+            return false;
+        });
+        $('.imgcode').click(function() {
+            var url = ctx + "imageCode?type=char&s=" + Math.random();
+            $(".imgcode").attr("src", url);
+        });
+    });
+
+    // 检查用户名密码是否为空
+    function check_login(){
+        var name=$("#user_name").val();
+        var pass=$("#password").val();
+        if (!isNotEmpty(name)) {
+            layer.msg('登录名不能为空!',{icon: 5,time:1000});
+            $("#login_form").removeClass('shake_effect');
+            setTimeout(function(){
+                $("#login_form").addClass('shake_effect')
+            },1);
+            return;
+        }
+        if (!isNotEmpty(pass)){
+            layer.msg('密码不能为空!',{icon: 5,time:1000});
+            $("#login_form").removeClass('shake_effect');
+            setTimeout(function(){
+                $("#login_form").addClass('shake_effect')
+            },1);
+            return;
+        }
+        $(".login-form").submit();
+    }
+</script>
+</html>

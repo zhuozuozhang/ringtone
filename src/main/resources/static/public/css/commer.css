@@ -1,0 +1,196 @@
+﻿* {
+    margin: 0;
+    padding: 0;
+    outline: none;
+}
+
+a,
+button {
+    cursor: pointer;
+}
+
+a {
+    text-decoration: none;
+    color: #5c5c5c;
+}
+
+.kong {
+    border: 0.5px solid #ddd;
+    background: #ddd;
+    margin-top: 1px;
+}
+
+.btnactive {
+    background: #ff6637 !important;
+    color: #fff !important;
+}
+
+.layui-layer-btn .layui-layer-btn0 {
+    border-color: #FF6637 !important;
+    background-color: #FF6637 !important;
+}
+
+/* 头部标题 */
+.active {
+    color: #ff6637 !important;
+}
+
+.zsy {
+    margin: 0px;
+    padding: 0px;
+    clear: both;
+    width: 100%;
+    overflow: hidden;
+    line-height: 0px;
+    height: 0px;
+}
+.header_title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 19px;
+    width: 1200px;
+    min-width: 1200px;
+    margin: 0 auto;
+    margin-bottom: 19px;
+}
+
+.header_title>div:nth-of-type(1) {
+    /* display: flex;
+    align-items: flex-end;
+    height: 30px; */
+    width: 380px;
+}
+
+.header_title>div:nth-of-type(1)>img {
+    width: 380px;
+}
+
+.header_title>div:nth-of-type(1)>h3 {
+    font: 400 30px/30px 'hzgb [Regular]';
+    color: #333;
+    border-right: 1px solid #000;
+    padding-right: 14px;
+    margin-right: 14px;
+}
+
+.header_title>div:nth-of-type(1)>p {
+    font: 400 18px 'MicrosoftYaHei [Regular]';
+    color: #000;
+}
+
+.header_title>div:nth-of-type(2) {
+    display: flex;
+    align-items: center;
+}
+
+.header_title>div:nth-of-type(2)>a:nth-of-type(1) {
+    display: flex;
+    align-items: center;
+    font: 400 16px/16px 'MicrosoftYaHei [Regular]';
+    color: #000;
+    border-right: 1px solid #000;
+    padding-right: 20px;
+    margin-right: 20px;
+}
+
+.header_title>div:nth-of-type(2)>a:nth-of-type(1) img {
+    width: 20px;
+    height: 20px;
+    margin-right: 10px;
+}
+
+.header_title>div:nth-of-type(2)>a:nth-of-type(2) {
+    font: 400 16px/16px 'MicrosoftYaHei [Regular]';
+    color: #000;
+}
+
+/* 头部标题end */
+/* 头部选项卡 */
+.headtab {
+    width: 1200px;
+    min-width: 1200px;
+    margin: 0 auto;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.headtab>a {
+    font: 400 18px/34px 'MicrosoftYaHei [Regular]';
+    color: #171717;
+    width: 171.43px;
+    display: block;
+    text-align: center;
+}
+
+/* 头部选项卡end */
+/* 广告 */
+.banner {
+    width: 100%;
+    height: 100%;
+    min-width: 1200px;
+    min-height: 344.4px;
+    overflow: hidden;
+}
+
+.banner>img {
+    min-width: 1200px;
+    width: 100%;
+}
+
+/* 广告end */
+/* 个人中心左侧 */
+.xs{
+    display: block;
+}
+.bxs{
+    display: none;
+}
+.cl{
+    clear:both;
+}.tcb,.tca {
+	cursor: pointer;
+}
+.tcbk {
+	width: 400px;
+    border-radius: 10px;
+    border: 1px solid #CCC;
+    position: absolute;
+    top: 28%;
+   
+    z-index: 999999;
+    background-color: #fff;
+    left: 40%;
+    margin-left: auto;
+    margin-right: auto;
+}
+.tcbk .zcjx {
+	line-height: 40px;
+	text-align: center;
+}
+.tcbk .jxbk {
+	line-height: 40px;
+	min-height: 200px;
+}
+.tcbk .jxbk span {
+	margin-right: 10px;
+	margin-left: 10px;
+	padding-right: 20px;
+	padding-left: 20px;
+}
+.tcbk .gban {
+	line-height: 40px;
+	height: 40px;
+	border-top-width: 1px;
+	border-top-style: solid;
+	border-top-color: #CCC;
+	text-align: center;
+	color: #39F;
+	cursor: pointer;
+}
+.display {
+	display: none;
+}

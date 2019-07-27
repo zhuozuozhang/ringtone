@@ -1,0 +1,71 @@
+<!DOCTYPE>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>企业彩铃</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/public/css/common.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/system/notice/css/notice.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/system/home/css/homehead.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/public/dataTables/jquery.dataTables.min.css}">
+</head>
+
+<body>
+<div th:include="system/common/include :: header"></div>
+<div class="menu">
+    <div class="cdwbk">
+        <a th:href="@{/system/index}">首页</a>
+        <a th:href="@{/system/toClinetNoticeListPage}" class="dqxx">公告</a>
+        <a th:href="@{/system/toCenterPage}">个人中心</a>
+    </div>
+</div>
+<div class="wbk">
+    <div class="nbk">
+        <table id="example">
+            <thead>
+                <tr>
+                    <th>公告</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="notice : ${noticeList}">
+                    <td class="ggbk">
+                        <div class="ggxx">
+                            <h3 th:text="${notice.noticeTitle}">电话邦号码认证上线通知</h3>
+                            <div class="ggnr" th:utext="${notice.noticeContent}"></div>
+                        </div>
+                    </td>
+                    <td class="ggtime" th:text="${#dates.format(notice.noticeTime,'yyyy-MM-dd HH:mm:ss')}">2019-06-11 15:45:17</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+</body>
+<script type="text/javascript" th:src="@{/public/js/jquery.min.js}"></script>
+<script type="text/javascript" th:src="@{/public/dataTables/jquery.dataTables.min.js}"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#example').DataTable({
+            "ordering": false,//禁止排序
+            "searching": false, //搜索框
+            "bLengthChange": false,
+            "aLengthMenu": [2, 15, 50],
+            "language": {
+                "decimal": ",",
+                "thousands": ".",
+                "lengthMenu": " _MENU_ ",
+                "zeroRecords": "没有找到记录",
+                "info": "",
+                "infoEmpty": "",
+                "infoFiltered": "",
+                "paginate": {
+                    "sPrevious": "上一页",
+                    "sNext": "下一页",
+                }
+            }
+        });
+    });
+</script>
+
+</html>

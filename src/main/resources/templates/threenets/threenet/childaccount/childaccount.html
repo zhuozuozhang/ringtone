@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<title>子账户列表</title>
+<head th:include="threenets/threenet/common/head :: linkcss"></head>
+<link rel="stylesheet" type="text/css" th:href="@{/client/threenets/css/index.css}">
+<style>
+    #Adds,#lower,#Alower {
+        background: #EEEEEE;
+        color: black;
+    }
+
+    .seled {
+        background: #17a9ff!important;
+        color: white !important;
+    }
+    .layui-input-block {
+        width: 300px;
+        margin-left: 170px!important;
+    }
+    .layui-form-label {
+        width: 140px!important;
+    }
+    .layui-upload button{
+        position: absolute;
+        width: 200px;
+        height: 100px;
+        opacity: 0;
+    }
+    .layui-btn {
+        height: 30px;
+        line-height: 30px;
+    }
+</style>
+<body>
+    <!-- 头部 -->
+    <div th:include="threenets/threenet/common/include :: header"></div>
+    <div class="layui-row contant" style="width:80%;">
+        <!-- 等待设置铃音 -->
+        <div class="layui-col-md12" id="search">
+            <div style="padding:20px 0;padding-left:0px;font-size:16px;">
+                操作:
+                <button type="button" class="layui-btn layui-btn-radius" id="Adds" onclick="AddUser();">添加子账户</button>
+                <button type="button" class="layui-btn layui-btn-radius" id="lower" onclick="openLower(1);">下级代理</button>
+                <button type="button" class="layui-btn layui-btn-radius" id="Alower" onclick="openLower(2);">所有下级代理</button>
+            </div>
+            <table class="layui-table" id="set">
+                <thead>
+                    <tr>
+                        <th>编号</th>
+                        <th>名称</th>
+                        <th>上级渠道商</th>
+                        <th>邮箱</th>
+                        <th>联系号码</th>
+                        <th>地区</th>
+                        <th>开通时间</th>
+                        <th>开通数量</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+            </table>
+        </div>
+    </div>
+</body>
+<div th:include="threenets/threenet/common/head :: footer"></div>
+<script>
+    $(".index5").addClass("active");
+    var columns = [
+        {"data": "id"},
+        {"data": "userName"},
+        {"data": "parentUserName"},
+        {"data": "userEmail"},
+        {"data": "userTel"},
+        {"data": "province"},
+        {"data": "userTime"},
+        {"data": "id"},
+    ];
+    var columnDefs = [{
+        targets: [8],
+        render: function(data, type, row, meta) {
+            var id = row.id;
+            console.log(id);
+            return "<i class='layui-icon layui-icon-home' title='进入' onclick='toIndexPage("+id+");'></i>"
+                +"<i class='layui-icon layui-icon-edit' title='重置密码' onclick='editMerchants("+id+");'></i>";
+        }
+    }];
+    // 初始化数据 当前登录者下级代理
+    openLower(1);
+    //子账号切换
+    function openLower(obj) {
+        if (obj == 1) {
+            $("#Alower").removeClass("seled");
+            $("#lower").addClass("seled");
+        } else if (obj == 2) {
+            $("#lower").removeClass("seled");
+            $("#Alower").addClass("seled");
+        }
+        page("#set",15,{
+            type:obj
+        },"/threenets/getChildAccountList",columns,columnDefs);
+    }
+    //添加子账号
+    function AddUser() {
+        layer.open({
+            type: 2,
+            title: '添加子账号',
+            content: '/threenets/toChildAccountAddPage',
+            area: ['550px', '680px']
+        });
+    }
+    //重置密码
+    function editMerchants(id) {
+        console.log(id);
+        layer.confirm('确认要重置密码为‘sg123456’吗？',function(index){
+            AjaxPut("/admin/updateUserPassword/"+id,{},function (res) {
+                if (res.data) {
+                    layer.msg('重置密码成功!',{icon:1,time:1000});
+                }else{
+                    layer.msg(res.msg,{icon: 6,time:1000});
+                }
+            });
+        });
+    }
+    // 进入子账号
+    function toIndexPage(id) {
+        window.location.href="/threenets/enterSubUser/"+id;
+    }
+</script>
+</html>

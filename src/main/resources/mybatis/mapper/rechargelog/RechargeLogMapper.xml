@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hrtxn.ringtone.project.system.rechargelog.mapper.RechargeLogMapper">
+
+    <resultMap id="BaseResultMap" type="com.hrtxn.ringtone.project.system.rechargelog.domain.RechargeLog">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="recharge_price" property="rechargePrice" jdbcType="REAL"/>
+        <result column="recharge_money" property="rechargeMoney" jdbcType="REAL"/>
+        <result column="recharge_time" property="rechargeTime" jdbcType="TIMESTAMP"/>
+        <result column="recharge_type" property="rechargeType" jdbcType="INTEGER"/>
+        <result column="user_name" property="userName" jdbcType="VARCHAR"/>
+        <result column="recharge_operator" property="rechargeOperator" jdbcType="VARCHAR"/>
+        <result column="user_id" property="userId" jdbcType="INTEGER"/>
+        <result column="recharge_remark" property="rechargeRemark" jdbcType="LONGVARCHAR"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, recharge_price, recharge_money ,recharge_time, recharge_type,user_name, recharge_operator,
+        user_id,recharge_remark
+    </sql>
+    <!-- 根据用户ID查询充值记录-->
+    <select id="findRechargeLogByUserId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        SELECT
+            <include refid="Base_Column_List"/>
+        FROM
+            sys_recharge_log
+        WHERE
+            user_id = #{id}
+        ORDER BY recharge_time DESC
+    </select>
+    <!-- 添加充值记录 -->
+    <insert id="insertRechargeLog" parameterType="RechargeLog">
+        INSERT INTO sys_recharge_log
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="rechargePrice != null">
+                recharge_price,
+            </if>
+            <if test="rechargeMoney != null">
+                recharge_money,
+            </if>
+            <if test="rechargeTime != null">
+                recharge_time,
+            </if>
+            <if test="rechargeType != null">
+                recharge_type,
+            </if>
+            <if test="userName != null">
+                user_name,
+            </if>
+            <if test="rechargeOperator != null">
+                recharge_operator,
+            </if>
+            <if test="userId != null">
+                user_id,
+            </if>
+            <if test="rechargeRemark != null">
+                recharge_remark,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="rechargePrice != null">
+                #{rechargePrice,jdbcType=REAL},
+            </if>
+            <if test="rechargeMoney != null">
+                #{rechargeMoney,jdbcType=REAL},
+            </if>
+            <if test="rechargeTime != null">
+                #{rechargeTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="rechargeType != null">
+                #{rechargeType,jdbcType=INTEGER},
+            </if>
+            <if test="userName != null">
+                #{userName,jdbcType=VARCHAR},
+            </if>
+            <if test="rechargeOperator != null">
+                #{rechargeOperator,jdbcType=VARCHAR},
+            </if>
+            <if test="userId != null">
+                #{userId,jdbcType=INTEGER},
+            </if>
+            <if test="rechargeRemark != null">
+                #{rechargeRemark,jdbcType=LONGVARCHAR},
+            </if>
+        </trim>
+    </insert>
+
+</mapper>

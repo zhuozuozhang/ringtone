@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>企业彩铃-号码认证</title>
+	<meta name="renderer" content="webkit">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta name="viewport" content="width=device-width,testUser-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi" />
+	<link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+	<link rel="stylesheet" href="../../admin/css/font.css">
+	<link rel="stylesheet" href="../../admin/css/xadmin.css">
+	<link rel="stylesheet" type="text/css" href="../../admin/dataTables/jquery.dataTables.min.css">
+</head>
+<body class="layui-anim layui-anim-up">
+	<div class="x-nav">
+		<span class="layui-breadcrumb">
+			<a href="">首页</a>
+			<a href="">号码认证</a>
+			<a>
+				<cite>订单列表</cite>
+			</a>
+		</span>
+		<a class="layui-btn layui-btn-primary layui-btn-small" style="line-height:1.6em;margin-top:3px;float:right" href="javascript:location.replace(location.href);" title="刷新">
+			<i class="layui-icon" style="line-height:38px">ဂ</i>
+		</a>
+	</div>
+	<div class="x-body">
+		<div class="layui-row">
+			<form class="layui-form layui-col-md12 x-so">
+				<input type="text" name="username" placeholder="请输入手机号" autocomplete="off" class="layui-input">
+				<button class="layui-btn" lay-submit="" lay-filter="sreach"><i class="layui-icon">&#xe615;</i></button>
+			</form>
+		</div>
+		<xblock>
+			<button class="layui-btn layui-btn-danger" onclick="delAll();"><i class="layui-icon"></i>批量删除</button>
+		</xblock>
+		<table class="layui-table" id="telcertification_table">
+			<thead>
+				<tr>
+					<th>
+						<div class="layui-unselect header layui-form-checkbox" lay-skin="primary"><i class="layui-icon">&#xe605;</i></div>
+					</th>
+					<th>ID</th>
+					<th>集团名称</th>
+					<th>联系人</th>
+					<th>联系电话</th>
+					<th>产品名称</th>
+					<th>成员数</th>
+					<th>状态</th>
+					<th>价格</th>
+					<th>创建时间</th>
+					<th>操作</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>
+						<div class="layui-unselect layui-form-checkbox" lay-skin="primary" data-id='1'><i class="layui-icon">&#xe605;</i></div>
+					</td>
+					<td>1</td>
+					<td>徐州互睿网络科技有限公司</td>
+					<td>测试周</td>
+					<td>15050840350</td>
+					<td>泰迪熊</td>
+					<td>2/1</td>
+					<td>订购成功</td>
+					<td>80</td>
+					<td>2019-06-21 11:46:42</td>
+					<td class="td-manage">
+						<a title="查看" onclick="x_admin_show('详细信息','telcertification_detail.html','','')" href="javascript:;">
+							<i class="layui-icon">&#xe63c;</i>
+						</a>
+						<a title="成员管理" onclick="x_admin_show('成员管理','telcertification_child_list.html','','')" href="javascript:;">
+							<i class="layui-icon">&#xe770;</i>
+						</a>
+						<a title="删除" onclick="telCertification_del(this,'要删除的id')" href="javascript:;">
+							<i class="layui-icon">&#xe640;</i>
+						</a>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	<script src="../../public/js/jquery.min.js"></script>
+	<script type="text/javascript" src="../../admin/lib/layui/layui.js" charset="utf-8"></script>
+	<script type="text/javascript" src="../../admin/dataTables/jquery.dataTables.min.js"></script>
+	<script type="text/javascript" src="../../admin/js/xadmin.js"></script>
+	<script data-cfasync="false" src="../../public/js/page.js"></script>
+	<script data-cfasync="false" src="../../public/js/regular.js"></script>
+	<script type="text/javascript">
+		$(document).ready(function(){
+			//  分页
+			page("#telcertification_table",9);
+		});
+
+		/*用户-删除*/
+		function telCertification_del(obj,id){
+			layer.confirm('确认要删除吗？',function(index){
+				//发异步删除数据
+				$(obj).parents("tr").remove();
+				layer.msg('已删除!',{icon:1,time:1000});
+			});
+		}
+		// 批量删除号码认证订单
+		function delAll () {
+			var data = tableCheck.getData();
+			if (isNotEmpty(data)) {
+	    		 layer.confirm('确认要删除吗？'+data,function(index){
+		            //捉到所有被选中的，发异步进行删除
+		            layer.msg('删除成功', {icon: 1});
+		            $(".layui-form-checked").not('.header').parents('tr').remove();
+		        });
+			}else{
+				layer.msg('至少选择一条数据', {icon: 7});
+			}
+		}
+	</script>
+</body>
+</html>

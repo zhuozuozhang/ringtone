@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head th:include="admin/common/include :: header"></head>
+<body class="layui-anim layui-anim-up">
+<div class="x-nav">
+    <span class="layui-breadcrumb">
+        <a href="">首页</a>
+        <a href="">公告管理</a>
+        <a>
+            <cite>公告列表</cite>
+        </a>
+    </span>
+    <a class="layui-btn layui-btn-primary layui-btn-small" style="line-height:1.6em;margin-top:3px;float:right"
+       href="javascript:location.replace(location.href);" title="刷新">
+        <i class="layui-icon" style="line-height:38px">ဂ</i>
+    </a>
+</div>
+<div class="x-body">
+    <xblock>
+        <button class="layui-btn" onclick="changeNotice('添加公告','/admin/toNoticeAddPage',800,670)">
+            <i class="layui-icon"></i>添加
+        </button>
+    </xblock>
+    <table class="layui-table" id="notice_table">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>公告标题</th>
+            <th>创建时间</th>
+            <th>创建者</th>
+            <th>权重</th>
+            <th>模块</th>
+            <th>是否开放</th>
+            <th>操作</th>
+        </tr>
+        </thead>
+        <tbody>
+            <tr th:each="notice:${noticeList}">
+                <td th:text="${notice.noticeId}">1</td>
+                <td th:text="${notice.noticeTitle}">号码认证上线</td>
+                <td th:text="${#dates.format(notice.noticeTime,'yyyy-MM-dd HH:mm:ss')}">2019-06-20 12:13:26</td>
+                <td th:text="${notice.noticeAuthor}">admin</td>
+                <td th:text="${notice.noticeWeight}">1</td>
+                <td th:if="${notice.noticeModule} == 0">三网</td>
+                <td th:if="${notice.noticeModule} == 1">号码认证</td>
+                <td th:if="${notice.noticeModule} == 2">400</td>
+                <td th:if="${notice.noticeModule} == 3">视频制作</td>
+                <td th:if="${notice.noticeModule} == 4">号卡</td>
+                <td th:if="${notice.noticeModule} == 5">铃音录制</td>
+                <td th:if="${notice.noticeModule} == 6">企业秀</td>
+                <td th:if="${notice.noticeModule} == 7">来去电名片</td>
+                <td class="td-status">
+                    <span th:if="${not notice.noticeStatus}" class="layui-btn layui-btn layui-btn-sm layui-btn-danger" th:onclick="notice_status(this,[[${notice.noticeId}]]);" title="否">否</span>
+                    <span th:if="${notice.noticeStatus}" class="layui-btn layui-btn layui-btn-sm"  th:onclick="notice_status(this,[[${notice.noticeId}]]);" title="是">是</span>
+                </td>
+                <td class="td-manage">
+                    <a title="查看" th:onclick="x_admin_show('详细信息','/admin/toNoticeDetaiPage/[[${notice.noticeId}]]',800,670)" href="javascript:;">
+                        <i class="layui-icon">&#xe63c;</i>
+                    </a>
+                    <a title="编辑" th:onclick="changeNotice('编辑','/admin/toUpdateNoticePage/[[${notice.noticeId}]]',800,670)" href="javascript:;">
+                        <i class="layui-icon">&#xe642;</i>
+                    </a>
+                    <a title="删除" th:onclick="notice_del(this,'[[${notice.noticeId}]]');" href="javascript:;">
+                        <i class="layui-icon">&#xe640;</i>
+                    </a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+<div th:include="admin/common/include :: footer"></div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        //  分页
+        page("#notice_table", 2);
+    });
+
+    // 状态设置
+    function notice_status(obj, id) {
+        if ($(obj).attr('title') == '是') {
+            layer.confirm('确认要禁用吗？', function (index) {
+                AjaxPut("/admin/updataNotiecStatus/"+id,{
+                    noticeStatus:false
+                },function (res) {
+                    if (res.code == 200 && res.data){
+                        //发异步把用户状态进行更改
+                        $(obj).attr('title', '禁用')
+                        $(obj).find('i').html('&#xe62f;');
+                        $(obj).parents("tr").find(".td-status").find('span').addClass('layui-btn-danger').html('否');
+                        layer.msg('已禁用!', {icon: 5, time: 1000});
+                    }else{
+                        layer.msg('执行修改公告状态出错!', {icon: 5, time: 1000});
+                    }
+                });
+            });
+        } else {
+            layer.confirm('确认要启用吗？', function (index) {
+                AjaxPut("/admin/updataNotiecStatus/"+id,{
+                    noticeStatus:true
+                },function (res) {
+                    if (res.code == 200 && res.data){
+                        $(obj).attr('title', '启用')
+                        $(obj).find('i').html('&#xe601;');
+                        $(obj).parents("tr").find(".td-status").find('span').removeClass('layui-btn-danger').html('是');
+                        layer.msg('已启用!', {icon: 6, time: 1000});
+                    }else{
+                        layer.msg('执行修改公告状态出错!', {icon: 5, time: 1000});
+                    }
+                });
+            });
+        }
+    }
+    // 修改公告信息
+    function changeNotice(title, url, w, h) {
+        layer.open({
+            type: 2,
+            area: [w + 'px', h + 'px'],
+            fix: false,
+            maxmin: true,
+            shadeClose: true,
+            shade: 0.4,
+            title: title,
+            content: url,
+            end:function(){
+                location.reload();//弹出层结束后，刷新主页面
+            }
+        });
+    }
+    /*公告-删除*/
+    function notice_del(obj, id) {
+        layer.confirm('确认要删除吗？', function (index) {
+            AjaxDelete("/admin/deleteNotice/"+id,'',function (res) {
+                if (res.code = 200 && res.data){
+                    //发异步删除数据
+                    $(obj).parents("tr").remove();
+                    layer.msg('删除成功!', {icon: 1, time: 1000});
+                }else{
+                    layer.msg('删除出错!', {icon: 5, time: 1000});
+                }
+            });
+        });
+    }
+</script>
+</html>
