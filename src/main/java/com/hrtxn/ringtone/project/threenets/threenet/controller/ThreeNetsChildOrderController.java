@@ -102,7 +102,7 @@ public class ThreeNetsChildOrderController {
     @PutMapping("/threenets/getPhoneInfo/{id}")
     @ResponseBody
     @Log(title = "获取号码信息功能", businessType = BusinessType.UPDATE, operatorLogType = OperatorLogType.THREENETS)
-    public AjaxResult getPhoneInfo(@PathVariable Integer id) {
+    public AjaxResult getPhoneInfo(Integer type, @PathVariable Integer id) {
         try {
             return threeNetsChildOrderService.getPhoneInfo(id);
         } catch (Exception e) {
