@@ -6,6 +6,7 @@ import com.hrtxn.ringtone.common.domain.Page;
 import com.hrtxn.ringtone.project.system.File.service.FileService;
 import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreenetsRing;
 import com.hrtxn.ringtone.project.threenets.threenet.mapper.ThreenetsRingMapper;
+import com.hrtxn.ringtone.project.threenets.threenet.utils.ApiUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,15 +23,13 @@ import java.util.List;
 @Service
 public class ThreeNetsRingService {
 
-    private final String[] VIDEO = {"mp4","mov"};
-
-    private final String[] AUDIO = {"wav","mp3"};
-
+    private final String[] VIDEO = {"mp4", "mov"};
+    private final String[] AUDIO = {"wav", "mp3"};
     @Autowired
     private ThreenetsRingMapper threenetsRingMapper;
-
     @Autowired
     private FileService fileService;
+    private ApiUtils apiUtils = new ApiUtils();
 
     /**
      * 获取铃音总数
@@ -61,7 +60,7 @@ public class ThreeNetsRingService {
      * @return
      * @throws Exception
      */
-    public List<ThreenetsRing> listByOrderId(Integer id) throws Exception{
+    public List<ThreenetsRing> listByOrderId(Integer id) throws Exception {
         return threenetsRingMapper.selectByOrderId(id);
     }
 
@@ -72,12 +71,13 @@ public class ThreeNetsRingService {
      * @return
      * @throws Exception
      */
-    public ThreenetsRing getRing(Integer id)throws Exception{
+    public ThreenetsRing getRing(Integer id) throws Exception {
         return threenetsRingMapper.selectByPrimaryKey(id);
     }
 
     /**
      * 保存铃音
+     *
      * @param ring
      * @return
      */
@@ -85,7 +85,7 @@ public class ThreeNetsRingService {
     public ThreenetsRing save(ThreenetsRing ring) {
         String extensionsName = ring.getRingWay().substring(ring.getRingWay().indexOf("."));
         boolean isVideo = Arrays.asList(VIDEO).contains(extensionsName);
-        ring.setRingType(isVideo?"视频":"音频");
+        ring.setRingType(isVideo ? "视频" : "音频");
         ring.setRingStatus(1);
         ring.setCreateTime(new Date());
         //保存铃音
@@ -113,29 +113,46 @@ public class ThreeNetsRingService {
 
     /**
      * 克隆铃音
+     *
      * @param id
      * @return
      */
-    public void cloneRing(Integer id) throws Exception{
+    public void cloneRing(Integer id) throws Exception {
         ThreenetsRing ring = threenetsRingMapper.selectByPrimaryKey(id);
         ring.setRingStatus(1);
         threenetsRingMapper.insertThreeNetsRing(ring);
     }
 
-    public String getRingOperate(Integer orderId) throws Exception {
+    /**
+     * 获取铃音所属运营商以及刷新铃音信息
+     *
+     * @param orderId
+     * @return
+     * @throws Exception
+     */
+    public AjaxResult getRingOperate(Integer orderId) throws Exception {
         List<ThreenetsRing> threenetsRings = threenetsRingMapper.selectByOrderId(orderId);
         String operate = "";
-        if (threenetsRings.size() > 0){
-            for (ThreenetsRing threenetsRing:threenetsRings) {
-                if (threenetsRing.getOperate() == 1){
-                    operate += threenetsRing.getOperate()+",";
-                } else if(threenetsRing.getOperate() == 2){
-                    operate += threenetsRing.getOperate()+",";
+        if (threenetsRings.size() > 0) {
+            // 获取铃音运营商
+            for (ThreenetsRing threenetsRing : threenetsRings) {
+                if (threenetsRing.getOperate() == 1) {
+                    operate += threenetsRing.getOperate() + ",";
+                } else if (threenetsRing.getOperate() == 2) {
+                    operate += threenetsRing.getOperate() + ",";
                 } else {
-                    operate += threenetsRing.getOperate()+",";
+                    operate += threenetsRing.getOperate() + ",";
                 }
             }
+            // 刷新铃音信息
+            AjaxResult ajaxResult = apiUtils.getRingInfo(threenetsRings);
+            if ((Boolean)ajaxResult.get("data")){
+                return AjaxResult.success(operate,"刷新成功!");
+            }else{
+                return AjaxResult.success(null,ajaxResult.get("msg").toString());
+            }
+        }else{
+            return AjaxResult.success(null,"无数据!");
         }
-        return operate;
     }
 }

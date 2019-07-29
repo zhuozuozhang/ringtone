@@ -23,7 +23,7 @@ $(function () {
     }
 });
 function showTable() {
-    let params = {
+    var params = {
         "id": $('#orderId').val(),
         "operate": $('#operate').val(),
     }
@@ -32,7 +32,6 @@ function showTable() {
         {"data": "operate"},
         {"data": "createTime"},
         {"data": "ringName"},
-        {"data": "orderId"},
         {"data": "ringType"},
         {"data": "ringWay"},
         {"data": "ringStatus"},
@@ -55,12 +54,12 @@ function showTable() {
             return "<div style='text-overflow:ellipsis;overflow:hidden;white-space:nowrap;width:150px;' title='" + data + "'>" + data + "</div>";;
         }
     }, {
-        targets: [6],
+        targets: [5],
         render: function (data, type, row, meta) {
             return '<a><span onclick="openPlayer(' + row.id + ');">试听</span></a>'
         }
     }, {
-        targets: [7],
+        targets: [6],
         render: function (data, type, row, meta) {
             if (data == 1) {
                 return '待审核'
@@ -73,12 +72,12 @@ function showTable() {
             }
         }
     },{
-        targets:[8],
+        targets:[7],
         render:function (data, type, row, meta) {
             return "<div style='text-overflow:ellipsis;overflow:hidden;white-space:nowrap;width:150px;' title='" + data + "'>" + data + "</div>";;
         }
     }, {
-        targets: [9],
+        targets: [8],
         render: function (data, type, row, meta) {
             var id = row.id;
             return '<i class="layui-icon" title="复制铃音" onclick="cloneRing(' + id + ')"><img src="../../client/threenets/images/copy.png" alt=""></i>' +
@@ -91,8 +90,8 @@ function showTable() {
 }
 //添加铃音
 function addRing() {
-    let orderId = $("#orderId").val();
-    let operate = $("#operate").val();
+    var orderId = $("#orderId").val();
+    var operate = $("#operate").val();
     layer.open({
         type: 2,
         title: '上传铃音',
@@ -120,7 +119,7 @@ function Advertising(content) {
 function dianxin(obj) {
     $(".more").removeClass("InternetOperators-clicked");
     $(obj).addClass("InternetOperators-clicked");
-    let className = obj.className;
+    var className = obj.className;
     if (className.indexOf('yidong') >= 0) {
         $("#operate").val(1)
     } else if (className.indexOf('liantong') >= 0) {

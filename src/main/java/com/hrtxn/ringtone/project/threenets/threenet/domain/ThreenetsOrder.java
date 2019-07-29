@@ -23,10 +23,6 @@ public class ThreenetsOrder implements Serializable {
     private String companyLinkman;
     // 联系人电话
     private String linkmanTel;
-    // 支付方式（0.个付/1.统付）
-    private Integer paymentType;
-    // 支付价格
-    private Integer paymentPrice;
     // 所在省
     private String province;
     // 所在市
@@ -35,12 +31,10 @@ public class ThreenetsOrder implements Serializable {
     private Date createTime;
     // 状态（审核通过）
     private String status;
-    // 运营商订单ID
-    private String operateId;
     // 用户ID
     private Integer userId;
 
-    private String ordernum;
+    /**************************VO**********************************/
     //----子订单数
     private Integer childOrderQuantity;
     //----包月子订单数

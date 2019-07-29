@@ -458,11 +458,11 @@ public class SwxlApi implements Serializable {
             reqEntity.addPart("payType", new StringBody("0"));
             reqEntity.addPart("applyForSmsNotification", new StringBody("0"));// 免短信
             reqEntity.addPart("smsFile", new StringBody(""));
-            if (ringOrder.getPaymentPrice() == 10) {
-                reqEntity.addPart("productId", new StringBody("0000002499"));//价格10元
-            } else {
-                reqEntity.addPart("productId", new StringBody("0000002500"));//价格20元
-            }
+//            if (ringOrder.getPaymentPrice() == 10) {
+//                reqEntity.addPart("productId", new StringBody("0000002499"));//价格10元
+//            } else {
+//                reqEntity.addPart("productId", new StringBody("0000002500"));//价格20元
+//            }
             reqEntity.addPart("ringName", new StringBody(ringOrder.getCompanyName(), Charset.forName("UTF-8")));// 铃音名称
             if (ringOrder.getUpLoadAgreement() != null) {
                 reqEntity.addPart("ringFile", new FileBody(ringOrder.getUpLoadAgreement())); // 铃音文件

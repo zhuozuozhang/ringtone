@@ -12,7 +12,6 @@ import com.hrtxn.ringtone.project.system.user.mapper.UserMapper;
 import com.hrtxn.ringtone.project.threenets.threenet.domain.PlotBarPhone;
 import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreenetsChildOrder;
 import com.hrtxn.ringtone.project.threenets.threenet.mapper.ThreenetsChildOrderMapper;
-import com.hrtxn.ringtone.project.threenets.threenet.mapper.ThreenetsOrderMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.subject.Subject;
@@ -23,7 +22,6 @@ import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -132,7 +130,7 @@ public class ThreeNetsService {
         newList.sort((o1, o2) -> o2.getDateTimes().compareTo(o1.getDateTimes()));
         ThreenetsChildOrder threenetsChildOrder = new ThreenetsChildOrder();
         threenetsChildOrder.setUserId(request.getUserId());
-        threenetsChildOrder.setOperate(request.getOperate());
+        threenetsChildOrder.setOperator(request.getOperate());
         threenetsChildOrder.setIsMonthly(2);
         Integer count = threenetsChildOrderMapper.getCount(threenetsChildOrder);
         for (PlotBarPhone plotBarPhone : newList) {

@@ -1,11 +1,9 @@
 package com.hrtxn.ringtone.project.threenets.threenet.service;
 
-import com.hrtxn.ringtone.common.api.MiguApi;
 import com.hrtxn.ringtone.common.constant.AjaxResult;
 import com.hrtxn.ringtone.common.domain.BaseRequest;
 import com.hrtxn.ringtone.common.domain.OrderRequest;
 import com.hrtxn.ringtone.common.domain.Page;
-import com.hrtxn.ringtone.common.utils.FileUtil;
 import com.hrtxn.ringtone.common.utils.ShiroUtils;
 import com.hrtxn.ringtone.common.utils.juhe.JuhePhoneUtils;
 import com.hrtxn.ringtone.project.system.File.domain.Uploadfile;
@@ -15,8 +13,6 @@ import com.hrtxn.ringtone.project.system.json.JuhePhoneResult;
 import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreenetsChildOrder;
 import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreenetsOrder;
 import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreenetsRing;
-import com.hrtxn.ringtone.project.threenets.threenet.json.swxl.Attachment;
-import com.hrtxn.ringtone.project.threenets.threenet.mapper.ThreenetsChildOrderMapper;
 import com.hrtxn.ringtone.project.threenets.threenet.mapper.ThreenetsOrderMapper;
 import com.hrtxn.ringtone.project.threenets.threenet.utils.ApiUtils;
 import lombok.Synchronized;
@@ -25,7 +21,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -179,11 +174,11 @@ public class ThreeNetsOrderService {
         if (!threenetsOrder.getLinkmanTel().equals(order.getLinkmanTel())) {
             //如果更改手机号则更改手机号归属地
             threenetsOrder = JuhePhoneUtils.getPhone(threenetsOrder);
-            if (threenetsOrder.getOperator() == 1) {
-                threenetsOrder.setPaymentPrice(Integer.parseInt(order.getMobilePay() != null ? order.getMobilePay() : order.getSpecialPrice()));
-            } else if (threenetsOrder.getOperator() == 3) {
-                threenetsOrder.setPaymentPrice(Integer.parseInt(order.getUmicomPay()));
-            }
+//            if (threenetsOrder.getOperator() == 1) {
+//                threenetsOrder.setPaymentPrice(Integer.parseInt(order.getMobilePay() != null ? order.getMobilePay() : order.getSpecialPrice()));
+//            } else if (threenetsOrder.getOperator() == 3) {
+//                threenetsOrder.setPaymentPrice(Integer.parseInt(order.getUmicomPay()));
+//            }
         }
         //保存本地
         BeanUtils.copyProperties(threenetsOrder, order);
@@ -200,7 +195,7 @@ public class ThreeNetsOrderService {
         List<ThreenetsChildOrder> childOrderList = threeNetsChildOrderService.formattedPhone(order.getMemberTels(), order.getId());
         for (int i = 0; i < childOrderList.size(); i++) {
             ThreenetsChildOrder childOrder = childOrderList.get(i);
-            ThreenetsRing ring = getRingByOperate(rings, order, childOrder.getOperate());
+            ThreenetsRing ring = getRingByOperate(rings, order, childOrder.getOperator());
             childOrder.setRingId(ring.getId());
             childOrder.setIsVideoUser(ring.getRingType().equals("视频") ? true : false);
             //保存子订单

@@ -34,6 +34,8 @@ public class ThreenetsChildOrder implements Serializable {
     private String operateOrderId;
     // 是否包月（1.未包月/2.已包月/3.已退订）
     private Integer isMonthly;
+    // 支付方式（0.个付/1.统付）
+    private Integer paymentType;
     // 是否是视频彩铃用户（移动专属 0.否/1.是）
     private Boolean isVideoUser;
     // 是否是彩铃用户（0.否/1.是）
@@ -45,7 +47,7 @@ public class ThreenetsChildOrder implements Serializable {
     // 所在市
     private String city;
     // 运营商（1.移动/2.电信/3.联通）
-    private Integer operate;
+    private Integer operator;
     // 用户ID
     private Integer userId;
     // 运营商返回的备注信息

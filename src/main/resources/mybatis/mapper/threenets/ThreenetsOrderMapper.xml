@@ -8,19 +8,15 @@
         <result column="company_name" property="companyName" jdbcType="VARCHAR"/>
         <result column="company_linkman" property="companyLinkman" jdbcType="VARCHAR"/>
         <result column="linkman_tel" property="linkmanTel" jdbcType="VARCHAR"/>
-        <result column="payment_type" property="paymentType" jdbcType="INTEGER"/>
-        <result column="payment_price" property="paymentPrice" jdbcType="INTEGER"/>
         <result column="province" property="province" jdbcType="VARCHAR"/>
         <result column="city" property="city" jdbcType="VARCHAR"/>
         <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
         <result column="status" property="status" jdbcType="VARCHAR"/>
-        <result column="operate_id" property="operateId" jdbcType="VARCHAR"/>
         <result column="user_id" property="userId" jdbcType="INTEGER"/>
     </resultMap>
 
     <sql id="Base_Column_List">
-        id, operator, company_name, company_linkman, linkman_tel, payment_type, payment_price,
-        province, city, create_time, status, operate_id, user_id,
+        id, operator, company_name, company_linkman, linkman_tel,province, city, create_time, status, user_id,
         (SELECT COUNT(*) FROM tb_threenets_child_order WHERE parent_order_id = p.id) as childOrderQuantity,
         (SELECT COUNT(*) FROM tb_threenets_child_order WHERE parent_order_id = p.id AND is_monthly = 2) as childOrderQuantityByMonthly,
         (SELECT user_name FROM tb_user u WHERE u.id = p.user_id ) AS userName
@@ -115,9 +111,6 @@
             <if test="status != null">
                 status,
             </if>
-            <if test="operateId != null">
-                operate_id,
-            </if>
             <if test="userId != null">
                 user_id,
             </if>
@@ -158,9 +151,6 @@
             </if>
             <if test="status != null">
                 #{status,jdbcType=VARCHAR},
-            </if>
-            <if test="operateId != null">
-                #{operateId,jdbcType=VARCHAR},
             </if>
             <if test="userId != null">
                 #{userId,jdbcType=INTEGER},
@@ -203,9 +193,6 @@
             </if>
             <if test="status != null">
                 status = #{status,jdbcType=VARCHAR},
-            </if>
-            <if test="operateId != null">
-                operate_id = #{operateId,jdbcType=VARCHAR},
             </if>
             <if test="userId != null">
                 user_id = #{userId,jdbcType=INTEGER},

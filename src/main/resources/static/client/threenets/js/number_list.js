@@ -84,7 +84,7 @@ function showTable() {
             var note = "<i onclick='sendMessage(2,1," + id + ");' class='layui-icon' title='下发短信'><img src='../../client/threenets/images/message.png'></i>";
             var linkNote = "<i onclick='sendMessage(2,2," + id + ");' class='layui-icon' title='下发链接短信'><img src='../../client/threenets/images/link.png'></i>";
             var del = "<i class='layui-icon layui-icon-delete' title='删除' onclick='deleteTel(" + id + ")'></i>";
-            return refresh + (isMonthly == 1 ? note : '') + (isMonthly == 2 ? setRing : '') + (operate == 3 && isMonthly == 1 ? linkNote : '') + del;
+            return refresh + (isMonthly != 2 ? note : '') + (isMonthly == 2 ? setRing : '') + (operate == 3 && isMonthly == 1 ? linkNote : '') + del;
         }
     }]
     page("#set", 15, params, "/threenets/getThreeNetsTaskList", columns, columnDefs);
@@ -94,8 +94,11 @@ function showTable() {
 // type 标识是否是批量操作 1、批量操作/2、单个操作
 // data 数据 type为1时，data为父级订单ID；type为2时，data为子订单ID
 function getPhoneInfo(type,data) {
+    if (type == 1){
+        data  = $('#parentOrderId').val();
+    }
     AjaxPut("/threenets/getPhoneInfo", {
-        data:$('#parentOrderId').val(),
+        data:data,
         type:type
     }, function (res) {
         if (res.code == 200 && res.data) {
@@ -120,7 +123,7 @@ function refreshVbrtStatus(id) {
 }
 
 //添加账号
-function AddUser() {
+function addUser() {
     layer.open({
         type: 2,
         title: '添加号码',

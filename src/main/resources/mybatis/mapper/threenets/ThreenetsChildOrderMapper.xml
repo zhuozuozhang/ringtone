@@ -13,21 +13,22 @@
         <result column="parent_order_id" property="parentOrderId" jdbcType="INTEGER"/>
         <result column="operate_id" property="operateId" jdbcType="VARCHAR"/>
         <result column="operate_order_id" property="operateOrderId" jdbcType="VARCHAR"/>
+        <result column="payment_type" property="paymentType" jdbcType="INTEGER"/>
         <result column="is_monthly" property="isMonthly" jdbcType="INTEGER"/>
         <result column="is_video_user" property="isVideoUser" jdbcType="BIT"/>
         <result column="is_ringtone_user" property="isRingtoneUser" jdbcType="BIT"/>
         <result column="is_reply_message" property="isReplyMessage" jdbcType="BIT"/>
         <result column="province" property="province" jdbcType="VARCHAR"/>
         <result column="city" property="city" jdbcType="VARCHAR"/>
-        <result column="operate" property="operate" jdbcType="INTEGER"/>
+        <result column="operator" property="operator" jdbcType="INTEGER"/>
         <result column="user_id" property="userId" jdbcType="INTEGER"/>
         <result column="remark" property="remark" jdbcType="LONGVARCHAR"/>
     </resultMap>
 
     <sql id="Base_Column_List">
-        id, linkman, linkman_tel, status, create_date, ring_name, ring_id, parent_order_id,operate_order_id,
+        id, linkman, linkman_tel, status, create_date, ring_name, ring_id, parent_order_id,operate_order_id,payment_type,
         operate_id, is_monthly, is_video_user, is_ringtone_user, is_reply_message, province,
-        city, operate, user_id,remark
+        city, operator, user_id,remark
     </sql>
 
     <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer">
@@ -63,7 +64,7 @@
             AND b.parent_id = #{param.parentId} or b.id = #{param.parentId}
         </if>
         <if test="param.operate != null and param.operate != ''">
-            AND operate = #{param.operate}
+            AND operator = #{param.operate}
         </if>
         GROUP BY DATE_FORMAT( create_date, '%Y-%m-%d' ) DESC,is_monthly
         ) a
@@ -83,7 +84,7 @@
             AND b.parent_id = #{param.parentId} or b.id = #{param.parentId}
         </if>
         <if test="param.operate != null and param.operate != ''">
-            AND operate = #{param.operate}
+            AND operator = #{param.operate}
         </if>
         GROUP BY DATE_FORMAT( create_date, '%Y-%m' ) DESC,is_monthly
         ) a
@@ -122,6 +123,9 @@
             <if test="operateId != null">
                 operate_id,
             </if>
+            <if test="paymentType != null">
+                payment_type,
+            </if>
             <if test="isMonthly != null">
                 is_monthly,
             </if>
@@ -140,8 +144,8 @@
             <if test="city != null">
                 city,
             </if>
-            <if test="operate != null">
-                operate,
+            <if test="operator != null">
+                operator,
             </if>
             <if test="userId != null">
                 user_id,
@@ -175,6 +179,9 @@
             <if test="operateId != null">
                 #{operateId,jdbcType=VARCHAR},
             </if>
+            <if test="paymentType != null">
+                #{paymentType,jdbcType=INTEGER},
+            </if>
             <if test="isMonthly != null">
                 #{isMonthly,jdbcType=INTEGER},
             </if>
@@ -193,8 +200,8 @@
             <if test="city != null">
                 #{city,jdbcType=VARCHAR},
             </if>
-            <if test="operate != null">
-                #{operate,jdbcType=INTEGER},
+            <if test="operator != null">
+                #{operator,jdbcType=INTEGER},
             </if>
             <if test="userId != null">
                 #{userId,jdbcType=INTEGER},
@@ -235,6 +242,9 @@
             <if test="operateOrderId != null">
                 operate_order_id = #{operateOrderId,jdbcType=VARCHAR},
             </if>
+            <if test="paymentType != null">
+                payment_type = #{paymentType,jdbcType=INTEGER},
+            </if>
             <if test="isMonthly != null">
                 is_monthly = #{isMonthly,jdbcType=INTEGER},
             </if>
@@ -253,8 +263,8 @@
             <if test="city != null">
                 city = #{city,jdbcType=VARCHAR},
             </if>
-            <if test="operate != null">
-                operate = #{operate,jdbcType=INTEGER},
+            <if test="operator != null">
+                operator = #{operator,jdbcType=INTEGER},
             </if>
             <if test="userId != null">
                 user_id = #{userId,jdbcType=INTEGER},
@@ -327,7 +337,7 @@
             AND create_date &gt;= '${param.start}' AND create_date &lt;= '${param.end}'
         </if>
         <if test="param != null and param.operate != null and param.operate != ''">
-            AND operate = ${param.operate}
+            AND operator = ${param.operate}
         </if>
     </sql>
 
@@ -344,14 +354,14 @@
 
     <insert id="batchChindOrder" parameterType="java.util.List">
         insert into tb_threenets_child_order
-        (linkman, linkman_tel, status, create_date, ring_name, ring_id, parent_order_id,operate_order_id,operate_id, is_monthly, is_video_user, is_ringtone_user, is_reply_message, province,city, operate, user_id,remark)
+        (linkman, linkman_tel, status, create_date, ring_name, ring_id, parent_order_id,operate_order_id,operate_id, is_monthly, is_video_user, is_ringtone_user, is_reply_message, province,city, operator, user_id,remark)
         values
         <foreach collection="list" item="child" index="index" separator=",">
             (
             #{child.linkman}, #{child.linkmanTel},#{child.status},#{child.createDate},#{child.ringName},
             #{child.ringId},#{child.parentOrderId},#{child.operateOrderId},#{child.operateId},#{child.isMonthly},
             #{child.isVideoUser},#{child.isRingtoneUser},#{child.isReplyMessage},#{child.province},
-            #{child.city}, #{child.operate}, #{child.userId}, #{child.remark}
+            #{child.city}, #{child.operator}, #{child.userId}, #{child.remark}
             )
         </foreach>
     </insert>

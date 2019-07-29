@@ -3,6 +3,7 @@ package com.hrtxn.ringtone.project.threenets.threenet.controller;
 import com.hrtxn.ringtone.common.constant.AjaxResult;
 import com.hrtxn.ringtone.common.domain.BaseRequest;
 import com.hrtxn.ringtone.common.domain.Page;
+import com.hrtxn.ringtone.common.utils.StringUtils;
 import com.hrtxn.ringtone.freemark.config.logConfig.Log;
 import com.hrtxn.ringtone.freemark.config.systemConfig.RingtoneConfig;
 import com.hrtxn.ringtone.freemark.enums.BusinessType;
@@ -51,8 +52,10 @@ public class ThreeNetsRingController {
             map.put("orderId", orderId);
             map.put("companyName", order.getCompanyName());
             // 根据父级ID获取铃音运营商
-            String ringOperate = threeNetsRingService.getRingOperate(orderId);
-            map.put("ringOperate",ringOperate);
+            AjaxResult  ajaxResult = threeNetsRingService.getRingOperate(orderId);
+            if (StringUtils.isNotNull(ajaxResult.get("data"))){
+                map.put("ringOperate",ajaxResult.get("data"));
+            }
         } catch (Exception e) {
             log.error("进入铃音列表 方法：toMerchantsChildPage 错误信息",e);
         }

@@ -55,10 +55,10 @@ public class MiguApi implements Serializable {
     public static String refreshVbrtStatus_url = "http://211.137.107.18:8888/cm/userpay!refreshVrbtStatus.action"; // 刷新视频彩铃功能
     public static String remindOrderCrbtAndMonth_URL = "http://211.137.107.18:8888/cm/userpay!remindOrderCrbtAndMonth.action";//短信提醒url
     public static String orderCrbtAndMonth_URL = "http://211.137.107.18:8888/cm/userpay!orderCrbtAndMonth.action";//直接开通包月url
+    public static String addGroup_url = "http://211.137.107.18:8888/cm/groupInfo!addGroup.action";//增加商户url
 
     public static String findCircleMsgList_url = "http://211.137.107.18:8888/cm/groupInfo!findCircleMsgList.action";// 查看消息
     public static String ADD_PHONE_URL = "http://211.137.107.18:8888/cm/groupInfo!inviteGroupUsers.action";//增加号码地址
-    public static String addGroup_url = "http://211.137.107.18:8888/cm/groupInfo!addGroup.action";//增加商户url
     public static String importRing_url = "http://211.137.107.18:8888/cm/cmRing!importRing.action";//增加铃音url
     public static String checkAdminMsisdn_url = "http://211.137.107.18:8888/cm/groupInfo!checkAdminMsisdn.action";
     public static String checkGroupName_url = "http://211.137.107.18:8888/cm/groupInfo!checkGroupName.action";
@@ -339,7 +339,7 @@ public class MiguApi implements Serializable {
             reslut = sendPost(map, remindOrderCrbtAndMonth_URL); // 短信下发
         }
 
-        log.info("移动发送短信 参数：{},{},{} 结果：{}",phoneNo,phoneMiguId,groupId,smsConfirm);
+        log.info("移动发送短信 参数：{},{},{} 结果：{}", phoneNo, phoneMiguId, groupId, smsConfirm);
         return reslut;
     }
 
@@ -441,8 +441,16 @@ public class MiguApi implements Serializable {
         }
         return result;
     }
-    // 增加商户(短信回复类型)，带管理员手机。（不含铃音，和手机号码）
-    public MiguAddGroupRespone add(ThreenetsOrder ringOrder) throws IOException,NoLoginException {
+
+    /**
+     * 增加商户(短信回复类型)，带管理员手机。（不含铃音，和手机号码）
+     *
+     * @param ringOrder
+     * @return
+     * @throws IOException
+     * @throws NoLoginException
+     */
+    public MiguAddGroupRespone add(ThreenetsOrder ringOrder) throws IOException, NoLoginException {
         User user = ShiroUtils.getSysUser();
         MiguAddGroupRespone addGroupRespone = null;
         String vcode = getCodeString();
@@ -455,31 +463,31 @@ public class MiguApi implements Serializable {
             params.setParameter(CoreProtocolPNames.HTTP_CONTENT_CHARSET, Charset.forName("UTF-8"));
             reqEntity.addPart("vcode", new StringBody(vcode));// 集团简介
             reqEntity.addPart("circle.ID", new StringBody(""));
-            reqEntity.addPart("circle.name",new StringBody(ringOrder.getCompanyName(), Charset.forName("UTF-8")));// 集团名称
-            reqEntity.addPart("circle.cmName",new StringBody(user.getUserName(), Charset.forName("UTF-8")));// 客户经理姓名
+            reqEntity.addPart("circle.name", new StringBody(ringOrder.getCompanyName(), Charset.forName("UTF-8")));// 集团名称
+            reqEntity.addPart("circle.cmName", new StringBody(user.getUserName(), Charset.forName("UTF-8")));// 客户经理姓名
             reqEntity.addPart("circle.cmMsisdn", new StringBody(user.getUserTel()));// 客服号码
             reqEntity.addPart("groupManagerName", new StringBody(user.getUserName(), Charset.forName("UTF-8")));// 管理员姓名
-            reqEntity.addPart("circle.owner.msisdn",new StringBody(ringOrder.getLinkmanTel(), Charset.forName("UTF-8")));// 集团管理员手机号
-            reqEntity.addPart("manager.password",new StringBody(ringOrder.getLinkmanTel(), Charset.forName("UTF-8")));// 集团管理员登陆密码
+            reqEntity.addPart("circle.owner.msisdn", new StringBody(ringOrder.getLinkmanTel(), Charset.forName("UTF-8")));// 集团管理员手机号
+            reqEntity.addPart("manager.password", new StringBody(ringOrder.getLinkmanTel(), Charset.forName("UTF-8")));// 集团管理员登陆密码
             reqEntity.addPart("manager.status", new StringBody("1"));// 0启用集团管理员账户1禁止集团管理员账户
-            reqEntity.addPart("province",new StringBody("福建省", Charset.forName("UTF-8")));// 省
-            reqEntity.addPart("city",new StringBody("福州市", Charset.forName("UTF-8")));// 市
-            reqEntity.addPart("county",new StringBody("鼓楼区", Charset.forName("UTF-8")));// 区
-            reqEntity.addPart("groupStreet",new StringBody("六一北路92号", Charset.forName("UTF-8")));// 集团所在街道
+            reqEntity.addPart("province", new StringBody("福建省", Charset.forName("UTF-8")));// 省
+            reqEntity.addPart("city", new StringBody("福州市", Charset.forName("UTF-8")));// 市
+            reqEntity.addPart("county", new StringBody("鼓楼区", Charset.forName("UTF-8")));// 区
+            reqEntity.addPart("groupStreet", new StringBody("六一北路92号", Charset.forName("UTF-8")));// 集团所在街道
             reqEntity.addPart("circle.payType", new StringBody("0"));// 集团统付
-            if (ringOrder.getPaymentPrice() != 0) {
-                reqEntity.addPart("circle.price",new StringBody(ringOrder.getPaymentPrice() + ""));// 资费，默认值为0
-                reqEntity.addPart("circle.specialPrice",new StringBody(""));// 资费，默认值为0
-            }else{
-                reqEntity.addPart("circle.specialPrice",new StringBody(ringOrder.getPaymentPrice() + ""));// 资费，默认值为0
-            }
+//            if (ringOrder.getPaymentPrice() != 0) {
+//                reqEntity.addPart("circle.price", new StringBody(ringOrder.getPaymentPrice() + ""));// 资费，默认值为0
+//                reqEntity.addPart("circle.specialPrice", new StringBody(""));// 资费，默认值为0
+//            } else {
+//                reqEntity.addPart("circle.specialPrice", new StringBody(ringOrder.getPaymentPrice() + ""));// 资费，默认值为0
+//            }
             reqEntity.addPart("circle.specialDiscount", new StringBody(""));// 折扣
             reqEntity.addPart("circle.applyForSmsNotification", new StringBody("0"));// 申请免短信
             reqEntity.addPart("circle.isNormal", new StringBody("0"));// 集团类型、正式
             reqEntity.addPart("circle.trialTimeType", new StringBody(""));// 试用时间
             reqEntity.addPart("circle.memo", new StringBody(""));// 集团简介
             if (ringOrder.getUpLoadAgreement() != null) {
-                reqEntity.addPart("file",new FileBody(ringOrder.getUpLoadAgreement()));
+                reqEntity.addPart("file", new FileBody(ringOrder.getUpLoadAgreement()));
             }
             httppost.setEntity(reqEntity);
             HttpResponse response1 = httpclient.execute(httppost);

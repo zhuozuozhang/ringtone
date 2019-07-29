@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hrtxn.ringtone.project.threenets.threenet.mapper.ThreeNetsOrderAttachedMapper">
+
+    <resultMap id="BaseResultMap" type="com.hrtxn.ringtone.project.threenets.threenet.domain.ThreeNetsOrderAttached">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="migu_id" property="miguId" jdbcType="VARCHAR"/>
+        <result column="mcard_id" property="mcardId" jdbcType="VARCHAR"/>
+        <result column="swxl_id" property="swxlId" jdbcType="VARCHAR"/>
+        <result column="migu_price" property="miguPrice" jdbcType="REAL"/>
+        <result column="mcard_price" property="mcardPrice" jdbcType="REAL"/>
+        <result column="swxl_price" property="swxlPrice" jdbcType="REAL"/>
+        <result column="parent_order_id" property="parentOrderId" jdbcType="INTEGER"/>
+        <result column="business_license" property="businessLicense" jdbcType="VARCHAR"/>
+        <result column="confirm_letter" property="confirmLetter" jdbcType="VARCHAR"/>
+        <result column="subject_prove" property="subjectProve" jdbcType="VARCHAR"/>
+        <result column="avoid_short_agreement" property="avoidShortAgreement" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, migu_id, mcard_id, swxl_id, migu_price, mcard_price, swxl_price, parent_order_id,
+        business_license, confirm_letter, subject_prove, avoid_short_agreement
+    </sql>
+
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+        select
+            <include refid="Base_Column_List"/>
+        from
+            tb_threenets_order_attached
+        where
+            id = #{id,jdbcType=INTEGER}
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+        delete from tb_threenets_order_attached
+        where id = #{id,jdbcType=INTEGER}
+    </delete>
+
+    <insert id="insertSelective" parameterType="ThreeNetsOrderAttached">
+        insert into tb_threenets_order_attached
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="miguId != null">
+                migu_id,
+            </if>
+            <if test="mcardId != null">
+                mcard_id,
+            </if>
+            <if test="swxlId != null">
+                swxl_id,
+            </if>
+            <if test="miguPrice != null">
+                migu_price,
+            </if>
+            <if test="mcardPrice != null">
+                mcard_price,
+            </if>
+            <if test="swxlPrice != null">
+                swxl_price,
+            </if>
+            <if test="parentOrderId != null">
+                parent_order_id,
+            </if>
+            <if test="businessLicense != null">
+                business_license,
+            </if>
+            <if test="confirmLetter != null">
+                confirm_letter,
+            </if>
+            <if test="subjectProve != null">
+                subject_prove,
+            </if>
+            <if test="avoidShortAgreement != null">
+                avoid_short_agreement,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=INTEGER},
+            </if>
+            <if test="miguId != null">
+                #{miguId,jdbcType=VARCHAR},
+            </if>
+            <if test="mcardId != null">
+                #{mcardId,jdbcType=VARCHAR},
+            </if>
+            <if test="swxlId != null">
+                #{swxlId,jdbcType=VARCHAR},
+            </if>
+            <if test="miguPrice != null">
+                #{miguPrice,jdbcType=REAL},
+            </if>
+            <if test="mcardPrice != null">
+                #{mcardPrice,jdbcType=REAL},
+            </if>
+            <if test="swxlPrice != null">
+                #{swxlPrice,jdbcType=REAL},
+            </if>
+            <if test="parentOrderId != null">
+                #{parentOrderId,jdbcType=INTEGER},
+            </if>
+            <if test="businessLicense != null">
+                #{businessLicense,jdbcType=VARCHAR},
+            </if>
+            <if test="confirmLetter != null">
+                #{confirmLetter,jdbcType=VARCHAR},
+            </if>
+            <if test="subjectProve != null">
+                #{subjectProve,jdbcType=VARCHAR},
+            </if>
+            <if test="avoidShortAgreement != null">
+                #{avoidShortAgreement,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="updateByPrimaryKeySelective" parameterType="ThreeNetsOrderAttached">
+        update tb_threenets_order_attached
+        <set>
+            <if test="miguId != null">
+                migu_id = #{miguId,jdbcType=VARCHAR},
+            </if>
+            <if test="mcardId != null">
+                mcard_id = #{mcardId,jdbcType=VARCHAR},
+            </if>
+            <if test="swxlId != null">
+                swxl_id = #{swxlId,jdbcType=VARCHAR},
+            </if>
+            <if test="miguPrice != null">
+                migu_price = #{miguPrice,jdbcType=REAL},
+            </if>
+            <if test="mcardPrice != null">
+                mcard_price = #{mcardPrice,jdbcType=REAL},
+            </if>
+            <if test="swxlPrice != null">
+                swxl_price = #{swxlPrice,jdbcType=REAL},
+            </if>
+            <if test="parentOrderId != null">
+                parent_order_id = #{parentOrderId,jdbcType=INTEGER},
+            </if>
+            <if test="businessLicense != null">
+                business_license = #{businessLicense,jdbcType=VARCHAR},
+            </if>
+            <if test="confirmLetter != null">
+                confirm_letter = #{confirmLetter,jdbcType=VARCHAR},
+            </if>
+            <if test="subjectProve != null">
+                subject_prove = #{subjectProve,jdbcType=VARCHAR},
+            </if>
+            <if test="avoidShortAgreement != null">
+                avoid_short_agreement = #{avoidShortAgreement,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+</mapper>

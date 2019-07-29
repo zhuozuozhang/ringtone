@@ -6,27 +6,24 @@ import com.hrtxn.ringtone.common.api.MiguApi;
 import com.hrtxn.ringtone.common.api.SwxlApi;
 import com.hrtxn.ringtone.common.constant.AjaxResult;
 import com.hrtxn.ringtone.common.exception.NoLoginException;
-import com.hrtxn.ringtone.project.system.File.domain.Uploadfile;
-import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreenetsRing;
-import com.hrtxn.ringtone.project.threenets.threenet.json.migu.MiguAddGroupRespone;
 import com.hrtxn.ringtone.common.utils.SpringUtils;
 import com.hrtxn.ringtone.common.utils.StringUtils;
 import com.hrtxn.ringtone.common.utils.json.JsonUtil;
-import com.hrtxn.ringtone.project.system.user.domain.User;
+import com.hrtxn.ringtone.project.system.File.domain.Uploadfile;
 import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreenetsChildOrder;
 import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreenetsOrder;
+import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreenetsRing;
+import com.hrtxn.ringtone.project.threenets.threenet.json.migu.MiguAddGroupRespone;
 import com.hrtxn.ringtone.project.threenets.threenet.json.migu.RefreshVbrtStatusResult;
 import com.hrtxn.ringtone.project.threenets.threenet.json.swxl.*;
 import com.hrtxn.ringtone.project.threenets.threenet.mapper.ThreenetsChildOrderMapper;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.shiro.SecurityUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -52,7 +49,7 @@ public class ApiUtils {
         int failure=0;
         for (ThreenetsChildOrder threenetsChildOrder :threenetsChildOrderList) {
             // 判断运营商
-            Integer operate = threenetsChildOrder.getOperate();
+            Integer operate = threenetsChildOrder.getOperator();
             if (operate == 1) {// 移动
                 String result = miguApi.getPhoneInfo(threenetsChildOrder.getLinkmanTel(), threenetsChildOrder.getOperateId());
                 if (StringUtils.isNotEmpty(result)) {
@@ -191,7 +188,7 @@ public class ApiUtils {
     public AjaxResult refreshVbrtStatus(ThreenetsChildOrder threenetsChildOrder) throws IOException, NoLoginException {
         Boolean f = false;
         String msg = "刷新失败！";
-        if (threenetsChildOrder.getOperate() == 1 && StringUtils.isNotEmpty(threenetsChildOrder.getLinkmanTel())) {
+        if (threenetsChildOrder.getOperator() == 1 && StringUtils.isNotEmpty(threenetsChildOrder.getLinkmanTel())) {
             String result = miguApi.refreshVbrtStatus(threenetsChildOrder.getLinkmanTel());
             if (StringUtils.isNotEmpty(result)) {
                 // 解析出数据
@@ -229,9 +226,9 @@ public class ApiUtils {
         int failure = 0; // 发送失败数量
         for (ThreenetsChildOrder t : threenetsChildOrderList) {
             if (flag == 1) {
-                if (t.getOperate() == 1) { // 移动普通短信
+                if (t.getOperator() == 1) { // 移动普通短信
                     miguApi.remindOrderCrbtAndMonth(t.getLinkmanTel(), t.getOperateOrderId(), t.getOperateId(), false);
-                } else if (t.getOperate() == 2) { // 电信普通短信
+                } else if (t.getOperator() == 2) { // 电信普通短信
 
                 } else { // 联通普通短信
                     String result = swxlApi.remindOrderCrbtAndMonth(t.getLinkmanTel(), t.getOperateId(), false);
@@ -244,7 +241,7 @@ public class ApiUtils {
                     }
                 }
             } else {
-                if (t.getOperate() == 3) { // 链接短信，联通专属
+                if (t.getOperator() == 3) { // 链接短信，联通专属
                     String res = swxlApi.swxlSendSMSByCRBTFail(t.getLinkmanTel());
                     if (StringUtils.isNotEmpty(res)){
                         SwxlPubBackData info = (SwxlPubBackData) JsonUtil.getObject4JsonString(res, SwxlPubBackData.class);
@@ -262,6 +259,13 @@ public class ApiUtils {
             return AjaxResult.success(false, msg2);
         }
     }
+
+
+    public AjaxResult getRingInfo(List<ThreenetsRing> threenetsRings) {
+        return null;
+    }
+
+
 
     /**
      * 保存移动订单
@@ -290,11 +294,11 @@ public class ApiUtils {
                     // 设置集团id
                     order.setMcardId(addGroupResponse.getCircleId());
                     // 2.增加订单表
-                    if (order.getPaymentPrice() == 3 || order.getPaymentPrice() == 5) {
-                        order.setStatus("审核通过");
-                    } else {
-                        order.setStatus("待审核");
-                    }
+//                    if (order.getPaymentPrice() == 3 || order.getPaymentPrice() == 5) {
+//                        order.setStatus("审核通过");
+//                    } else {
+//                        order.setStatus("待审核");
+//                    }
                 }
             return AjaxResult.success(addGroupResponse,addGroupResponse.getMsg());
         }catch (Exception e){
@@ -368,4 +372,5 @@ public class ApiUtils {
             return AjaxResult.error("保存失败");
         }
     }
+
 }

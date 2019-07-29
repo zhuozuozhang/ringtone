@@ -166,7 +166,7 @@ public class ThreeNetsChildOrderService {
         JuhePhone juhePhone = JuhePhoneUtils.getPhone(childOrder.getLinkmanTel());
         JuhePhoneResult result = (JuhePhoneResult) juhePhone.getResult();
         //运营商
-        childOrder.setOperate(JuhePhoneUtils.getOperate(result));
+        childOrder.setOperator(JuhePhoneUtils.getOperate(result));
         childOrder.setProvince(result.getProvince());
         childOrder.setCity(result.getCity());
         //设置代理商
@@ -269,26 +269,27 @@ public class ThreeNetsChildOrderService {
      * @return
      */
     public AjaxResult sendMessage(Integer type, Integer flag, Integer data) throws Exception {
-        if (StringUtils.isNotNull(type) && StringUtils.isNotNull(flag) && StringUtils.isNotNull(data)) {
+        if (StringUtils.isNotNull(type) && StringUtils.isNotNull(flag) && StringUtils.isNotNull(data)){
             // 根据type获取数据内容
             List<ThreenetsChildOrder> threenetsChildOrderList = new ArrayList<>();
-            if (type == 1) {// 批量操作，应获取父级ID下所有子订单
-                // 根据父级订单ID获取子订单
+            if (type == 1){// 批量操作，应获取父级ID下所有子订单
+                // 根据父级订单ID获取企业彩铃为未包月状态子订单
                 ThreenetsChildOrder threenetsChildOrder = new ThreenetsChildOrder();
                 threenetsChildOrder.setParentOrderId(data);
-                threenetsChildOrderList = threenetsChildOrderMapper.selectThreeNetsTaskList(null, threenetsChildOrder);
-            } else {
+                threenetsChildOrder.setIsMonthly(1);
+                threenetsChildOrderList = threenetsChildOrderMapper.selectThreeNetsTaskList(null,threenetsChildOrder);
+            }else{
                 // 单个操作，获取子订单信息
                 ThreenetsChildOrder threenetsChildOrder = threenetsChildOrderMapper.selectByPrimaryKey(data);
                 threenetsChildOrderList.add(threenetsChildOrder);
             }
             // 判断是否有数据
-            if (threenetsChildOrderList.size() > 0) {
-                //return apiUtils.sendMessage(threenetsChildOrderList, flag);
-            } else {
-                return AjaxResult.success(false, "无数据！");
+            if (threenetsChildOrderList.size() > 0){
+                return apiUtils.sendMessage(threenetsChildOrderList, flag);
+            }else {
+                return AjaxResult.success(false,"无数据！");
             }
         }
-        return AjaxResult.success(false, "参数不正确！");
+        return AjaxResult.success(false,"参数不正确！");
     }
 }
