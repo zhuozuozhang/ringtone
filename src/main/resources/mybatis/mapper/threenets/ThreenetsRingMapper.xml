@@ -179,8 +179,8 @@
     </sql>
 
     <sql id="parameters">
-        <if test="param != null and param.operate != null and param.operate != ''">
-            AND r.operate = #{param.operate}
+        <if test="param != null and param.operator != null and param.operator != ''">
+            AND r.operate = #{param.operator}
         </if>
         <if test="param != null and param.id != null and param.id != ''">
             AND r.order_id = #{param.id}

@@ -89,7 +89,7 @@ public class ThreeNetsRingController {
     @GetMapping("/threenets/toAddMerchantsRingPage")
     public String toAddMerchantsRingPage(ModelMap map,BaseRequest request){
         map.put("orderId", request.getOrderId());
-        map.put("operate", request.getOperate());
+        map.put("operate", request.getOperator());
         return "threenets/threenet/merchants/addring";
     }
 

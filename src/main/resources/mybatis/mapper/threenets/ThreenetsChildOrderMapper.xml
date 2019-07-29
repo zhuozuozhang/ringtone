@@ -336,8 +336,8 @@
         <if test="param != null and param.start != null and param.start != '' and param.end != '' and param.end != null">
             AND create_date &gt;= '${param.start}' AND create_date &lt;= '${param.end}'
         </if>
-        <if test="param != null and param.operate != null and param.operate != ''">
-            AND operator = ${param.operate}
+        <if test="param != null and param.operator != null and param.operator != ''">
+            AND operator = ${param.operator}
         </if>
     </sql>
 

@@ -130,7 +130,7 @@ public class ThreeNetsService {
         newList.sort((o1, o2) -> o2.getDateTimes().compareTo(o1.getDateTimes()));
         ThreenetsChildOrder threenetsChildOrder = new ThreenetsChildOrder();
         threenetsChildOrder.setUserId(request.getUserId());
-        threenetsChildOrder.setOperator(request.getOperate());
+        threenetsChildOrder.setOperator(request.getOperator());
         threenetsChildOrder.setIsMonthly(2);
         Integer count = threenetsChildOrderMapper.getCount(threenetsChildOrder);
         for (PlotBarPhone plotBarPhone : newList) {

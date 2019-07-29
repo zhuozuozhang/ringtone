@@ -51,7 +51,7 @@ function showTable() {
     },{
         targets:[3],
         render:function (data, type, row, meta) {
-            return "<div style='text-overflow:ellipsis;overflow:hidden;white-space:nowrap;width:150px;' title='" + data + "'>" + data + "</div>";;
+            return "<div style='text-overflow:ellipsis;overflow:hidden;white-space:nowrap;width:150px;' title='" + data + "'>" + data + "</div>";
         }
     }, {
         targets: [5],

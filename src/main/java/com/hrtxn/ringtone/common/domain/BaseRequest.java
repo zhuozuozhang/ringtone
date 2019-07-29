@@ -15,7 +15,7 @@ public class BaseRequest {
 
     private String name;
 
-    private Integer operate;
+    private Integer operator;
 
     private Integer isMonthly;
 
