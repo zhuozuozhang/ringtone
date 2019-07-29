@@ -9,7 +9,7 @@ function showTable() {
         {"data": "id"},
         {"data": "linkman"},
         {"data": "linkmanTel"},
-        {"data": "operate"},
+        {"data": "operator"},
         {"data": "province"},
         {"data": "createDate"},
         {"data": "ringName"},
@@ -63,10 +63,10 @@ function showTable() {
     }, {
         targets: [9],
         render: function (data, type, row, meta) {
-            var operate = row.operate;
+            var operator = row.operator;
             var id = row.id;
             var status = data ? '是' : '否'
-            return status + (operate == 1 ? "<i onclick='refreshVbrtStatus(" + id + ")' class='layui-icon' title='刷新'><img src='../../client/threenets/images/refresh.png'></i>" : '');
+            return status + (operator == 1 ? "<i onclick='refreshVbrtStatus(" + id + ")' class='layui-icon' title='刷新'><img src='../../client/threenets/images/refresh.png'></i>" : '');
         }
     }, {
         targets: [10],
@@ -77,14 +77,14 @@ function showTable() {
         targets: [11],
         render: function (data, type, row, meta) {
             var id = row.id;
-            var operate = row.operate;
+            var operator = row.operator;
             var isMonthly = row.isMonthly;
             var setRing = "<i class='layui-icon' title='设置铃音'><img src='../../client/threenets/images/ring.png'></i>";
             var refresh = "<i onclick='getPhoneInfo(2," + id + ")' class='layui-icon layui-icon-refresh-3' title='刷新'></i>";
             var note = "<i onclick='sendMessage(2,1," + id + ");' class='layui-icon' title='下发短信'><img src='../../client/threenets/images/message.png'></i>";
             var linkNote = "<i onclick='sendMessage(2,2," + id + ");' class='layui-icon' title='下发链接短信'><img src='../../client/threenets/images/link.png'></i>";
             var del = "<i class='layui-icon layui-icon-delete' title='删除' onclick='deleteTel(" + id + ")'></i>";
-            return refresh + (isMonthly != 2 ? note : '') + (isMonthly == 2 ? setRing : '') + (operate == 3 && isMonthly == 1 ? linkNote : '') + del;
+            return refresh + (isMonthly != 2 ? note : '') + (isMonthly == 2 ? setRing : '') + (operator == 3 && isMonthly == 1 ? linkNote : '') + del;
         }
     }]
     page("#set", 15, params, "/threenets/getThreeNetsTaskList", columns, columnDefs);

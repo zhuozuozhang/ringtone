@@ -20,11 +20,11 @@ public class ThreeNetsOrderAttached implements Serializable {
     // 联通运营商ID
     private String swxlId;
     // 移动支付价格
-    private Float miguPrice;
+    private Integer miguPrice;
     // 电信支付价格
-    private Float mcardPrice;
+    private Integer mcardPrice;
     // 联通支付价格
-    private Float swxlPrice;
+    private Integer swxlPrice;
     // 父级订单ID
     private Integer parentOrderId;
     // 营业执照/企业资质路径（电信专属）

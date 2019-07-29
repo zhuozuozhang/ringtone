@@ -7,9 +7,9 @@
         <result column="migu_id" property="miguId" jdbcType="VARCHAR"/>
         <result column="mcard_id" property="mcardId" jdbcType="VARCHAR"/>
         <result column="swxl_id" property="swxlId" jdbcType="VARCHAR"/>
-        <result column="migu_price" property="miguPrice" jdbcType="REAL"/>
-        <result column="mcard_price" property="mcardPrice" jdbcType="REAL"/>
-        <result column="swxl_price" property="swxlPrice" jdbcType="REAL"/>
+        <result column="migu_price" property="miguPrice" jdbcType="INTEGER"/>
+        <result column="mcard_price" property="mcardPrice" jdbcType="INTEGER"/>
+        <result column="swxl_price" property="swxlPrice" jdbcType="INTEGER"/>
         <result column="parent_order_id" property="parentOrderId" jdbcType="INTEGER"/>
         <result column="business_license" property="businessLicense" jdbcType="VARCHAR"/>
         <result column="confirm_letter" property="confirmLetter" jdbcType="VARCHAR"/>
@@ -90,13 +90,13 @@
                 #{swxlId,jdbcType=VARCHAR},
             </if>
             <if test="miguPrice != null">
-                #{miguPrice,jdbcType=REAL},
+                #{miguPrice,jdbcType=INTEGER},
             </if>
             <if test="mcardPrice != null">
-                #{mcardPrice,jdbcType=REAL},
+                #{mcardPrice,jdbcType=INTEGER},
             </if>
             <if test="swxlPrice != null">
-                #{swxlPrice,jdbcType=REAL},
+                #{swxlPrice,jdbcType=INTEGER},
             </if>
             <if test="parentOrderId != null">
                 #{parentOrderId,jdbcType=INTEGER},
@@ -129,13 +129,13 @@
                 swxl_id = #{swxlId,jdbcType=VARCHAR},
             </if>
             <if test="miguPrice != null">
-                migu_price = #{miguPrice,jdbcType=REAL},
+                migu_price = #{miguPrice,jdbcType=INTEGER},
             </if>
             <if test="mcardPrice != null">
-                mcard_price = #{mcardPrice,jdbcType=REAL},
+                mcard_price = #{mcardPrice,jdbcType=INTEGER},
             </if>
             <if test="swxlPrice != null">
-                swxl_price = #{swxlPrice,jdbcType=REAL},
+                swxl_price = #{swxlPrice,jdbcType=INTEGER},
             </if>
             <if test="parentOrderId != null">
                 parent_order_id = #{parentOrderId,jdbcType=INTEGER},
