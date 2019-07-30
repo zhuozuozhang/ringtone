@@ -1,7 +1,10 @@
 package com.hrtxn.ringtone.project.system.notice.mapper;
 
+import com.hrtxn.ringtone.common.domain.Page;
 import com.hrtxn.ringtone.project.system.notice.domain.Notice;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
 
@@ -18,7 +21,7 @@ public interface NoticeMapper {
      * @return
      * @throws Exception
      */
-    List<Notice> findAllNoticeList() throws Exception;
+    List<Notice> findAllNoticeList(@Param("page") Page page) throws Exception;
 
     /**
      * 添加公告
@@ -55,4 +58,6 @@ public interface NoticeMapper {
      * @return
      */
     List<Notice> findNoticeListByModul(String modul) throws Exception;
+
+    int getNoticeCount();
 }

@@ -24,6 +24,11 @@
         FROM
             sys_notice
         ORDER BY notice_time DESC
+        LIMIT #{page.page},#{page.pagesize}
+    </select>
+    <!--获取公告总数-->
+    <select id="getNoticeCount" resultType="int">
+        SELECT COUNT(*) FROM sys_notice;
     </select>
     <!-- 根据ID查询公告信息 -->
     <select id="findNoticeById" resultMap="BaseResultMap" parameterType="java.lang.Integer">

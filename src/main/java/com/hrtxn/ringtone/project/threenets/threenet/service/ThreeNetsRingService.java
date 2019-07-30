@@ -7,6 +7,7 @@ import com.hrtxn.ringtone.project.system.File.service.FileService;
 import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreenetsRing;
 import com.hrtxn.ringtone.project.threenets.threenet.mapper.ThreenetsRingMapper;
 import com.hrtxn.ringtone.project.threenets.threenet.utils.ApiUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,6 +22,7 @@ import java.util.List;
  * Description:铃音业务层
  */
 @Service
+@Slf4j
 public class ThreeNetsRingService {
 
     private final String[] VIDEO = {"mp4", "mov"};
@@ -146,11 +148,12 @@ public class ThreeNetsRingService {
             }
             // 刷新铃音信息
             AjaxResult ajaxResult = apiUtils.getRingInfo(threenetsRings);
-            if ((Boolean)ajaxResult.get("data")){
+            log.info("刷新铃音信息结果"+ajaxResult.toString());
+//            if ((Boolean)ajaxResult.get("data")){
                 return AjaxResult.success(operate,"刷新成功!");
-            }else{
-                return AjaxResult.success(null,ajaxResult.get("msg").toString());
-            }
+//            }else{
+//                return AjaxResult.success(null,ajaxResult.get("msg").toString());
+//            }
         }else{
             return AjaxResult.success(null,"无数据!");
         }

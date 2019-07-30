@@ -10,13 +10,14 @@
         <result column="operate" property="operate" jdbcType="INTEGER"/>
         <result column="order_id" property="orderId" jdbcType="INTEGER"/>
         <result column="operate_ring_id" property="operateRingId" jdbcType="VARCHAR"/>
+        <result column="operate_id" property="operateId" jdbcType="VARCHAR"/>
         <result column="ring_way" property="ringWay" jdbcType="LONGVARCHAR"/>
         <result column="ring_content" property="ringContent" jdbcType="LONGVARCHAR"/>
         <result column="remark" property="remark" jdbcType="LONGVARCHAR"/>
         <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
     </resultMap>
     <sql id="Base_Column_List">
-          id, ring_name, ring_type, ring_status, operate, order_id, operate_ring_id,ring_way, ring_content, create_time, remark
+          id, ring_name, ring_type, ring_status, operate, order_id,operate_id,operate_ring_id,ring_way, ring_content, create_time, remark
     </sql>
 
     <select id="getRing" resultMap="BaseResultMap">

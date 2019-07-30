@@ -1,12 +1,12 @@
 package com.hrtxn.ringtone.common.api;
 
 import com.hrtxn.ringtone.common.exception.NoLoginException;
-import com.hrtxn.ringtone.project.threenets.threenet.json.migu.MiguAddGroupRespone;
 import com.hrtxn.ringtone.common.utils.ChaoJiYing;
 import com.hrtxn.ringtone.common.utils.ShiroUtils;
 import com.hrtxn.ringtone.common.utils.json.JsonUtil;
 import com.hrtxn.ringtone.project.system.user.domain.User;
 import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreenetsOrder;
+import com.hrtxn.ringtone.project.threenets.threenet.json.migu.MiguAddGroupRespone;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -56,6 +56,7 @@ public class MiguApi implements Serializable {
     public static String remindOrderCrbtAndMonth_URL = "http://211.137.107.18:8888/cm/userpay!remindOrderCrbtAndMonth.action";//短信提醒url
     public static String orderCrbtAndMonth_URL = "http://211.137.107.18:8888/cm/userpay!orderCrbtAndMonth.action";//直接开通包月url
     public static String addGroup_url = "http://211.137.107.18:8888/cm/groupInfo!addGroup.action";//增加商户url
+    public static String findCircleRingPageById_url = "http://211.137.107.18:8888/cm/setRingAction!findCircleRingById.action"; // 获取铃音信息
 
     public static String findCircleMsgList_url = "http://211.137.107.18:8888/cm/groupInfo!findCircleMsgList.action";// 查看消息
     public static String ADD_PHONE_URL = "http://211.137.107.18:8888/cm/groupInfo!inviteGroupUsers.action";//增加号码地址
@@ -65,7 +66,6 @@ public class MiguApi implements Serializable {
     public static String ringSetting_url = "http://211.137.107.18:8888/cm/groupInfo!ringSetting.action";
     public static String deleteCircleRingById_url = "http://211.137.107.18:8888/cm/cmCircleRing!deleteCircleRingById.action";
     public static String deletePhone_url = "http://211.137.107.18:8888/cm/groupInfo!deleteUserByMemberId.action";
-    public static String findCircleRingPageById_url = "http://211.137.107.18:8888/cm/setRingAction!findCircleRingById.action";
     public static String getRingSettingListByMsisdn_url = "http://211.137.107.18:8888/cm/toolbox!getRingSettingListByMsisdn.action";
     public static String getRingListByMsisdn_url = "http://211.137.107.18:8888/cm/toolbox!getRingListByMsisdn.action";
     public static String delOtherRing_url = "http://211.137.107.18:8888/cm/toolbox!delRing.action";
@@ -372,6 +372,21 @@ public class MiguApi implements Serializable {
         String getUrl = getRingPage_url + "?groupId=" + circleID;
         String result = sendGet(getUrl);
         log.info("移动获取铃音列表页面--->" + result);
+        return result;
+    }
+
+    /**
+     * 获取铃音信息
+     *
+     * @param circleID
+     * @return
+     * @throws NoLoginException
+     * @throws IOException
+     */
+    public String findCircleRingPageById(String circleID) throws NoLoginException, IOException {
+        String getUrl = findCircleRingPageById_url + "?circleID=" + circleID;
+        String result = sendGet(getUrl);
+        log.info("移动获取铃音信息 参数：{} 结果：{}", circleID, result);
         return result;
     }
 

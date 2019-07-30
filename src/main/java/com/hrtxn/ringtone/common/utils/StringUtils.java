@@ -234,7 +234,20 @@ public class StringUtils extends org.apache.commons.lang3.StringUtils
 
         return str.substring(start, end);
     }
-
+    /**
+     * 从开头截取到字符c,不包含字符c
+     * @param source
+     * @param c
+     * @return
+     */
+    public static String subString(String source,char c){
+        if(source==null){
+            return source;
+        }
+        int index= source.indexOf(c);
+        String s = source.substring(0,index);
+        return s;
+    }
     /**
      * 格式化文本, {} 表示占位符<br>
      * 此方法只是简单将占位符 {} 按照顺序替换为参数<br>

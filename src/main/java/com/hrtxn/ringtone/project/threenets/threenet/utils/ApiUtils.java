@@ -17,6 +17,7 @@ import com.hrtxn.ringtone.project.threenets.threenet.json.migu.MiguAddGroupRespo
 import com.hrtxn.ringtone.project.threenets.threenet.json.migu.RefreshVbrtStatusResult;
 import com.hrtxn.ringtone.project.threenets.threenet.json.swxl.*;
 import com.hrtxn.ringtone.project.threenets.threenet.mapper.ThreenetsChildOrderMapper;
+import com.hrtxn.ringtone.project.threenets.threenet.mapper.ThreenetsRingMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -260,9 +261,91 @@ public class ApiUtils {
         }
     }
 
+    /**
+     * 刷新铃音信息
+     * @param threenetsRings
+     * @return
+     */
+    public AjaxResult getRingInfo(List<ThreenetsRing> threenetsRings) throws NoLoginException, IOException {
+        String msg = "错误消息：";
+        int failure = 0;
+        for (ThreenetsRing threenetsRing:threenetsRings) {
+            Boolean f = false;
+            Integer operator = threenetsRing.getOperate();
+            if (operator ==1){ // 移动
+                String result = miguApi.findCircleRingPageById(threenetsRing.getOperateId());
+                if (StringUtils.isNotEmpty(result)) {
+                    Document doc = Jsoup.parse(result);
+                    Elements contents = doc.getElementsByClass("tbody_lis");
+                    String ringName = threenetsRing.getRingName();
+                    ringName = StringUtils.subString(ringName, '.');
+                    Elements trs = contents.get(0).getElementsByTag("tr");
+                    for (int i = 0; i < trs.size(); i++) {
+                        Elements tds = trs.get(i).getElementsByTag("td");
+                        if (tds.get(0).text().equals(ringName)) {
+                            Element el2 = tds.get(4);
+                            String ringCheckmsg = el2.attr("title");
+                            ringCheckmsg = ringCheckmsg.replace("激活", "下发");
+                            String remark = el2.text();
+                            if (StringUtils.isNotEmpty(ringCheckmsg)) {
+                                threenetsRing.setRemark(ringCheckmsg); // 运营商返回的备注信息
+                            }
+                            // 铃音状态（1.待审核/2.激活中/3.激活成功/4.部分省份激活超时/5.部分省份激活成功/6.激活失败）
+                            if ("待审核".equals(remark)){
+                                threenetsRing.setRingStatus(1);
+                            } else if ("激活中".equals(remark)){
+                                threenetsRing.setRingStatus(2);
+                            }else if ("激活成功".equals(remark)) {
+                                threenetsRing.setRingStatus(3);
+                            } else if ("部分省份激活超时".equals(remark)) {
+                                threenetsRing.setRingStatus(4);
+                            } else if ("部分省份激活成功".equals(remark)) {
+                                threenetsRing.setRingStatus(5);
+                            } else  {
+                                threenetsRing.setRingStatus(6);
+                            }
+                            if (threenetsRing.getRingStatus() != 5){
+                                Element el = tds.get(8);
+                                Elements temp = el.child(2).getElementsByTag("a");
+                                String t = temp.attr("onclick");
+                                int begin = t.indexOf("showConfirm('") + 13;
+                                int end = begin + 36;
+                                String t2 = t.substring(begin, end);
+                                threenetsRing.setOperateRingId(t2);
+                            }else {
+                                Element el = tds.get(8);
+                                Elements temp = el.child(2).getElementsByTag("a");
+                                String t = temp.attr("href");
+                                int begin = t.indexOf("ringID=") + 7;
+                                int end = begin + 36;
+                                String t2 = t.substring(begin, end);
+                                threenetsRing.setOperateRingId(t2);
+                            }
+                            // 修改铃音信息
+                            int count = SpringUtils.getBean(ThreenetsRingMapper.class).updateByPrimaryKeySelective(threenetsRing);
 
-    public AjaxResult getRingInfo(List<ThreenetsRing> threenetsRings) {
-        return null;
+                            break;
+                        }
+                    }
+                } else {
+                    failure++;
+                    msg += "["+threenetsRing.getRingName()+":更新出错！]";
+                }
+            } else if(operator == 2){ // 电信
+
+            } else { // 联通
+
+            }
+            if(f){
+                // 更改铃音信息
+
+            }
+        }
+        if(failure > 0){
+            return AjaxResult.success(false,msg);
+        }else {
+            return AjaxResult.success(true,"刷新成功！");
+        }
     }
 
 

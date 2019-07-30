@@ -1,6 +1,7 @@
 package com.hrtxn.ringtone.project.system.notice.controller;
 
 import com.hrtxn.ringtone.common.constant.AjaxResult;
+import com.hrtxn.ringtone.common.domain.Page;
 import com.hrtxn.ringtone.common.utils.StringUtils;
 import com.hrtxn.ringtone.freemark.config.logConfig.Log;
 import com.hrtxn.ringtone.freemark.enums.BusinessType;
@@ -37,12 +38,30 @@ public class NoticeController {
     @GetMapping("/admin/toNoticeListPage")
     public String toNoticeListPage(ModelMap map){
         try {
-            List<Notice> noticeList = noticeService.findAllNoticeList();
-            map.put("noticeList",noticeList);
+//            List<Notice> noticeList = noticeService.findAllNoticeList();
+//            map.put("noticeList",noticeList);
         } catch (Exception e) {
             log.error("获取公告列表 方法：toNoticeListPage 错误信息：",e);
         }
         return "admin/notice/notice_list";
+    }
+
+    /**
+     * 获取公告列表
+     *
+     * @param page
+     * @return
+     */
+    @RequiresRoles("admin")
+    @ResponseBody
+    @PostMapping("/admin/getNoticeList")
+    public AjaxResult getNoticeList(Page page){
+        try {
+            return noticeService.findAllNoticeList(page);
+        } catch (Exception e) {
+            log.error("获取公告列表 方法：getNoticeList 错误信息：",e);
+            return AjaxResult.error(e.getMessage());
+        }
     }
 
     /**
@@ -157,7 +176,7 @@ public class NoticeController {
     public String toClinetNoticeListPage(ModelMap map){
         List<Notice> _noticeList = new ArrayList<>();
         try {
-            List<Notice> noticeList = noticeService.findAllNoticeList();
+            List<Notice> noticeList = null;//noticeService.findAllNoticeList();
             for (Notice notice : noticeList) {
                 if (notice.getNoticeStatus()){
                     _noticeList.add(notice);

@@ -1,10 +1,12 @@
 package com.hrtxn.ringtone.project.system.notice.service;
 
 import com.hrtxn.ringtone.common.constant.AjaxResult;
+import com.hrtxn.ringtone.common.domain.Page;
 import com.hrtxn.ringtone.common.utils.ShiroUtils;
 import com.hrtxn.ringtone.common.utils.StringUtils;
 import com.hrtxn.ringtone.project.system.notice.domain.Notice;
 import com.hrtxn.ringtone.project.system.notice.mapper.NoticeMapper;
+import org.aspectj.weaver.loadtime.Aj;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -27,8 +29,17 @@ public class NoticeService {
      * @return
      * @throws Exception
      */
-    public List<Notice> findAllNoticeList() throws Exception {
-        return noticeMapper.findAllNoticeList();
+    public AjaxResult findAllNoticeList(Page page) throws Exception {
+        if (!StringUtils.isNotNull(page)) return null;
+        page.setPage((page.getPage() - 1) * page.getPagesize());
+        // 获取公告总数
+        int count = noticeMapper.getNoticeCount();
+        // 获取公告信息
+        List<Notice> noticeList = noticeMapper.findAllNoticeList(page);
+        if (noticeList.size() > 0){
+            return AjaxResult.success(noticeList,"获取数据成功！",count);
+        }
+        return AjaxResult.error("没有获取到数据！");
     }
     /**
      * 添加公告信息
