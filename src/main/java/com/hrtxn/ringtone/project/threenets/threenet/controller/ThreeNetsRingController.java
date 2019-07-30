@@ -102,11 +102,11 @@ public class ThreeNetsRingController {
     @PostMapping("/threenets/insterThreeNetsRing")
     @ResponseBody
     @Log(title = "添加铃音", businessType = BusinessType.INSERT, operatorLogType = OperatorLogType.THREENETS)
-    public AjaxResult insterThreeNetsRing(ThreenetsRing ring) {
+    public AjaxResult insterThreeNetsRing(ThreenetsRing ring){
         try {
-            threeNetsRingService.save(ring);
-            return AjaxResult.success(ring, "保存成功");
-        } catch (Exception e) {
+            threeNetsRingService.saveRing(ring);
+            return AjaxResult.success(ring,"保存成功");
+        }catch (Exception e){
             log.error("添加铃音失败 方法：insterThreeNetsRing 错误信息", e);
             return AjaxResult.error("保存失败！");
         }

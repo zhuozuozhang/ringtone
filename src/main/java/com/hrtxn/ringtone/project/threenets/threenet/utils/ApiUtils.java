@@ -10,6 +10,7 @@ import com.hrtxn.ringtone.common.utils.SpringUtils;
 import com.hrtxn.ringtone.common.utils.StringUtils;
 import com.hrtxn.ringtone.common.utils.json.JsonUtil;
 import com.hrtxn.ringtone.project.system.File.domain.Uploadfile;
+import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreeNetsOrderAttached;
 import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreenetsChildOrder;
 import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreenetsOrder;
 import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreenetsRing;
@@ -23,6 +24,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import reactor.util.IoUtils;
 
 import java.io.IOException;
 import java.util.List;
@@ -343,40 +345,35 @@ public class ApiUtils {
      * 保存移动订单
      *
      * @param order
-     * @param order
+     * @param attached
      * @return
      */
-    public AjaxResult saveOrderByYd(ThreenetsOrder order){
-        try{
-            //登陆
-            miguApi.loginAuto();
-
-           int sendCount = 3;// 系统同步远程系统3次。解决网络慢的问题
-            // 添加到咪咕平台
-            // 1.先进行增加到本地数据库
-                // 2.在进行同步到服务器，同步3次。
-                MiguAddGroupRespone addGroupResponse = null;
-                for (int i = 0; i < sendCount; i++) {// 重试添加3次
-                    addGroupResponse = miguApi.add(order);
-                    if (addGroupResponse != null) {
-                        break;
-                    }
-                }
-                if (addGroupResponse.isSuccess()) {
-                    // 设置集团id
-                    order.setMcardId(addGroupResponse.getCircleId());
-                    // 2.增加订单表
-//                    if (order.getPaymentPrice() == 3 || order.getPaymentPrice() == 5) {
-//                        order.setStatus("审核通过");
-//                    } else {
-//                        order.setStatus("待审核");
-//                    }
-                }
-            return AjaxResult.success(addGroupResponse,addGroupResponse.getMsg());
-        }catch (Exception e){
-            log.error("对接移动 方法：saveOrderByYd  错误信息", e);
-            return AjaxResult.error("保存失败");
+    public MiguAddGroupRespone saveOrderByYd(ThreenetsOrder order, ThreeNetsOrderAttached attached)throws IOException,NoLoginException{
+       int sendCount = 3;// 系统同步远程系统3次。解决网络慢的问题
+        MiguAddGroupRespone addGroupResponse = null;
+        //进行同步到服务器，同步3次。
+        for (int i = 0; i < sendCount; i++) {// 重试添加3次
+            addGroupResponse = miguApi.add(order,attached);
+            if (addGroupResponse != null) {
+                break;
+            }
         }
+        return addGroupResponse;
+    }
+
+
+    /**
+     * 保存铃音
+     *
+     * @param ring
+     * @param circleID
+     * @param groupName
+     * @return
+     * @throws IOException
+     * @throws NoLoginException
+     */
+    public AjaxResult saveMiguRing(ThreenetsRing ring, String circleID, String groupName)throws IOException,NoLoginException{
+        return miguApi.saveRing(ring,circleID,groupName);
     }
 
     /**
@@ -391,21 +388,6 @@ public class ApiUtils {
      */
     public AjaxResult saveOrderByLt(ThreenetsOrder ringOrder, List<Uploadfile> attachments, ThreenetsRing ring){
         try{
-            // 1.增加附件
-            if (attachments != null && attachments.size() > 0) {
-                for (int i = 0; i < attachments.size(); i++) {
-                    Uploadfile t = attachments.get(i);
-                    if (StringUtils.isEmpty(t.getXh()) || t.getId()==null) {
-                        // 删除集合
-                        attachments.remove(i);
-                        --i;
-                    }
-                }
-            }
-            if (attachments != null && attachments.size() > 0) {
-                // 附件表已经删除了
-                //attachmentsRepository.addAttachments(attachments);
-            }
             // 添加到音乐名片系统
             SwxlGroupResponse swxlGroupResponse = null;
             // 添加商户
@@ -415,34 +397,66 @@ public class ApiUtils {
                     break;
                 }
             }
-            // status 0正常 1异常
-            if (swxlGroupResponse != null && 0 == swxlGroupResponse.getStatus()) {
-                // 向商户发送开通短信,发送短信的成功或者失败,不影响后续操作
-                boolean swxlSendPhoneSMS = swxlApi.SwxlSendPhoneSMS(swxlGroupResponse.getId());
-                /* 添加铃音 */
-                ring.setOperateId(ringOrder.getMcardId());
-                SwxlRingMsg swxlRingMsg = null;
-                for (int i = 0; i < 5; i++) {
-                    swxlRingMsg = swxlApi.getRingInfo2(ring);
-                    if (swxlRingMsg != null) {
-                        break;
-                    }
-                }
-                if (swxlRingMsg != null) {
-                    ring.setRemark(swxlRingMsg.getRemark());
-                    return AjaxResult.success(ring,"成功");
-                    // 添加铃音到数据库
-                    //ringRepository.saveRing(ring);
-                } else {
-                    return AjaxResult.error("获取铃音信息失败，至《铃音管理》页面刷新");
-                }
-            } else {
-                return AjaxResult.error(swxlGroupResponse.getRemark());
-            }
+//            // status 0正常 1异常
+//            if (swxlGroupResponse != null && 0 == swxlGroupResponse.getStatus()) {
+//                // 向商户发送开通短信,发送短信的成功或者失败,不影响后续操作
+//                boolean swxlSendPhoneSMS = swxlApi.SwxlSendPhoneSMS(swxlGroupResponse.getId());
+//                /* 添加铃音 */
+//                ring.setOperateId(ringOrder.getMcardId());
+//                SwxlRingMsg swxlRingMsg = null;
+//                for (int i = 0; i < 5; i++) {
+//                    swxlRingMsg = swxlApi.getRingInfo2(ring);
+//                    if (swxlRingMsg != null) {
+//                        break;
+//                    }
+//                }
+//                if (swxlRingMsg != null) {
+//                    ring.setRemark(swxlRingMsg.getRemark());
+//                    return AjaxResult.success(ring,"成功");
+//                    // 添加铃音到数据库
+//                    //ringRepository.saveRing(ring);
+//                } else {
+//                    return AjaxResult.error("获取铃音信息失败，至《铃音管理》页面刷新");
+//                }
+//            } else {
+//            }
+            return AjaxResult.error(swxlGroupResponse.getRemark());
         }catch (Exception e){
             log.error("对接联通 方法：saveOrderByLt  错误信息", e);
             return AjaxResult.error("保存失败");
         }
+    }
+
+    /**
+     * 移动 添加成员
+     *
+     * @param data
+     * @param circleId
+     * @return
+     * @throws IOException
+     * @throws NoLoginException
+     */
+    public String addPhoneByYd(String data ,String circleId)throws IOException,NoLoginException {
+        if (circleId == null){
+            return "集团ID错误！";
+        }
+        return miguApi.addPhone(data,circleId);
+    }
+
+    /**
+     * 联通 添加成员
+     *
+     * @param data
+     * @param circleId
+     * @return
+     * @throws IOException
+     * @throws NoLoginException
+     */
+    public String addPhoneByLt(String data ,String circleId)throws IOException,NoLoginException {
+        if(circleId == null){
+            return "集团ID错误";
+        }
+        return swxlApi.addPhone(data, circleId);
     }
 
 }

@@ -10,16 +10,17 @@ import com.hrtxn.ringtone.common.utils.juhe.JuhePhoneUtils;
 import com.hrtxn.ringtone.project.system.json.JuhePhone;
 import com.hrtxn.ringtone.project.system.json.JuhePhoneResult;
 import com.hrtxn.ringtone.project.threenets.threenet.domain.PlotBarPhone;
+import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreeNetsOrderAttached;
 import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreenetsChildOrder;
 import com.hrtxn.ringtone.project.threenets.threenet.mapper.ThreenetsChildOrderMapper;
 import com.hrtxn.ringtone.project.threenets.threenet.utils.ApiUtils;
+import lombok.Synchronized;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Author:lile
@@ -31,6 +32,9 @@ public class ThreeNetsChildOrderService {
 
     @Autowired
     private ThreenetsChildOrderMapper threenetsChildOrderMapper;
+
+    @Autowired
+    private ThreeNetsOrderAttachedService threeNetsOrderAttachedService;
     private ApiUtils apiUtils = new ApiUtils();
 
     /**
@@ -57,6 +61,17 @@ public class ThreeNetsChildOrderService {
     }
 
     /**
+     * 获取无分页的代办列表
+     *
+     * @param request
+     * @return
+     * @throws Exception
+     */
+    public List<ThreenetsChildOrder> getChildOrder(BaseRequest request) throws Exception {
+        return threenetsChildOrderMapper.selectThreeNetsTaskList(new Page(0, 100), getParameters(request));
+    }
+
+    /**
      * 参数格式化
      *
      * @param request
@@ -68,6 +83,9 @@ public class ThreeNetsChildOrderService {
         Integer userRole = ShiroUtils.getSysUser().getUserRole();
         if (userRole != 1) {
             order.setUserId(ShiroUtils.getSysUser().getId());
+        }
+        if (request.getTimeType() == null && request.getIsMonthly() == null) {
+            return order;
         }
         if (!request.getTimeType().toString().equals("0")) {
             order.setEnd(DateUtils.formatNow());
@@ -98,17 +116,46 @@ public class ThreeNetsChildOrderService {
      * @return
      */
     @Transactional
-    public AjaxResult insterThreeNetsChildOrder(ThreenetsChildOrder threenetsChildOrder)throws Exception {
+    public AjaxResult insterThreeNetsChildOrder(ThreenetsChildOrder threenetsChildOrder) throws Exception {
         if (!StringUtils.isNotNull(threenetsChildOrder)) {
             return AjaxResult.error("参数格式不正确");
         }
-        List<ThreenetsChildOrder> list = formattedPhone(threenetsChildOrder.getMemberTels(),null);
+        List<ThreenetsChildOrder> list = formattedPhone(threenetsChildOrder.getMemberTels(), null);
         Integer count = batchChindOrder(list);
         //int count = threenetsChildOrderMapper.insertThreeNetsChildOrder(threenetsChildOrder);
+        saveThreenetsPhone(threenetsChildOrder.getParentOrderId(), list);
         if (count > 0) {
             return AjaxResult.success(true, "添加成功");
         }
         return AjaxResult.error("执行出错");
+    }
+
+    /**
+     * 保存手机号
+     * @param order
+     * @param childOrders
+     */
+    @Synchronized
+    public void saveThreenetsPhone(Integer order, List<ThreenetsChildOrder> childOrders) {
+        try {
+            ThreeNetsOrderAttached attached = threeNetsOrderAttachedService.selectByParentOrderId(order);
+            Map<Integer, List<ThreenetsChildOrder>> map = childOrders.stream().collect(Collectors.groupingBy(ThreenetsChildOrder::getOperator));
+            for (Integer operator : map.keySet()) {
+                String data = "";
+                List<ThreenetsChildOrder> list = map.get(operator);
+                for (int i = 0; i < list.size(); i++) {
+                    data = data + list.get(i).getLinkmanTel() + (i == list.size() - 1 ? "" : ",");
+                }
+                if (operator == 1){
+                    apiUtils.addPhoneByYd(data, attached.getMiguId());
+                }
+                if (operator == 3){
+                    apiUtils.addPhoneByLt(data,attached.getSwxlId());
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 
@@ -127,7 +174,7 @@ public class ThreeNetsChildOrderService {
      *
      * @param phones
      */
-    public List<ThreenetsChildOrder> formattedPhone(String phones,Integer orderId) throws Exception {
+    public List<ThreenetsChildOrder> formattedPhone(String phones, Integer orderId) throws Exception {
         //换行符----
         String regR = "\n\r";
         String regN = "\n";
@@ -139,7 +186,7 @@ public class ThreeNetsChildOrderService {
         for (String tel : phoneArray) {
             ThreenetsChildOrder childOrder = new ThreenetsChildOrder();
             childOrder.setLinkmanTel(tel);
-            if (orderId != null || orderId != 0){
+            if (orderId != null) {
                 childOrder.setParentOrderId(orderId);
             }
             childOrder = initChildOrder(childOrder);
@@ -172,7 +219,7 @@ public class ThreeNetsChildOrderService {
         //设置代理商
         childOrder.setUserId(ShiroUtils.getSysUser().getId());
         childOrder.setCreateDate(new Date());
-        childOrder.setStatus("审核通过");
+        //childOrder.setStatus("审核通过");
         return childOrder;
     }
 
@@ -221,22 +268,22 @@ public class ThreeNetsChildOrderService {
      * @param data 数据 type为1时，data为父级订单ID；type为2时，data为子订单ID
      * @return
      */
-    public AjaxResult getPhoneInfo(Integer type,Integer data) throws Exception {
-        if ( StringUtils.isNotNull(type) && StringUtils.isNotNull(data) && data > 0) {
+    public AjaxResult getPhoneInfo(Integer type, Integer data) throws Exception {
+        if (StringUtils.isNotNull(type) && StringUtils.isNotNull(data) && data > 0) {
             List<ThreenetsChildOrder> threenetsChildOrderList = new ArrayList<>();
-            if (type == 1){ // 批量刷新操作 根据父级ID获取子订单
+            if (type == 1) { // 批量刷新操作 根据父级ID获取子订单
                 ThreenetsChildOrder threenetsChildOrder = new ThreenetsChildOrder();
                 threenetsChildOrder.setParentOrderId(data);
-                threenetsChildOrderList = threenetsChildOrderMapper.selectThreeNetsTaskList(null,threenetsChildOrder);
-            }else {
+                threenetsChildOrderList = threenetsChildOrderMapper.selectThreeNetsTaskList(null, threenetsChildOrder);
+            } else {
                 // 根据ID查询子订单信息
                 ThreenetsChildOrder threenetsChildOrder = threenetsChildOrderMapper.selectByPrimaryKey(data);
                 threenetsChildOrderList.add(threenetsChildOrder);
             }
-            if (threenetsChildOrderList.size() > 0){
+            if (threenetsChildOrderList.size() > 0) {
                 return apiUtils.getPhoneInfo(threenetsChildOrderList);
-            }else {
-                return AjaxResult.success(false,"查询不到数据！");
+            } else {
+                return AjaxResult.success(false, "查询不到数据！");
             }
         }
         return AjaxResult.success(false, "参数不正确！");
@@ -269,28 +316,28 @@ public class ThreeNetsChildOrderService {
      * @return
      */
     public AjaxResult sendMessage(Integer type, Integer flag, Integer data) throws Exception {
-        if (StringUtils.isNotNull(type) && StringUtils.isNotNull(flag) && StringUtils.isNotNull(data)){
+        if (StringUtils.isNotNull(type) && StringUtils.isNotNull(flag) && StringUtils.isNotNull(data)) {
             // 根据type获取数据内容
             List<ThreenetsChildOrder> threenetsChildOrderList = new ArrayList<>();
-            if (type == 1){// 批量操作，应获取父级ID下所有子订单
+            if (type == 1) {// 批量操作，应获取父级ID下所有子订单
                 // 根据父级订单ID获取企业彩铃为未包月状态子订单
                 ThreenetsChildOrder threenetsChildOrder = new ThreenetsChildOrder();
                 threenetsChildOrder.setParentOrderId(data);
                 threenetsChildOrder.setIsMonthly(1);
-                threenetsChildOrderList = threenetsChildOrderMapper.selectThreeNetsTaskList(null,threenetsChildOrder);
-            }else{
+                threenetsChildOrderList = threenetsChildOrderMapper.selectThreeNetsTaskList(null, threenetsChildOrder);
+            } else {
                 // 单个操作，获取子订单信息
                 ThreenetsChildOrder threenetsChildOrder = threenetsChildOrderMapper.selectByPrimaryKey(data);
                 threenetsChildOrderList.add(threenetsChildOrder);
             }
             // 判断是否有数据
-            if (threenetsChildOrderList.size() > 0){
+            if (threenetsChildOrderList.size() > 0) {
                 return apiUtils.sendMessage(threenetsChildOrderList, flag);
-            }else {
-                return AjaxResult.success(false,"无数据！");
+            } else {
+                return AjaxResult.success(false, "无数据！");
             }
         }
-        return AjaxResult.success(false,"参数不正确！");
+        return AjaxResult.success(false, "参数不正确！");
     }
 
     /**

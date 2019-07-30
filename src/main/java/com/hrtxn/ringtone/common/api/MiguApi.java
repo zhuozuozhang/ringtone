@@ -1,6 +1,10 @@
 package com.hrtxn.ringtone.common.api;
 
+import com.hrtxn.ringtone.common.constant.AjaxResult;
 import com.hrtxn.ringtone.common.exception.NoLoginException;
+import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreeNetsOrderAttached;
+import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreenetsRing;
+import com.hrtxn.ringtone.project.threenets.threenet.json.migu.MiguAddGroupRespone;
 import com.hrtxn.ringtone.common.utils.ChaoJiYing;
 import com.hrtxn.ringtone.common.utils.ShiroUtils;
 import com.hrtxn.ringtone.common.utils.json.JsonUtil;
@@ -465,7 +469,7 @@ public class MiguApi implements Serializable {
      * @throws IOException
      * @throws NoLoginException
      */
-    public MiguAddGroupRespone add(ThreenetsOrder ringOrder) throws IOException, NoLoginException {
+    public MiguAddGroupRespone add(ThreenetsOrder ringOrder, ThreeNetsOrderAttached attached) throws IOException, NoLoginException {
         User user = ShiroUtils.getSysUser();
         MiguAddGroupRespone addGroupRespone = null;
         String vcode = getCodeString();
@@ -490,19 +494,19 @@ public class MiguApi implements Serializable {
             reqEntity.addPart("county", new StringBody("鼓楼区", Charset.forName("UTF-8")));// 区
             reqEntity.addPart("groupStreet", new StringBody("六一北路92号", Charset.forName("UTF-8")));// 集团所在街道
             reqEntity.addPart("circle.payType", new StringBody("0"));// 集团统付
-//            if (ringOrder.getPaymentPrice() != 0) {
-//                reqEntity.addPart("circle.price", new StringBody(ringOrder.getPaymentPrice() + ""));// 资费，默认值为0
-//                reqEntity.addPart("circle.specialPrice", new StringBody(""));// 资费，默认值为0
-//            } else {
-//                reqEntity.addPart("circle.specialPrice", new StringBody(ringOrder.getPaymentPrice() + ""));// 资费，默认值为0
-//            }
-            reqEntity.addPart("circle.specialDiscount", new StringBody(""));// 折扣
+            if (attached.getMiguPrice() <= 5) {
+                reqEntity.addPart("circle.price", new StringBody(attached.getMiguPrice() + ""));// 资费，默认值为0
+                reqEntity.addPart("circle.specialPrice", new StringBody(""));// 资费，默认值为0
+            } else {
+                reqEntity.addPart("circle.specialPrice", new StringBody(attached.getMiguPrice() + ""));// 资费，默认值为0
+            }
+            //reqEntity.addPart("circle.specialDiscount", new StringBody(""));// 折扣
             reqEntity.addPart("circle.applyForSmsNotification", new StringBody("0"));// 申请免短信
             reqEntity.addPart("circle.isNormal", new StringBody("0"));// 集团类型、正式
-            reqEntity.addPart("circle.trialTimeType", new StringBody(""));// 试用时间
+            //reqEntity.addPart("circle.trialTimeType", new StringBody(""));// 试用时间
             reqEntity.addPart("circle.memo", new StringBody(""));// 集团简介
             if (ringOrder.getUpLoadAgreement() != null) {
-                reqEntity.addPart("file", new FileBody(ringOrder.getUpLoadAgreement()));
+                reqEntity.addPart("myfile", new FileBody(ringOrder.getUpLoadAgreement()));
             }
             httppost.setEntity(reqEntity);
             HttpResponse response1 = httpclient.execute(httppost);
@@ -524,6 +528,91 @@ public class MiguApi implements Serializable {
         return addGroupRespone;
     }
 
+    /**
+     * 上传铃音，还要添加商户登录
+     * @param ring
+     * @param circleID
+     * @param groupName
+     * @return
+     * @throws IOException
+     * @throws NoLoginException
+     */
+    public AjaxResult saveRing(ThreenetsRing ring, String circleID, String groupName) throws IOException,NoLoginException {
+        AjaxResult ajaxResult = new AjaxResult();
+        String ringName = ring.getRingName().substring(0,ring.getRingName().indexOf(".")+1);
+        DefaultHttpClient httpclient = new DefaultHttpClient();
+        HttpPost httppost = new HttpPost(importRing_url);
+        httpclient.setCookieStore(this.getCookieStore());
+        try {
+            MultipartEntity reqEntity = new MultipartEntity();
+            HttpParams params = httpclient.getParams();
+            params.setParameter(CoreProtocolPNames.HTTP_CONTENT_CHARSET, Charset.forName("UTF-8"));
+            //reqEntity.addPart("groupName", new StringBody(groupName, Charset.forName("UTF-8")));
+            //reqEntity.addPart("singer", new StringBody(""));
+            //reqEntity.addPart("songName", new StringBody(""));
+            reqEntity.addPart("ringName", new StringBody(ringName, Charset.forName("UTF-8")));
+            reqEntity.addPart("circleID", new StringBody(circleID, Charset.forName("UTF-8")));
+            reqEntity.addPart("trade", new StringBody("其他普通行业", Charset.forName("UTF-8")));
+            //reqEntity.addPart("file", new FileBody(ring.getFile(), "audio/mp3"));
+            reqEntity.addPart("ringContent", new StringBody(ring.getRingContent(), Charset.forName("UTF-8")));
+            reqEntity.addPart("autoSetType", new StringBody("0"));
+            httppost.setEntity(reqEntity);
+            HttpResponse response1 = httpclient.execute(httppost);
+            int statusCode = response1.getStatusLine().getStatusCode();
+            if (statusCode == HttpStatus.SC_OK) {
+                log.debug("铃音上传服务器正常响应2.....");
+                String result = EntityUtils.toString(response1.getEntity());
+                if (result.contains("铃音名称已经存在，请修改")) {
+                    ajaxResult.error("铃音名称已经存在，请修改");
+                }else if (result.contains("集团还有铃音正在分发中，不能上传铃音")) {
+                    ajaxResult.error("集团还有铃音正在分发中，不能上传铃音");
+                }else {
+                    ajaxResult.success(true,"上传成功");
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            httppost.abort();
+            httpclient.getConnectionManager().shutdown();
+        }
+        return ajaxResult;
+    }
+
+
+    /**
+     * 向移动咪咕增加号码
+     *
+     * @param data
+     * @param circleID
+     * @return
+     * @throws
+     */
+    public String addPhone(String data, String circleID) throws IOException,NoLoginException{
+        String result = null;
+        DefaultHttpClient httpclient = new DefaultHttpClient();
+        HttpPost httppost = new HttpPost(ADD_PHONE_URL);
+        List<NameValuePair> formparams = new ArrayList<NameValuePair>();
+        formparams.add(new BasicNameValuePair("data", data));
+        formparams.add(new BasicNameValuePair("circleID", circleID));
+        formparams.add(new BasicNameValuePair("autoSetRing", "1"));
+        formparams.add(new BasicNameValuePair("addAll", "0"));
+        httpclient.setCookieStore(this.getCookieStore());
+        try {
+            UrlEncodedFormEntity entity = new UrlEncodedFormEntity(formparams, "utf-8");
+            httppost.setEntity(entity);
+            HttpResponse response = httpclient.execute(httppost);
+            HttpEntity resEntity = response.getEntity();
+            result = EntityUtils.toString(resEntity);
+            this.setMiguCookie(httpclient.getCookieStore());
+        } catch (Exception e) {
+            System.out.println(e);
+        } finally {
+            httppost.abort();
+            httpclient.getConnectionManager().shutdown();
+        }
+        return result;
+    }
     public static void main(String[] args) throws NoLoginException, IOException {
 //        MiguApi miguApi = new MiguApi();
 //        String s = miguApi.getRingPage("c9a7ffb7-876c-40aa-88ef-14185f79930b");

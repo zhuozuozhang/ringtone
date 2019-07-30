@@ -148,6 +148,9 @@ public class JuhePhoneUtils {
      */
     public static ThreenetsOrder getPhone(ThreenetsOrder order)throws Exception{
         JuhePhone phone = getPhone(order.getLinkmanTel());
+        if (phone.getResult() == null){
+            return order;
+        }
         JuhePhoneResult result = (JuhePhoneResult) phone.getResult();
         order.setOperator(JuhePhoneUtils.getOperate(result));
         order.setProvince(result.getProvince());
@@ -157,7 +160,7 @@ public class JuhePhoneUtils {
 
 
     public static void main(String[] args) throws Exception {
-        JuhePhone phone = getPhone("");
+        JuhePhone phone = getPhone("100000000000");
         System.out.println(phone);
     }
 }

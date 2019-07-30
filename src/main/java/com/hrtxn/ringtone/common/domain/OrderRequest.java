@@ -32,6 +32,7 @@ public class OrderRequest {
     //移动高资费
     private String specialPrice;
     //-------------------电信----------------
+
     //企业资质
     private String companyUrl;
     //客户确认涵
