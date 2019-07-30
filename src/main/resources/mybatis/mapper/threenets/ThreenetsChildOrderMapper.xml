@@ -30,7 +30,7 @@
         operate_id, is_monthly, is_video_user, is_ringtone_user, is_reply_message, province,
         city, operator, user_id,remark
     </sql>
-
+    <!-- 根据子订单ID获取子订单信息 -->
     <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer">
         select
         <include refid="Base_Column_List"/>
@@ -90,10 +90,15 @@
         ) a
         where left( a.dateTimes, 4) ='${param.year}'
     </select>
-
+    <!-- 根据子订单id删除子订单 -->
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
         delete from tb_threenets_child_order
         where id = #{id,jdbcType=INTEGER}
+    </delete>
+    <!-- 根据父级ID删除子订单 -->
+    <delete id="deleteByParadeOrderId" parameterType="java.lang.Integer">
+        delete from tb_threenets_child_order
+        where parent_order_id = #{id,jdbcType=INTEGER}
     </delete>
     <!-- 添加三网子订单 -->
     <insert id="insertThreeNetsChildOrder" parameterType="ThreenetsChildOrder">
@@ -275,6 +280,60 @@
         </set>
         where id = #{id,jdbcType=INTEGER}
     </update>
+    <!-- 查询父级订单信息 -->
+    <select id="selectThreeNetsTaskList" resultMap="BaseResultMap">
+        select p.*,c.company_name as companyLinkman from tb_threenets_order c
+        left join tb_threenets_child_order p on c.id = p.parent_order_id
+        where 1=1
+        <include refid="parameters"/>
+        order by create_date desc
+        <include refid="page"/>
+    </select>
+    <!-- 获取总数 -->
+    <select id="getCount" resultType="java.lang.Integer" parameterType="com.hrtxn.ringtone.project.threenets.threenet.domain.ThreenetsChildOrder">
+        select count(*) from tb_threenets_child_order p
+        where 1=1
+        <include refid="parameters"/>
+        order by create_date desc
+    </select>
+    <!-- 批量添加子订单 -->
+    <insert id="batchChindOrder" parameterType="java.util.List">
+        insert into tb_threenets_child_order
+        (linkman, linkman_tel, status, create_date, ring_name, ring_id, parent_order_id,operate_order_id,operate_id, is_monthly, is_video_user, is_ringtone_user, is_reply_message, province,city, operator, user_id,remark)
+        values
+        <foreach collection="list" item="child" index="index" separator=",">
+            (
+            #{child.linkman}, #{child.linkmanTel},#{child.status},#{child.createDate},#{child.ringName},
+            #{child.ringId},#{child.parentOrderId},#{child.operateOrderId},#{child.operateId},#{child.isMonthly},
+            #{child.isVideoUser},#{child.isRingtoneUser},#{child.isReplyMessage},#{child.province},
+            #{child.city}, #{child.operator}, #{child.userId}, #{child.remark}
+            )
+        </foreach>
+    </insert>
+
+    <sql id="parameters">
+        <if test="param != null and param.userId != null and param.userId != ''">
+            AND p.user_id = ${param.userId}
+        </if>
+        <if test="param != null and param.isMonthly != null and param.isMonthly != ''">
+            AND is_monthly = ${param.isMonthly}
+        </if>
+        <if test="param != null and param.parentOrderId != null and param.parentOrderId != ''">
+            AND parent_order_id = ${param.parentOrderId}
+        </if>
+        <if test="param != null and param.start != null and param.start != '' and param.end != '' and param.end != null">
+            AND create_date &gt;= '${param.start}' AND create_date &lt;= '${param.end}'
+        </if>
+        <if test="param != null and param.operator != null and param.operator != ''">
+            AND p.operator = ${param.operator}
+        </if>
+    </sql>
+
+    <sql id="page">
+        <if test="page!=null and page.page != null and page.pagesize != null">
+            LIMIT #{page.page},#{page.pagesize}
+        </if>
+    </sql>
 
     <sql id="conditionChild">
         <if test="childOrder.parentOrderId != null and childOrder.parentOrderId != ''">
@@ -300,69 +359,10 @@
             AND is_reply_message = '${childOrder.isReplyMessage}'
         </if>
     </sql>
+
     <sql id="dates">
         <if test="start != null and start != '' and end != '' and end != null">
             AND create_date &gt;= '${start}' AND create_date &lt;= '${end}'
         </if>
     </sql>
-
-    <select id="selectThreeNetsTaskList" resultMap="BaseResultMap">
-        select c.*,p.company_name as companyLinkman from tb_threenets_order p
-        left join tb_threenets_child_order c on p.id = c.parent_order_id
-        where 1=1
-        <include refid="parameters"/>
-        order by create_date desc
-        <include refid="page"/>
-    </select>
-
-    <select id="getCount" resultType="java.lang.Integer"
-            parameterType="com.hrtxn.ringtone.project.threenets.threenet.domain.ThreenetsChildOrder">
-        select count(*) from tb_threenets_child_order p
-        where 1=1
-        <include refid="parameters"/>
-        order by create_date desc
-    </select>
-
-    <sql id="parameters">
-        <if test="param != null and param.userId != null and param.userId != ''">
-            AND p.user_id = ${param.userId}
-        </if>
-        <if test="param != null and param.isMonthly != null and param.isMonthly != ''">
-            AND is_monthly = ${param.isMonthly}
-        </if>
-        <if test="param != null and param.parentOrderId != null and param.parentOrderId != ''">
-            AND parent_order_id = ${param.parentOrderId}
-        </if>
-        <if test="param != null and param.start != null and param.start != '' and param.end != '' and param.end != null">
-            AND create_date &gt;= '${param.start}' AND create_date &lt;= '${param.end}'
-        </if>
-        <if test="param != null and param.operator != null and param.operator != ''">
-            AND operator = ${param.operator}
-        </if>
-    </sql>
-
-    <sql id="page">
-        <if test="page!=null and page.page != null and page.pagesize != null">
-            LIMIT #{page.page},#{page.pagesize}
-        </if>
-    </sql>
-
-    <delete id="deleteByParadeOrderId" parameterType="java.lang.Integer">
-        delete from tb_threenets_child_order
-        where parent_order_id = #{id,jdbcType=INTEGER}
-    </delete>
-
-    <insert id="batchChindOrder" parameterType="java.util.List">
-        insert into tb_threenets_child_order
-        (linkman, linkman_tel, status, create_date, ring_name, ring_id, parent_order_id,operate_order_id,operate_id, is_monthly, is_video_user, is_ringtone_user, is_reply_message, province,city, operator, user_id,remark)
-        values
-        <foreach collection="list" item="child" index="index" separator=",">
-            (
-            #{child.linkman}, #{child.linkmanTel},#{child.status},#{child.createDate},#{child.ringName},
-            #{child.ringId},#{child.parentOrderId},#{child.operateOrderId},#{child.operateId},#{child.isMonthly},
-            #{child.isVideoUser},#{child.isRingtoneUser},#{child.isReplyMessage},#{child.province},
-            #{child.city}, #{child.operator}, #{child.userId}, #{child.remark}
-            )
-        </foreach>
-    </insert>
 </mapper>

@@ -7,6 +7,23 @@
  */
 
 /**
+ * 验证checkBox 是否有选中项
+ * @param name input checkBox元素name
+ * @returns {boolean}
+ */
+function checkBoxIsSelected(name){
+    var names = document.getElementsByName(name);
+    var checkArr = new Array();
+    for (var i = 0; i < names.length; i++){
+        if (names[i].checked){
+            checkArr.push($(names[i]).attr("data-phone"))
+        }
+    }
+    return checkArr;
+}
+
+
+/**
  * 验证是否是正整数
  */
 function isPositiveInteger(integer) {

@@ -4,24 +4,25 @@ $(function () {
     var ringOperate = $("#ringOperate").val();
     if (ringOperate.indexOf("1") != -1) { // 移动
         $(".yidong").addClass("InternetOperators-clicked");
-        $(".yidong").css("display","block");
-        $("#operate").val(1)
+        $(".yidong").css("display", "block");
+        $("#operate").val(1);
     }
     if (ringOperate.indexOf("2") != -1) { // 电信
-        if (ringOperate.indexOf("1") == -1){
+        if (ringOperate.indexOf("1") == -1) {
             $(".dianxin").addClass("InternetOperators-clicked");
-            $("#operate").val(2)
+            $("#operate").val(2);
         }
-        $(".dianxin").css("display","block");
+        $(".dianxin").css("display", "block");
     }
     if (ringOperate.indexOf("3") != -1) { // 联通
         if (ringOperate.indexOf("1") == -1 && ringOperate.indexOf("2") == -1) {
             $(".liantong").addClass("InternetOperators-clicked");
-            $("#operate").val(3)
+            $("#operate").val(3);
         }
-        $(".liantong").css("display","block");
+        $(".liantong").css("display", "block");
     }
 });
+
 function showTable() {
     var params = {
         "id": $('#orderId').val(),
@@ -48,9 +49,9 @@ function showTable() {
                 return '联通'
             }
         }
-    },{
-        targets:[3],
-        render:function (data, type, row, meta) {
+    }, {
+        targets: [3],
+        render: function (data, type, row, meta) {
             return "<div style='text-overflow:ellipsis;overflow:hidden;white-space:nowrap;width:150px;' title='" + data + "'>" + data + "</div>";
         }
     }, {
@@ -67,27 +68,39 @@ function showTable() {
                 return '激活中'
             } else if (data == 3) {
                 return '激活成功'
+            } else if (data == 4) {
+                return '部分省份激活超时'
+            } else if (data == 5) {
+                return '部分省份激活成功'
             } else {
                 return '激活失败'
             }
         }
-    },{
-        targets:[7],
-        render:function (data, type, row, meta) {
-            return "<div style='text-overflow:ellipsis;overflow:hidden;white-space:nowrap;width:150px;' title='" + data + "'>" + data + "</div>";;
+    }, {
+        targets: [7],
+        render: function (data, type, row, meta) {
+            return "<div style='text-overflow:ellipsis;overflow:hidden;white-space:nowrap;width:150px;' title='" + data + "'>" + data + "</div>";
+            ;
         }
     }, {
         targets: [8],
         render: function (data, type, row, meta) {
             var id = row.id;
+            var ringStatus = row.ringStatus;
+            var operate = row.operate;
+            var setRing = "";
+            if(ringStatus == 3 || ringStatus == 4 || ringStatus == 5){
+                setRing = "<a href='/threenets/toSetingRing/"+id+"/"+operate+"/" + $("#orderId").val() + "/" + $("#companyName").val()+ "'><i class='layui-icon layui-icon-set' title='设置铃音'></i></a>";
+            }
             return '<i class="layui-icon" title="复制铃音" onclick="cloneRing(' + id + ')"><img src="../../client/threenets/images/copy.png" alt=""></i>' +
                 '<a href="/threenets/downloadRing/' + id + '"><i class="layui-icon layui-icon-download-circle" title="下载铃音"></i></a>' +
-                '<i class="layui-icon" title="查看广告词" onclick="Advertising(\'' + row.ringContent + '\');"><img src="../../client/threenets/images/see.png" alt=""></i>' +
-                '<i class="layui-icon layui-icon-delete" title="删除" onclick="deleteRing(' + id + ')"></i>'
+                '<i class="layui-icon" title="查看广告词" onclick="advertising(\'' + row.ringContent + '\');"><img src="../../client/threenets/images/see.png" alt=""></i>' +
+                setRing + '<i class="layui-icon layui-icon-delete" title="删除" onclick="deleteRing(' + id + ')"></i>';
         }
-    }]
+    }];
     page("#set", 15, params, "/threenets/getThreeNetsRingList", columns, columnDefs);
 }
+
 //添加铃音
 function addRing() {
     var orderId = $("#orderId").val();
@@ -99,6 +112,7 @@ function addRing() {
         content: '/threenets/toAddMerchantsRingPage?orderId=' + orderId + '&operate=' + operate
     });
 }
+
 //在线试听
 function openPlayer(id) {
     layer.open({
@@ -108,13 +122,15 @@ function openPlayer(id) {
         content: '<video id="ovideo" autoplay loop src="/threenets/playRing/' + id + '" controls="controls " allowfullscreen="true" quality="high" width="800px" height="514px" align="middle" allowscriptaccess="always" flashvars="isAutoPlay=true" type="application/x-shockwave-flash"></video>'
     });
 }
+
 //查看广告词
-function Advertising(content) {
+function advertising(content) {
     layer.open({
         title: '广告词',
         content: content
     });
 }
+
 //运营商切换
 function dianxin(obj) {
     $(".more").removeClass("InternetOperators-clicked");
@@ -129,6 +145,7 @@ function dianxin(obj) {
     }
     showTable();
 }
+
 //克隆铃音
 function cloneRing(id) {
     layer.confirm("你确定要克隆此条记录吗?", {
@@ -142,6 +159,7 @@ function cloneRing(id) {
     }, function () {
     });
 }
+
 //删除铃音
 function deleteRing(id) {
     layer.confirm("你确定要删除此条记录吗?", {

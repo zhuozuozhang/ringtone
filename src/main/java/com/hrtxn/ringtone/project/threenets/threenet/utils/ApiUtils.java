@@ -266,9 +266,7 @@ public class ApiUtils {
      * @param threenetsRings
      * @return
      */
-    public AjaxResult getRingInfo(List<ThreenetsRing> threenetsRings) throws NoLoginException, IOException {
-        String msg = "错误消息：";
-        int failure = 0;
+    public List<ThreenetsRing> getRingInfo(List<ThreenetsRing> threenetsRings) throws NoLoginException, IOException {
         for (ThreenetsRing threenetsRing:threenetsRings) {
             Boolean f = false;
             Integer operator = threenetsRing.getOperate();
@@ -323,13 +321,10 @@ public class ApiUtils {
                             }
                             // 修改铃音信息
                             int count = SpringUtils.getBean(ThreenetsRingMapper.class).updateByPrimaryKeySelective(threenetsRing);
-
+                            log.info("修改铃音信息结果---->"+count);
                             break;
                         }
                     }
-                } else {
-                    failure++;
-                    msg += "["+threenetsRing.getRingName()+":更新出错！]";
                 }
             } else if(operator == 2){ // 电信
 
@@ -341,14 +336,8 @@ public class ApiUtils {
 
             }
         }
-        if(failure > 0){
-            return AjaxResult.success(false,msg);
-        }else {
-            return AjaxResult.success(true,"刷新成功！");
-        }
+        return threenetsRings;
     }
-
-
 
     /**
      * 保存移动订单

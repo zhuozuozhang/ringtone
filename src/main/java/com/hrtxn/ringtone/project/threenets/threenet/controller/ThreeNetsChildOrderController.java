@@ -33,6 +33,25 @@ public class ThreeNetsChildOrderController {
     private ThreeNetsOrderService threeNetsOrderService;
 
     /**
+     * 获取设置铃音子订单数据
+     *
+     * @param page
+     * @param orderId
+     * @param operate
+     * @return
+     */
+    @PostMapping("/threenets/getThreeNetsChidOrderSetingList")
+    @ResponseBody
+    public AjaxResult getThreeNetsChidOrderSetingList(Page page,Integer orderId,Integer operate){
+        try {
+            return threeNetsChildOrderService.findChildOrderByOrderId(page,orderId,operate);
+        } catch (Exception e) {
+            log.error("获取设置铃音子订单数据 方法：getThreeNetsChidOrderSetingList 错误信息：",e);
+            return AjaxResult.error(e.getMessage());
+        }
+    }
+
+    /**
      * 进入号码管理
      *
      * @return

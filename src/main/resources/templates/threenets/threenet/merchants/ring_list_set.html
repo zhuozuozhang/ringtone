@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <title>铃音管理-铃音设置</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" type="text/css" th:href="@{/public/layui/css/layui.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/public/layui/css/modules/layer/default/layer.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/public/css/commer.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/public/dataTables/jquery.dataTables.min.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/client/threenets/css/head.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/client/threenets/css/number_list.css}">
+    <script type="text/javascript" th:src="@{/public/js/jquery.min.js}"></script>
+    <style>
+        .dataTables_wrapper .dataTables_filter input {
+            height: 30px;
+        }
+
+        #mcontent .mconl {
+            border-right: solid #ddd 1px;
+        }
+        .setting_title{
+            height: 30px;
+            line-height: 30px;
+            border-bottom: 2px solid #ebedef;
+            color: #c0009e;
+            font-weight: 700;
+            margin: 10px 0px;
+            width: 700px;
+            margin: 5px auto;
+        }
+    </style>
+</head>
+<body>
+    <!-- 头部 -->
+    <div th:include="threenets/threenet/common/include :: header"></div>
+    <div class="layui-row" id="mcontent">
+        <div class="layui-col-xs1 mconl">
+            <div class="grid-demo grid-demo-bg1">
+                <div id="page-aside" class="aside">
+                    <ul class="nav">
+                        <li class="management">
+                            <a class="banner" href="javascript:;">商户管理</a>
+                        </li>
+                        <li id="apersonnel">
+                            <a th:href="@{'/threenets/toMerchantsPhonePage/'+${orderId}}">号码管理</a>
+                        </li>
+                        <li id="ring" class="selected">
+                            <a th:href="@{'/threenets/toMerchantsRingPage/'+${orderId}}">铃音管理</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="layui-col-xs11 mconr">
+            <input type="hidden" id="operate" th:value="${operate}">
+            <input type="hidden" id="orderId" th:value="${orderId}">
+            <input type="hidden" id="ringId" th:value="${id}">
+            <div class="grid-demo">
+                <div class="layui-row contant" style="width:95%;">
+                    <!-- 等待设置铃音 -->
+                    <div class="layui-col-md12" id="search">
+                        <div class="title-bar clearfix">
+                            <h1 class="pull-cnter">
+                                您正在以 <span style="color: red;" th:text="${companyName}"></span> 的管理员身份进行操作。
+                            </h1>
+                        </div>
+                        <div style="padding:10px 0 0 10px;font-size:16px;">
+                            操作：
+                            <button type="button" class="layui-btn layui-btn-radius layui-btn-normal" id="sear">确认</button>
+                        </div>
+                        <table class="layui-table" id="set">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th><input type="checkbox" id="allCheck"></th>
+                                    <th>员工姓名</th>
+                                    <th>铃音号码</th>
+                                    <th>省份</th>
+                                    <th>当前铃音</th>
+                                </tr>
+                            </thead>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<div th:include="threenets/threenet/common/head :: footer"></div>
+<script>
+    $(".index2").addClass("active");
+    //分页
+    $(document).ready(function() {
+        showTable();
+        
+        $("#sear").click(function () {
+            var checkArr = checkBoxIsSelected("check");
+            if (checkArr.length <= 0) return layer.msg('请至少选中一条!', {icon: 5, time: 1000});
+            var orderId = $("#orderId").val();
+            var operate = $("#operate").val();
+            var ringId = $("#ringId").val();
+
+            alert(checkArr);
+            alert(orderId);
+            alert(operate);
+            alert(ringId);
+
+
+            AjaxPut("/threenets/setRing",{
+                phones:checkArr,
+                orderId:orderId,
+                operate:operate,
+                id:ringId
+            },function (result) {
+                if (result.code == 200){
+                    layer.msg("设置成功！", {icon: 6, time: 1000});
+                    setTimeout(function () {
+                        window.localtion.href = "/threenets/toMerchantsRingPage/"+orderId;
+                    },1000);
+                }else{
+                    layer.msg(result.msg, {icon: 5, time: 1000});
+                }
+            });
+
+
+        });
+    });
+
+    function showTable() {
+        var param = {
+            orderId:$("#orderId").val(),
+            operate:$("#operate").val()
+        }
+        var columns = [
+            {"data": "id"},
+            {"data": null},
+            {"data": "linkman"},
+            {"data": "linkmanTel"},
+            {"data": "province"},
+            {"data": "ringName"}
+        ];
+        var columnDefs = [{
+            targets: [1],
+            render: function (data, type, row, meta) {
+                var linkmanTel = row.linkmanTel;
+                return "<input type='checkbox' name='check' data-phone='"+linkmanTel+"'>";
+            }
+        }];
+        page("#set", 10, param, "/threenets/getThreeNetsChidOrderSetingList", columns, columnDefs);
+    }
+
+    //全选框
+    $("#allCheck").click(function(){
+        $("input[name='check']").prop("checked",this.checked);
+    });
+    //单选框
+    $("input[name='check']").change(function(){
+        if($("input[name='check']").not("input:checked").size() <= 0){
+            $("#allCheck").prop("checked",true);
+        }else{
+            $("#allCheck").prop("checked",false);
+        }
+    });
+</script>
+</html>

@@ -3,6 +3,7 @@ package com.hrtxn.ringtone.project.threenets.threenet.service;
 import com.hrtxn.ringtone.common.constant.AjaxResult;
 import com.hrtxn.ringtone.common.domain.BaseRequest;
 import com.hrtxn.ringtone.common.domain.Page;
+import com.hrtxn.ringtone.common.exception.NoLoginException;
 import com.hrtxn.ringtone.project.system.File.service.FileService;
 import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreenetsRing;
 import com.hrtxn.ringtone.project.threenets.threenet.mapper.ThreenetsRingMapper;
@@ -12,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -50,9 +52,12 @@ public class ThreeNetsRingService {
      * @param request
      * @return
      */
-    public List<ThreenetsRing> getChildOrderList(Page page, BaseRequest request) {
+    public List<ThreenetsRing> getChildOrderList(Page page, BaseRequest request) throws NoLoginException, IOException {
         page.setPage((page.getPage() - 1) * page.getPagesize());
-        return threenetsRingMapper.getRingList(page, request);
+        List<ThreenetsRing> ringList = threenetsRingMapper.getRingList(page, request);
+        // 刷新当前铃音列表
+        ringList = apiUtils.getRingInfo(ringList);
+        return ringList;
     }
 
     /**
@@ -132,7 +137,7 @@ public class ThreeNetsRingService {
      * @return
      * @throws Exception
      */
-    public AjaxResult getRingOperate(Integer orderId) throws Exception {
+    public String getRingOperate(Integer orderId) throws Exception {
         List<ThreenetsRing> threenetsRings = threenetsRingMapper.selectByOrderId(orderId);
         String operate = "";
         if (threenetsRings.size() > 0) {
@@ -146,16 +151,18 @@ public class ThreeNetsRingService {
                     operate += threenetsRing.getOperate() + ",";
                 }
             }
-            // 刷新铃音信息
-            AjaxResult ajaxResult = apiUtils.getRingInfo(threenetsRings);
-            log.info("刷新铃音信息结果"+ajaxResult.toString());
-//            if ((Boolean)ajaxResult.get("data")){
-                return AjaxResult.success(operate,"刷新成功!");
-//            }else{
-//                return AjaxResult.success(null,ajaxResult.get("msg").toString());
-//            }
-        }else{
-            return AjaxResult.success(null,"无数据!");
         }
+            // 刷新铃音信息
+//            AjaxResult ajaxResult = apiUtils.getRingInfo(threenetsRings);
+//            log.info("刷新铃音信息结果"+ajaxResult.toString());
+////            if ((Boolean)ajaxResult.get("data")){
+//                return AjaxResult.success(operate,"刷新成功!");
+////            }else{
+////                return AjaxResult.success(null,ajaxResult.get("msg").toString());
+////            }
+//        }else{
+//            return AjaxResult.success(null,"无数据!");
+//        }
+        return operate;
     }
 }

@@ -292,4 +292,33 @@ public class ThreeNetsChildOrderService {
         }
         return AjaxResult.success(false,"参数不正确！");
     }
+
+    /**
+     * 获取设置铃音子订单数据
+     *
+     * @param page
+     * @param orderId
+     * @param operate
+     * @return
+     * @throws Exception
+     */
+    public AjaxResult findChildOrderByOrderId(Page page, Integer orderId,Integer operate) throws Exception {
+        page.setPage((page.getPage() - 1) * page.getPagesize());
+        if (StringUtils.isNotNull(page) && StringUtils.isNotNull(orderId) && StringUtils.isNotNull(operate)){
+            // 获取已包月子订单
+            ThreenetsChildOrder threenetsChildOrder = new ThreenetsChildOrder();
+            threenetsChildOrder.setParentOrderId(orderId);
+            threenetsChildOrder.setIsMonthly(2);
+            threenetsChildOrder.setOperator(operate);
+            List<ThreenetsChildOrder> threenetsChildOrderList = threenetsChildOrderMapper.selectThreeNetsTaskList(page, threenetsChildOrder);
+            // 获取总数
+            Integer count = threenetsChildOrderMapper.getCount(threenetsChildOrder);
+            if (threenetsChildOrderList.size() > 0){
+                return AjaxResult.success(threenetsChildOrderList,"获取数据成功！",count);
+            }else {
+                return AjaxResult.error("无已包月数据！");
+            }
+        }
+        return AjaxResult.error("参数不正确！");
+    }
 }
