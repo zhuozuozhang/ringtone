@@ -23,6 +23,8 @@ public class BaseRequest {
 
     private Integer orderId;
 
+    private String companyName;
+
     private String month;
 
     private String year;

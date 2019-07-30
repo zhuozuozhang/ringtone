@@ -150,7 +150,7 @@
                     </div>
                 </div>
             </div>
-            <input type="hidden" id="parentOrderId" name="parentOrderId">
+            <input type="hidden" id="parentOrderId" name="parentOrderId" th:value="${orderId}">
             <div id="tijiao" class="newBlocPage-button" lay-submit lay-filter="formDemo">确定提交</div>
         </div>
     </form>
@@ -179,24 +179,6 @@
                     新疆，广东，江苏平台暂未开通这些地区，如有需要开通，江苏电信<span>10+0</span>，浙江电信<span>10+10</span>，安徽电信<span>3+5</span>请直接联系群内客服免费开通,湖南资费另见电信提单详细说明
                 </div>
             </div>
-        </div>
-    </div>
-    <!--引入弹窗组件end-->
-    <script type="text/javascript" src="../../client/threenets/js/jquery.tips.js"></script>
-    <!--铃音规范-->
-    <div class="ZL-rule" id="ZL-rule" style="display:none;">
-        <div class="ZL-ruleDel">
-            <h1>铃音规范</h1>
-            <p>1、铃音内容不能含有违法、赌博、淫秽、封建迷信、宗教宣传、政治反动等敏感信息；</p>
-            <p>2、铃音内容不能涉及国家机关（司法、行政及政府单位）、彩票、节目热线、贷款或货币、客服类、虚拟交易类等敏感信息；</p>
-            <p>3、铃音无法播放 、内容不完整、无法试听、静音及系统平台提示音等不予通过；</p>
-            <p>4、铃音为非普通话且难以听清的方言、低俗语言、无法确定内容含义的他国语言、各国国歌</p>
-            <p>5、内容包含国家领导人及知名党派、团体、公司等敏感类称谓不予通过；</p>
-            <p>6、铃音内容出现“您所呼叫的用户已关机”、“您所呼叫的用户暂时无法接通”等类似电信系统提示语，而且模仿的非常逼真一般人无法辨别，将无法通过审批；</p>
-            <p>7、若铃音内容涉及到公安机关、各大银行、医院、诊所、司法部门等，需客户提供相应机关单位给予的加盖公章的证明、营业执照，方可审核通过；</p>
-            <p>8、铃音背景须为纯音乐；</p>
-            <p>9、根据最新广告法，企业宣传铃音不能包含“最XX”“XX第一”等极限用词。</p>
-            <img src="../../client/threenets/images/floating_ico_1.png" alt="" onclick="CloseDxcx('ZL-rule')">
         </div>
     </div>
     <script>
@@ -295,9 +277,11 @@
             //监听提交
             form.on('submit(formDemo)', function (data) {
                 $("#Form").submit();
-                let index = parent.layer.getFrameIndex(window.name); //获取窗口索引
-                parent.layer.close(index);
-                window.parent.location.reload();//刷新父页面
+                setTimeout(function () {
+                    let index = parent.layer.getFrameIndex(window.name); //获取窗口索引
+                    parent.layer.close(index);
+                    window.parent.location.reload();//刷新父页面
+                },200)
                 return false;
             });
         });

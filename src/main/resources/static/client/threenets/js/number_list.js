@@ -124,11 +124,12 @@ function refreshVbrtStatus(id) {
 
 //添加账号
 function addUser() {
+    let orderId = $("#parentOrderId").val();
     layer.open({
         type: 2,
         title: '添加号码',
         area: ['650px', '650px'],
-        content: '/threenets/toAddMerchantsPhonePage'
+        content: '/threenets/toAddMerchantsPhonePage/'+orderId
     });
 }
 

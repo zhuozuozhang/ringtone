@@ -670,6 +670,38 @@ public class SwxlApi implements Serializable {
         }
         return swxlRingInfo;
     }
+
+
+    /**
+     * 向商务炫铃增加号码
+     * @param data
+     * @param circleID
+     * @return
+     * @throws MiguNologinException
+     */
+    public String addPhone(String members, String groupId) throws IOException,NoLoginException{
+        String result = null;
+        DefaultHttpClient httpclient = WebClientDevWrapper.wrapClient(new DefaultHttpClient());
+        HttpPost httppost = new HttpPost(ADD_PHONE_URL);
+        List<NameValuePair> formparams = new ArrayList<NameValuePair>();
+        formparams.add(new BasicNameValuePair("groupId", groupId));
+        formparams.add(new BasicNameValuePair("msisdns", members));
+        httpclient.setCookieStore(this.getCookieStore());
+        try {
+            UrlEncodedFormEntity entity = new UrlEncodedFormEntity(formparams, "utf-8");
+            httppost.setEntity(entity);
+            HttpResponse response = httpclient.execute(httppost);
+            HttpEntity resEntity = response.getEntity();
+            result = EntityUtils.toString(resEntity);
+            System.out.println("result:" + result);
+        } catch (Exception e) {
+            System.out.println(e);
+        } finally {
+            httppost.abort();
+            httpclient.getConnectionManager().shutdown();
+        }
+        return result;
+    }
     public static void main(String[] args) throws NoLoginException, IOException {
 //        SwxlApi swxlApi = new SwxlApi();
 //        String login = swxlApi.getRingInfo("9178900020190614589013");

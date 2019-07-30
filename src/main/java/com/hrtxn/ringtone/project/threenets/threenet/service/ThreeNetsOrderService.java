@@ -191,8 +191,8 @@ public class ThreeNetsOrderService {
         attached.setConfirmLetter(order.getClientUrl());//客户确认函
         attached.setSubjectProve(order.getMainUrl());//主体证明
         attached.setAvoidShortAgreement(order.getProtocolUrl());//免短协议
-
-
+        //保存订单附表
+        threeNetsOrderAttachedService.save(attached);
         //查询铃音是否存在
         List<ThreenetsRing> rings = threeNetsRingService.listByOrderId(order.getId());
         //子订单手机号验证,以及子订单数据初始化
@@ -221,6 +221,7 @@ public class ThreeNetsOrderService {
     private ThreenetsRing getRingByOperate(List<ThreenetsRing> rings, OrderRequest order, Integer operate) {
         if (rings.isEmpty()) {
             ThreenetsRing ring = initRing(order);
+            ring.setOperate(operate);
             rings.add(ring);
             return ring;
         } else if (rings.size() == 1) {
@@ -228,6 +229,7 @@ public class ThreeNetsOrderService {
                 return rings.get(0);
             } else {
                 ThreenetsRing ring = initRing(order);
+                ring.setOperate(operate);
                 rings.add(ring);
                 return ring;
             }
@@ -238,6 +240,7 @@ public class ThreeNetsOrderService {
                 return threenetsRings.get(0);
             } else {
                 ThreenetsRing ring = initRing(order);
+                ring.setOperate(operate);
                 rings.add(ring);
                 return ring;
             }
@@ -279,9 +282,16 @@ public class ThreeNetsOrderService {
                 order.setLinkmanTel(collect.get(1).get(0).getLinkmanTel());
                 MiguAddGroupRespone miguAddGroupRespone = utils.saveOrderByYd(order, attached);
                 if (miguAddGroupRespone.isSuccess()) {
+                    List<ThreenetsChildOrder> childOrders = collect.get(1);
+                    ThreenetsRing ring = threeNetsRingService.getRing(childOrders.get(0).getRingId());
                     attached.setMiguId(miguAddGroupRespone.getCircleId());
+                    utils.saveMiguRing(ring,attached.getMiguId(),order.getCompanyName());
                 }
             }
+            //保存订单附表
+            threeNetsOrderAttachedService.update(attached);
+
+
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -289,8 +299,7 @@ public class ThreeNetsOrderService {
         //utils.saveOrderByLt(order,fileList,null);
         //联通集团
 
-        //保存订单附表
-        threeNetsOrderAttachedService.save(attached);
+
         //保存子订单
         threeNetsChildOrderService.batchChindOrder(list);
     }

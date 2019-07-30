@@ -38,4 +38,11 @@ public interface ThreeNetsOrderAttachedMapper {
      * @return
      */
     int updateByPrimaryKeySelective(ThreeNetsOrderAttached threeNetsOrderAttached);
+
+    /**
+     *
+     * @param id
+     * @return
+     */
+    ThreeNetsOrderAttached selectByParentOrderId(Integer id);
 }

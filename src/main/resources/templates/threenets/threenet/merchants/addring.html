@@ -78,8 +78,8 @@
         </div>
         <div id="tijiao" class="newBlocPage-button" lay-submit lay-filter="formDemo">确定提交</div>
         <input type="hidden" id="ringWay" name="ringWay">
-        <input type="hidden" id="operate" name="operate" th:value="${operate}">
         <input type="hidden" id="orderId" name="orderId" th:value="${orderId}">
+        <input type="hidden" id="companyName" name="companyName" th:value="${companyName}">
     </div>
     <script>
         document.getElementById("file").addEventListener("mousedown", function () {
@@ -149,9 +149,11 @@
                 layer.msg("文件上传失败", {icon: 2, time: 1000});
             } else {
                 $("#Form").submit();
-                let index = parent.layer.getFrameIndex(window.name); //获取窗口索引
-                parent.layer.close(index);
-                window.parent.location.reload();//刷新父页面
+                setTimeout(function () {
+                    let index = parent.layer.getFrameIndex(window.name); //获取窗口索引
+                    parent.layer.close(index);
+                    window.parent.location.reload();//刷新父页面
+                },500);
             }
         }
 

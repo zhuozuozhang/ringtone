@@ -91,12 +91,12 @@ function showTable() {
 //添加铃音
 function addRing() {
     var orderId = $("#orderId").val();
-    var operate = $("#operate").val();
+    var companyName = $("#companyName").val();
     layer.open({
         type: 2,
         title: '上传铃音',
         area: ['650px', '550px'],
-        content: '/threenets/toAddMerchantsRingPage?orderId=' + orderId + '&operate=' + operate
+        content: '/threenets/toAddMerchantsRingPage?orderId=' + orderId+"&companyName="+companyName
     });
 }
 //在线试听

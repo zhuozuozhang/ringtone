@@ -33,4 +33,14 @@ public class ThreeNetsOrderAttachedService {
     public void update(ThreeNetsOrderAttached attached){
         threeNetsOrderAttachedMapper.updateByPrimaryKeySelective(attached);
     }
+
+    /**
+     * 根据父级id查询
+     *
+     * @param id
+     * @return
+     */
+    public ThreeNetsOrderAttached selectByParentOrderId(Integer id){
+        return threeNetsOrderAttachedMapper.selectByParentOrderId(id);
+    }
 }

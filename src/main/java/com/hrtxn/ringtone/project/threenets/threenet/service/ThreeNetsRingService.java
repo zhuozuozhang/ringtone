@@ -3,18 +3,26 @@ package com.hrtxn.ringtone.project.threenets.threenet.service;
 import com.hrtxn.ringtone.common.constant.AjaxResult;
 import com.hrtxn.ringtone.common.domain.BaseRequest;
 import com.hrtxn.ringtone.common.domain.Page;
+import com.hrtxn.ringtone.common.utils.FileUtil;
+import com.hrtxn.ringtone.freemark.config.systemConfig.RingtoneConfig;
 import com.hrtxn.ringtone.project.system.File.service.FileService;
+import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreeNetsOrderAttached;
+import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreenetsChildOrder;
 import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreenetsRing;
 import com.hrtxn.ringtone.project.threenets.threenet.mapper.ThreenetsRingMapper;
 import com.hrtxn.ringtone.project.threenets.threenet.utils.ApiUtils;
+import lombok.Synchronized;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.File;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Author:lile
@@ -27,10 +35,18 @@ public class ThreeNetsRingService {
 
     private final String[] VIDEO = {"mp4", "mov"};
     private final String[] AUDIO = {"wav", "mp3"};
+
     @Autowired
     private ThreenetsRingMapper threenetsRingMapper;
     @Autowired
     private FileService fileService;
+
+    @Autowired
+    private ThreeNetsOrderAttachedService threeNetsOrderAttachedService;
+    @Autowired
+    private ThreeNetsChildOrderService threeNetsChildOrderService;
+
+
     private ApiUtils apiUtils = new ApiUtils();
 
     /**
@@ -77,6 +93,52 @@ public class ThreeNetsRingService {
         return threenetsRingMapper.selectByPrimaryKey(id);
     }
 
+    @Transactional
+    public ThreenetsRing saveRing(ThreenetsRing ring) {
+        try{
+            BaseRequest request = new BaseRequest();
+            request.setParentId(ring.getOrderId());
+            List<ThreenetsChildOrder> childOrderList = threeNetsChildOrderService.getChildOrder(request);
+            Map<Integer, List<ThreenetsChildOrder>> collect = childOrderList.stream().collect(Collectors.groupingBy(ThreenetsChildOrder::getOperator));
+            for (Integer operator:collect.keySet()) {
+                String extensionsName = ring.getRingWay().substring(ring.getRingWay().indexOf("."));
+                boolean isVideo = Arrays.asList(VIDEO).contains(extensionsName);
+                ring.setRingType(isVideo ? "视频" : "音频");
+                ring.setRingStatus(1);
+                ring.setCreateTime(new Date());
+                ring.setRingName(ring.getRingName()+extensionsName);
+                ring.setOperate(operator);
+                //保存铃音
+                threenetsRingMapper.insertThreeNetsRing(ring);
+                if (operator == 1){
+                    saveMiguRing(ring);
+                }
+            }
+            //修改文件状态
+            fileService.updateStatus(ring.getRingWay());
+        }catch (Exception e){
+            log.info("添加铃音失败",e);
+        }
+        return ring;
+    }
+
+    /**
+     * 同步铃音到移动
+     *
+     * @param ring
+     */
+    @Synchronized
+    private void saveMiguRing(ThreenetsRing ring){
+        try {
+            ring.setFile(new File(RingtoneConfig.getProfile()+ring.getRingWay()));
+            ThreeNetsOrderAttached attached = threeNetsOrderAttachedService.selectByParentOrderId(ring.getOrderId());
+            apiUtils.saveMiguRing(ring,attached.getMiguId(),ring.getCompanyName());
+        }catch (Exception e){
+            log.info("添加铃音失败",e);
+        }
+
+    }
+
     /**
      * 保存铃音
      *
@@ -90,6 +152,7 @@ public class ThreeNetsRingService {
         ring.setRingType(isVideo ? "视频" : "音频");
         ring.setRingStatus(1);
         ring.setCreateTime(new Date());
+        ring.setRingName(ring.getRingName()+extensionsName);
         //保存铃音
         threenetsRingMapper.insertThreeNetsRing(ring);
         //修改文件状态

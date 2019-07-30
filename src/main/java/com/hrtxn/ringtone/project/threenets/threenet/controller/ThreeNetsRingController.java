@@ -89,7 +89,7 @@ public class ThreeNetsRingController {
     @GetMapping("/threenets/toAddMerchantsRingPage")
     public String toAddMerchantsRingPage(ModelMap map,BaseRequest request){
         map.put("orderId", request.getOrderId());
-        map.put("operate", request.getOperator());
+        map.put("companyName", request.getCompanyName());
         return "threenets/threenet/merchants/addring";
     }
 
@@ -103,7 +103,7 @@ public class ThreeNetsRingController {
     @Log(title = "添加铃音", businessType = BusinessType.INSERT, operatorLogType = OperatorLogType.THREENETS)
     public AjaxResult insterThreeNetsRing(ThreenetsRing ring){
         try {
-            threeNetsRingService.save(ring);
+            threeNetsRingService.saveRing(ring);
             return AjaxResult.success(ring,"保存成功");
         }catch (Exception e){
             log.error("添加铃音失败 方法：insterThreeNetsRing 错误信息", e);

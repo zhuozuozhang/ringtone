@@ -2,6 +2,7 @@ package com.hrtxn.ringtone.project.threenets.threenet.domain;
 
 import lombok.Data;
 
+import java.io.File;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -44,5 +45,7 @@ public class ThreenetsRing implements Serializable {
     private String companyName;
     // 铃音数量
     private Integer ringCount;
+    //
+    private File file;
 
 }
