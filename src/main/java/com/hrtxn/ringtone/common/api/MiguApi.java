@@ -1,6 +1,8 @@
 package com.hrtxn.ringtone.common.api;
 
 import com.hrtxn.ringtone.common.exception.NoLoginException;
+import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreeNetsOrderAttached;
+import com.hrtxn.ringtone.project.threenets.threenet.json.migu.MiguAddGroupRespone;
 import com.hrtxn.ringtone.common.utils.ChaoJiYing;
 import com.hrtxn.ringtone.common.utils.ShiroUtils;
 import com.hrtxn.ringtone.common.utils.json.JsonUtil;
@@ -465,7 +467,7 @@ public class MiguApi implements Serializable {
      * @throws IOException
      * @throws NoLoginException
      */
-    public MiguAddGroupRespone add(ThreenetsOrder ringOrder) throws IOException, NoLoginException {
+    public MiguAddGroupRespone add(ThreenetsOrder ringOrder, ThreeNetsOrderAttached attached) throws IOException, NoLoginException {
         User user = ShiroUtils.getSysUser();
         MiguAddGroupRespone addGroupRespone = null;
         String vcode = getCodeString();
@@ -490,19 +492,19 @@ public class MiguApi implements Serializable {
             reqEntity.addPart("county", new StringBody("鼓楼区", Charset.forName("UTF-8")));// 区
             reqEntity.addPart("groupStreet", new StringBody("六一北路92号", Charset.forName("UTF-8")));// 集团所在街道
             reqEntity.addPart("circle.payType", new StringBody("0"));// 集团统付
-//            if (ringOrder.getPaymentPrice() != 0) {
-//                reqEntity.addPart("circle.price", new StringBody(ringOrder.getPaymentPrice() + ""));// 资费，默认值为0
-//                reqEntity.addPart("circle.specialPrice", new StringBody(""));// 资费，默认值为0
-//            } else {
-//                reqEntity.addPart("circle.specialPrice", new StringBody(ringOrder.getPaymentPrice() + ""));// 资费，默认值为0
-//            }
-            reqEntity.addPart("circle.specialDiscount", new StringBody(""));// 折扣
+            if (attached.getMiguPrice() <= 5) {
+                reqEntity.addPart("circle.price", new StringBody(attached.getMiguPrice() + ""));// 资费，默认值为0
+                reqEntity.addPart("circle.specialPrice", new StringBody(""));// 资费，默认值为0
+            } else {
+                reqEntity.addPart("circle.specialPrice", new StringBody(attached.getMiguPrice() + ""));// 资费，默认值为0
+            }
+            //reqEntity.addPart("circle.specialDiscount", new StringBody(""));// 折扣
             reqEntity.addPart("circle.applyForSmsNotification", new StringBody("0"));// 申请免短信
             reqEntity.addPart("circle.isNormal", new StringBody("0"));// 集团类型、正式
-            reqEntity.addPart("circle.trialTimeType", new StringBody(""));// 试用时间
+            //reqEntity.addPart("circle.trialTimeType", new StringBody(""));// 试用时间
             reqEntity.addPart("circle.memo", new StringBody(""));// 集团简介
             if (ringOrder.getUpLoadAgreement() != null) {
-                reqEntity.addPart("file", new FileBody(ringOrder.getUpLoadAgreement()));
+                reqEntity.addPart("myfile", new FileBody(ringOrder.getUpLoadAgreement()));
             }
             httppost.setEntity(reqEntity);
             HttpResponse response1 = httpclient.execute(httppost);
@@ -522,6 +524,34 @@ public class MiguApi implements Serializable {
             httpclient.getConnectionManager().shutdown();
         }
         return addGroupRespone;
+        //            HashMap<String,String> map = new HashMap<>();
+//            map.put("vcode", vcode);// 集团简介
+//            map.put("circle.ID", "");
+//            map.put("circle.name",ringOrder.getCompanyName());// 集团名称
+//            map.put("circle.cmName", user.getUserName());// 客户经理姓名
+//            map.put("circle.cmMsisdn", user.getUserTel());// 客服号码
+//            map.put("groupManagerName", user.getUserName());// 管理员姓名
+//            map.put("circle.owner.msisdn", ringOrder.getLinkmanTel());// 集团管理员手机号
+//            map.put("manager.password", ringOrder.getLinkmanTel());// 集团管理员登陆密码
+//            map.put("manager.status","1");// 0启用集团管理员账户1禁止集团管理员账户
+//            map.put("province", "福建省");// 省
+//            map.put("city", "福州市");// 市
+//            map.put("county","鼓楼区");// 区
+//            map.put("groupStreet","六一北路92号");// 集团所在街道
+//            map.put("circle.payType", "0");// 集团统付
+//            if (attached.getMiguPrice() <= 5) {
+//                map.put("circle.price", attached.getMiguPrice() + "");// 资费，默认值为0
+//                map.put("circle.specialPrice", "");// 资费，默认值为0
+//            } else {
+//                map.put("circle.specialPrice",attached.getMiguPrice() + "");// 资费，默认值为0
+//            }
+//            map.put("circle.specialDiscount","");// 折扣
+//            map.put("circle.applyForSmsNotification","0");// 申请免短信
+//            map.put("circle.isNormal", "0");// 集团类型、正式
+//            map.put("circle.trialTimeType", "");// 试用时间
+//            map.put("circle.memo","");// 集团简介
+//            String sendPost = sendPost(map, addGroup_url);
+//            System.out.printf(sendPost);
     }
 
     public static void main(String[] args) throws NoLoginException, IOException {

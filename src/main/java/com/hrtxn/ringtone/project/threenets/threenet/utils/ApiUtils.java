@@ -10,6 +10,7 @@ import com.hrtxn.ringtone.common.utils.SpringUtils;
 import com.hrtxn.ringtone.common.utils.StringUtils;
 import com.hrtxn.ringtone.common.utils.json.JsonUtil;
 import com.hrtxn.ringtone.project.system.File.domain.Uploadfile;
+import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreeNetsOrderAttached;
 import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreenetsChildOrder;
 import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreenetsOrder;
 import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreenetsRing;
@@ -354,40 +355,20 @@ public class ApiUtils {
      * 保存移动订单
      *
      * @param order
-     * @param order
+     * @param attached
      * @return
      */
-    public AjaxResult saveOrderByYd(ThreenetsOrder order){
-        try{
-            //登陆
-            miguApi.loginAuto();
-
-           int sendCount = 3;// 系统同步远程系统3次。解决网络慢的问题
-            // 添加到咪咕平台
-            // 1.先进行增加到本地数据库
-                // 2.在进行同步到服务器，同步3次。
-                MiguAddGroupRespone addGroupResponse = null;
-                for (int i = 0; i < sendCount; i++) {// 重试添加3次
-                    addGroupResponse = miguApi.add(order);
-                    if (addGroupResponse != null) {
-                        break;
-                    }
-                }
-                if (addGroupResponse.isSuccess()) {
-                    // 设置集团id
-                    order.setMcardId(addGroupResponse.getCircleId());
-                    // 2.增加订单表
-//                    if (order.getPaymentPrice() == 3 || order.getPaymentPrice() == 5) {
-//                        order.setStatus("审核通过");
-//                    } else {
-//                        order.setStatus("待审核");
-//                    }
-                }
-            return AjaxResult.success(addGroupResponse,addGroupResponse.getMsg());
-        }catch (Exception e){
-            log.error("对接移动 方法：saveOrderByYd  错误信息", e);
-            return AjaxResult.error("保存失败");
+    public MiguAddGroupRespone saveOrderByYd(ThreenetsOrder order, ThreeNetsOrderAttached attached)throws IOException,NoLoginException{
+       int sendCount = 3;// 系统同步远程系统3次。解决网络慢的问题
+        MiguAddGroupRespone addGroupResponse = null;
+        //进行同步到服务器，同步3次。
+        for (int i = 0; i < sendCount; i++) {// 重试添加3次
+            addGroupResponse = miguApi.add(order,attached);
+            if (addGroupResponse != null) {
+                break;
+            }
         }
+        return addGroupResponse;
     }
 
     /**

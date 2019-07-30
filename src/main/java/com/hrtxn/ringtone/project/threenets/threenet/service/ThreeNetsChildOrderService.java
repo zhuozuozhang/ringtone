@@ -172,7 +172,7 @@ public class ThreeNetsChildOrderService {
         //设置代理商
         childOrder.setUserId(ShiroUtils.getSysUser().getId());
         childOrder.setCreateDate(new Date());
-        childOrder.setStatus("审核通过");
+        //childOrder.setStatus("审核通过");
         return childOrder;
     }
 

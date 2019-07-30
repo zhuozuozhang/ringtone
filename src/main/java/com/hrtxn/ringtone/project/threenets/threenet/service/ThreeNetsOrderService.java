@@ -10,9 +10,11 @@ import com.hrtxn.ringtone.project.system.File.domain.Uploadfile;
 import com.hrtxn.ringtone.project.system.File.service.FileService;
 import com.hrtxn.ringtone.project.system.json.JuhePhone;
 import com.hrtxn.ringtone.project.system.json.JuhePhoneResult;
+import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreeNetsOrderAttached;
 import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreenetsChildOrder;
 import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreenetsOrder;
 import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreenetsRing;
+import com.hrtxn.ringtone.project.threenets.threenet.json.migu.MiguAddGroupRespone;
 import com.hrtxn.ringtone.project.threenets.threenet.mapper.ThreenetsOrderMapper;
 import com.hrtxn.ringtone.project.threenets.threenet.utils.ApiUtils;
 import lombok.Synchronized;
@@ -42,6 +44,8 @@ public class ThreeNetsOrderService {
     private ThreeNetsRingService threeNetsRingService;
     @Autowired
     private FileService fileService;
+    @Autowired
+    private ThreeNetsOrderAttachedService threeNetsOrderAttachedService;
 
     /**
      * 根据id查询
@@ -174,24 +178,24 @@ public class ThreeNetsOrderService {
         if (!threenetsOrder.getLinkmanTel().equals(order.getLinkmanTel())) {
             //如果更改手机号则更改手机号归属地
             threenetsOrder = JuhePhoneUtils.getPhone(threenetsOrder);
-//            if (threenetsOrder.getOperator() == 1) {
-//                threenetsOrder.setPaymentPrice(Integer.parseInt(order.getMobilePay() != null ? order.getMobilePay() : order.getSpecialPrice()));
-//            } else if (threenetsOrder.getOperator() == 3) {
-//                threenetsOrder.setPaymentPrice(Integer.parseInt(order.getUmicomPay()));
-//            }
+            BeanUtils.copyProperties(threenetsOrder, order);
+            threenetsOrder.setStatus(order.getMobilePay() != null ? "审核通过" : "待审核");
+            threenetsOrderMapper.updateByPrimaryKey(threenetsOrder);
         }
-        //保存本地
-        BeanUtils.copyProperties(threenetsOrder, order);
-        threenetsOrderMapper.updateByPrimaryKey(threenetsOrder);
+        //订单附表初始化
+        ThreeNetsOrderAttached attached = new ThreeNetsOrderAttached();
+        attached.setMiguPrice(Integer.parseInt(order.getMobilePay() != null ? order.getMobilePay() : order.getSpecialPrice()));
+        attached.setSwxlPrice(Integer.getInteger(order.getUmicomPay()));
+        attached.setParentOrderId(order.getId());
+        attached.setBusinessLicense(order.getCompanyUrl());//企业资质
+        attached.setConfirmLetter(order.getClientUrl());//客户确认函
+        attached.setSubjectProve(order.getMainUrl());//主体证明
+        attached.setAvoidShortAgreement(order.getProtocolUrl());//免短协议
+
 
         //查询铃音是否存在
         List<ThreenetsRing> rings = threeNetsRingService.listByOrderId(order.getId());
-        if (order.getMemberTels().indexOf(order.getLinkmanTel()) < 0) {
-            String tels = order.getMemberTels();
-            tels = tels + '\n' + order.getLinkmanTel();
-            order.setMemberTels(tels);
-        }
-        //子订单手机号验证
+        //子订单手机号验证,以及子订单数据初始化
         List<ThreenetsChildOrder> childOrderList = threeNetsChildOrderService.formattedPhone(order.getMemberTels(), order.getId());
         for (int i = 0; i < childOrderList.size(); i++) {
             ThreenetsChildOrder childOrder = childOrderList.get(i);
@@ -199,10 +203,10 @@ public class ThreeNetsOrderService {
             childOrder.setRingId(ring.getId());
             childOrder.setIsVideoUser(ring.getRingType().equals("视频") ? true : false);
             //保存子订单
-            childOrderList.add(i, childOrder);
+            childOrderList.set(i,childOrder);
         }
-        //批量保存
-        threeNetsChildOrderService.batchChindOrder(childOrderList);
+        //保存线上
+        saveOnlineOrder(threenetsOrder,attached,childOrderList);
         return AjaxResult.success(threenetsOrder, "保存成功！");
     }
 
@@ -261,36 +265,33 @@ public class ThreeNetsOrderService {
     /**
      * 三网保存订单
      *
-     * @param order
+     * @param list
      */
     @Synchronized
-    private void saveOnlineOrder(ThreenetsOrder order,ThreenetsRing ring) {
+    private void saveOnlineOrder(ThreenetsOrder order,ThreeNetsOrderAttached attached,List<ThreenetsChildOrder> list) {
+        Map<Integer, List<ThreenetsChildOrder>> collect = list.stream().collect(Collectors.groupingBy(ThreenetsChildOrder::getOperator));
+        List<Uploadfile> fileList = fileService.listUploadfile(order.getId());
         ApiUtils utils = new ApiUtils();
-        switch (order.getOperator()) {
-            //移动
-            case 1:
-                utils.saveOrderByYd(order);
-                break;
-            //电信
-            case 2:
-                break;
-            //联通
-            case 3:
-                List<Uploadfile> list = fileService.listUploadfile(order.getId());
-                utils.saveOrderByLt(order,list,ring);
-                break;
-            default:
-                break;
+
+        try{
+            // 移动
+            if (!collect.get(1).isEmpty()){
+                order.setLinkmanTel(collect.get(1).get(0).getLinkmanTel());
+                MiguAddGroupRespone miguAddGroupRespone = utils.saveOrderByYd(order, attached);
+                if (miguAddGroupRespone.isSuccess()) {
+                    attached.setMiguId(miguAddGroupRespone.getCircleId());
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
         }
+        //联通
+        //utils.saveOrderByLt(order,fileList,null);
+        //联通集团
+
+        //保存订单附表
+        threeNetsOrderAttachedService.save(attached);
+        //保存子订单
+        threeNetsChildOrderService.batchChindOrder(list);
     }
-
-    /**
-     * 三网保存子订单
-     *
-     * @param childOrder
-     */
-    private void saveOnlineChildOrder(ThreenetsChildOrder childOrder) {
-
-    }
-
 }

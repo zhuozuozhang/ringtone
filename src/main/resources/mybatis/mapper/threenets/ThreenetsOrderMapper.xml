@@ -93,12 +93,6 @@
             <if test="linkmanTel != null">
                 linkman_tel,
             </if>
-            <if test="paymentType != null">
-                payment_type,
-            </if>
-            <if test="paymentPrice != null">
-                payment_price,
-            </if>
             <if test="province != null">
                 province,
             </if>
@@ -113,9 +107,6 @@
             </if>
             <if test="userId != null">
                 user_id,
-            </if>
-            <if test="ordernum != null">
-                ordernum,
             </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -134,12 +125,6 @@
             <if test="linkmanTel != null">
                 #{linkmanTel,jdbcType=VARCHAR},
             </if>
-            <if test="paymentType != null">
-                #{paymentType,jdbcType=INTEGER},
-            </if>
-            <if test="paymentPrice != null">
-                #{paymentPrice,jdbcType=INTEGER},
-            </if>
             <if test="province != null">
                 #{province,jdbcType=VARCHAR},
             </if>
@@ -154,9 +139,6 @@
             </if>
             <if test="userId != null">
                 #{userId,jdbcType=INTEGER},
-            </if>
-            <if test="ordernum != null">
-                #{ordernum,jdbcType=VARCHAR},
             </if>
         </trim>
     </insert>

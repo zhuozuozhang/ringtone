@@ -1,5 +1,6 @@
 package com.hrtxn.ringtone.project.threenets.threenet.mapper;
 
+import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreeNetsOrderAttached;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -9,4 +10,32 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface ThreeNetsOrderAttachedMapper {
+
+    /**
+     *
+     * @param id
+     * @return
+     */
+    ThreeNetsOrderAttached selectByPrimaryKey(Integer id);
+
+    /**
+     *
+     * @param id
+     * @return
+     */
+    int deleteByPrimaryKey(Integer id);
+
+    /**
+     *
+     * @param threeNetsOrderAttached
+     * @return
+     */
+    int insertSelective(ThreeNetsOrderAttached threeNetsOrderAttached);
+
+    /**
+     *
+     * @param threeNetsOrderAttached
+     * @return
+     */
+    int updateByPrimaryKeySelective(ThreeNetsOrderAttached threeNetsOrderAttached);
 }

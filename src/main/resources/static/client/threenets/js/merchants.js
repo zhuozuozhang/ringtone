@@ -67,7 +67,7 @@ function DelMerchants(id) {
     layer.confirm("你确定要删除该行记录吗?", {
         btn: ["确定", "取消"] //按钮
     }, function () {
-        AjaxDevare("/threenets/devareThreeNetsOrder", {"id": id}, function (result) {
+        AjaxDelete("/threenets/deleteThreeNetsOrder", {"id": id}, function (result) {
             layer.closeAll('dialog');//关闭弹层
             layer.msg(result.msg + "!", {icon: result.code == 500 ? 2 : 1, time: 1000});
             $('#set').DataTable().ajax.reload(null,false);

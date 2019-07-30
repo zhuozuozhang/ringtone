@@ -45,6 +45,7 @@ public class FileService {
             uploadfileMapper.insertSelective(uploadfile);
             return AjaxResult.success(1, path, "文件上传成功");
         } catch (Exception e) {
+            e.printStackTrace();
             return AjaxResult.error("文件上传失败");
         }
     }
