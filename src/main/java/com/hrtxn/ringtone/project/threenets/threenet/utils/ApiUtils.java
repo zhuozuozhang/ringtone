@@ -29,6 +29,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
@@ -356,11 +357,11 @@ public class ApiUtils {
      * @throws IOException
      * @throws NoLoginException
      */
-    public AjaxResult setRing(String phones, ThreenetsRing threenetsRing, Integer operate,Integer orderId) throws IOException, NoLoginException {
+    public AjaxResult setRing(String phones, ThreenetsRing threenetsRing, Integer operate, Integer orderId) throws IOException, NoLoginException {
         String sucMsg = "";
         String errMsg = "";
         int failure = 0;
-        if (operate == 1){ // 移动
+        if (operate == 1) { // 移动
             String result = miguApi.setCircleRingById4User(phones, threenetsRing.getOperateRingId(), threenetsRing.getOperateId());
             RingSetResult rsr = (RingSetResult) JsonUtil.getObject4JsonString(result, RingSetResult.class);
             if (rsr.isSuccess()) {
@@ -368,35 +369,35 @@ public class ApiUtils {
                 for (String phone : phoness) {
                     String ringName = StringUtils.subString(threenetsRing.getRingName(), '.');
                     // 根据父级订单ID以及电话号码查询子级订单信息
-                    ThreenetsChildOrder threenetsChildOrder = SpringUtils.getBean(ThreenetsChildOrderMapper.class).findChildOrderByOrderIdAndPhone(orderId,phone);
+                    ThreenetsChildOrder threenetsChildOrder = SpringUtils.getBean(ThreenetsChildOrderMapper.class).findChildOrderByOrderIdAndPhone(orderId, phone);
                     if (threenetsChildOrder.getIsMonthly() == 2) {
                         threenetsChildOrder.setRingName(ringName);
                         threenetsChildOrder.setRemark("您的请求已受理，请稍后在【商户列表 ->号码管理】中点击刷新操作查看");
                         // 执行修改子订单操作
                         int count = SpringUtils.getBean(ThreenetsChildOrderMapper.class).updateThreeNetsChidOrder(threenetsChildOrder);
-                        if (count <= 0){
+                        if (count <= 0) {
                             failure++;
                         }
                     }
                 }
-                if (failure == 0){
+                if (failure == 0) {
                     sucMsg = "您的请求已受理，请稍后在【商户列表 ->号码管理】中点击刷新操作查看!";
-                }else{
+                } else {
                     errMsg = "执行修改子订单信息出错！";
                 }
             } else {
                 failure++;
                 errMsg = rsr.getMsg();
             }
-        } else if(operate == 2){ // 电信
+        } else if (operate == 2) { // 电信
 
         } else { // 联通
 
         }
-        if (failure > 0){
-            return  AjaxResult.error(errMsg);
-        }else{
-            return AjaxResult.success(true,sucMsg);
+        if (failure > 0) {
+            return AjaxResult.error(errMsg);
+        } else {
+            return AjaxResult.success(true, sucMsg);
         }
     }
 
@@ -408,11 +409,10 @@ public class ApiUtils {
      * @param attached
      * @return
      */
-    public MiguAddGroupRespone saveOrderByYd(ThreenetsOrder order, ThreeNetsOrderAttached attached) throws IOException, NoLoginException {
-        int sendCount = 3;// 系统同步远程系统3次。解决网络慢的问题
+    public MiguAddGroupRespone addOrderByYd(ThreenetsOrder order, ThreeNetsOrderAttached attached) throws IOException, NoLoginException {
         MiguAddGroupRespone addGroupResponse = null;
         //进行同步到服务器，同步3次。
-        for (int i = 0; i < sendCount; i++) {// 重试添加3次
+        for (int i = 0; i < 3; i++) {// 重试添加3次
             addGroupResponse = miguApi.add(order, attached);
             if (addGroupResponse != null) {
                 break;
@@ -421,6 +421,26 @@ public class ApiUtils {
         return addGroupResponse;
     }
 
+    /**
+     * 保存联通订单
+     *
+     * @param ringOrder
+     * @param attached
+     * @return
+     * @throws IOException
+     * @throws NoLoginException
+     */
+    public SwxlGroupResponse addOrderByLt(ThreenetsOrder ringOrder, ThreeNetsOrderAttached attached) throws IOException, NoLoginException {
+        SwxlGroupResponse swxlGroupResponse = null;
+        // 添加商户,同步5次
+        for (int i = 0; i < 5; i++) {
+            swxlGroupResponse = swxlApi.addGroup(ringOrder, attached);
+            if (swxlGroupResponse != null && 0 == swxlGroupResponse.getStatus()) {
+                break;
+            }
+        }
+        return swxlGroupResponse;
+    }
 
     /**
      * 保存铃音
@@ -437,68 +457,48 @@ public class ApiUtils {
     }
 
     /**
-     * 保存联通订单
+     * 联通保存铃音
      *
-     * @param ringOrder
-     * @param attachments
      * @param ring
+     * @param circleID
      * @return
      * @throws IOException
      * @throws NoLoginException
      */
-    public AjaxResult saveOrderByLt(ThreenetsOrder ringOrder, List<Uploadfile> attachments, ThreenetsRing ring) {
-        try {
-            // 添加到音乐名片系统
-            SwxlGroupResponse swxlGroupResponse = null;
-            // 添加商户
-            for (int i = 0; i < 5; i++) {
-                swxlGroupResponse = swxlApi.addGroup(ringOrder, ring);
-                if (swxlGroupResponse != null && 0 == swxlGroupResponse.getStatus()) {
-                    break;
-                }
-            }
-//            // status 0正常 1异常
-//            if (swxlGroupResponse != null && 0 == swxlGroupResponse.getStatus()) {
-//                // 向商户发送开通短信,发送短信的成功或者失败,不影响后续操作
-//                boolean swxlSendPhoneSMS = swxlApi.SwxlSendPhoneSMS(swxlGroupResponse.getId());
-//                /* 添加铃音 */
-//                ring.setOperateId(ringOrder.getMcardId());
-//                SwxlRingMsg swxlRingMsg = null;
-//                for (int i = 0; i < 5; i++) {
-//                    swxlRingMsg = swxlApi.getRingInfo2(ring);
-//                    if (swxlRingMsg != null) {
-//                        break;
-//                    }
-//                }
-//                if (swxlRingMsg != null) {
-//                    ring.setRemark(swxlRingMsg.getRemark());
-//                    return AjaxResult.success(ring,"成功");
-//                    // 添加铃音到数据库
-//                    //ringRepository.saveRing(ring);
-//                } else {
-//                    return AjaxResult.error("获取铃音信息失败，至《铃音管理》页面刷新");
-//                }
-//            } else {
-//            }
-            return AjaxResult.error(swxlGroupResponse.getRemark());
-        } catch (Exception e) {
-            log.error("对接联通 方法：saveOrderByLt  错误信息", e);
-            return AjaxResult.error("保存失败");
-        }
+    public String saveSwxlRing(ThreenetsRing ring,String circleID)throws IOException,NoLoginException{
+        return swxlApi.addRing(ring,circleID);
     }
+
+    /**
+     * 联通-添加铃音
+     *
+     * @param ring
+     * @param circleID
+     * @return
+     * @throws IOException
+     * @throws NoLoginException
+     */
+    public String addRingByLt(ThreenetsRing ring,String circleID)throws IOException,NoLoginException{
+        return swxlApi.addRing(ring, circleID);
+    }
+
 
     /**
      * 移动 添加成员
      *
-     * @param data
+     * @param orders
      * @param circleId
      * @return
      * @throws IOException
      * @throws NoLoginException
      */
-    public String addPhoneByYd(String data, String circleId) throws IOException, NoLoginException {
+    public String addPhoneByYd(List<ThreenetsChildOrder> orders, String circleId) throws IOException, NoLoginException {
         if (circleId == null) {
             return "集团ID错误！";
+        }
+        String data = "";
+        for (int i = 0; i < orders.size(); i++) {
+            data = data + orders.get(i).getLinkmanTel() + (i == orders.size() - 1 ? "" : ",");
         }
         return miguApi.addPhone(data, circleId);
     }
@@ -506,15 +506,19 @@ public class ApiUtils {
     /**
      * 联通 添加成员
      *
-     * @param data
+     * @param orders
      * @param circleId
      * @return
      * @throws IOException
      * @throws NoLoginException
      */
-    public String addPhoneByLt(String data, String circleId) throws IOException, NoLoginException {
+    public String addPhoneByLt(List<ThreenetsChildOrder> orders, String circleId) throws IOException, NoLoginException {
         if (circleId == null) {
             return "集团ID错误";
+        }
+        String data = "";
+        for (int i = 0; i < orders.size(); i++) {
+            data = data + orders.get(i).getLinkmanTel() + (i == orders.size() - 1 ? "" : ",");
         }
         return swxlApi.addPhone(data, circleId);
     }

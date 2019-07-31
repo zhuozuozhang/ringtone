@@ -10,8 +10,11 @@ import com.hrtxn.ringtone.project.system.json.JuhePhoneResult;
 import com.hrtxn.ringtone.project.system.user.domain.User;
 import com.hrtxn.ringtone.project.system.user.mapper.UserMapper;
 import com.hrtxn.ringtone.project.threenets.threenet.domain.PlotBarPhone;
+import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreeNetsOrderAttached;
 import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreenetsChildOrder;
+import com.hrtxn.ringtone.project.threenets.threenet.mapper.ThreeNetsOrderAttachedMapper;
 import com.hrtxn.ringtone.project.threenets.threenet.mapper.ThreenetsChildOrderMapper;
+import com.hrtxn.ringtone.project.threenets.threenet.mapper.ThreenetsOrderMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.subject.Subject;
@@ -36,10 +39,33 @@ import java.util.stream.Collectors;
 public class ThreeNetsService {
 
     @Autowired
+    private ThreenetsOrderMapper threenetsOrderMapper;
+
+    @Autowired
+    private ThreeNetsOrderAttachedMapper threeNetsOrderAttachedMapper;
+
+    @Autowired
     private ThreenetsChildOrderMapper threenetsChildOrderMapper;
     @Autowired
     private UserMapper userMapper;
 
+
+    /**
+     * 根据父级id获取附表
+     *
+     * @param id
+     * @return
+     */
+    public ThreeNetsOrderAttached getOrderAttached(Integer id){
+        return threeNetsOrderAttachedMapper.selectByParentOrderId(id);
+    }
+    /**
+     *
+     * @param id
+     * @param session
+     * @return
+     * @throws Exception
+     */
     public AjaxResult enterSubUser(Integer id, HttpSession session) throws Exception {
         if (StringUtils.isNotNull(id) && id != 0) {
             // 判断当前登陆者是否是管理员

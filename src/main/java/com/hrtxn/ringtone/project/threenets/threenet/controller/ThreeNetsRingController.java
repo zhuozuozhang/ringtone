@@ -37,8 +37,6 @@ public class ThreeNetsRingController {
 
     @Autowired
     private ThreeNetsRingService threeNetsRingService;
-    @Autowired
-    private ThreeNetsOrderService threeNetsOrderService;
 
     /**
      * 进入铃音列表
@@ -48,7 +46,7 @@ public class ThreeNetsRingController {
     @GetMapping("/threenets/toMerchantsRingPage/{orderId}")
     public String toMerchantsChildPage(ModelMap map, @PathVariable Integer orderId) {
         try {
-            ThreenetsOrder order = threeNetsOrderService.getById(orderId);
+            ThreenetsOrder order = threeNetsRingService.getOrderById(orderId);
             map.put("orderId", orderId);
             map.put("companyName", order.getCompanyName());
             // 根据父级ID获取铃音运营商

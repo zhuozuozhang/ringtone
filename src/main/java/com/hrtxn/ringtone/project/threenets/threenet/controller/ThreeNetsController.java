@@ -13,6 +13,7 @@ import com.hrtxn.ringtone.project.system.notice.service.NoticeService;
 import com.hrtxn.ringtone.project.system.user.domain.User;
 import com.hrtxn.ringtone.project.system.user.service.UserService;
 import com.hrtxn.ringtone.project.threenets.threenet.domain.PlotBarPhone;
+import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreeNetsOrderAttached;
 import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreenetsChildOrder;
 import com.hrtxn.ringtone.project.threenets.threenet.service.ThreeNetsChildOrderService;
 import com.hrtxn.ringtone.project.threenets.threenet.service.ThreeNetsService;
@@ -100,6 +101,9 @@ public class ThreeNetsController {
      */
     @GetMapping("/threenets/toAddMerchantsPhonePage/{orderId}")
     public String toAddMerchantsPhonePage(ModelMap map,@PathVariable("orderId")Integer orderId) {
+        ThreeNetsOrderAttached attached = threeNetsService.getOrderAttached(orderId);
+        map.put("miguId",attached.getMiguId());
+        map.put("swxlId",attached.getSwxlId());
         map.put("orderId",orderId);
         return "threenets/threenet/merchants/Addnumber";
     }
