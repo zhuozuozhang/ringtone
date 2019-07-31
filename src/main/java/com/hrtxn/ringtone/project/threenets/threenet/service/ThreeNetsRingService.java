@@ -4,7 +4,7 @@ import com.hrtxn.ringtone.common.constant.AjaxResult;
 import com.hrtxn.ringtone.common.domain.BaseRequest;
 import com.hrtxn.ringtone.common.domain.Page;
 import com.hrtxn.ringtone.common.exception.NoLoginException;
-import com.hrtxn.ringtone.common.utils.FileUtil;
+import com.hrtxn.ringtone.common.utils.StringUtils;
 import com.hrtxn.ringtone.freemark.config.systemConfig.RingtoneConfig;
 import com.hrtxn.ringtone.project.system.File.service.FileService;
 import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreeNetsOrderAttached;
@@ -18,8 +18,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.IOException;
 import java.io.File;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -215,17 +215,30 @@ public class ThreeNetsRingService {
                 }
             }
         }
-            // 刷新铃音信息
-//            AjaxResult ajaxResult = apiUtils.getRingInfo(threenetsRings);
-//            log.info("刷新铃音信息结果"+ajaxResult.toString());
-////            if ((Boolean)ajaxResult.get("data")){
-//                return AjaxResult.success(operate,"刷新成功!");
-////            }else{
-////                return AjaxResult.success(null,ajaxResult.get("msg").toString());
-////            }
-//        }else{
-//            return AjaxResult.success(null,"无数据!");
-//        }
         return operate;
+    }
+
+    /**
+     * 设置铃音
+     *
+     * @param phones
+     * @param orderId
+     * @param operate
+     * @param id
+     * @return
+     * @throws Exception
+     */
+    public AjaxResult setRing(String phones, Integer orderId, Integer operate, Integer id) throws Exception {
+        if (StringUtils.isNotEmpty(phones) && StringUtils.isNotNull(orderId)
+                && StringUtils.isNotNull(operate)  && StringUtils.isNotNull(id)){
+            // 根据ID获取铃音信息
+            ThreenetsRing threenetsRing = threenetsRingMapper.selectByPrimaryKey(id);
+            if (StringUtils.isNotNull(threenetsRing)){
+                return apiUtils.setRing(phones, threenetsRing, operate, orderId);
+            } else {
+                return AjaxResult.error("无铃音数据！");
+            }
+        }
+        return AjaxResult.error("参数格式不正确！");
     }
 }

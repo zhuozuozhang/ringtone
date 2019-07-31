@@ -108,4 +108,12 @@ public interface ThreenetsChildOrderMapper {
      * @return
      */
     int batchChindOrder(@Param("list") List<ThreenetsChildOrder> list);
+
+    /**
+     * 根据父级订单ID以及电话号码查询子级订单信息
+     * @param orderId
+     * @param phone
+     * @return
+     */
+    ThreenetsChildOrder findChildOrderByOrderIdAndPhone(@Param("orderId") Integer orderId, @Param("phone") String phone);
 }

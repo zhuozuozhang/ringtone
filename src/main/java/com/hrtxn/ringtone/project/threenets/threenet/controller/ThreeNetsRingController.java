@@ -112,7 +112,6 @@ public class ThreeNetsRingController {
         }
     }
 
-
     /**
      * 删除铃音
      *
@@ -143,7 +142,6 @@ public class ThreeNetsRingController {
             return AjaxResult.error("克隆失败！");
         }
     }
-
 
     /**
      * 播放铃音
@@ -225,10 +223,23 @@ public class ThreeNetsRingController {
         }
     }
 
+    /**
+     * 设置铃音
+     *
+     * @param phones
+     * @param orderId
+     * @param operate
+     * @param id
+     * @return
+     */
     @ResponseBody
     @PutMapping("/threenets/setRing")
-    public AjaxResult setRing(String[] phones,Integer orderId,Integer operate, Integer id){
-        System.out.println("q4wjhyuiryqwruiyhe sod");
-        return null;
+    public AjaxResult setRing(String phones,Integer orderId,Integer operate, Integer id){
+        try {
+            return threeNetsRingService.setRing(phones,orderId,operate,id);
+        } catch (Exception e) {
+            log.info("设置铃音 方法：setRing 错误信息：[{}]",e);
+        }
+        return AjaxResult.error("设置铃音出错！");
     }
 }

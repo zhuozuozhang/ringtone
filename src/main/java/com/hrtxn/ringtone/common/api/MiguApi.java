@@ -2,14 +2,14 @@ package com.hrtxn.ringtone.common.api;
 
 import com.hrtxn.ringtone.common.constant.AjaxResult;
 import com.hrtxn.ringtone.common.exception.NoLoginException;
-import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreeNetsOrderAttached;
-import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreenetsRing;
-import com.hrtxn.ringtone.project.threenets.threenet.json.migu.MiguAddGroupRespone;
 import com.hrtxn.ringtone.common.utils.ChaoJiYing;
+import com.hrtxn.ringtone.common.utils.HttpUtils;
 import com.hrtxn.ringtone.common.utils.ShiroUtils;
 import com.hrtxn.ringtone.common.utils.json.JsonUtil;
 import com.hrtxn.ringtone.project.system.user.domain.User;
+import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreeNetsOrderAttached;
 import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreenetsOrder;
+import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreenetsRing;
 import com.hrtxn.ringtone.project.threenets.threenet.json.migu.MiguAddGroupRespone;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.json.JSONArray;
@@ -61,10 +61,11 @@ public class MiguApi implements Serializable {
     public static String orderCrbtAndMonth_URL = "http://211.137.107.18:8888/cm/userpay!orderCrbtAndMonth.action";//直接开通包月url
     public static String addGroup_url = "http://211.137.107.18:8888/cm/groupInfo!addGroup.action";//增加商户url
     public static String findCircleRingPageById_url = "http://211.137.107.18:8888/cm/setRingAction!findCircleRingById.action"; // 获取铃音信息
-
-    public static String findCircleMsgList_url = "http://211.137.107.18:8888/cm/groupInfo!findCircleMsgList.action";// 查看消息
     public static String ADD_PHONE_URL = "http://211.137.107.18:8888/cm/groupInfo!inviteGroupUsers.action";//增加号码地址
     public static String importRing_url = "http://211.137.107.18:8888/cm/cmRing!importRing.action";//增加铃音url
+    public static String settingRing_url = "http://211.137.107.18:8888/cm/cmCircleRing!setCircleRingById4User.action"; // 铃音设置
+
+    public static String findCircleMsgList_url = "http://211.137.107.18:8888/cm/groupInfo!findCircleMsgList.action";// 查看消息
     public static String checkAdminMsisdn_url = "http://211.137.107.18:8888/cm/groupInfo!checkAdminMsisdn.action";
     public static String checkGroupName_url = "http://211.137.107.18:8888/cm/groupInfo!checkGroupName.action";
     public static String ringSetting_url = "http://211.137.107.18:8888/cm/groupInfo!ringSetting.action";
@@ -204,6 +205,55 @@ public class MiguApi implements Serializable {
                         code = json.getString("pic_str");
                         break;
                     } else {
+                        getCodeString();
+                    }
+                } else {
+                    getCodeString();
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            httpCode.abort();
+            httpclientCode.getConnectionManager().shutdown();
+        }
+        return code;
+    }
+
+    public String getCreateSHCodeString() throws NoLoginException, IOException {
+        String code = null;
+        DefaultHttpClient httpclientCode = new DefaultHttpClient();
+        httpclientCode.setCookieStore(this.getCookieStore());
+        double rm = (new Random()).nextDouble();
+        System.out.println(rm);
+        HttpGet httpCode = new HttpGet(CODE_URL + "?abc=" + rm);
+        HttpResponse codeResponse;
+        try {
+            // 获取验证码
+            codeResponse = httpclientCode.execute(httpCode);
+            InputStream ins1 = codeResponse.getEntity().getContent();
+            this.setMiguCookie(httpclientCode.getCookieStore());
+            ByteArrayOutputStream os = new ByteArrayOutputStream();
+            byte[] buff = new byte[100];
+            int rc = 0;
+            while ((rc = ins1.read(buff, 0, 100)) > 0) {
+                os.write(buff, 0, rc);
+            }
+            byte[] in2b = os.toByteArray();
+            HttpUtils.downloadNet(ins1);
+            String codestr = ChaoJiYing.PostPic("wwewwe", "wyc19931224", "899622", "4004", "4", in2b);
+            //{"err_no":0,"err_str":"OK","pic_id":"3068410332412700001","pic_str":"0572","md5":"9f847dfdb63ca1ddf9d5beb86a4c8594"}
+            System.out.println("验证码识别："+codestr);
+            JSONArray jsonStr = JSONArray.fromObject("["+codestr+"]");
+            for (int i = 0; i < jsonStr.size(); i++) {
+                JSONObject json = jsonStr.getJSONObject(i);
+                Integer err_no = Integer.parseInt(json.getString("err_no"));
+                code = json.getString("pic_str");
+                if (err_no == 0) {
+                    if(code!= null && code.length() == 4){
+                        code = json.getString("pic_str");
+                        break;
+                    }else {
                         getCodeString();
                     }
                 } else {
@@ -391,6 +441,78 @@ public class MiguApi implements Serializable {
         String getUrl = findCircleRingPageById_url + "?circleID=" + circleID;
         String result = sendGet(getUrl);
         log.info("移动获取铃音信息 参数：{} 结果：{}", circleID, result);
+        return result;
+    }
+
+    public String ringSetting(String phoneNo, String ringId, String circleId) throws NoLoginException, IOException {
+        String result = null;
+        CloseableHttpClient httpclient = HttpClients.custom().setDefaultCookieStore(this.getCookieStore()).build();
+        HttpPost httppost = new HttpPost(ringSetting_url);
+        List<NameValuePair> formparams = new ArrayList<NameValuePair>();
+        formparams.add(new BasicNameValuePair("phoneNo", phoneNo));
+        formparams.add(new BasicNameValuePair("ringId", ringId));
+        formparams.add(new BasicNameValuePair("circleId", circleId));
+        UrlEncodedFormEntity entity = new UrlEncodedFormEntity(formparams, "utf-8");
+        httppost.setEntity(entity);
+        CloseableHttpResponse response = httpclient.execute(httppost);
+        try {
+            HttpEntity resEntity = response.getEntity();
+            result = EntityUtils.toString(resEntity);
+            log.info("移动 设置铃音 参数：{},{},{} 结果：{}",phoneNo,ringId,circleId,result);
+            this.setMiguCookie(this.getCookieStore());
+        } catch (Exception e) {
+            System.out.println(e);
+        } finally {
+            httppost.abort();
+            response.close();
+        }
+        return result;
+    }
+
+    /**
+     * 设置铃音
+     *
+     * @param phones
+     * @param ringId
+     * @param circleId
+     * @return {"msg":"验证码输入错误","success":false}
+     * @throws IOException
+     * @throws NoLoginException
+     */
+    public String setCircleRingById4User(String phones, String ringId, String circleId) throws IOException, NoLoginException {
+        String result = null;
+        CloseableHttpClient httpclient = HttpClients.custom().setDefaultCookieStore(this.getCookieStore()).build();
+        HttpPost httppost = new HttpPost(settingRing_url);
+        List<NameValuePair> formparams = new ArrayList<NameValuePair>();
+        String[] phoness = phones.split(",");
+        for (String phone : phoness) {
+            formparams.add(new BasicNameValuePair("checkbox", phone));
+        }
+        formparams.add(new BasicNameValuePair("circleID", circleId));
+        formparams.add(new BasicNameValuePair("ringID", ringId));
+        formparams.add(new BasicNameValuePair("data", phones));
+        formparams.add(new BasicNameValuePair("payType", "0"));
+        formparams.add(new BasicNameValuePair("allFlag", ""));
+        String vcode = getCreateSHCodeString();
+        formparams.add(new BasicNameValuePair("vcode", vcode));
+        UrlEncodedFormEntity entity = new UrlEncodedFormEntity(formparams, "utf-8");
+        httppost.setEntity(entity);
+        CloseableHttpResponse response = httpclient.execute(httppost);
+        try {
+            HttpEntity resEntity = response.getEntity();
+            result = EntityUtils.toString(resEntity);
+            log.info("移动 设置铃音 参数：{},{},{} 结果：{}",phones,ringId,circleId,result);
+            this.setMiguCookie(this.getCookieStore());
+        } catch (Exception e) {
+            log.error("移动 设置铃音 错误信息", e);
+        } finally {
+            try {
+                httppost.abort();
+                response.close();
+            } catch (IOException e) {
+                log.error("response.close(); 错误信息", e);
+            }
+        }
         return result;
     }
 

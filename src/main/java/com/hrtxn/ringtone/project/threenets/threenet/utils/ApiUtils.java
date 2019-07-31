@@ -16,7 +16,11 @@ import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreenetsOrder;
 import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreenetsRing;
 import com.hrtxn.ringtone.project.threenets.threenet.json.migu.MiguAddGroupRespone;
 import com.hrtxn.ringtone.project.threenets.threenet.json.migu.RefreshVbrtStatusResult;
-import com.hrtxn.ringtone.project.threenets.threenet.json.swxl.*;
+import com.hrtxn.ringtone.project.threenets.threenet.json.migu.RingSetResult;
+import com.hrtxn.ringtone.project.threenets.threenet.json.swxl.SwxlGroupResponse;
+import com.hrtxn.ringtone.project.threenets.threenet.json.swxl.SwxlPhoneInfoResult;
+import com.hrtxn.ringtone.project.threenets.threenet.json.swxl.SwxlPubBackData;
+import com.hrtxn.ringtone.project.threenets.threenet.json.swxl.SwxlQueryPubRespone;
 import com.hrtxn.ringtone.project.threenets.threenet.mapper.ThreenetsChildOrderMapper;
 import com.hrtxn.ringtone.project.threenets.threenet.mapper.ThreenetsRingMapper;
 import lombok.extern.slf4j.Slf4j;
@@ -24,7 +28,6 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import reactor.util.IoUtils;
 
 import java.io.IOException;
 import java.util.List;
@@ -49,8 +52,8 @@ public class ApiUtils {
     public AjaxResult getPhoneInfo(List<ThreenetsChildOrder> threenetsChildOrderList) throws Exception {
         Boolean f = false;
         String msg = "错误消息：";
-        int failure=0;
-        for (ThreenetsChildOrder threenetsChildOrder :threenetsChildOrderList) {
+        int failure = 0;
+        for (ThreenetsChildOrder threenetsChildOrder : threenetsChildOrderList) {
             // 判断运营商
             Integer operate = threenetsChildOrder.getOperator();
             if (operate == 1) {// 移动
@@ -96,11 +99,11 @@ public class ApiUtils {
                         }
                         threenetsChildOrder.setRemark(tds.get(10).text());// 备注
                         f = true;
-                    }else {
+                    } else {
                         failure++;
                         msg += "[" + threenetsChildOrder.getLinkmanTel() + "：获取信息失败！]";
                     }
-                }else {
+                } else {
                     failure++;
                     msg += "[" + threenetsChildOrder.getLinkmanTel() + "：获取信息失败！]";
                 }
@@ -111,7 +114,8 @@ public class ApiUtils {
                 if (StringUtils.isNotEmpty(phoneInfo)) {
                     // 分发实体详情转换
                     ObjectMapper mapper = new ObjectMapper();
-                    SwxlPubBackData<SwxlQueryPubRespone<SwxlPhoneInfoResult>> info = mapper.readValue(phoneInfo, new TypeReference<SwxlPubBackData<SwxlPhoneInfoResult>>() {});
+                    SwxlPubBackData<SwxlQueryPubRespone<SwxlPhoneInfoResult>> info = mapper.readValue(phoneInfo, new TypeReference<SwxlPubBackData<SwxlPhoneInfoResult>>() {
+                    });
                     if (StringUtils.isNotNull(info) && "000000".equals(info.getRecode())) {
                         SwxlQueryPubRespone<SwxlPhoneInfoResult> pageData = (SwxlQueryPubRespone) info.getData();
                         // 得到号码信息实体
@@ -175,10 +179,10 @@ public class ApiUtils {
                 }
             }
         }
-        if (failure > 0){
+        if (failure > 0) {
             return AjaxResult.success(false, msg);
         } else {
-            return AjaxResult.success(true,"更新成功！");
+            return AjaxResult.success(true, "更新成功！");
         }
     }
 
@@ -220,7 +224,7 @@ public class ApiUtils {
      * 发送短信
      *
      * @param threenetsChildOrderList
-     * @param flag 标识是否是下发链接短信 1、普通短信/2、链接短信
+     * @param flag                    标识是否是下发链接短信 1、普通短信/2、链接短信
      * @return
      */
     public AjaxResult sendMessage(List<ThreenetsChildOrder> threenetsChildOrderList, Integer flag) throws IOException, NoLoginException {
@@ -235,10 +239,10 @@ public class ApiUtils {
 
                 } else { // 联通普通短信
                     String result = swxlApi.remindOrderCrbtAndMonth(t.getLinkmanTel(), t.getOperateId(), false);
-                    if (StringUtils.isNotEmpty(result)){
+                    if (StringUtils.isNotEmpty(result)) {
                         SwxlPubBackData info = (SwxlPubBackData) JsonUtil.getObject4JsonString(result, SwxlPubBackData.class);
                         if (!"000000".equals(info.getRecode()) || !info.isSuccess()) {
-                            msg2 += "["+t.getLinkmanTel()+":"+info.getMessage()+"]";
+                            msg2 += "[" + t.getLinkmanTel() + ":" + info.getMessage() + "]";
                             failure++;
                         }
                     }
@@ -246,33 +250,34 @@ public class ApiUtils {
             } else {
                 if (t.getOperator() == 3) { // 链接短信，联通专属
                     String res = swxlApi.swxlSendSMSByCRBTFail(t.getLinkmanTel());
-                    if (StringUtils.isNotEmpty(res)){
+                    if (StringUtils.isNotEmpty(res)) {
                         SwxlPubBackData info = (SwxlPubBackData) JsonUtil.getObject4JsonString(res, SwxlPubBackData.class);
                         if (!"000000".equals(info.getRecode()) || !info.isSuccess()) {
-                            msg2 += "["+t.getLinkmanTel()+":"+info.getMessage()+"]";
+                            msg2 += "[" + t.getLinkmanTel() + ":" + info.getMessage() + "]";
                             failure++;
                         }
                     }
                 }
             }
         }
-        if (failure == 0){
+        if (failure == 0) {
             return AjaxResult.success(true, msg);
-        }else{
+        } else {
             return AjaxResult.success(false, msg2);
         }
     }
 
     /**
      * 刷新铃音信息
+     *
      * @param threenetsRings
      * @return
      */
     public List<ThreenetsRing> getRingInfo(List<ThreenetsRing> threenetsRings) throws NoLoginException, IOException {
-        for (ThreenetsRing threenetsRing:threenetsRings) {
+        for (ThreenetsRing threenetsRing : threenetsRings) {
             Boolean f = false;
             Integer operator = threenetsRing.getOperate();
-            if (operator ==1){ // 移动
+            if (operator == 1) { // 移动
                 String result = miguApi.findCircleRingPageById(threenetsRing.getOperateId());
                 if (StringUtils.isNotEmpty(result)) {
                     Document doc = Jsoup.parse(result);
@@ -291,20 +296,20 @@ public class ApiUtils {
                                 threenetsRing.setRemark(ringCheckmsg); // 运营商返回的备注信息
                             }
                             // 铃音状态（1.待审核/2.激活中/3.激活成功/4.部分省份激活超时/5.部分省份激活成功/6.激活失败）
-                            if ("待审核".equals(remark)){
+                            if ("待审核".equals(remark)) {
                                 threenetsRing.setRingStatus(1);
-                            } else if ("激活中".equals(remark)){
+                            } else if ("激活中".equals(remark)) {
                                 threenetsRing.setRingStatus(2);
-                            }else if ("激活成功".equals(remark)) {
+                            } else if ("激活成功".equals(remark)) {
                                 threenetsRing.setRingStatus(3);
                             } else if ("部分省份激活超时".equals(remark)) {
                                 threenetsRing.setRingStatus(4);
                             } else if ("部分省份激活成功".equals(remark)) {
                                 threenetsRing.setRingStatus(5);
-                            } else  {
+                            } else {
                                 threenetsRing.setRingStatus(6);
                             }
-                            if (threenetsRing.getRingStatus() != 5){
+                            if (threenetsRing.getRingStatus() != 5) {
                                 Element el = tds.get(8);
                                 Elements temp = el.child(2).getElementsByTag("a");
                                 String t = temp.attr("onclick");
@@ -312,7 +317,7 @@ public class ApiUtils {
                                 int end = begin + 36;
                                 String t2 = t.substring(begin, end);
                                 threenetsRing.setOperateRingId(t2);
-                            }else {
+                            } else {
                                 Element el = tds.get(8);
                                 Elements temp = el.child(2).getElementsByTag("a");
                                 String t = temp.attr("href");
@@ -323,17 +328,17 @@ public class ApiUtils {
                             }
                             // 修改铃音信息
                             int count = SpringUtils.getBean(ThreenetsRingMapper.class).updateByPrimaryKeySelective(threenetsRing);
-                            log.info("修改铃音信息结果---->"+count);
+                            log.info("修改铃音信息结果---->" + count);
                             break;
                         }
                     }
                 }
-            } else if(operator == 2){ // 电信
+            } else if (operator == 2) { // 电信
 
             } else { // 联通
 
             }
-            if(f){
+            if (f) {
                 // 更改铃音信息
 
             }
@@ -342,18 +347,73 @@ public class ApiUtils {
     }
 
     /**
+     * 设置铃音
+     *
+     * @param phones
+     * @param threenetsRing
+     * @param operate
+     * @return
+     * @throws IOException
+     * @throws NoLoginException
+     */
+    public AjaxResult setRing(String phones, ThreenetsRing threenetsRing, Integer operate,Integer orderId) throws IOException, NoLoginException {
+        String sucMsg = "";
+        String errMsg = "";
+        int failure = 0;
+        if (operate == 1){ // 移动
+            String result = miguApi.setCircleRingById4User(phones, threenetsRing.getOperateRingId(), threenetsRing.getOperateId());
+            RingSetResult rsr = (RingSetResult) JsonUtil.getObject4JsonString(result, RingSetResult.class);
+            if (rsr.isSuccess()) {
+                String[] phoness = phones.split(",");
+                for (String phone : phoness) {
+                    String ringName = StringUtils.subString(threenetsRing.getRingName(), '.');
+                    // 根据父级订单ID以及电话号码查询子级订单信息
+                    ThreenetsChildOrder threenetsChildOrder = SpringUtils.getBean(ThreenetsChildOrderMapper.class).findChildOrderByOrderIdAndPhone(orderId,phone);
+                    if (threenetsChildOrder.getIsMonthly() == 2) {
+                        threenetsChildOrder.setRingName(ringName);
+                        threenetsChildOrder.setRemark("您的请求已受理，请稍后在【商户列表 ->号码管理】中点击刷新操作查看");
+                        // 执行修改子订单操作
+                        int count = SpringUtils.getBean(ThreenetsChildOrderMapper.class).updateThreeNetsChidOrder(threenetsChildOrder);
+                        if (count <= 0){
+                            failure++;
+                        }
+                    }
+                }
+                if (failure == 0){
+                    sucMsg = "您的请求已受理，请稍后在【商户列表 ->号码管理】中点击刷新操作查看!";
+                }else{
+                    errMsg = "执行修改子订单信息出错！";
+                }
+            } else {
+                failure++;
+                errMsg = rsr.getMsg();
+            }
+        } else if(operate == 2){ // 电信
+
+        } else { // 联通
+
+        }
+        if (failure > 0){
+            return  AjaxResult.error(errMsg);
+        }else{
+            return AjaxResult.success(true,sucMsg);
+        }
+    }
+
+
+    /**
      * 保存移动订单
      *
      * @param order
      * @param attached
      * @return
      */
-    public MiguAddGroupRespone saveOrderByYd(ThreenetsOrder order, ThreeNetsOrderAttached attached)throws IOException,NoLoginException{
-       int sendCount = 3;// 系统同步远程系统3次。解决网络慢的问题
+    public MiguAddGroupRespone saveOrderByYd(ThreenetsOrder order, ThreeNetsOrderAttached attached) throws IOException, NoLoginException {
+        int sendCount = 3;// 系统同步远程系统3次。解决网络慢的问题
         MiguAddGroupRespone addGroupResponse = null;
         //进行同步到服务器，同步3次。
         for (int i = 0; i < sendCount; i++) {// 重试添加3次
-            addGroupResponse = miguApi.add(order,attached);
+            addGroupResponse = miguApi.add(order, attached);
             if (addGroupResponse != null) {
                 break;
             }
@@ -372,8 +432,8 @@ public class ApiUtils {
      * @throws IOException
      * @throws NoLoginException
      */
-    public AjaxResult saveMiguRing(ThreenetsRing ring, String circleID, String groupName)throws IOException,NoLoginException{
-        return miguApi.saveRing(ring,circleID,groupName);
+    public AjaxResult saveMiguRing(ThreenetsRing ring, String circleID, String groupName) throws IOException, NoLoginException {
+        return miguApi.saveRing(ring, circleID, groupName);
     }
 
     /**
@@ -386,8 +446,8 @@ public class ApiUtils {
      * @throws IOException
      * @throws NoLoginException
      */
-    public AjaxResult saveOrderByLt(ThreenetsOrder ringOrder, List<Uploadfile> attachments, ThreenetsRing ring){
-        try{
+    public AjaxResult saveOrderByLt(ThreenetsOrder ringOrder, List<Uploadfile> attachments, ThreenetsRing ring) {
+        try {
             // 添加到音乐名片系统
             SwxlGroupResponse swxlGroupResponse = null;
             // 添加商户
@@ -421,7 +481,7 @@ public class ApiUtils {
 //            } else {
 //            }
             return AjaxResult.error(swxlGroupResponse.getRemark());
-        }catch (Exception e){
+        } catch (Exception e) {
             log.error("对接联通 方法：saveOrderByLt  错误信息", e);
             return AjaxResult.error("保存失败");
         }
@@ -436,11 +496,11 @@ public class ApiUtils {
      * @throws IOException
      * @throws NoLoginException
      */
-    public String addPhoneByYd(String data ,String circleId)throws IOException,NoLoginException {
-        if (circleId == null){
+    public String addPhoneByYd(String data, String circleId) throws IOException, NoLoginException {
+        if (circleId == null) {
             return "集团ID错误！";
         }
-        return miguApi.addPhone(data,circleId);
+        return miguApi.addPhone(data, circleId);
     }
 
     /**
@@ -452,8 +512,8 @@ public class ApiUtils {
      * @throws IOException
      * @throws NoLoginException
      */
-    public String addPhoneByLt(String data ,String circleId)throws IOException,NoLoginException {
-        if(circleId == null){
+    public String addPhoneByLt(String data, String circleId) throws IOException, NoLoginException {
+        if (circleId == null) {
             return "集团ID错误";
         }
         return swxlApi.addPhone(data, circleId);
