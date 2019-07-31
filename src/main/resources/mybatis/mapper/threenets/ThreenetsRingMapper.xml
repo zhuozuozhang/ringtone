@@ -33,20 +33,28 @@
             order by create_time desc
             limit #{page.page},#{page.pagesize}
     </select>
-
-
+    <!-- 根据主键获取铃音信息 -->
     <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer">
         select
         <include refid="Base_Column_List"/>
         from tb_threenets_ring
         where id = #{id,jdbcType=INTEGER}
     </select>
-
+    <!-- 根据父级订单获取铃音信息 -->
     <select id="selectByOrderId" resultMap="BaseResultMap" parameterType="java.lang.Integer">
         select
         <include refid="Base_Column_List"/>
         from tb_threenets_ring
         where order_id = #{id,jdbcType=INTEGER}
+    </select>
+    <!--获取设置铃音激活成功铃音数据-->
+    <select id="getSetRingList" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from tb_threenets_ring
+        where order_id = #{orderId}
+        AND operate = #{operate}
+        AND ring_status IN (3,4,5)
     </select>
     <!-- 根据铃音ID删除铃音信息 -->
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
@@ -172,13 +180,19 @@
         where 1=1
         <include refid="parameters"/>
     </select>
+    <!--获取设置铃音激活成功铃音总数-->
+    <select id="getSetRingCount" resultType="java.lang.Integer">
+        select count(*) from tb_threenets_ring r
+        where order_id = #{orderId}
+        AND operate = #{operate}
+        AND ring_status IN (3,4,5)
+    </select>
     <!-- 分页 -->
     <sql id="page">
         <if test="page!=null and page.page != null and page.pagesize != null">
             LIMIT #{page.page},#{page.pagesize}
         </if>
     </sql>
-
     <sql id="parameters">
         <if test="param != null and param.operator != null and param.operator != ''">
             AND r.operate = #{param.operator}

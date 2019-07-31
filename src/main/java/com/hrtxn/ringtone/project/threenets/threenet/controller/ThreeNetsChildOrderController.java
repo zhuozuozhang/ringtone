@@ -32,6 +32,38 @@ public class ThreeNetsChildOrderController {
     @Autowired
     private ThreeNetsOrderService threeNetsOrderService;
 
+
+
+    /**
+     * 号码管理---跳转到设置铃音页面
+     *
+     * @param id
+     * @param operator
+     * @param companyName
+     * @param orderId
+     * @param map
+     * @return
+     */
+    @GetMapping("/threenets/toUserSetingRing/{id}/{operator}/{companyName}/{orderId}")
+    public String toUserSetingRing(@PathVariable("id") Integer id,
+           @PathVariable("operator") Integer operator,
+           @PathVariable("companyName") String companyName,
+           @PathVariable("orderId") Integer orderId,ModelMap map){
+        map.put("companyName",companyName);
+        map.put("orderId",orderId);
+        map.put("operate",operator);
+        map.put("id",id);// 子订单ID
+        // 根据ID获取子订单信息
+        try {
+            ThreenetsChildOrder threenetsChildOrder = threeNetsChildOrderService.selectByPrimaryKey(id);
+            map.put("threenetsChildOrder",threenetsChildOrder);
+        } catch (Exception e) {
+            log.error("获取子订单信息出错"+e);
+        }
+        return "threenets/threenet/merchants/number_list_set";
+    }
+
+
     /**
      * 获取设置铃音子订单数据
      *

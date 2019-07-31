@@ -368,4 +368,15 @@ public class ThreeNetsChildOrderService {
         }
         return AjaxResult.error("参数不正确！");
     }
+
+    /**
+     * 根据主键获取子订单信息
+     *
+     * @param id
+     * @return
+     * @throws Exception
+     */
+    public ThreenetsChildOrder selectByPrimaryKey(Integer id) throws Exception {
+        return threenetsChildOrderMapper.selectByPrimaryKey(id);
+    }
 }

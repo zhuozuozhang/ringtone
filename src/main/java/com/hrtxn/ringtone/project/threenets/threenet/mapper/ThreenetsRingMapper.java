@@ -84,4 +84,23 @@ public interface ThreenetsRingMapper {
      * @return
      */
     int deleteByParadeOrderId(Integer id);
+
+    /**
+     * 获取设置铃音激活成功铃音数据数据
+     *
+     * @param page
+     * @param orderId
+     * @param operate
+     * @return
+     */
+    List<ThreenetsRing> getSetRingList(@Param("page") Page page, @Param("orderId") Integer orderId, @Param("operate") Integer operate) throws Exception;
+
+    /**
+     * 获取设置铃音激活成功铃音总数
+     *
+     * @param orderId
+     * @param operate
+     * @return
+     */
+    int getSetRingCount(@Param("orderId") Integer orderId, @Param("operate") Integer operate) throws Exception;
 }

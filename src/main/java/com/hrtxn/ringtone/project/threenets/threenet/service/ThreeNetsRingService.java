@@ -241,4 +241,23 @@ public class ThreeNetsRingService {
         }
         return AjaxResult.error("参数格式不正确！");
     }
+
+    /**
+     *获取设置铃音激活成功铃音数据数据
+     *
+     * @param page
+     * @param orderId
+     * @param operate
+     * @return
+     */
+    public AjaxResult getThreeNetsRingSetingList(Page page, Integer orderId, Integer operate) throws Exception {
+        page.setPage((page.getPage() - 1) * page.getPagesize());
+        List<ThreenetsRing> ringList = threenetsRingMapper.getSetRingList(page,orderId,operate);
+        // 获取设置铃音激活成功铃音总数
+        int count = threenetsRingMapper.getSetRingCount(orderId,operate);
+        if(ringList.size() > 0){
+            return AjaxResult.success(ringList,"获取数据成功！",count);
+        }
+        return AjaxResult.error("无数据！");
+    }
 }

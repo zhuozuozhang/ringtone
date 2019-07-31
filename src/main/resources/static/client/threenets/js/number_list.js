@@ -79,14 +79,14 @@ function showTable() {
             var id = row.id;
             var operator = row.operator;
             var isMonthly = row.isMonthly;
-            var setRing = "<i class='layui-icon' title='设置铃音'><img src='../../client/threenets/images/ring.png'></i>";
+            var setRing = "<a href='/threenets/toUserSetingRing/"+id+"/"+operator+"/"+$("#companyName").val()+"/"+$("#parentOrderId").val()+"'><i class='layui-icon layui-icon-set' title='设置铃音'></i></a>";
             var refresh = "<i onclick='getPhoneInfo(2," + id + ")' class='layui-icon layui-icon-refresh-3' title='刷新'></i>";
             var note = "<i onclick='sendMessage(2,1," + id + ");' class='layui-icon' title='下发短信'><img src='../../client/threenets/images/message.png'></i>";
             var linkNote = "<i onclick='sendMessage(2,2," + id + ");' class='layui-icon' title='下发链接短信'><img src='../../client/threenets/images/link.png'></i>";
             var del = "<i class='layui-icon layui-icon-delete' title='删除' onclick='deleteTel(" + id + ")'></i>";
             return refresh + (isMonthly != 2 ? note : '') + (isMonthly == 2 ? setRing : '') + (operator == 3 && isMonthly == 1 ? linkNote : '') + del;
         }
-    }]
+    }];
     page("#set", 15, params, "/threenets/getThreeNetsTaskList", columns, columnDefs);
 }
 
@@ -124,7 +124,7 @@ function refreshVbrtStatus(id) {
 
 //添加账号
 function addUser() {
-    let orderId = $("#parentOrderId").val();
+    var orderId = $("#parentOrderId").val();
     layer.open({
         type: 2,
         title: '添加号码',

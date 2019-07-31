@@ -1,5 +1,5 @@
-
 $(function () {
+    $(".index2").addClass("active");
     // 设置铃音
     $("#sear").click(function () {
         var checkArr = checkBoxIsSelected("check").toString();
@@ -42,7 +42,7 @@ function showTable() {
         targets: [1],
         render: function (data, type, row, meta) {
             var linkmanTel = row.linkmanTel;
-            return "<input type='checkbox' name='check' data-phone='"+linkmanTel+"'>";
+            return "<input type='checkbox' name='check' data='"+linkmanTel+"'>";
         }
     }];
     page("#set", 10, param, "/threenets/getThreeNetsChidOrderSetingList", columns, columnDefs);

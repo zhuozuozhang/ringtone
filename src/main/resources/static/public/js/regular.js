@@ -16,7 +16,7 @@ function checkBoxIsSelected(name){
     var checkArr = new Array();
     for (var i = 0; i < names.length; i++){
         if (names[i].checked){
-            checkArr.push($(names[i]).attr("data-phone"))
+            checkArr.push($(names[i]).attr("data"))
         }
     }
     return checkArr;

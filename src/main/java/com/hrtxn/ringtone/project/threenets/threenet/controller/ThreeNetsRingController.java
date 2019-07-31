@@ -102,11 +102,11 @@ public class ThreeNetsRingController {
     @PostMapping("/threenets/insterThreeNetsRing")
     @ResponseBody
     @Log(title = "添加铃音", businessType = BusinessType.INSERT, operatorLogType = OperatorLogType.THREENETS)
-    public AjaxResult insterThreeNetsRing(ThreenetsRing ring){
+    public AjaxResult insterThreeNetsRing(ThreenetsRing ring) {
         try {
             threeNetsRingService.saveRing(ring);
-            return AjaxResult.success(ring,"保存成功");
-        }catch (Exception e){
+            return AjaxResult.success(ring, "保存成功");
+        } catch (Exception e) {
             log.error("添加铃音失败 方法：insterThreeNetsRing 错误信息", e);
             return AjaxResult.error("保存失败！");
         }
@@ -203,7 +203,7 @@ public class ThreeNetsRingController {
     }
 
     /**
-     * 跳转到铃音设置页面
+     * 铃音管理页面--跳转到铃音设置页面
      *
      * @param orderId
      * @param companyName
@@ -211,12 +211,12 @@ public class ThreeNetsRingController {
      * @return
      */
     @GetMapping("/threenets/toSetingRing/{id}/{operate}/{orderId}/{companyName}")
-    public String toSetingRing(@PathVariable Integer id,@PathVariable Integer operate, @PathVariable Integer orderId,@PathVariable String companyName, ModelMap map) {
-        if (StringUtils.isNotNull(orderId) && StringUtils.isNotEmpty(companyName)&& StringUtils.isNotNull(id)&& StringUtils.isNotNull(operate)){
-            map.put("companyName",companyName);
-            map.put("orderId",orderId);
-            map.put("operate",operate);
-            map.put("id",id);
+    public String toSetingRing(@PathVariable Integer id, @PathVariable Integer operate, @PathVariable Integer orderId, @PathVariable String companyName, ModelMap map) {
+        if (StringUtils.isNotNull(orderId) && StringUtils.isNotEmpty(companyName) && StringUtils.isNotNull(id) && StringUtils.isNotNull(operate)) {
+            map.put("companyName", companyName);
+            map.put("orderId", orderId);
+            map.put("operate", operate);
+            map.put("id", id);// 铃音ID
             return "threenets/threenet/merchants/ring_list_set";
         } else {
             return "redirect:error/error500Page";
@@ -224,7 +224,7 @@ public class ThreeNetsRingController {
     }
 
     /**
-     * 设置铃音
+     * 铃音管理页面--设置铃音
      *
      * @param phones
      * @param orderId
@@ -234,12 +234,32 @@ public class ThreeNetsRingController {
      */
     @ResponseBody
     @PutMapping("/threenets/setRing")
-    public AjaxResult setRing(String phones,Integer orderId,Integer operate, Integer id){
+    public AjaxResult setRing(String phones, Integer orderId, Integer operate, Integer id) {
         try {
-            return threeNetsRingService.setRing(phones,orderId,operate,id);
+            return threeNetsRingService.setRing(phones, orderId, operate, id);
         } catch (Exception e) {
-            log.info("设置铃音 方法：setRing 错误信息：[{}]",e);
+            log.info("铃音管理页面--设置铃音 方法：setRing 错误信息：[{}]", e);
         }
         return AjaxResult.error("设置铃音出错！");
     }
+
+    /**
+     * 获取设置铃音激活成功铃音数据
+     *
+     * @param page
+     * @param orderId
+     * @param operate
+     * @return
+     */
+    @PostMapping("/threenets/getThreeNetsRingSetingList")
+    @ResponseBody
+    public AjaxResult getThreeNetsRingSetingList(Page page, Integer orderId, Integer operate) {
+        try {
+            return threeNetsRingService.getThreeNetsRingSetingList(page, orderId, operate);
+        } catch (Exception e) {
+            log.error("获取设置铃音激活成功铃音数据 方法：getThreeNetsRingSetingList 错误信息：",e);
+        }
+        return AjaxResult.error("获取数据失败！");
+    }
+
 }

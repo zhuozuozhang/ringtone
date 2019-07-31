@@ -19,7 +19,7 @@ public class ThreenetsRing implements Serializable {
     private String ringName;
     // 铃音类型（音频/视频）
     private String ringType;
-    // 铃音状态（1.待审核/2.激活中/3.激活成功/4.激活失败）
+    // 铃音状态（1.待审核/2.激活中/3.激活成功/4.部分省份激活超时/5.部分省份激活成功/6.激活失败）
     private Integer ringStatus;
     // 运营商（1.移动/2.电信/3.联通）
     private Integer operate;
