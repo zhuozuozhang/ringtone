@@ -57,7 +57,7 @@
                             <i style="color: red">*</i>移动资费:
                         </label>
                         <div class="layui-input-block" style='width: 150px;margin-left: 150px;'>
-                            <input checked="" type="radio" name="mobilePay" id="PayPrice" value="5" title="5元/月">
+                            <input checked="" type="radio" name="miguPrice" id="PayPrice" value="5" title="5元/月">
                         </div>
                         <span style="position: absolute;top: 11px;right: 90px;text-decoration: none;color: black;">申请高资费：</span>
                         <div class="layui-input-block" style="width: 80px;position: absolute;top: 0;right: 0;">
@@ -93,8 +93,8 @@
                             <i style="color: red">*</i>联通资费:
                         </label>
                         <div class="layui-input-block">
-                            <input type="radio" name="umicomPay" value="10" title="10元/月" checked="">
-                            <input type="radio" name="umicomPay" value="20" title="20元/月">
+                            <input type="radio" name="swxlPrice" value="10" title="10元/月" checked="">
+                            <input type="radio" name="swxlPrice" value="20" title="20元/月">
                         </div>
                     </div>
                 </div>
@@ -151,6 +151,8 @@
                 </div>
             </div>
             <input type="hidden" id="parentOrderId" name="parentOrderId" th:value="${orderId}">
+            <input type="hidden" id="miguId" name="miguId" th:value="${miguId}">
+            <input type="hidden" id="swxlId" name="swxlId" th:value="${swxlId}">
             <div id="tijiao" class="newBlocPage-button" lay-submit lay-filter="formDemo">确定提交</div>
         </div>
     </form>
@@ -211,7 +213,7 @@
             AjaxPost('/threenets/getOperate', {"phone": phones}, function (result) {
                 if (result.code == 200) {
                     //移动
-                    if (result.data[0] > 0) {
+                    if (result.data[0] > 0 && $("#miguId").val() == "") {
                         $("#fee").show();
                     }
                     //电信
@@ -219,8 +221,8 @@
                         $("#fee1,#qyzzdiv").show();
                     }
                     //联通
-                    if (result.data[2] > 0) {
-                        $("#fee2,#sfmd").show();
+                    if (result.data[2] > 0 && $("#swxlId").val() == "") {
+                        $("#fee2,#sfmd,#fee3").show();
                     }
                 } else {
                     layer.msg(result.msg);

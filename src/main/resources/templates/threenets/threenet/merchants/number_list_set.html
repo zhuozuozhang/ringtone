@@ -85,6 +85,7 @@
     </div>
     <input type="hidden" id="orderId" th:value="${orderId}">
     <input type="hidden" id="operate" th:value="${operate}">
+    <input type="hidden" id="childOrderId" th:value="${id}">
 </body>
 <div th:include="threenets/threenet/common/head :: footer"></div>
 <script>
@@ -92,6 +93,30 @@
     //分页
     $(document).ready(function() {
         showTable();
+
+        $("#sear").click(function () {
+            var orderId = $("#orderId").val();
+            var ringId = $("input[type='radio']:checked").attr("data");
+            var childOrderId = $("#childOrderId").val();
+            var operate = $("#operate").val();
+            if (!isNotEmpty(ringId)) return layer.msg('请选中一条!', {icon: 5, time: 1000});
+
+            AjaxPut("/threenets/chidSetRing",{
+                orderId:orderId,
+                ringId:ringId,
+                operate:operate,
+                childOrderId:childOrderId
+            },function (res) {
+                if (res.code == 200){
+                    layer.msg(res.msg, {icon: 6, time: 1000});
+                    setTimeout(function () {
+                        window.location.href = "/threenets/toMerchantsPhonePage/"+orderId;
+                    },3000);
+                }else{
+                    layer.msg(res.msg, {icon: 5, time: 1000});
+                }
+            });
+        });
     });
     function showTable() {
         var param = {

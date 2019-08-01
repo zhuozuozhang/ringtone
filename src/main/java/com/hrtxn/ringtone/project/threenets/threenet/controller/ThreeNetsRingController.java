@@ -10,7 +10,6 @@ import com.hrtxn.ringtone.freemark.enums.BusinessType;
 import com.hrtxn.ringtone.freemark.enums.OperatorLogType;
 import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreenetsOrder;
 import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreenetsRing;
-import com.hrtxn.ringtone.project.threenets.threenet.service.ThreeNetsOrderService;
 import com.hrtxn.ringtone.project.threenets.threenet.service.ThreeNetsRingService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,8 +36,6 @@ public class ThreeNetsRingController {
 
     @Autowired
     private ThreeNetsRingService threeNetsRingService;
-    @Autowired
-    private ThreeNetsOrderService threeNetsOrderService;
 
     /**
      * 进入铃音列表
@@ -48,7 +45,7 @@ public class ThreeNetsRingController {
     @GetMapping("/threenets/toMerchantsRingPage/{orderId}")
     public String toMerchantsChildPage(ModelMap map, @PathVariable Integer orderId) {
         try {
-            ThreenetsOrder order = threeNetsOrderService.getById(orderId);
+            ThreenetsOrder order = threeNetsRingService.getOrderById(orderId);
             map.put("orderId", orderId);
             map.put("companyName", order.getCompanyName());
             // 根据父级ID获取铃音运营商

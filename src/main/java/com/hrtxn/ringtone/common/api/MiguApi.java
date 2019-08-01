@@ -534,7 +534,7 @@ public class MiguApi implements Serializable {
             if (statusCode == HttpStatus.SC_OK) {
                 HttpEntity resEntity = response.getEntity();
                 result = EntityUtils.toString(resEntity);
-                this.setMiguCookie(this.miguCookie);
+                this.setMiguCookie(this.getCookieStore());
             }
         } catch (Exception e) {
             log.error("移动sendGet 错误信息", e);

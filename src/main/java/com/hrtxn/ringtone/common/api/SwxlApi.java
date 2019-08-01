@@ -3,12 +3,12 @@ package com.hrtxn.ringtone.common.api;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hrtxn.ringtone.common.exception.NoLoginException;
-import com.hrtxn.ringtone.project.threenets.threenet.json.swxl.*;
 import com.hrtxn.ringtone.common.utils.ChaoJiYing;
 import com.hrtxn.ringtone.common.utils.WebClientDevWrapper;
+import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreeNetsOrderAttached;
 import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreenetsOrder;
 import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreenetsRing;
-import jodd.util.StringUtil;
+import com.hrtxn.ringtone.project.threenets.threenet.json.swxl.*;
 import lombok.Getter;
 import lombok.Synchronized;
 import lombok.extern.slf4j.Slf4j;
@@ -58,22 +58,22 @@ public class SwxlApi implements Serializable {
     public static String CODE_URL = "https://swxl.10155.com/swxlapi/web/login/code";// 验证码地址
     public static String swxlrefreshCrbtStatus_url = "https://swxl.10155.com/swxlapi/web/member/refreshStatus";//根据号码查询彩铃功能
     public static String getSwxlRingFenFa_URL = "https://swxl.10155.com/swxlapi/web/ring";// ring/ringId获取铃音分发详细
-    public static String getSetRingList_url = "https://swxl.10155.com/ring/getSetRingList.do"; // 获取铃音信息
     public static String getGroupRingInfo_URL = "https://swxl.10155.com/swxlapi/web/ring";// 获取铃音
     public static String ADD_PHONE_URL = "https://swxl.10155.com/swxlapi/web/member";// 增加号码地址
-
-    public static String importRing_url = "https://swxl.10155.com/group/uploadRing.do";// 铃音上传url
-    public static String deleteSwxlRing_URL = "https://swxl.10155.com/swxlapi/web/ring";// 删除铃音
-    public static String DELETE_PHONE_URL = "https://swxl.10155.com/swxlapi/web/member";// 删除用户
-    public static String groupSetRing_URL = "https://swxl.10155.com/swxlapi/web/ring/setRing.do";// 批量设置铃音
     public static String remindOrderCrbtAndMonth_URL = "https://swxl.10155.com/swxlapi/web/member/openBusiness";// 短信提醒url
     public static String orderCrbtAndMonth_URL = "https://swxl.10155.com/swxlapi/userpay/remindOrderCrbtAndMonth.do";// 直接开通包月url
     public static String Send_PHONESMS_URL = "https://swxl.10155.com/swxlapi/web/member";// 为集团下发开通短信
     public static String addGroup_url = "https://swxl.10155.com/swxlapi/web/group";// 增加商户url
     public static String importSwxlRing_URL = "https://swxl.10155.com/swxlapi/web/ring/add";// 上传铃音
+    public static String Send_SMS_SecondMsg_URL = "https://swxl.10155.com/swxlapi/web/member/openBizSpecialChannel";// 用户开通业务失败二次发送短信地址
+
+    public static String getSetRingList_url = "https://swxl.10155.com/ring/getSetRingList.do"; // 获取铃音信息
+    public static String importRing_url = "https://swxl.10155.com/group/uploadRing.do";// 铃音上传url
+    public static String deleteSwxlRing_URL = "https://swxl.10155.com/swxlapi/web/ring";// 删除铃音
+    public static String DELETE_PHONE_URL = "https://swxl.10155.com/swxlapi/web/member";// 删除用户
+    public static String groupSetRing_URL = "https://swxl.10155.com/swxlapi/web/ring/setRing.do";// 批量设置铃音
     public static String PhoneSetRing_URL = "https://swxl.10155.com/swxlapi/web/ring/set";// 用户设置铃音
     public static String deleteGroup_url = "https://swxl.10155.com/swxlapi/web/group";
-    public static String Send_SMS_SecondMsg_URL = "https://swxl.10155.com/swxlapi/web/member/openBizSpecialChannel";// 用户开通业务失败二次发送短信地址
     public static String addChild_url = "https://swxl.10155.com/swxlapi/web/manager/child";// 增加商户url
     public static String silentMember_url = "https://swxl.10155.com/swxlapi/web/member/silentMember";//工具箱获取用户信息
     public static String systemLogList_url = "https://swxl.10155.com/swxlapi/web/systemLog/list";//工具箱获取用户信息
@@ -261,13 +261,20 @@ public class SwxlApi implements Serializable {
      *
      * @param operateId
      * @return
+     * {"recode":"000000","message":"成功",
+     * "data":{
+     * "data":[
+     * {"id":"9178900020190716121088","ringFilePath":"/v1/ring/2019/07/16/bc439a5facdb44809d11b9e7ca920a22.mp3",
+     * "groupId":"9b4e684484b94531a08e06f5f2ef1e72",
+     * "ringName":"朗诗德集团广东","ctime":"2019-07-16 11:09:11","status":"2","remark":"铃音审核通过"}
+     * ],"recordsTotal":1},"success":true}
      * @throws NoLoginException
      * @throws IOException
      */
     public String getRingInfo(String operateId) throws NoLoginException, IOException {
         String url = getGroupRingInfo_URL + "?groupId=" + operateId;
         String result = sendGet(url);
-        log.info("获取铃音信息--->" + result);
+        log.info("获取铃音信息 参数：{} 结果：{}",operateId,result);
         return result;
     }
 
@@ -303,7 +310,7 @@ public class SwxlApi implements Serializable {
     public String getSwxlRingFenFaAreaInfo(String ringid) throws NoLoginException, IOException {
         String getUrl = getSwxlRingFenFa_URL + "/" + ringid;
         String result = sendGet(getUrl);
-        log.info("联通获取铃音分发详细--->" + result);
+        log.info("联通获取铃音分发详细 参数：{} 结果：{} " ,ringid, result);
         return result;
     }
 
@@ -389,7 +396,7 @@ public class SwxlApi implements Serializable {
             if (statusCode == HttpStatus.SC_OK) {
                 HttpEntity resEntity = response.getEntity();
                 String resStr = EntityUtils.toString(resEntity);
-                this.setSwxlCookie(this.swxlCookie);
+                this.setSwxlCookie(this.getCookieStore());
                 return resStr;
             }
         } catch (Exception e) {
@@ -427,6 +434,7 @@ public class SwxlApi implements Serializable {
         try {
             HttpEntity resEntity = response.getEntity();
             result = EntityUtils.toString(resEntity);
+            this.setSwxlCookie(this.getCookieStore());
         } catch (Exception e) {
             log.error("联通 sendPost 错误信息", e);
         } finally {
@@ -440,12 +448,12 @@ public class SwxlApi implements Serializable {
      * 增加商户
      *
      * @param ringOrder
-     * @param ring
+     * @param attached
      * @return
      * @throws IOException
      * @throws NoLoginException
      */
-    public SwxlGroupResponse addGroup(ThreenetsOrder ringOrder, ThreenetsRing ring) throws IOException, NoLoginException {
+    public SwxlGroupResponse addGroup(ThreenetsOrder ringOrder, ThreeNetsOrderAttached attached) throws IOException, NoLoginException {
         SwxlGroupResponse swxlAddGroupRespone = null;
         DefaultHttpClient httpclient = WebClientDevWrapper.wrapClient(new DefaultHttpClient());
         HttpPost httppost = new HttpPost(addGroup_url);
@@ -455,25 +463,20 @@ public class SwxlApi implements Serializable {
             HttpParams params = httpclient.getParams();
             params.setParameter(CoreProtocolPNames.HTTP_CONTENT_CHARSET, Charset.forName("UTF-8"));
             reqEntity.addPart("groupName", new StringBody(ringOrder.getCompanyName(), Charset.forName("UTF-8")));// 集团名称
+            reqEntity.addPart("tel", new StringBody(ringOrder.getLinkmanTel()));// 集团名称
             reqEntity.addPart("payType", new StringBody("0"));
             reqEntity.addPart("applyForSmsNotification", new StringBody("0"));// 免短信
             reqEntity.addPart("smsFile", new StringBody(""));
-//            if (ringOrder.getPaymentPrice() == 10) {
-//                reqEntity.addPart("productId", new StringBody("0000002499"));//价格10元
-//            } else {
-//                reqEntity.addPart("productId", new StringBody("0000002500"));//价格20元
-//            }
+            if (attached.getSwxlPrice() == 10) {
+                reqEntity.addPart("productId", new StringBody("225"));//价格10元
+            } else {
+                reqEntity.addPart("productId", new StringBody("224"));//价格20元
+            }
             reqEntity.addPart("ringName", new StringBody(ringOrder.getCompanyName(), Charset.forName("UTF-8")));// 铃音名称
             if (ringOrder.getUpLoadAgreement() != null) {
                 reqEntity.addPart("ringFile", new FileBody(ringOrder.getUpLoadAgreement())); // 铃音文件
             }
             reqEntity.addPart("qualificationFile", new StringBody(""));
-            reqEntity.addPart("companyName", new StringBody(ringOrder.getCompanyName(), Charset.forName("UTF-8")));
-            if (StringUtil.isBlank(ring.getRingContent())) {
-                reqEntity.addPart("content", new StringBody("感谢您一直以来对我们的信任和支持，我们竭诚为您提供优质的产品和完善的服务，真诚期待与您的合作", Charset.forName("UTF-8")));
-            } else {
-                reqEntity.addPart("content", new StringBody(ring.getRingContent(), Charset.forName("UTF-8")));
-            }
             reqEntity.addPart("msisdns", new StringBody(ringOrder.getLinkmanTel()));// 号码
             reqEntity.addPart("bizCodes", new StringBody(""));
             httppost.setEntity(reqEntity);
@@ -629,7 +632,7 @@ public class SwxlApi implements Serializable {
         SwxlRingMsg swxlRingInfo = null;
         DefaultHttpClient httpclient = WebClientDevWrapper.wrapClient(new DefaultHttpClient());
         try {
-            HttpGet httpGet = new HttpGet(getGroupRingInfo_URL + "?groupId="+ ring.getOperateId());
+            HttpGet httpGet = new HttpGet(getGroupRingInfo_URL + "?groupId=" + ring.getOperateId());
             httpclient.setCookieStore(this.getCookieStore());
             HttpResponse response = httpclient.execute(httpGet);// 进入
             int statusCode = response.getStatusLine().getStatusCode();
@@ -640,8 +643,9 @@ public class SwxlApi implements Serializable {
                 System.out.println("查询铃音，取得的内容：" + content);
                 if (content.contains("000000")) {
                     ObjectMapper mapper = new ObjectMapper();
-                    SwxlPubBackData<SwxlQueryPubRespone<SwxlRingMsg>> backData = mapper.readValue(content,new TypeReference<SwxlPubBackData<SwxlRingMsg>>() {});
-                    @SuppressWarnings({ "unchecked", "rawtypes" })
+                    SwxlPubBackData<SwxlQueryPubRespone<SwxlRingMsg>> backData = mapper.readValue(content, new TypeReference<SwxlPubBackData<SwxlRingMsg>>() {
+                    });
+                    @SuppressWarnings({"unchecked", "rawtypes"})
                     SwxlQueryPubRespone<SwxlRingMsg> dataList = (SwxlQueryPubRespone) backData.getData();
                     if (dataList != null) {
                         List<SwxlRingMsg> ringList = dataList.getData();
@@ -674,12 +678,14 @@ public class SwxlApi implements Serializable {
 
     /**
      * 向商务炫铃增加号码
-     * @param data
-     * @param circleID
+     *
+     * @param members
+     * @param groupId
      * @return
-     * @throws MiguNologinException
+     * @throws IOException
+     * @throws NoLoginException
      */
-    public String addPhone(String members, String groupId) throws IOException,NoLoginException{
+    public String addPhone(String members, String groupId) throws IOException, NoLoginException {
         String result = null;
         DefaultHttpClient httpclient = WebClientDevWrapper.wrapClient(new DefaultHttpClient());
         HttpPost httppost = new HttpPost(ADD_PHONE_URL);
@@ -696,6 +702,41 @@ public class SwxlApi implements Serializable {
             System.out.println("result:" + result);
         } catch (Exception e) {
             System.out.println(e);
+        } finally {
+            httppost.abort();
+            httpclient.getConnectionManager().shutdown();
+        }
+        return result;
+    }
+
+    /***
+     * 上传铃音--商务炫铃
+     * @param ring
+     * return flag:true 返回 ring.ringId 为 商务炫铃铃音ID
+     */
+    public String addRing(ThreenetsRing ring,String circleID) throws IOException,NoLoginException{
+        String result = null;
+        DefaultHttpClient httpclient = WebClientDevWrapper.wrapClient(new DefaultHttpClient());
+        HttpPost httppost = new HttpPost(importSwxlRing_URL);
+        httpclient.setCookieStore(this.getCookieStore());
+        try {
+            MultipartEntity reqEntity = new MultipartEntity();
+            HttpParams params = httpclient.getParams();
+            params.setParameter(CoreProtocolPNames.HTTP_CONTENT_CHARSET, Charset.forName("UTF-8"));
+            reqEntity.addPart("ringName", new StringBody(ring.getRingName().split("\\.")[0], Charset.forName("UTF-8")));
+            reqEntity.addPart("groupId", new StringBody(circleID, Charset.forName("UTF-8")));
+            reqEntity.addPart("ringFile", new FileBody(ring.getFile(), "audio/mp3"));
+            httppost.setEntity(reqEntity);
+            HttpResponse response1 = httpclient.execute(httppost);
+            int statusCode = response1.getStatusLine().getStatusCode();
+            if (statusCode == HttpStatus.SC_OK) {
+                log.debug("铃音上传服务器正常响应2.....");
+                // HttpEntity resEntity = response1.getEntity();
+                result = EntityUtils.toString(response1.getEntity());
+                System.out.println(result);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         } finally {
             httppost.abort();
             httpclient.getConnectionManager().shutdown();

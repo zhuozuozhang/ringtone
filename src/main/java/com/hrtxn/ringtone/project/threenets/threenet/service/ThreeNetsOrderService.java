@@ -38,6 +38,7 @@ public class ThreeNetsOrderService {
 
     @Autowired
     private ThreenetsOrderMapper threenetsOrderMapper;
+
     @Autowired
     private ThreeNetsChildOrderService threeNetsChildOrderService;
     @Autowired
@@ -280,7 +281,7 @@ public class ThreeNetsOrderService {
             // 移动
             if (!collect.get(1).isEmpty()){
                 order.setLinkmanTel(collect.get(1).get(0).getLinkmanTel());
-                MiguAddGroupRespone miguAddGroupRespone = utils.saveOrderByYd(order, attached);
+                MiguAddGroupRespone miguAddGroupRespone = utils.addOrderByYd(order, attached);
                 if (miguAddGroupRespone.isSuccess()) {
                     List<ThreenetsChildOrder> childOrders = collect.get(1);
                     ThreenetsRing ring = threeNetsRingService.getRing(childOrders.get(0).getRingId());

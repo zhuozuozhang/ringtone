@@ -20,9 +20,8 @@ public interface ThreenetsOrderMapper {
      * 查询三网订单
      * @param id
      * @return
-     * @throws Exception
      */
-    ThreenetsOrder selectByPrimaryKey(Integer id) throws Exception;
+    ThreenetsOrder selectByPrimaryKey(Integer id);
 
     /**
      * 删除
@@ -51,9 +50,7 @@ public interface ThreenetsOrderMapper {
      * @param request
      * @return
      */
-    List<ThreenetsOrder> getAllorderList(
-        @Param("page") Page page,
-        @Param("param")BaseRequest request);
+    List<ThreenetsOrder> getAllorderList(@Param("page") Page page, @Param("param")BaseRequest request);
 
     /**
      * 查询三网商户列表总数

@@ -32,7 +32,22 @@ public class ThreeNetsChildOrderController {
     @Autowired
     private ThreeNetsOrderService threeNetsOrderService;
 
-
+    /**
+     * 号码管理设置铃音
+     *
+     * @param orderId
+     * @param operate
+     * @param ringId
+     * @param childOrderId
+     * @return
+     * @throws Exception
+     */
+    @PutMapping("/threenets/chidSetRing")
+    @ResponseBody
+    @Log(title = "号码管理设置铃音",businessType = BusinessType.UPDATE,operatorLogType = OperatorLogType.THREENETS)
+    public AjaxResult chidSetRing(Integer orderId,Integer operate,Integer ringId, Integer childOrderId) throws Exception {
+        return threeNetsChildOrderService.chidSetRing(orderId,operate,ringId,childOrderId);
+    }
 
     /**
      * 号码管理---跳转到设置铃音页面
@@ -90,9 +105,13 @@ public class ThreeNetsChildOrderController {
      */
     @GetMapping("/threenets/toMerchantsPhonePage/{parentOrderId}")
     public String toMerchantsPhonePage(ModelMap map, @PathVariable Integer parentOrderId) {
-        ThreenetsOrder order = threeNetsOrderService.getById(parentOrderId);
-        map.put("parentOrderId", parentOrderId);
-        map.put("companyName", order.getCompanyName());
+        try {
+            ThreenetsOrder order = threeNetsChildOrderService.getOrderById(parentOrderId);
+            map.put("parentOrderId", parentOrderId);
+            map.put("companyName", order.getCompanyName());
+        }catch (Exception e){
+            log.error("获取集团名称失败 方法：toMerchantsPhonePage 错误信息：",e);
+        }
         return "threenets/threenet/merchants/number_list";
     }
 
@@ -125,9 +144,9 @@ public class ThreeNetsChildOrderController {
     @PostMapping("/threenets/insterThreeNetsChildOrder")
     @ResponseBody
     @Log(title = "添加子订单", businessType = BusinessType.INSERT, operatorLogType = OperatorLogType.THREENETS)
-    public AjaxResult insterThreeNetsChildOrder(ThreenetsChildOrder threenetsChildOrder) {
+    public AjaxResult insterThreeNetsChildOrder(ThreenetsChildOrder childOrder) {
         try {
-            return threeNetsChildOrderService.insterThreeNetsChildOrder(threenetsChildOrder);
+            return threeNetsChildOrderService.insterThreeNetsChildOrder(childOrder);
         }catch (Exception e){
             log.error("批量保存 方法：insterThreeNetsChildOrder 错误信息", e);
             return AjaxResult.error("保存失败");

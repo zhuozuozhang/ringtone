@@ -24,8 +24,7 @@ public class JsonUtil {
      */        
     public static Object  getObject4JsonString(String jsonString, @SuppressWarnings("rawtypes") Class pojoCalss) {         
         Object pojo;         
-        System.out.println("jsonString="+jsonString);
-        JSONObject jsonObject = JSONObject.fromObject(jsonString);         
+        JSONObject jsonObject = JSONObject.fromObject(jsonString);
         pojo = JSONObject.toBean(jsonObject, pojoCalss);         
         return pojo;         
     }         

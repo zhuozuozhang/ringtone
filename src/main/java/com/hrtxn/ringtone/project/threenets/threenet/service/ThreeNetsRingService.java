@@ -9,7 +9,9 @@ import com.hrtxn.ringtone.freemark.config.systemConfig.RingtoneConfig;
 import com.hrtxn.ringtone.project.system.File.service.FileService;
 import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreeNetsOrderAttached;
 import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreenetsChildOrder;
+import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreenetsOrder;
 import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreenetsRing;
+import com.hrtxn.ringtone.project.threenets.threenet.mapper.ThreenetsOrderMapper;
 import com.hrtxn.ringtone.project.threenets.threenet.mapper.ThreenetsRingMapper;
 import com.hrtxn.ringtone.project.threenets.threenet.utils.ApiUtils;
 import lombok.Synchronized;
@@ -39,10 +41,13 @@ public class ThreeNetsRingService {
     private final String[] AUDIO = {"wav", "mp3"};
 
     @Autowired
+    private ThreenetsOrderMapper threenetsOrderMapper;
+
+    @Autowired
     private ThreenetsRingMapper threenetsRingMapper;
+
     @Autowired
     private FileService fileService;
-
     @Autowired
     private ThreeNetsOrderAttachedService threeNetsOrderAttachedService;
     @Autowired
@@ -50,6 +55,15 @@ public class ThreeNetsRingService {
 
 
     private ApiUtils apiUtils = new ApiUtils();
+
+    /**
+     * 根据订单id获取父级订单
+     * @param id
+     * @return
+     */
+    public ThreenetsOrder getOrderById(Integer id)throws Exception{
+        return threenetsOrderMapper.selectByPrimaryKey(id);
+    }
 
     /**
      * 获取铃音总数
@@ -118,6 +132,9 @@ public class ThreeNetsRingService {
                 if (operator == 1){
                     saveMiguRing(ring);
                 }
+                if (operator == 3){
+                    saveSwxlRing(ring);
+                }
             }
             //修改文件状态
             fileService.updateStatus(ring.getRingWay());
@@ -142,6 +159,20 @@ public class ThreeNetsRingService {
             log.info("添加铃音失败",e);
         }
 
+    }
+
+    /**
+     * 保存联通铃音
+     * @param ring
+     */
+    private void saveSwxlRing(ThreenetsRing ring){
+        try {
+            ring.setFile(new File(RingtoneConfig.getProfile()+ring.getRingWay()));
+            ThreeNetsOrderAttached attached = threeNetsOrderAttachedService.selectByParentOrderId(ring.getOrderId());
+            apiUtils.saveSwxlRing(ring,attached.getSwxlId());
+        }catch (Exception e){
+
+        }
     }
 
     /**
