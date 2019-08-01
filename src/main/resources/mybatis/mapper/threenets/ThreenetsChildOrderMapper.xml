@@ -309,12 +309,12 @@
     <!-- 批量添加子订单 -->
     <insert id="batchChindOrder" parameterType="java.util.List">
         insert into tb_threenets_child_order
-        (linkman, linkman_tel, status, create_date, ring_name, ring_id, parent_order_id,operate_order_id,operate_id, is_monthly, is_video_user, is_ringtone_user, is_reply_message, province,city, operator, user_id,remark)
+        (linkman, linkman_tel, status, create_date, ring_name, ring_id, parent_order_id,operate_order_id,operate_id,payment_type, is_monthly, is_video_user, is_ringtone_user, is_reply_message, province,city, operator, user_id,remark)
         values
         <foreach collection="list" item="child" index="index" separator=",">
             (
             #{child.linkman}, #{child.linkmanTel},#{child.status},#{child.createDate},#{child.ringName},
-            #{child.ringId},#{child.parentOrderId},#{child.operateOrderId},#{child.operateId},#{child.isMonthly},
+            #{child.ringId},#{child.parentOrderId},#{child.operateOrderId},#{child.operateId},#{child.paymentType},#{child.isMonthly},
             #{child.isVideoUser},#{child.isRingtoneUser},#{child.isReplyMessage},#{child.province},
             #{child.city}, #{child.operator}, #{child.userId}, #{child.remark}
             )

@@ -23,6 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -85,15 +86,26 @@ public class ThreeNetsOrderService {
      */
     @Transactional
     public AjaxResult delete(Integer id) {
-        //删除铃音
-        threeNetsRingService.delete(id);
-        //删除子订单
-        threeNetsChildOrderService.delete(id);
-        //删除订单
-        int sum = threenetsOrderMapper.deleteByPrimaryKey(id);
-        if (sum > 0) {
-            return AjaxResult.success(sum, "删除成功");
-        } else {
+        try {
+            //删除铃音
+            String ringRul = "";
+            List<ThreenetsRing> list = threeNetsRingService.listByOrderId(id);
+            for (int i = 0; i < list.size(); i++) {
+                threeNetsRingService.delete(list.get(i).getId());
+                ringRul = list.get(i).getRingWay();
+            }
+            fileService.deleteFile(ringRul);
+            //删除子订单
+            BaseRequest request = new BaseRequest();
+            request.setId(id);
+            List<ThreenetsChildOrder> childOrder = threeNetsChildOrderService.getChildOrder(request);
+            for (int i = 0; i < childOrder.size(); i++) {
+                threeNetsChildOrderService.delete(childOrder.get(i).getId());
+            }
+            //删除订单
+            threenetsOrderMapper.deleteByPrimaryKey(id);
+            return AjaxResult.success(true, "删除成功");
+        }catch (Exception e){
             return AjaxResult.error("删除失败");
         }
     }
@@ -162,6 +174,7 @@ public class ThreeNetsOrderService {
         order.setCity(result.getCity());
         order.setUserId(ShiroUtils.getSysUser().getId());
         order.setCreateTime(new Date());
+        order.setStatus("审核通过");
         threenetsOrderMapper.insertThreenetsOrder(order);
         return AjaxResult.success(order.getId(), "保存成功");
     }
@@ -180,13 +193,16 @@ public class ThreeNetsOrderService {
             //如果更改手机号则更改手机号归属地
             threenetsOrder = JuhePhoneUtils.getPhone(threenetsOrder);
             BeanUtils.copyProperties(threenetsOrder, order);
-            threenetsOrder.setStatus(order.getMobilePay() != null ? "审核通过" : "待审核");
             threenetsOrderMapper.updateByPrimaryKey(threenetsOrder);
         }
         //订单附表初始化
         ThreeNetsOrderAttached attached = new ThreeNetsOrderAttached();
-        attached.setMiguPrice(Integer.parseInt(order.getMobilePay() != null ? order.getMobilePay() : order.getSpecialPrice()));
-        attached.setSwxlPrice(Integer.getInteger(order.getUmicomPay()));
+        if (order.getMobilePay() != null || order.getSpecialPrice() != null) {
+            attached.setMiguPrice(Integer.parseInt(order.getMobilePay() != null ? order.getMobilePay() : order.getSpecialPrice()));
+        }
+        if (order.getUmicomPay() != null) {
+            attached.setSwxlPrice(Integer.parseInt(order.getUmicomPay()));
+        }
         attached.setParentOrderId(order.getId());
         attached.setBusinessLicense(order.getCompanyUrl());//企业资质
         attached.setConfirmLetter(order.getClientUrl());//客户确认函
@@ -194,76 +210,37 @@ public class ThreeNetsOrderService {
         attached.setAvoidShortAgreement(order.getProtocolUrl());//免短协议
         //保存订单附表
         threeNetsOrderAttachedService.save(attached);
-        //查询铃音是否存在
-        List<ThreenetsRing> rings = threeNetsRingService.listByOrderId(order.getId());
         //子订单手机号验证,以及子订单数据初始化
         List<ThreenetsChildOrder> childOrderList = threeNetsChildOrderService.formattedPhone(order.getMemberTels(), order.getId());
-        for (int i = 0; i < childOrderList.size(); i++) {
-            ThreenetsChildOrder childOrder = childOrderList.get(i);
-            ThreenetsRing ring = getRingByOperate(rings, order, childOrder.getOperator());
-            childOrder.setRingId(ring.getId());
-            childOrder.setIsVideoUser(ring.getRingType().equals("视频") ? true : false);
-            //保存子订单
-            childOrderList.set(i,childOrder);
+        List<ThreenetsChildOrder> childOrders = new ArrayList<>();
+        //将子订单数据按照网段区分
+        Map<Integer, List<ThreenetsChildOrder>> collect = childOrderList.stream().collect(Collectors.groupingBy(ThreenetsChildOrder::getOperator));
+        for (Integer operator : collect.keySet()) {
+            ThreenetsRing ring = new ThreenetsRing();
+            ring.setRingWay(order.getRingUrl());
+            ring.setOperate(order.getOperate());
+            ring.setOrderId(order.getId());
+            ring.setRingContent(order.getRingContent());
+            ring.setRingName(order.getRingName());
+            ring.setOperate(operator);
+            threeNetsRingService.save(ring);
+            List<ThreenetsChildOrder> list = collect.get(operator);
+            for (int i = 0; i < list.size(); i++) {
+                ThreenetsChildOrder childOrder = list.get(i);
+                childOrder.setRingId(ring.getId());
+                childOrder.setRingName(ring.getRingName());
+                childOrder.setIsVideoUser(ring.getRingType().equals("视频") ? true : false);
+                childOrder.setIsRingtoneUser(ring.getRingType().equals("视频") ? false : true);
+                childOrder.setPaymentType(Integer.parseInt(order.getPaymentType()));
+                childOrders.add(childOrder);
+            }
         }
+        //保存子订单
+        threeNetsChildOrderService.batchChindOrder(childOrders);
         //保存线上
-        saveOnlineOrder(threenetsOrder,attached,childOrderList);
+        //saveOnlineOrder(threenetsOrder,attached,childOrders);
+
         return AjaxResult.success(threenetsOrder, "保存成功！");
-    }
-
-    /**
-     * 转存铃音
-     *
-     * @param rings
-     * @param order
-     * @param operate
-     * @return
-     */
-    private ThreenetsRing getRingByOperate(List<ThreenetsRing> rings, OrderRequest order, Integer operate) {
-        if (rings.isEmpty()) {
-            ThreenetsRing ring = initRing(order);
-            ring.setOperate(operate);
-            rings.add(ring);
-            return ring;
-        } else if (rings.size() == 1) {
-            if (rings.get(0).getOperate() == operate) {
-                return rings.get(0);
-            } else {
-                ThreenetsRing ring = initRing(order);
-                ring.setOperate(operate);
-                rings.add(ring);
-                return ring;
-            }
-        } else {
-            Map<Integer, List<ThreenetsRing>> collect = rings.stream().collect(Collectors.groupingBy(ThreenetsRing::getOperate));
-            List<ThreenetsRing> threenetsRings = collect.get(operate);
-            if (threenetsRings != null && !threenetsRings.isEmpty()) {
-                return threenetsRings.get(0);
-            } else {
-                ThreenetsRing ring = initRing(order);
-                ring.setOperate(operate);
-                rings.add(ring);
-                return ring;
-            }
-        }
-    }
-
-
-    /**
-     * 添加新铃音
-     *
-     * @param order
-     * @return
-     */
-    private ThreenetsRing initRing(OrderRequest order) {
-        ThreenetsRing ring = new ThreenetsRing();
-        ring.setRingWay(order.getRingUrl());
-        ring.setOperate(order.getOperate());
-        ring.setOrderId(order.getId());
-        ring.setRingContent(order.getRingContent());
-        ring.setRingName(order.getRingName());
-        //保存铃音
-        return threeNetsRingService.save(ring);
     }
 
     /**
@@ -272,28 +249,27 @@ public class ThreeNetsOrderService {
      * @param list
      */
     @Synchronized
-    private void saveOnlineOrder(ThreenetsOrder order,ThreeNetsOrderAttached attached,List<ThreenetsChildOrder> list) {
+    private void saveOnlineOrder(ThreenetsOrder order, ThreeNetsOrderAttached attached, List<ThreenetsChildOrder> list) {
         Map<Integer, List<ThreenetsChildOrder>> collect = list.stream().collect(Collectors.groupingBy(ThreenetsChildOrder::getOperator));
         List<Uploadfile> fileList = fileService.listUploadfile(order.getId());
         ApiUtils utils = new ApiUtils();
-
-        try{
+        try {
             // 移动
-            if (!collect.get(1).isEmpty()){
+            if (!collect.get(1).isEmpty()) {
                 order.setLinkmanTel(collect.get(1).get(0).getLinkmanTel());
                 MiguAddGroupRespone miguAddGroupRespone = utils.addOrderByYd(order, attached);
                 if (miguAddGroupRespone.isSuccess()) {
                     List<ThreenetsChildOrder> childOrders = collect.get(1);
                     ThreenetsRing ring = threeNetsRingService.getRing(childOrders.get(0).getRingId());
                     attached.setMiguId(miguAddGroupRespone.getCircleId());
-                    utils.saveMiguRing(ring,attached.getMiguId(),order.getCompanyName());
+                    utils.saveMiguRing(ring, attached.getMiguId(), order.getCompanyName());
                 }
             }
             //保存订单附表
             threeNetsOrderAttachedService.update(attached);
 
 
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
         //联通

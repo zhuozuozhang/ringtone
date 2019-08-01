@@ -47,6 +47,8 @@ public class OrderRequest {
     private String mianduan;
     //免短协议
     private String protocolUrl;
+    //支付方式
+    private String paymentType;
 
     //随机id用于保存
     private Integer id;
