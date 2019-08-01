@@ -28,4 +28,14 @@ public class BaseRequest {
     private String month;
 
     private String year;
+
+
+    //企业资质
+    private String companyUrl;
+    //客户确认涵
+    private String clientUrl;
+    //主体证明
+    private String mainUrl;
+    //免短协议
+    private String protocolUrl;
 }

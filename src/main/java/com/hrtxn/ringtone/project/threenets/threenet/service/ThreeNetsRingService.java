@@ -125,7 +125,7 @@ public class ThreeNetsRingService {
                 String extensionsName = ring.getRingWay().substring(ring.getRingWay().indexOf("."));
                 boolean isVideo = Arrays.asList(VIDEO).contains(extensionsName);
                 ring.setRingType(isVideo ? "视频" : "音频");
-                ring.setRingStatus(1);
+                ring.setRingStatus(2);
                 ring.setCreateTime(new Date());
                 ring.setRingName(ring.getRingName()+extensionsName);
                 ring.setOperate(operator);
@@ -188,7 +188,7 @@ public class ThreeNetsRingService {
         String extensionsName = ring.getRingWay().substring(ring.getRingWay().indexOf("."));
         boolean isVideo = Arrays.asList(VIDEO).contains(extensionsName);
         ring.setRingType(isVideo ? "视频" : "音频");
-        ring.setRingStatus(1);
+        ring.setRingStatus(2);
         ring.setCreateTime(new Date());
         ring.setRingName(ring.getRingName()+extensionsName);
         //保存铃音
@@ -222,7 +222,7 @@ public class ThreeNetsRingService {
      */
     public void cloneRing(Integer id) throws Exception {
         ThreenetsRing ring = threenetsRingMapper.selectByPrimaryKey(id);
-        ring.setRingStatus(1);
+        ring.setRingStatus(2);
         threenetsRingMapper.insertThreeNetsRing(ring);
     }
 

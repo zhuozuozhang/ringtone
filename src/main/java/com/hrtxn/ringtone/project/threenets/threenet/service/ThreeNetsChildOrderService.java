@@ -19,6 +19,7 @@ import com.hrtxn.ringtone.project.threenets.threenet.mapper.ThreenetsOrderMapper
 import com.hrtxn.ringtone.project.threenets.threenet.mapper.ThreenetsRingMapper;
 import com.hrtxn.ringtone.project.threenets.threenet.utils.ApiUtils;
 import lombok.Synchronized;
+import org.apache.commons.beanutils.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -138,14 +139,16 @@ public class ThreeNetsChildOrderService {
      * @return
      */
     @Transactional
-    public AjaxResult insterThreeNetsChildOrder(ThreenetsChildOrder threenetsChildOrder) throws Exception {
+    public AjaxResult insterThreeNetsChildOrder(ThreenetsChildOrder threenetsChildOrder,BaseRequest request) throws Exception {
         if (!StringUtils.isNotNull(threenetsChildOrder)) {
             return AjaxResult.error("参数格式不正确");
         }
         List<ThreenetsChildOrder> list = formattedPhone(threenetsChildOrder.getMemberTels(), null);
         ThreeNetsOrderAttached attached = threeNetsOrderAttachedService.selectByParentOrderId(threenetsChildOrder.getParentOrderId());
+        //克隆
+        BeanUtils.copyProperties(attached, request);
         if (attached.getMiguPrice() == null) {
-            attached.setMiguPrice(threenetsChildOrder.getMiguPrice());
+            attached.setMiguPrice(threenetsChildOrder.getMiguPrice() != null ? threenetsChildOrder.getMiguPrice() : threenetsChildOrder.getSpecialPrice());
         }
         if (attached.getSwxlPrice() == null) {
             attached.setSwxlPrice(threenetsChildOrder.getSwxlPrice());
@@ -162,20 +165,40 @@ public class ThreeNetsChildOrderService {
     @Synchronized
     public void saveThreenetsPhone(ThreeNetsOrderAttached attached, List<ThreenetsChildOrder> childOrders) {
         try {
+            List<ThreenetsRing> rings = threenetsRingMapper.selectByOrderId(attached.getParentOrderId());
+            Map<Integer, List<ThreenetsRing>> ringMap = rings.stream().collect(Collectors.groupingBy(ThreenetsRing::getOperate));
             ThreenetsOrder order = threenetsOrderMapper.selectByPrimaryKey(attached.getParentOrderId());
             Map<Integer, List<ThreenetsChildOrder>> map = childOrders.stream().collect(Collectors.groupingBy(ThreenetsChildOrder::getOperator));
             for (Integer operator : map.keySet()) {
                 List<ThreenetsChildOrder> list = map.get(operator);
                 if (operator == 1) {
                     addMembersByYd(order, attached, list);
-                    batchChindOrder(list);
+                    batchChindOrder(list,rings.get(0));
+                    if (ringMap.get(1) == null){
+                        ThreenetsRing threenetsRing = rings.get(0);
+                        threenetsRing.setOperate(1);
+                        threenetsRing.setRingStatus(2);
+                        threenetsRingMapper.insertThreeNetsRing(threenetsRing);
+                    }
                 }
                 if (operator == 2) {
-                    //电信
+                    batchChindOrder(list,rings.get(0));
+                    if (ringMap.get(2) == null){
+                        ThreenetsRing threenetsRing = rings.get(0);
+                        threenetsRing.setOperate(2);
+                        threenetsRing.setRingStatus(2);
+                        threenetsRingMapper.insertThreeNetsRing(threenetsRing);
+                    }
                 }
                 if (operator == 3) {
                     addMemberByLt(order, attached, list);
-                    batchChindOrder(list);
+                    batchChindOrder(list,rings.get(0));
+                    if (ringMap.get(3) == null){
+                        ThreenetsRing threenetsRing = rings.get(0);
+                        threenetsRing.setOperate(3);
+                        threenetsRing.setRingStatus(2);
+                        threenetsRingMapper.insertThreeNetsRing(threenetsRing);
+                    }
                 }
             }
         } catch (Exception e) {
@@ -224,8 +247,6 @@ public class ThreeNetsChildOrderService {
             }
             if (!rings.isEmpty()) {
                 ThreenetsRing threenetsRing = rings.get(0);
-                threenetsRing.setOperate(3);
-                threenetsRingMapper.insertThreeNetsRing(threenetsRing);
                 order.setUpLoadAgreement(new File(RingtoneConfig.getProfile() + threenetsRing.getRingWay()));
             }
             order.setLinkmanTel(list.get(0).getLinkmanTel());
@@ -247,6 +268,24 @@ public class ThreeNetsChildOrderService {
      * @return
      */
     public Integer batchChindOrder(List<ThreenetsChildOrder> orders) {
+        return threenetsChildOrderMapper.batchChindOrder(orders);
+    }
+
+    /**
+     * 批量保存
+     *
+     * @param orders
+     * @return
+     */
+    public Integer batchChindOrder(List<ThreenetsChildOrder> orders,ThreenetsRing ring) {
+        for (int i = 0; i < orders.size(); i++) {
+            ThreenetsChildOrder childOrder = orders.get(i);
+            childOrder.setRingName(ring.getRingName());
+            childOrder.setRingId(ring.getId());
+            childOrder.setIsVideoUser(ring.getRingType().equals("视频") ? true : false);
+            childOrder.setIsRingtoneUser(ring.getRingType().equals("视频") ? false : true);
+            orders.set(i,childOrder);
+        }
         return threenetsChildOrderMapper.batchChindOrder(orders);
     }
 
