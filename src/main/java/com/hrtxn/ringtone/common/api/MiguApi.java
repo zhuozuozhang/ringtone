@@ -446,31 +446,6 @@ public class MiguApi implements Serializable {
         return result;
     }
 
-    public String ringSetting(String phoneNo, String ringId, String circleId) throws NoLoginException, IOException {
-        String result = null;
-        CloseableHttpClient httpclient = HttpClients.custom().setDefaultCookieStore(this.getCookieStore()).build();
-        HttpPost httppost = new HttpPost(ringSetting_url);
-        List<NameValuePair> formparams = new ArrayList<NameValuePair>();
-        formparams.add(new BasicNameValuePair("phoneNo", phoneNo));
-        formparams.add(new BasicNameValuePair("ringId", ringId));
-        formparams.add(new BasicNameValuePair("circleId", circleId));
-        UrlEncodedFormEntity entity = new UrlEncodedFormEntity(formparams, "utf-8");
-        httppost.setEntity(entity);
-        CloseableHttpResponse response = httpclient.execute(httppost);
-        try {
-            HttpEntity resEntity = response.getEntity();
-            result = EntityUtils.toString(resEntity);
-            log.info("移动 设置铃音 参数：{},{},{} 结果：{}",phoneNo,ringId,circleId,result);
-            this.setMiguCookie(this.getCookieStore());
-        } catch (Exception e) {
-            System.out.println(e);
-        } finally {
-            httppost.abort();
-            response.close();
-        }
-        return result;
-    }
-
     /**
      * 设置铃音
      *

@@ -66,13 +66,13 @@ public class SwxlApi implements Serializable {
     public static String addGroup_url = "https://swxl.10155.com/swxlapi/web/group";// 增加商户url
     public static String importSwxlRing_URL = "https://swxl.10155.com/swxlapi/web/ring/add";// 上传铃音
     public static String Send_SMS_SecondMsg_URL = "https://swxl.10155.com/swxlapi/web/member/openBizSpecialChannel";// 用户开通业务失败二次发送短信地址
+    public static String PhoneSetRing_URL = "https://swxl.10155.com/swxlapi/web/ring/set";// 用户设置铃音
 
     public static String getSetRingList_url = "https://swxl.10155.com/ring/getSetRingList.do"; // 获取铃音信息
     public static String importRing_url = "https://swxl.10155.com/group/uploadRing.do";// 铃音上传url
     public static String deleteSwxlRing_URL = "https://swxl.10155.com/swxlapi/web/ring";// 删除铃音
     public static String DELETE_PHONE_URL = "https://swxl.10155.com/swxlapi/web/member";// 删除用户
     public static String groupSetRing_URL = "https://swxl.10155.com/swxlapi/web/ring/setRing.do";// 批量设置铃音
-    public static String PhoneSetRing_URL = "https://swxl.10155.com/swxlapi/web/ring/set";// 用户设置铃音
     public static String deleteGroup_url = "https://swxl.10155.com/swxlapi/web/group";
     public static String addChild_url = "https://swxl.10155.com/swxlapi/web/manager/child";// 增加商户url
     public static String silentMember_url = "https://swxl.10155.com/swxlapi/web/member/silentMember";//工具箱获取用户信息
@@ -281,7 +281,7 @@ public class SwxlApi implements Serializable {
 
     /**
      * 根据号码查询彩铃功能
-     *
+     * (废弃 已使用getRingInfo代替)
      * @param msisdn
      * @param typeFlag
      * @return
@@ -374,6 +374,25 @@ public class SwxlApi implements Serializable {
         map.put("confirmType", "CONFIRM_BY_WEB");
         result = sendPost(map, Send_SMS_SecondMsg_URL);
         log.info("联通发送链接短信 参数：{} 结果：{}", msisdn, result);
+        return result;
+    }
+
+    /**
+     * 设置铃音
+     *
+     * @param members
+     * @param ringId
+     * @return
+     */
+    public String setRingForPhone(String members, String ringId) throws NoLoginException, IOException {
+        List<NameValuePair> formparams = new ArrayList<NameValuePair>();
+        formparams.add(new BasicNameValuePair("ringId", ringId));
+        formparams.add(new BasicNameValuePair("msisdn", members));
+        HashMap map = new HashMap();
+        map.put("ringId", ringId);
+        map.put("msisdn", members);
+        String result = sendPost(map, PhoneSetRing_URL);
+        log.info("联通 设置铃音 参数：{},{} 结果：{}",members,ringId,result);
         return result;
     }
 
@@ -621,61 +640,6 @@ public class SwxlApi implements Serializable {
         return result;
     }
 
-    /***
-     * 获取集团铃音信息--升级版本
-     *
-     * @param ring
-     * @return
-     * @throws NoLoginException
-     */
-    public SwxlRingMsg getRingInfo2(ThreenetsRing ring) throws NoLoginException {
-        SwxlRingMsg swxlRingInfo = null;
-        DefaultHttpClient httpclient = WebClientDevWrapper.wrapClient(new DefaultHttpClient());
-        try {
-            HttpGet httpGet = new HttpGet(getGroupRingInfo_URL + "?groupId=" + ring.getOperateId());
-            httpclient.setCookieStore(this.getCookieStore());
-            HttpResponse response = httpclient.execute(httpGet);// 进入
-            int statusCode = response.getStatusLine().getStatusCode();
-            if (statusCode == HttpStatus.SC_OK) {
-                HttpEntity resEntity = response.getEntity();
-                String content = EntityUtils.toString(resEntity);
-                this.setSwxlCookie(httpclient.getCookieStore());
-                System.out.println("查询铃音，取得的内容：" + content);
-                if (content.contains("000000")) {
-                    ObjectMapper mapper = new ObjectMapper();
-                    SwxlPubBackData<SwxlQueryPubRespone<SwxlRingMsg>> backData = mapper.readValue(content, new TypeReference<SwxlPubBackData<SwxlRingMsg>>() {
-                    });
-                    @SuppressWarnings({"unchecked", "rawtypes"})
-                    SwxlQueryPubRespone<SwxlRingMsg> dataList = (SwxlQueryPubRespone) backData.getData();
-                    if (dataList != null) {
-                        List<SwxlRingMsg> ringList = dataList.getData();
-                        String ringName = ring.getRingName();
-                        ringName = ringName.split("\\.")[0];
-                        if (ringList.size() > 0) {
-                            for (SwxlRingMsg swxlRingMsg : ringList) {
-                                if (swxlRingMsg.getRingName().equals(ringName.trim())) {
-                                    swxlRingInfo = swxlRingMsg;
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                    return swxlRingInfo;
-                }
-            }
-        } catch (NoLoginException e) {
-            e.printStackTrace();
-        } catch (ClientProtocolException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            httpclient.getConnectionManager().shutdown();
-        }
-        return swxlRingInfo;
-    }
-
-
     /**
      * 向商务炫铃增加号码
      *
@@ -742,12 +706,6 @@ public class SwxlApi implements Serializable {
             httpclient.getConnectionManager().shutdown();
         }
         return result;
-    }
-    public static void main(String[] args) throws NoLoginException, IOException {
-//        SwxlApi swxlApi = new SwxlApi();
-//        String login = swxlApi.getRingInfo("9178900020190614589013");
-//        System.out.println("======================================");
-//        String s = swxlApi.swxlrefreshCrbtStatus("16607347601", 2);
     }
 
 }

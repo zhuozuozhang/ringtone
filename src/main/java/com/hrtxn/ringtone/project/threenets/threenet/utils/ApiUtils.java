@@ -297,7 +297,7 @@ public class ApiUtils {
                             if (StringUtils.isNotEmpty(ringCheckmsg)) {
                                 threenetsRing.setRemark(ringCheckmsg); // 运营商返回的备注信息
                             }
-                            // 铃音状态（1.待审核/2.激活中/3.激活成功/4.部分省份激活超时/5.部分省份激活成功/6.激活失败）
+                            // 铃音状态（1.待审核/2.激活中/3.激活成功/4.部分省份激活超时/5.部分省份激活成功/6.激活失败/7.审核不通过/8.分发失败）
                             if ("待审核".equals(remark)) {
                                 threenetsRing.setRingStatus(1);
                             } else if ("激活中".equals(remark)) {
@@ -492,7 +492,35 @@ public class ApiUtils {
         } else if (operate == 2) { // 电信
 
         } else { // 联通
-
+            String[] phoness = phones.split(",");
+            for (String phone : phoness) {
+                String result = swxlApi.setRingForPhone(phone, threenetsRing.getOperateRingId());
+                if (StringUtils.isNotEmpty(result)){
+                    SwxlBaseBackMessage<SwxlAddPhoneNewResult> info = SpringUtils.getBean(ObjectMapper.class).readValue(result,SwxlBaseBackMessage.class);
+                    if (StringUtils.isNotNull(info) && "000000".equals(info.getRecode()) && info.isSuccess()){
+                        String ringName = StringUtils.subString(threenetsRing.getRingName(), '.');
+                        // 根据父级订单ID以及电话号码查询子级订单信息
+                        ThreenetsChildOrder threenetsChildOrder = SpringUtils.getBean(ThreenetsChildOrderMapper.class).findChildOrderByOrderIdAndPhone(orderId, phone);
+                        if (threenetsChildOrder.getIsMonthly() == 2) {
+                            threenetsChildOrder.setRingName(ringName);
+                            threenetsChildOrder.setRemark("您的请求已受理，请稍后在【商户列表 ->号码管理】中点击刷新操作查看");
+                            // 执行修改子订单操作
+                            int count = SpringUtils.getBean(ThreenetsChildOrderMapper.class).updateThreeNetsChidOrder(threenetsChildOrder);
+                            if (count <= 0) {
+                                failure++;
+                            }
+                        }
+                        if (failure == 0) {
+                            sucMsg = "您的请求已受理，请稍后在【商户列表 ->号码管理】中点击刷新操作查看!";
+                        } else {
+                            errMsg = "执行修改子订单信息出错！";
+                        }
+                    }else{
+                        failure++;
+                        errMsg += "["+phone+"]:"+info.getMessage();
+                    }
+                }
+            }
         }
         if (failure > 0) {
             return AjaxResult.error(errMsg);

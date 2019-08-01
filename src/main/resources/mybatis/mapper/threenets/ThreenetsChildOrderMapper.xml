@@ -73,8 +73,8 @@
         <if test="param.parentId != null and param.parentId != ''">
             AND b.parent_id = #{param.parentId} or b.id = #{param.parentId}
         </if>
-        <if test="param.operate != null and param.operate != ''">
-            AND operator = #{param.operate}
+        <if test="param.operator != null and param.operator != ''">
+            AND operator = #{param.operator}
         </if>
         GROUP BY DATE_FORMAT( create_date, '%Y-%m-%d' ) DESC,is_monthly
         ) a
@@ -93,8 +93,8 @@
         <if test="param.parentId != null and param.parentId != ''">
             AND b.parent_id = #{param.parentId} or b.id = #{param.parentId}
         </if>
-        <if test="param.operate != null and param.operate != ''">
-            AND operator = #{param.operate}
+        <if test="param.operator != null and param.operator != ''">
+            AND operator = #{param.operator}
         </if>
         GROUP BY DATE_FORMAT( create_date, '%Y-%m' ) DESC,is_monthly
         ) a
