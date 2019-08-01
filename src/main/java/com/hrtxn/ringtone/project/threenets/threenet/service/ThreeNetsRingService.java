@@ -115,6 +115,8 @@ public class ThreeNetsRingService {
     @Transactional
     public ThreenetsRing saveRing(ThreenetsRing ring) {
         try{
+            ThreenetsOrder order = threenetsOrderMapper.selectByPrimaryKey(ring.getOrderId());
+            ring.setCompanyName(order.getCompanyName());
             BaseRequest request = new BaseRequest();
             request.setParentId(ring.getOrderId());
             List<ThreenetsChildOrder> childOrderList = threeNetsChildOrderService.getChildOrder(request);

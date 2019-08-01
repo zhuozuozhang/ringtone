@@ -162,18 +162,19 @@ public class ThreeNetsChildOrderService {
     @Synchronized
     public void saveThreenetsPhone(ThreeNetsOrderAttached attached, List<ThreenetsChildOrder> childOrders) {
         try {
+            ThreenetsOrder order = threenetsOrderMapper.selectByPrimaryKey(attached.getParentOrderId());
             Map<Integer, List<ThreenetsChildOrder>> map = childOrders.stream().collect(Collectors.groupingBy(ThreenetsChildOrder::getOperator));
             for (Integer operator : map.keySet()) {
                 List<ThreenetsChildOrder> list = map.get(operator);
                 if (operator == 1) {
-                    addMembersByYd(attached, list);
+                    addMembersByYd(order, attached, list);
                     batchChindOrder(list);
                 }
                 if (operator == 2) {
                     //电信
                 }
                 if (operator == 3) {
-                    addMemberByLt(attached, list);
+                    addMemberByLt(order, attached, list);
                     batchChindOrder(list);
                 }
             }
@@ -190,10 +191,9 @@ public class ThreeNetsChildOrderService {
      * @throws IOException
      * @throws NoLoginException
      */
-    private void addMembersByYd(ThreeNetsOrderAttached attached, List<ThreenetsChildOrder> list) throws IOException, NoLoginException {
+    private void addMembersByYd(ThreenetsOrder order, ThreeNetsOrderAttached attached, List<ThreenetsChildOrder> list) throws IOException, NoLoginException {
         //无集团id则先进行集团新增
         if (attached.getMiguId() == null) {
-            ThreenetsOrder order = threenetsOrderMapper.selectByPrimaryKey(attached.getParentOrderId());
             MiguAddGroupRespone miguAddGroupRespone = apiUtils.addOrderByYd(order, attached);
             if (miguAddGroupRespone.isSuccess()) {
                 attached.setMiguId(miguAddGroupRespone.getCircleId());
@@ -206,6 +206,7 @@ public class ThreeNetsChildOrderService {
     }
 
     /**
+     * x
      * 新增联通成员
      *
      * @param attached
@@ -213,9 +214,8 @@ public class ThreeNetsChildOrderService {
      * @throws IOException
      * @throws NoLoginException
      */
-    private void addMemberByLt(ThreeNetsOrderAttached attached, List<ThreenetsChildOrder> list) throws IOException, NoLoginException {
+    private void addMemberByLt(ThreenetsOrder order, ThreeNetsOrderAttached attached, List<ThreenetsChildOrder> list) throws IOException, NoLoginException {
         if (attached.getSwxlId() == null) {
-            ThreenetsOrder order = threenetsOrderMapper.selectByPrimaryKey(attached.getParentOrderId());
             List<ThreenetsRing> rings = new ArrayList<>();
             try {
                 rings = threenetsRingMapper.selectByOrderId(attached.getParentOrderId());
@@ -300,7 +300,7 @@ public class ThreeNetsChildOrderService {
         //设置代理商
         childOrder.setUserId(ShiroUtils.getSysUser().getId());
         childOrder.setCreateDate(new Date());
-        //childOrder.setStatus("审核通过");
+        childOrder.setStatus("审核通过");
         return childOrder;
     }
 

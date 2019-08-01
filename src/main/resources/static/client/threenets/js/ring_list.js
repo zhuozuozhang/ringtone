@@ -26,7 +26,7 @@ $(function () {
 function showTable() {
     var params = {
         "id": $('#orderId').val(),
-        "operate": $('#operate').val(),
+        "operator": $('#operate').val(),
     }
     var columns = [
         {"data": "id"},

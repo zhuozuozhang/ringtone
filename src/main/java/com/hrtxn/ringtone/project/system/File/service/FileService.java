@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.util.Date;
 import java.util.List;
 
@@ -58,6 +59,17 @@ public class FileService {
         Uploadfile uploadfile = new Uploadfile();
         uploadfile.setPath(path);
         uploadfile.setStatus(2);
+        uploadfileMapper.updateByPath(uploadfile);
+    }
+
+    /**
+     * 修改文件使用状态
+     * @param path
+     */
+    public void deleteFile (String path){
+        Uploadfile uploadfile = new Uploadfile();
+        uploadfile.setPath(path);
+        uploadfile.setStatus(1);
         uploadfileMapper.updateByPath(uploadfile);
     }
 

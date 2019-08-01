@@ -21,7 +21,7 @@ public interface ThreenetsOrderMapper {
      * @param id
      * @return
      */
-    ThreenetsOrder selectByPrimaryKey(Integer id);
+    ThreenetsOrder selectByPrimaryKey(Integer id) throws Exception ;
 
     /**
      * 删除

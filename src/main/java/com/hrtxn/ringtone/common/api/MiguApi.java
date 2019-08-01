@@ -5,6 +5,7 @@ import com.hrtxn.ringtone.common.exception.NoLoginException;
 import com.hrtxn.ringtone.common.utils.ChaoJiYing;
 import com.hrtxn.ringtone.common.utils.HttpUtils;
 import com.hrtxn.ringtone.common.utils.ShiroUtils;
+import com.hrtxn.ringtone.common.utils.WebClientDevWrapper;
 import com.hrtxn.ringtone.common.utils.json.JsonUtil;
 import com.hrtxn.ringtone.project.system.user.domain.User;
 import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreeNetsOrderAttached;
@@ -63,6 +64,7 @@ public class MiguApi implements Serializable {
     public static String findCircleRingPageById_url = "http://211.137.107.18:8888/cm/setRingAction!findCircleRingById.action"; // 获取铃音信息
     public static String ADD_PHONE_URL = "http://211.137.107.18:8888/cm/groupInfo!inviteGroupUsers.action";//增加号码地址
     public static String importRing_url = "http://211.137.107.18:8888/cm/cmRing!importRing.action";//增加铃音url
+    public static String uploadRing_url = "http://211.137.107.18:8888/cm/cmRing!uploadRing.action";//增加铃音url
     public static String settingRing_url = "http://211.137.107.18:8888/cm/cmCircleRing!setCircleRingById4User.action"; // 铃音设置
 
     public static String findCircleMsgList_url = "http://211.137.107.18:8888/cm/groupInfo!findCircleMsgList.action";// 查看消息
@@ -661,37 +663,37 @@ public class MiguApi implements Serializable {
      */
     public AjaxResult saveRing(ThreenetsRing ring, String circleID, String groupName) throws IOException,NoLoginException {
         AjaxResult ajaxResult = new AjaxResult();
-        String ringName = ring.getRingName().substring(0,ring.getRingName().indexOf(".")+1);
-        DefaultHttpClient httpclient = new DefaultHttpClient();
+        String ringName = ring.getRingName().substring(0,ring.getRingName().indexOf("."));
+
+        DefaultHttpClient httpclient = WebClientDevWrapper.wrapClient(new DefaultHttpClient());
         HttpPost httppost = new HttpPost(importRing_url);
         httpclient.setCookieStore(this.getCookieStore());
         try {
             MultipartEntity reqEntity = new MultipartEntity();
             HttpParams params = httpclient.getParams();
             params.setParameter(CoreProtocolPNames.HTTP_CONTENT_CHARSET, Charset.forName("UTF-8"));
-            //reqEntity.addPart("groupName", new StringBody(groupName, Charset.forName("UTF-8")));
-            //reqEntity.addPart("singer", new StringBody(""));
-            //reqEntity.addPart("songName", new StringBody(""));
             reqEntity.addPart("ringName", new StringBody(ringName, Charset.forName("UTF-8")));
             reqEntity.addPart("circleID", new StringBody(circleID, Charset.forName("UTF-8")));
             reqEntity.addPart("trade", new StringBody("其他普通行业", Charset.forName("UTF-8")));
-            //reqEntity.addPart("file", new FileBody(ring.getFile(), "audio/mp3"));
+            reqEntity.addPart("file", new FileBody(ring.getFile(), "audio/mp3"));
             reqEntity.addPart("ringContent", new StringBody(ring.getRingContent(), Charset.forName("UTF-8")));
             reqEntity.addPart("autoSetType", new StringBody("0"));
             httppost.setEntity(reqEntity);
             HttpResponse response1 = httpclient.execute(httppost);
-            int statusCode = response1.getStatusLine().getStatusCode();
-            if (statusCode == HttpStatus.SC_OK) {
-                log.debug("铃音上传服务器正常响应2.....");
-                String result = EntityUtils.toString(response1.getEntity());
-                if (result.contains("铃音名称已经存在，请修改")) {
-                    ajaxResult.error("铃音名称已经存在，请修改");
-                }else if (result.contains("集团还有铃音正在分发中，不能上传铃音")) {
-                    ajaxResult.error("集团还有铃音正在分发中，不能上传铃音");
-                }else {
-                    ajaxResult.success(true,"上传成功");
-                }
-            }
+            HttpEntity entity = response1.getEntity();
+            String result = EntityUtils.toString(entity);
+            //int statusCode = response1.getStatusLine().getStatusCode();
+//            if (statusCode == HttpStatus.SC_OK) {
+//                log.debug("铃音上传服务器正常响应2.....");
+//                //String result = EntityUtils.toString(response1.getEntity());
+//                if (result.contains("铃音名称已经存在，请修改")) {
+//                    ajaxResult.error("铃音名称已经存在，请修改");
+//                }else if (result.contains("集团还有铃音正在分发中，不能上传铃音")) {
+//                    ajaxResult.error("集团还有铃音正在分发中，不能上传铃音");
+//                }else {
+//                    ajaxResult.success(true,"上传成功");
+//                }
+//            }
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -700,7 +702,6 @@ public class MiguApi implements Serializable {
         }
         return ajaxResult;
     }
-
 
     /**
      * 向移动咪咕增加号码
