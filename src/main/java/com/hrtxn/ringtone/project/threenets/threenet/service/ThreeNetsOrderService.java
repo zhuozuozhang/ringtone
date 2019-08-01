@@ -6,6 +6,7 @@ import com.hrtxn.ringtone.common.domain.OrderRequest;
 import com.hrtxn.ringtone.common.domain.Page;
 import com.hrtxn.ringtone.common.utils.ShiroUtils;
 import com.hrtxn.ringtone.common.utils.juhe.JuhePhoneUtils;
+import com.hrtxn.ringtone.freemark.config.systemConfig.RingtoneConfig;
 import com.hrtxn.ringtone.project.system.File.domain.Uploadfile;
 import com.hrtxn.ringtone.project.system.File.service.FileService;
 import com.hrtxn.ringtone.project.system.json.JuhePhone;
@@ -15,6 +16,7 @@ import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreenetsChildOrder;
 import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreenetsOrder;
 import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreenetsRing;
 import com.hrtxn.ringtone.project.threenets.threenet.json.migu.MiguAddGroupRespone;
+import com.hrtxn.ringtone.project.threenets.threenet.json.swxl.SwxlGroupResponse;
 import com.hrtxn.ringtone.project.threenets.threenet.mapper.ThreenetsOrderMapper;
 import com.hrtxn.ringtone.project.threenets.threenet.utils.ApiUtils;
 import lombok.Synchronized;
@@ -23,6 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -238,7 +241,7 @@ public class ThreeNetsOrderService {
         //保存子订单
         threeNetsChildOrderService.batchChindOrder(childOrders);
         //保存线上
-        //saveOnlineOrder(threenetsOrder,attached,childOrders);
+        saveOnlineOrder(threenetsOrder,attached,childOrders);
 
         return AjaxResult.success(threenetsOrder, "保存成功！");
     }
@@ -255,7 +258,7 @@ public class ThreeNetsOrderService {
         ApiUtils utils = new ApiUtils();
         try {
             // 移动
-            if (!collect.get(1).isEmpty()) {
+            if (collect.get(1) != null) {
                 order.setLinkmanTel(collect.get(1).get(0).getLinkmanTel());
                 MiguAddGroupRespone miguAddGroupRespone = utils.addOrderByYd(order, attached);
                 if (miguAddGroupRespone.isSuccess()) {
@@ -265,19 +268,21 @@ public class ThreeNetsOrderService {
                     utils.saveMiguRing(ring, attached.getMiguId(), order.getCompanyName());
                 }
             }
+            if (collect.get(3) != null){
+                List<ThreenetsChildOrder> childOrders = collect.get(3);
+                ThreenetsRing ring = threeNetsRingService.getRing(childOrders.get(0).getRingId());
+                order.setUpLoadAgreement(new File(RingtoneConfig.getProfile()+ring.getRingWay()));
+                SwxlGroupResponse swxlGroupResponse = utils.addOrderByLt(order, attached);
+                if (swxlGroupResponse.getStatus() == 0) {
+                    attached.setSwxlId(swxlGroupResponse.getId());
+                }else{
+                    return;
+                }
+            }
             //保存订单附表
             threeNetsOrderAttachedService.update(attached);
-
-
         } catch (Exception e) {
             e.printStackTrace();
         }
-        //联通
-        //utils.saveOrderByLt(order,fileList,null);
-        //联通集团
-
-
-        //保存子订单
-        threeNetsChildOrderService.batchChindOrder(list);
     }
 }

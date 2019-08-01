@@ -144,9 +144,9 @@ public class ThreeNetsChildOrderController {
     @PostMapping("/threenets/insterThreeNetsChildOrder")
     @ResponseBody
     @Log(title = "添加子订单", businessType = BusinessType.INSERT, operatorLogType = OperatorLogType.THREENETS)
-    public AjaxResult insterThreeNetsChildOrder(ThreenetsChildOrder childOrder) {
+    public AjaxResult insterThreeNetsChildOrder(ThreenetsChildOrder childOrder,BaseRequest request) {
         try {
-            return threeNetsChildOrderService.insterThreeNetsChildOrder(childOrder);
+            return threeNetsChildOrderService.insterThreeNetsChildOrder(childOrder,request);
         }catch (Exception e){
             log.error("批量保存 方法：insterThreeNetsChildOrder 错误信息", e);
             return AjaxResult.error("保存失败");
