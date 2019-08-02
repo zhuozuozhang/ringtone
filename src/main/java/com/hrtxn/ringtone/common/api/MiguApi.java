@@ -648,11 +648,11 @@ public class MiguApi implements Serializable {
             HttpParams params = httpclient.getParams();
             params.setParameter(CoreProtocolPNames.HTTP_CONTENT_CHARSET, Charset.forName("UTF-8"));
             reqEntity.addPart("ringName", new StringBody(ringName, Charset.forName("UTF-8")));
-            reqEntity.addPart("circleID", new StringBody(circleID));
+            reqEntity.addPart("circleID", new StringBody("2250ec10-307f-4040-bb4a-fe631f75c254",Charset.forName("UTF-8")));
             reqEntity.addPart("trade", new StringBody("其他普通行业", Charset.forName("UTF-8")));
             reqEntity.addPart("singer", new StringBody(""));
             reqEntity.addPart("songName", new StringBody(""));
-            reqEntity.addPart("file", new FileBody(ring.getFile(), "video/mp4"));
+            //reqEntity.addPart("file", new FileBody(ring.getFile(), "video/mp4"));
             //reqEntity.addPart("file", new FileBody(ring.getFile(), "audio/mp3"));
             reqEntity.addPart("ringContent", new StringBody(ring.getRingContent(), Charset.forName("UTF-8")));
             reqEntity.addPart("autoSetType", new StringBody("0"));
@@ -660,7 +660,7 @@ public class MiguApi implements Serializable {
             HttpResponse response1 = httpclient.execute(httppost);
             HttpEntity entity = response1.getEntity();
             result = EntityUtils.toString(entity);
-            //int statusCode = response1.getStatusLine().getStatusCode();
+            int statusCode = response1.getStatusLine().getStatusCode();
 //            if (statusCode == HttpStatus.SC_OK) {
 //                log.debug("铃音上传服务器正常响应2.....");
 //                //String result = EntityUtils.toString(response1.getEntity());
@@ -673,7 +673,7 @@ public class MiguApi implements Serializable {
 //                }
 //            }
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("移动 设置铃音 错误信息", e);
         } finally {
             httppost.abort();
             httpclient.getConnectionManager().shutdown();

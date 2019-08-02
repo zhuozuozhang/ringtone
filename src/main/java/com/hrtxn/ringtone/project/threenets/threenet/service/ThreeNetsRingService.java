@@ -157,6 +157,8 @@ public class ThreeNetsRingService {
             ring.setFile(new File(RingtoneConfig.getProfile()+ring.getRingWay()));
             ThreeNetsOrderAttached attached = threeNetsOrderAttachedService.selectByParentOrderId(ring.getOrderId());
             apiUtils.saveMiguRing(ring,attached.getMiguId(),ring.getCompanyName());
+            ring.setOperateId(attached.getMiguId());
+            threenetsRingMapper.updateByPrimaryKeySelective(ring);
         }catch (Exception e){
             log.info("添加铃音失败",e);
         }
@@ -172,6 +174,8 @@ public class ThreeNetsRingService {
             ring.setFile(new File(RingtoneConfig.getProfile()+ring.getRingWay()));
             ThreeNetsOrderAttached attached = threeNetsOrderAttachedService.selectByParentOrderId(ring.getOrderId());
             apiUtils.addRingByLt(ring,attached.getSwxlId());
+            ring.setOperateId(attached.getSwxlId());
+            threenetsRingMapper.updateByPrimaryKeySelective(ring);
         }catch (Exception e){
 
         }
@@ -298,5 +302,14 @@ public class ThreeNetsRingService {
             return AjaxResult.success(ringList,"获取数据成功！",count);
         }
         return AjaxResult.error("无数据！");
+    }
+
+    /**
+     * 修改
+     *
+     * @param ring
+     */
+    public void update(ThreenetsRing ring){
+        threenetsRingMapper.updateByPrimaryKeySelective(ring);
     }
 }
