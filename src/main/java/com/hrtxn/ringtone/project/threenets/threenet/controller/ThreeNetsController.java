@@ -2,6 +2,7 @@ package com.hrtxn.ringtone.project.threenets.threenet.controller;
 
 import com.hrtxn.ringtone.common.constant.AjaxResult;
 import com.hrtxn.ringtone.common.domain.BaseRequest;
+import com.hrtxn.ringtone.common.exception.NoLoginException;
 import com.hrtxn.ringtone.common.utils.MD5Utils;
 import com.hrtxn.ringtone.common.utils.ShiroUtils;
 import com.hrtxn.ringtone.common.utils.StringUtils;
@@ -25,6 +26,7 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -370,7 +372,8 @@ public class ThreeNetsController {
      */
     @PostMapping("/threenets/insertUser")
     @ResponseBody
-    public AjaxResult insertUser(User user){
+    @Log(title = "添加子账号",businessType = BusinessType.INSERT,operatorLogType = OperatorLogType.THREENETS)
+    public AjaxResult insertUser(User user) throws NoLoginException, IOException {
         return userService.insertUser(user);
     }
 

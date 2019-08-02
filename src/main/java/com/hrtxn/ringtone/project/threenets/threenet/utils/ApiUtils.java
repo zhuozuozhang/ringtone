@@ -9,11 +9,13 @@ import com.hrtxn.ringtone.common.utils.SpringUtils;
 import com.hrtxn.ringtone.common.utils.StringUtils;
 import com.hrtxn.ringtone.common.utils.json.JsonUtil;
 import com.hrtxn.ringtone.project.system.user.domain.User;
+import com.hrtxn.ringtone.project.system.user.mapper.UserMapper;
 import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreeNetsOrderAttached;
 import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreenetsChildOrder;
 import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreenetsOrder;
 import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreenetsRing;
 import com.hrtxn.ringtone.project.threenets.threenet.json.migu.MiguAddGroupRespone;
+import com.hrtxn.ringtone.project.threenets.threenet.json.migu.MiguAddPhoneRespone;
 import com.hrtxn.ringtone.project.threenets.threenet.json.migu.RefreshVbrtStatusResult;
 import com.hrtxn.ringtone.project.threenets.threenet.json.migu.RingSetResult;
 import com.hrtxn.ringtone.project.threenets.threenet.json.swxl.*;
@@ -227,7 +229,7 @@ public class ApiUtils {
      * 发送短信
      *
      * @param threenetsChildOrderList
-     * @param flag                    标识是否是下发链接短信 1、普通短信/2、链接短信
+     * @param flag 标识是否是下发链接短信 1、普通短信/2、链接短信
      * @return
      */
     public AjaxResult sendMessage(List<ThreenetsChildOrder> threenetsChildOrderList, Integer flag) throws IOException, NoLoginException {
@@ -581,22 +583,10 @@ public class ApiUtils {
      * @throws IOException
      * @throws NoLoginException
      */
-    public AjaxResult saveMiguRing(ThreenetsRing ring, String circleID, String groupName) throws IOException, NoLoginException {
+    public String saveMiguRing(ThreenetsRing ring, String circleID, String groupName) throws IOException, NoLoginException {
         return miguApi.saveRing(ring, circleID, groupName);
     }
 
-    /**
-     * 联通保存铃音
-     *
-     * @param ring
-     * @param circleID
-     * @return
-     * @throws IOException
-     * @throws NoLoginException
-     */
-    public String saveSwxlRing(ThreenetsRing ring, String circleID) throws IOException, NoLoginException {
-        return swxlApi.addRing(ring, circleID);
-    }
 
     /**
      * 联通-添加铃音
@@ -621,10 +611,7 @@ public class ApiUtils {
      * @throws IOException
      * @throws NoLoginException
      */
-    public String addPhoneByYd(List<ThreenetsChildOrder> orders, String circleId) throws IOException, NoLoginException {
-        if (circleId == null) {
-            return "集团ID错误！";
-        }
+    public MiguAddPhoneRespone addPhoneByYd(List<ThreenetsChildOrder> orders, String circleId) throws IOException, NoLoginException {
         String data = "";
         for (int i = 0; i < orders.size(); i++) {
             data = data + orders.get(i).getLinkmanTel() + (i == orders.size() - 1 ? "" : ",");
@@ -658,8 +645,25 @@ public class ApiUtils {
      * @param user
      * @return
      */
-    public AjaxResult insertUser(User user) {
+    public AjaxResult insertUser(User user) throws NoLoginException, IOException {
+        String msg = "创建失败！";
         // 执行添加联通子渠道商
-        swxlApi.addChild(user);
+        String result = swxlApi.addChild(user);
+        if (StringUtils.isNotEmpty(result)){
+            SwxlBaseBackMessage<Object> createUser = SpringUtils.getBean(ObjectMapper.class).readValue(result,SwxlBaseBackMessage.class);
+            // 接口返回成功
+            if(StringUtils.isNotNull(createUser) && "000000".equals(createUser.getRecode()) && createUser.isSuccess()){
+                // 执行添加到本地数据库
+                int count = SpringUtils.getBean(UserMapper.class).insertUser(user);
+                if (count > 0){
+                    return AjaxResult.success(true,"创建成功！");
+                }else {
+                    msg = "执行添加本地数据库出错！";
+                }
+            } else {
+                msg = createUser.getMessage();
+            }
+        }
+        return AjaxResult.error(msg);
     }
 }

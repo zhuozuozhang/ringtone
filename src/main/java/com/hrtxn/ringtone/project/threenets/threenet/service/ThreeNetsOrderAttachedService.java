@@ -43,4 +43,14 @@ public class ThreeNetsOrderAttachedService {
     public ThreeNetsOrderAttached selectByParentOrderId(Integer id){
         return threeNetsOrderAttachedMapper.selectByParentOrderId(id);
     }
+
+    /**
+     * 删除附表
+     *
+     * @param id
+     * @return
+     */
+    public Integer delete(Integer id){
+        return threeNetsOrderAttachedMapper.deleteByPrimaryKey(id);
+    }
 }

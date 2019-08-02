@@ -699,7 +699,6 @@ public class SwxlApi implements Serializable {
                 log.debug("铃音上传服务器正常响应2.....");
                 // HttpEntity resEntity = response1.getEntity();
                 result = EntityUtils.toString(response1.getEntity());
-                System.out.println(result);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -710,6 +709,14 @@ public class SwxlApi implements Serializable {
         return result;
     }
 
+    /**
+     * 创建子渠道商
+     *
+     * @param user
+     * @return {"recode":"000000","message":"成功","data":null,"success":true}
+     * @throws NoLoginException
+     * @throws IOException
+     */
     public String addChild(User user) throws NoLoginException, IOException {
         String result = null;
         DefaultHttpClient httpclient = WebClientDevWrapper.wrapClient(new DefaultHttpClient());
@@ -737,11 +744,12 @@ public class SwxlApi implements Serializable {
             HttpResponse response1 = httpclient.execute(httppost);
             int statusCode = response1.getStatusLine().getStatusCode();
             if (statusCode == HttpStatus.SC_OK) {
-                log.debug("服务器正常响应.....");
                 HttpEntity resEntity = response1.getEntity();
                 result = EntityUtils.toString(resEntity);
+                log.debug("创建子账号 参数：{} 结果：{}",user.toString(),result);
             }
         } catch (Exception e) {
+            log.error("创建子账号 错误信息",e);
         } finally {
             httppost.abort();
             httpclient.getConnectionManager().shutdown();

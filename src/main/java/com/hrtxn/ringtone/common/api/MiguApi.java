@@ -12,6 +12,7 @@ import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreeNetsOrderAttach
 import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreenetsOrder;
 import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreenetsRing;
 import com.hrtxn.ringtone.project.threenets.threenet.json.migu.MiguAddGroupRespone;
+import com.hrtxn.ringtone.project.threenets.threenet.json.migu.MiguAddPhoneRespone;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -636,11 +637,10 @@ public class MiguApi implements Serializable {
      * @throws IOException
      * @throws NoLoginException
      */
-    public AjaxResult saveRing(ThreenetsRing ring, String circleID, String groupName) throws IOException,NoLoginException {
-        AjaxResult ajaxResult = new AjaxResult();
+    public String saveRing(ThreenetsRing ring, String circleID, String groupName) throws IOException,NoLoginException {
         String ringName = ring.getRingName().substring(0,ring.getRingName().indexOf("."));
-
-        DefaultHttpClient httpclient = WebClientDevWrapper.wrapClient(new DefaultHttpClient());
+        String result = "";
+        DefaultHttpClient httpclient = new DefaultHttpClient();
         HttpPost httppost = new HttpPost(importRing_url);
         httpclient.setCookieStore(this.getCookieStore());
         try {
@@ -648,15 +648,18 @@ public class MiguApi implements Serializable {
             HttpParams params = httpclient.getParams();
             params.setParameter(CoreProtocolPNames.HTTP_CONTENT_CHARSET, Charset.forName("UTF-8"));
             reqEntity.addPart("ringName", new StringBody(ringName, Charset.forName("UTF-8")));
-            reqEntity.addPart("circleID", new StringBody(circleID, Charset.forName("UTF-8")));
+            reqEntity.addPart("circleID", new StringBody(circleID));
             reqEntity.addPart("trade", new StringBody("其他普通行业", Charset.forName("UTF-8")));
-            reqEntity.addPart("file", new FileBody(ring.getFile(), "audio/mp3"));
+            reqEntity.addPart("singer", new StringBody(""));
+            reqEntity.addPart("songName", new StringBody(""));
+            reqEntity.addPart("file", new FileBody(ring.getFile(), "video/mp4"));
+            //reqEntity.addPart("file", new FileBody(ring.getFile(), "audio/mp3"));
             reqEntity.addPart("ringContent", new StringBody(ring.getRingContent(), Charset.forName("UTF-8")));
             reqEntity.addPart("autoSetType", new StringBody("0"));
             httppost.setEntity(reqEntity);
             HttpResponse response1 = httpclient.execute(httppost);
             HttpEntity entity = response1.getEntity();
-            String result = EntityUtils.toString(entity);
+            result = EntityUtils.toString(entity);
             //int statusCode = response1.getStatusLine().getStatusCode();
 //            if (statusCode == HttpStatus.SC_OK) {
 //                log.debug("铃音上传服务器正常响应2.....");
@@ -675,7 +678,7 @@ public class MiguApi implements Serializable {
             httppost.abort();
             httpclient.getConnectionManager().shutdown();
         }
-        return ajaxResult;
+        return result;
     }
 
     /**
@@ -686,8 +689,8 @@ public class MiguApi implements Serializable {
      * @return
      * @throws
      */
-    public String addPhone(String data, String circleID) throws IOException,NoLoginException{
-        String result = null;
+    public MiguAddPhoneRespone addPhone(String data, String circleID) throws IOException,NoLoginException{
+        MiguAddPhoneRespone miguAddPhoneRespone = new MiguAddPhoneRespone();
         DefaultHttpClient httpclient = new DefaultHttpClient();
         HttpPost httppost = new HttpPost(ADD_PHONE_URL);
         List<NameValuePair> formparams = new ArrayList<NameValuePair>();
@@ -701,7 +704,8 @@ public class MiguApi implements Serializable {
             httppost.setEntity(entity);
             HttpResponse response = httpclient.execute(httppost);
             HttpEntity resEntity = response.getEntity();
-            result = EntityUtils.toString(resEntity);
+            String result = EntityUtils.toString(resEntity);
+            miguAddPhoneRespone = (MiguAddPhoneRespone) JsonUtil.getObject4JsonString(result, MiguAddPhoneRespone.class);
             this.setMiguCookie(httpclient.getCookieStore());
         } catch (Exception e) {
             System.out.println(e);
@@ -709,7 +713,7 @@ public class MiguApi implements Serializable {
             httppost.abort();
             httpclient.getConnectionManager().shutdown();
         }
-        return result;
+        return miguAddPhoneRespone;
     }
     public static void main(String[] args) throws NoLoginException, IOException {
 //        MiguApi miguApi = new MiguApi();

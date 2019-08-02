@@ -13,7 +13,6 @@ var columnDefs = [{
     targets: [8],
     render: function(data, type, row, meta) {
         var id = row.id;
-        console.log(id);
         return "<i class='layui-icon layui-icon-home' title='进入' onclick='toIndexPage("+id+");'></i>"
             +"<i class='layui-icon layui-icon-edit' title='重置密码' onclick='editMerchants("+id+");'></i>";
     }
@@ -38,7 +37,10 @@ function AddUser() {
         type: 2,
         title: '添加子账号',
         content: '/threenets/toChildAccountAddPage',
-        area: ['600px', '680px']
+        area: ['600px', '680px'],
+        end: function () {
+            $('#set').DataTable().ajax.reload(null,false);//弹出层结束后，刷新主页面
+        }
     });
 }
 //重置密码

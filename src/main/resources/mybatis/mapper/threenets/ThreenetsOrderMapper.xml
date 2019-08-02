@@ -58,6 +58,11 @@
         where 1 = 1
         <include refid="parameters" />
     </select>
+    <!-- 查询名称是否重复-->
+    <select id="isRepetitionByName" resultMap="BaseResultMap" parameterType="java.lang.String">
+        select * from tb_threenets_order
+        where company_name = #{name,jdbcType=VARCHAR}
+    </select>
     <!-- 根据ID获取三网订单信息 -->
     <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer">
         SELECT

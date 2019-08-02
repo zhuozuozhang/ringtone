@@ -43,53 +43,53 @@
         <div class="layui-form-item">
             <label class="layui-form-label">QQ号</label>
             <div class="layui-input-block">
-                <input type="text" name="userQq" placeholder="请输入QQ号" autocomplete="off" class="layui-input userQq">
+                <input type="text" name="userQq" required lay-verify="required" placeholder="请输入QQ号" autocomplete="off" class="layui-input userQq">
             </div>
         </div>
         <div class="layui-form-item">
             <label class="layui-form-label">邮箱</label>
             <div class="layui-input-block">
-                <input type="text" name="userEmail" placeholder="请输入邮箱" autocomplete="off" class="layui-input userEmail">
+                <input type="text" name="userEmail" required lay-verify="required" placeholder="请输入邮箱" autocomplete="off" class="layui-input userEmail">
             </div>
         </div>
         <div class="layui-form-item">
             <label class="layui-form-label">地区</label>
             <div class="layui-input-block">
                 <select name="province" id="province" style="display: none!important;">
-                    <option value="0">北京市</option>
-                    <option value="1">天津市</option>
-                    <option value="2">上海市</option>
-                    <option value="3">重庆市</option>
-                    <option value="4">河北省</option>
-                    <option value="5">河南省</option>
-                    <option value="6">云南省</option>
-                    <option value="7">辽宁省</option>
-                    <option value="8">黑龙江省</option>
-                    <option value="9">湖南省</option>
-                    <option value="10">安徽省</option>
-                    <option value="11">山东省</option>
-                    <option value="12">新疆维吾尔自治区</option>
-                    <option value="13">江苏省</option>
-                    <option value="14">浙江省</option>
-                    <option value="15">江西省</option>
-                    <option value="16">湖北省</option>
-                    <option value="17">广西壮族自治区</option>
-                    <option value="18">甘肃省</option>
-                    <option value="19">山西省</option>
-                    <option value="20">内蒙古自治区</option>
-                    <option value="21">陕西省</option>
-                    <option value="22">吉林省</option>
-                    <option value="23">福建省</option>
-                    <option value="24">贵州省</option>
-                    <option value="25">广东省</option>
-                    <option value="26">青海省</option>
-                    <option value="27">西藏</option>
-                    <option value="28">四川省</option>
-                    <option value="29">宁夏回族自治区</option>
-                    <option value="30">海南省</option>
-                    <option value="31">台湾省</option>
-                    <option value="32">香港</option>
-                    <option value="33">澳门</option>
+                    <option value="北京市">北京市</option>
+                    <option value="天津市">天津市</option>
+                    <option value="上海市">上海市</option>
+                    <option value="重庆市">重庆市</option>
+                    <option value="河北省">河北省</option>
+                    <option value="河南省">河南省</option>
+                    <option value="云南省">云南省</option>
+                    <option value="辽宁省">辽宁省</option>
+                    <option value="黑龙江省">黑龙江省</option>
+                    <option value="湖南省">湖南省</option>
+                    <option value="安徽省">安徽省</option>
+                    <option value="山东省">山东省</option>
+                    <option value="新疆维吾尔自治区">新疆维吾尔自治区</option>
+                    <option value="江苏省">江苏省</option>
+                    <option value="浙江省">浙江省</option>
+                    <option value="江西省">江西省</option>
+                    <option value="湖北省">湖北省</option>
+                    <option value="广西壮族自治区">广西壮族自治区</option>
+                    <option value="甘肃省">甘肃省</option>
+                    <option value="山西省">山西省</option>
+                    <option value="内蒙古自治区">内蒙古自治区</option>
+                    <option value="陕西省">陕西省</option>
+                    <option value="吉林省">吉林省</option>
+                    <option value="福建省">福建省</option>
+                    <option value="贵州省">贵州省</option>
+                    <option value="广东省">广东省</option>
+                    <option value="青海省">青海省</option>
+                    <option value="西藏">西藏</option>
+                    <option value="四川省">四川省</option>
+                    <option value="宁夏回族自治区">宁夏回族自治区</option>
+                    <option value="海南省">海南省</option>
+                    <option value="台湾省">台湾省</option>
+                    <option value="香港">香港</option>
+                    <option value="澳门">澳门</option>
                 </select>
             </div>
         </div>
@@ -139,10 +139,20 @@
             var userCardFan = $("#cardf").val();
 
             if (userPassword != checkUserPassword) {
-                return "两次密码输入不一致！";
+                layer.msg("两次密码输入不一致！",{icon: 5,time:1000});
+                return false;
             }
             if (userTel.length != 11 || !isTel(userTel)){
-                return "客服号码格式不正确！";
+                layer.msg("客服号码格式不正确！",{icon: 5,time:1000})
+                return false;
+            }
+            if (!isNotEmpty(userCardZhen)) {
+                layer.msg("身份证正面照必传！",{icon: 5,time:1000})
+                return false;
+            }
+            if (!isNotEmpty(userCardFan)) {
+                layer.msg("身份证反面照必传！",{icon: 5,time:1000})
+                return false;
             }
             
             AjaxPost("/threenets/insertUser",{
@@ -157,9 +167,15 @@
                 userCardFan:userCardFan
             },function (res) {
                 if (res.code == 200 && res.data){
-                    layer.msg("创建成功",{icon: 6,time:1000});
+                    //发异步，把数据提交给后台
+                    layer.alert("增加成功", {icon: 6},function () {
+                        // 获得frame索引
+                        var index = parent.layer.getFrameIndex(window.name);
+                        //关闭当前frame
+                        parent.layer.close(index);
+                    });
                 }else{
-                    layer.msg(res.msg,{icon: 5,time:1000});
+                    layer.msg(res.msg,{icon: 5,time:3000});
                 }
             });
             return false;

@@ -107,6 +107,9 @@ public class ThreeNetsOrderService {
             }
             //删除订单
             threenetsOrderMapper.deleteByPrimaryKey(id);
+            //删除附表
+            ThreeNetsOrderAttached attached = threeNetsOrderAttachedService.selectByParentOrderId(id);
+            threeNetsOrderAttachedService.delete(attached.getId());
             return AjaxResult.success(true, "删除成功");
         }catch (Exception e){
             return AjaxResult.error("删除失败");
@@ -159,6 +162,16 @@ public class ThreeNetsOrderService {
         return threenetsOrderMapper.getCount(request);
     }
 
+
+    public boolean isRepetitionByName(String name){
+        List<ThreenetsOrder> orders = threenetsOrderMapper.isRepetitionByName(name);
+        if (orders.isEmpty()){
+            return false;
+        }else{
+            return true;
+        }
+    }
+
     /**
      * 初始化订单
      *
@@ -167,6 +180,9 @@ public class ThreeNetsOrderService {
      */
     @Transactional
     public AjaxResult init(ThreenetsOrder order) throws Exception {
+        if (isRepetitionByName(order.getCompanyName())){
+            return AjaxResult.error("商户名称不允许重复！");
+        }
         JuhePhone phone = JuhePhoneUtils.getPhone(order.getLinkmanTel());
         if (!phone.getResultcode().equals("200")) {
             return AjaxResult.error("获取归属地失败，请填写正确的手机号码！");
@@ -239,10 +255,9 @@ public class ThreeNetsOrderService {
             }
         }
         //保存子订单
-        threeNetsChildOrderService.batchChindOrder(childOrders);
+        //threeNetsChildOrderService.batchChindOrder(childOrders);
         //保存线上
         saveOnlineOrder(threenetsOrder,attached,childOrders);
-
         return AjaxResult.success(threenetsOrder, "保存成功！");
     }
 
@@ -266,18 +281,35 @@ public class ThreeNetsOrderService {
                     ThreenetsRing ring = threeNetsRingService.getRing(childOrders.get(0).getRingId());
                     attached.setMiguId(miguAddGroupRespone.getCircleId());
                     utils.saveMiguRing(ring, attached.getMiguId(), order.getCompanyName());
+                    for (int i = 0; i < childOrders.size(); i++) {
+                        ThreenetsChildOrder childOrder = childOrders.get(i);
+                        childOrder.setOperateId(attached.getMiguId());
+                        childOrders.set(i,childOrder);
+                    }
+                    threeNetsChildOrderService.batchChindOrder(childOrders);
                 }
             }
+            //联通
             if (collect.get(3) != null){
                 List<ThreenetsChildOrder> childOrders = collect.get(3);
                 ThreenetsRing ring = threeNetsRingService.getRing(childOrders.get(0).getRingId());
                 order.setUpLoadAgreement(new File(RingtoneConfig.getProfile()+ring.getRingWay()));
                 SwxlGroupResponse swxlGroupResponse = utils.addOrderByLt(order, attached);
                 if (swxlGroupResponse.getStatus() == 0) {
-                    attached.setSwxlId(swxlGroupResponse.getId());
+                    attached.setSwxlId(swxlGroupResponse.getGroupId());
+                    for (int i = 0; i < childOrders.size(); i++) {
+                        ThreenetsChildOrder childOrder = childOrders.get(i);
+                        childOrder.setOperateId(attached.getSwxlId());
+                        childOrders.set(i,childOrder);
+                    }
+                    threeNetsChildOrderService.batchChindOrder(childOrders);
                 }else{
                     return;
                 }
+            }
+            //电信
+            if (collect.get(2) != null){
+
             }
             //保存订单附表
             threeNetsOrderAttachedService.update(attached);

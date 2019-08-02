@@ -3,6 +3,7 @@ package com.hrtxn.ringtone.project.system.user.service;
 import com.hrtxn.ringtone.common.constant.AjaxResult;
 import com.hrtxn.ringtone.common.domain.BaseRequest;
 import com.hrtxn.ringtone.common.domain.Page;
+import com.hrtxn.ringtone.common.exception.NoLoginException;
 import com.hrtxn.ringtone.common.utils.MD5Utils;
 import com.hrtxn.ringtone.common.utils.ShiroUtils;
 import com.hrtxn.ringtone.common.utils.StringUtils;
@@ -19,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpSession;
 import java.io.File;
+import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 
@@ -242,22 +244,24 @@ public class UserService {
      * @param user
      * @return
      */
-    public AjaxResult insertUser(User user) {
+    public AjaxResult insertUser(User user) throws NoLoginException, IOException {
         if (StringUtils.isNotNull(user)
                 && StringUtils.isNotEmpty(user.getUserName())
                 && StringUtils.isNotEmpty(user.getUserPassword())
                 && StringUtils.isNotEmpty(user.getUserTel())){
+
             String passwprd = MD5Utils.GetMD5Code(user.getUserPassword());
             user.setUserPassword(passwprd);
 
+            Integer id = ShiroUtils.getSysUser().getId();
+            user.setParentId(id);
+            user.setUserTime(new Date());
             if (StringUtils.isNotEmpty(user.getUserCardZhen())){
-                ring.setFile(new File(RingtoneConfig.getProfile()+user.getUserCardZhen()));
+                user.setIdGroupFrontFile(new File(RingtoneConfig.getProfile()+user.getUserCardZhen()));
             }
-
             if (StringUtils.isNotEmpty(user.getUserCardFan())){
-                ring.setFile(new File(RingtoneConfig.getProfile()+user.getUserCardFan()));
+                user.setIdGroupReverseFile(new File(RingtoneConfig.getProfile()+user.getUserCardFan()));
             }
-
             // 执行添加子账号操作
             return apiUtils.insertUser(user);
         }

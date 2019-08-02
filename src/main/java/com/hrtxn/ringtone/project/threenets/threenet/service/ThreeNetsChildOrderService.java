@@ -13,6 +13,7 @@ import com.hrtxn.ringtone.project.system.json.JuhePhone;
 import com.hrtxn.ringtone.project.system.json.JuhePhoneResult;
 import com.hrtxn.ringtone.project.threenets.threenet.domain.*;
 import com.hrtxn.ringtone.project.threenets.threenet.json.migu.MiguAddGroupRespone;
+import com.hrtxn.ringtone.project.threenets.threenet.json.migu.MiguAddPhoneRespone;
 import com.hrtxn.ringtone.project.threenets.threenet.json.swxl.SwxlGroupResponse;
 import com.hrtxn.ringtone.project.threenets.threenet.mapper.ThreenetsChildOrderMapper;
 import com.hrtxn.ringtone.project.threenets.threenet.mapper.ThreenetsOrderMapper;
@@ -172,7 +173,7 @@ public class ThreeNetsChildOrderService {
             for (Integer operator : map.keySet()) {
                 List<ThreenetsChildOrder> list = map.get(operator);
                 if (operator == 1) {
-                    addMembersByYd(order, attached, list);
+                    list = addMembersByYd(order, attached, list);
                     batchChindOrder(list,rings.get(0));
                     if (ringMap.get(1) == null){
                         ThreenetsRing threenetsRing = rings.get(0);
@@ -191,7 +192,7 @@ public class ThreeNetsChildOrderService {
                     }
                 }
                 if (operator == 3) {
-                    addMemberByLt(order, attached, list);
+                    list = addMemberByLt(order, attached, list);
                     batchChindOrder(list,rings.get(0));
                     if (ringMap.get(3) == null){
                         ThreenetsRing threenetsRing = rings.get(0);
@@ -214,7 +215,7 @@ public class ThreeNetsChildOrderService {
      * @throws IOException
      * @throws NoLoginException
      */
-    private void addMembersByYd(ThreenetsOrder order, ThreeNetsOrderAttached attached, List<ThreenetsChildOrder> list) throws IOException, NoLoginException {
+    private List<ThreenetsChildOrder> addMembersByYd(ThreenetsOrder order, ThreeNetsOrderAttached attached, List<ThreenetsChildOrder> list) throws IOException, NoLoginException {
         //无集团id则先进行集团新增
         if (attached.getMiguId() == null) {
             MiguAddGroupRespone miguAddGroupRespone = apiUtils.addOrderByYd(order, attached);
@@ -222,10 +223,17 @@ public class ThreeNetsChildOrderService {
                 attached.setMiguId(miguAddGroupRespone.getCircleId());
                 threeNetsOrderAttachedService.update(attached);
             } else {
-                return;
+                return new ArrayList<>();
             }
         }
-        String result = apiUtils.addPhoneByYd(list, attached.getMiguId());
+        MiguAddPhoneRespone addPhoneRespone = apiUtils.addPhoneByYd(list, attached.getMiguId());
+        for (int i = 0; i < list.size(); i++) {
+            ThreenetsChildOrder childOrder = list.get(i);
+            childOrder.setOperateId(attached.getMiguId());
+            childOrder.setOperateOrderId(addPhoneRespone.getLeftMemberAddNum());
+            list.set(i,childOrder);
+        }
+        return list;
     }
 
     /**
@@ -237,7 +245,7 @@ public class ThreeNetsChildOrderService {
      * @throws IOException
      * @throws NoLoginException
      */
-    private void addMemberByLt(ThreenetsOrder order, ThreeNetsOrderAttached attached, List<ThreenetsChildOrder> list) throws IOException, NoLoginException {
+    private List<ThreenetsChildOrder> addMemberByLt(ThreenetsOrder order, ThreeNetsOrderAttached attached, List<ThreenetsChildOrder> list) throws IOException, NoLoginException {
         if (attached.getSwxlId() == null) {
             List<ThreenetsRing> rings = new ArrayList<>();
             try {
@@ -255,10 +263,16 @@ public class ThreeNetsChildOrderService {
                 attached.setSwxlId(swxlGroupResponse.getId());
                 threeNetsOrderAttachedService.update(attached);
             } else {
-                return;
+                return new ArrayList<>();
             }
         }
         apiUtils.addPhoneByLt(list, attached.getSwxlId());
+        for (int i = 0; i < list.size(); i++) {
+            ThreenetsChildOrder childOrder = list.get(i);
+            childOrder.setOperateId(attached.getMiguId());
+            list.set(i,childOrder);
+        }
+        return list;
     }
 
     /**
