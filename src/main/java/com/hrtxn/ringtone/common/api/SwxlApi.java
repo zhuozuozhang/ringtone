@@ -697,7 +697,6 @@ public class SwxlApi implements Serializable {
                 log.debug("铃音上传服务器正常响应2.....");
                 // HttpEntity resEntity = response1.getEntity();
                 result = EntityUtils.toString(response1.getEntity());
-                System.out.println(result);
             }
         } catch (Exception e) {
             e.printStackTrace();

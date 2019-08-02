@@ -13,6 +13,7 @@ import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreenetsChildOrder;
 import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreenetsOrder;
 import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreenetsRing;
 import com.hrtxn.ringtone.project.threenets.threenet.json.migu.MiguAddGroupRespone;
+import com.hrtxn.ringtone.project.threenets.threenet.json.migu.MiguAddPhoneRespone;
 import com.hrtxn.ringtone.project.threenets.threenet.json.migu.RefreshVbrtStatusResult;
 import com.hrtxn.ringtone.project.threenets.threenet.json.migu.RingSetResult;
 import com.hrtxn.ringtone.project.threenets.threenet.json.swxl.*;
@@ -580,22 +581,10 @@ public class ApiUtils {
      * @throws IOException
      * @throws NoLoginException
      */
-    public AjaxResult saveMiguRing(ThreenetsRing ring, String circleID, String groupName) throws IOException, NoLoginException {
+    public String saveMiguRing(ThreenetsRing ring, String circleID, String groupName) throws IOException, NoLoginException {
         return miguApi.saveRing(ring, circleID, groupName);
     }
 
-    /**
-     * 联通保存铃音
-     *
-     * @param ring
-     * @param circleID
-     * @return
-     * @throws IOException
-     * @throws NoLoginException
-     */
-    public String saveSwxlRing(ThreenetsRing ring, String circleID) throws IOException, NoLoginException {
-        return swxlApi.addRing(ring, circleID);
-    }
 
     /**
      * 联通-添加铃音
@@ -620,10 +609,7 @@ public class ApiUtils {
      * @throws IOException
      * @throws NoLoginException
      */
-    public String addPhoneByYd(List<ThreenetsChildOrder> orders, String circleId) throws IOException, NoLoginException {
-        if (circleId == null) {
-            return "集团ID错误！";
-        }
+    public MiguAddPhoneRespone addPhoneByYd(List<ThreenetsChildOrder> orders, String circleId) throws IOException, NoLoginException {
         String data = "";
         for (int i = 0; i < orders.size(); i++) {
             data = data + orders.get(i).getLinkmanTel() + (i == orders.size() - 1 ? "" : ",");

@@ -37,6 +37,7 @@ function showTable() {
     }, {
         targets: [6],
         render: function (data, type, row, meta) {
+            data = isNotEmpty(data)?data:"";
             return "<div style='text-overflow:ellipsis;overflow:hidden;white-space:nowrap;width:150px;' title='" + data + "'>" + data + "</div>";
         }
     }, {
@@ -71,6 +72,7 @@ function showTable() {
     }, {
         targets: [10],
         render: function (data, type, row, meta) {
+            data = isNotEmpty(data)?data:"";
             return "<div style='text-overflow:ellipsis;overflow:hidden;white-space:nowrap;width:150px;' title='" + data + "'>" + data + "</div>";
         }
     }, {

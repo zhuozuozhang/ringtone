@@ -135,7 +135,7 @@ public class ThreeNetsRingService {
                     saveMiguRing(ring);
                 }
                 if (operator == 3){
-                    saveSwxlRing(ring);
+                    //saveSwxlRing(ring);
                 }
             }
             //修改文件状态
@@ -171,7 +171,7 @@ public class ThreeNetsRingService {
         try {
             ring.setFile(new File(RingtoneConfig.getProfile()+ring.getRingWay()));
             ThreeNetsOrderAttached attached = threeNetsOrderAttachedService.selectByParentOrderId(ring.getOrderId());
-            apiUtils.saveSwxlRing(ring,attached.getSwxlId());
+            apiUtils.addRingByLt(ring,attached.getSwxlId());
         }catch (Exception e){
 
         }
@@ -224,6 +224,12 @@ public class ThreeNetsRingService {
         ThreenetsRing ring = threenetsRingMapper.selectByPrimaryKey(id);
         ring.setRingStatus(2);
         threenetsRingMapper.insertThreeNetsRing(ring);
+        if (ring.getOperate() == 3){
+            saveSwxlRing(ring);
+        }
+        if (ring.getOperate() == 1){
+            saveMiguRing(ring);
+        }
     }
 
     /**

@@ -57,4 +57,12 @@ public interface ThreenetsOrderMapper {
      * @return
      */
     int getCount(@Param("param")BaseRequest request);
+
+    /**
+     * 查询名字是否重复
+     *
+     * @param name
+     * @return
+     */
+    List<ThreenetsOrder> isRepetitionByName(String name);
 }
