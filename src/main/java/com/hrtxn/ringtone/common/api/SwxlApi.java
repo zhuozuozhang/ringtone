@@ -4,7 +4,9 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hrtxn.ringtone.common.exception.NoLoginException;
 import com.hrtxn.ringtone.common.utils.ChaoJiYing;
+import com.hrtxn.ringtone.common.utils.PhoneUtils;
 import com.hrtxn.ringtone.common.utils.WebClientDevWrapper;
+import com.hrtxn.ringtone.project.system.user.domain.User;
 import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreeNetsOrderAttached;
 import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreenetsOrder;
 import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreenetsRing;
@@ -708,4 +710,42 @@ public class SwxlApi implements Serializable {
         return result;
     }
 
+    public String addChild(User user) throws NoLoginException, IOException {
+        String result = null;
+        DefaultHttpClient httpclient = WebClientDevWrapper.wrapClient(new DefaultHttpClient());
+        HttpPost httppost = new HttpPost(addChild_url);
+        httpclient.setCookieStore(this.getCookieStore());
+        try {
+            MultipartEntity reqEntity = new MultipartEntity();
+            HttpParams params = httpclient.getParams();
+            params.setParameter(CoreProtocolPNames.HTTP_CONTENT_CHARSET, Charset.forName("UTF-8"));
+            reqEntity.addPart("realname",new StringBody(user.getUserName(), Charset.forName("UTF-8")));
+            reqEntity.addPart("name",new StringBody(user.getUserName(), Charset.forName("UTF-8")));
+            reqEntity.addPart("msisdn",new StringBody(PhoneUtils.getTel(), Charset.forName("UTF-8")));
+            reqEntity.addPart("customerPhone",new StringBody(user.getUserTel(), Charset.forName("UTF-8")));
+            reqEntity.addPart("province",new StringBody(user.getProvince(), Charset.forName("UTF-8")));
+            reqEntity.addPart("password",new StringBody(PASSWORD2, Charset.forName("UTF-8")));
+            reqEntity.addPart("qqNum",new StringBody(user.getUserQq(), Charset.forName("UTF-8")));
+            if (user.getIdGroupFrontFile() != null) {
+                reqEntity.addPart("idGroupFrontFile",new FileBody(user.getIdGroupFrontFile()));
+            }
+            if (user.getIdGroupReverseFile() != null) {
+                reqEntity.addPart("idGroupReverseFile",new FileBody(user.getIdGroupReverseFile()));
+            }
+            reqEntity.addPart("parentId",new StringBody("7940f534-138d-43d3-88f1-352d4232b9fa", Charset.forName("UTF-8")));
+            httppost.setEntity(reqEntity);
+            HttpResponse response1 = httpclient.execute(httppost);
+            int statusCode = response1.getStatusLine().getStatusCode();
+            if (statusCode == HttpStatus.SC_OK) {
+                log.debug("服务器正常响应.....");
+                HttpEntity resEntity = response1.getEntity();
+                result = EntityUtils.toString(resEntity);
+            }
+        } catch (Exception e) {
+        } finally {
+            httppost.abort();
+            httpclient.getConnectionManager().shutdown();
+        }
+        return result;
+    }
 }

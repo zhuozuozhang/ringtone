@@ -6,16 +6,19 @@ import com.hrtxn.ringtone.common.domain.Page;
 import com.hrtxn.ringtone.common.utils.MD5Utils;
 import com.hrtxn.ringtone.common.utils.ShiroUtils;
 import com.hrtxn.ringtone.common.utils.StringUtils;
+import com.hrtxn.ringtone.freemark.config.systemConfig.RingtoneConfig;
 import com.hrtxn.ringtone.project.system.rechargelog.domain.RechargeLog;
 import com.hrtxn.ringtone.project.system.rechargelog.service.RechargeLogService;
 import com.hrtxn.ringtone.project.system.user.domain.User;
 import com.hrtxn.ringtone.project.system.user.domain.UserVo;
 import com.hrtxn.ringtone.project.system.user.mapper.UserMapper;
+import com.hrtxn.ringtone.project.threenets.threenet.utils.ApiUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpSession;
+import java.io.File;
 import java.util.Date;
 import java.util.List;
 
@@ -31,6 +34,8 @@ public class UserService {
     private UserMapper userMapper;
     @Autowired
     private RechargeLogService rechargeLogService;
+
+    private ApiUtils apiUtils = new ApiUtils();
 
     /**
      * 根据用户名获取用户信息
@@ -229,5 +234,33 @@ public class UserService {
      */
     public List<User> getUserByName(String name)throws Exception{
         return userMapper.findChildUser(null,name);
+    }
+
+    /**
+     * 添加子账号
+     *
+     * @param user
+     * @return
+     */
+    public AjaxResult insertUser(User user) {
+        if (StringUtils.isNotNull(user)
+                && StringUtils.isNotEmpty(user.getUserName())
+                && StringUtils.isNotEmpty(user.getUserPassword())
+                && StringUtils.isNotEmpty(user.getUserTel())){
+            String passwprd = MD5Utils.GetMD5Code(user.getUserPassword());
+            user.setUserPassword(passwprd);
+
+            if (StringUtils.isNotEmpty(user.getUserCardZhen())){
+                ring.setFile(new File(RingtoneConfig.getProfile()+user.getUserCardZhen()));
+            }
+
+            if (StringUtils.isNotEmpty(user.getUserCardFan())){
+                ring.setFile(new File(RingtoneConfig.getProfile()+user.getUserCardFan()));
+            }
+
+            // 执行添加子账号操作
+            return apiUtils.insertUser(user);
+        }
+        return AjaxResult.error("参数格式不正确！");
     }
 }

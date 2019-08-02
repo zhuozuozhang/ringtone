@@ -2,6 +2,7 @@ package com.hrtxn.ringtone.project.system.user.domain;
 
 import lombok.Data;
 
+import java.io.File;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -51,5 +52,11 @@ public class User implements Serializable {
     private String userCardZhen;
     // 省份证反面路径
     private String userCardFan;
+
+
+    /*************************VO***************************/
+
+    private File idGroupFrontFile; // 身份证正面文件
+    private File idGroupReverseFile; // 身份证反面文件
 
 }

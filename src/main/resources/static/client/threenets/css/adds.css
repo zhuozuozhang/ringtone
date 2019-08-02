@@ -10,7 +10,7 @@
 .layui-input-block {
     width: 300px;
     margin-left: 170px!important;
-    min-height: 30px;
+    /*min-height: 30px;*/
 }
 .layui-form-label {
     width: 140px!important;

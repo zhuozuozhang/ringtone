@@ -154,7 +154,7 @@ public class ThreeNetsController {
         try {
             return threeNetsService.getMonthData(request);
         } catch (Exception e) {
-            log.error("获取子账号列表 方法：getChildAccountList 错误信息", e);
+            log.error("获取子账号列表 方法：getDbusinessDate 错误信息", e);
         }
         return null;
     }
@@ -187,7 +187,7 @@ public class ThreeNetsController {
         try {
             return threeNetsService.getYearData(request);
         } catch (Exception e) {
-            log.error("获取子账号列表 方法：getChildAccountList 错误信息", e);
+            log.error("获取子账号列表 方法：getMbusinessDate 错误信息", e);
         }
         return null;
     }
@@ -360,6 +360,18 @@ public class ThreeNetsController {
             mdoel.addAttribute("msg", "执行出错");
         }
         return "redirect:/threenets/toChildAccountPage";
+    }
+
+    /**
+     * 添加子账号
+     *
+     * @param user
+     * @return
+     */
+    @PostMapping("/threenets/insertUser")
+    @ResponseBody
+    public AjaxResult insertUser(User user){
+        return userService.insertUser(user);
     }
 
     /**

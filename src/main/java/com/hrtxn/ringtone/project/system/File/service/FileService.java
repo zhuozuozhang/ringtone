@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.util.Date;
 import java.util.List;
 
@@ -34,7 +33,7 @@ public class FileService {
      * @param orderId
      * @return
      */
-    public AjaxResult upload(MultipartFile file, String fileName, String type, Integer orderId) {
+    public AjaxResult upload(MultipartFile file, String fileName, Integer orderId) {
         try {
             String path = FileUtil.uploadFile(file, orderId, fileName);
             //保存到数据库
@@ -44,7 +43,7 @@ public class FileService {
             uploadfile.setStatus(1);
             uploadfile.setCreatetime(new Date());
             uploadfileMapper.insertSelective(uploadfile);
-            return AjaxResult.success(1, path, "文件上传成功");
+            return AjaxResult.success(path, "文件上传成功");
         } catch (Exception e) {
             e.printStackTrace();
             return AjaxResult.error("文件上传失败");

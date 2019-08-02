@@ -86,7 +86,7 @@ public class ThreeNetsRingService {
         page.setPage((page.getPage() - 1) * page.getPagesize());
         List<ThreenetsRing> ringList = threenetsRingMapper.getRingList(page, request);
         // 刷新当前铃音列表
-//        ringList = apiUtils.getRingInfo(ringList);
+        ringList = apiUtils.getRingInfo(ringList);
         return ringList;
     }
 

@@ -37,7 +37,11 @@ function showTable() {
     }, {
         targets: [6],
         render: function (data, type, row, meta) {
-            return "<div style='text-overflow:ellipsis;overflow:hidden;white-space:nowrap;width:150px;' title='" + data + "'>" + data + "</div>";
+            if (isNotEmpty(data)){
+                return "<div style='text-overflow:ellipsis;overflow:hidden;white-space:nowrap;width:150px;' title='" + data + "'>" + data + "</div>";
+            } else {
+                return "";
+            }
         }
     }, {
         targets: [7],

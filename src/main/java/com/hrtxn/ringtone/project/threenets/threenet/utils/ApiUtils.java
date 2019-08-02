@@ -8,6 +8,7 @@ import com.hrtxn.ringtone.common.exception.NoLoginException;
 import com.hrtxn.ringtone.common.utils.SpringUtils;
 import com.hrtxn.ringtone.common.utils.StringUtils;
 import com.hrtxn.ringtone.common.utils.json.JsonUtil;
+import com.hrtxn.ringtone.project.system.user.domain.User;
 import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreeNetsOrderAttached;
 import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreenetsChildOrder;
 import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreenetsOrder;
@@ -651,4 +652,14 @@ public class ApiUtils {
         return swxlApi.addPhone(data, circleId);
     }
 
+    /**
+     * 添加子账号
+     *
+     * @param user
+     * @return
+     */
+    public AjaxResult insertUser(User user) {
+        // 执行添加联通子渠道商
+        swxlApi.addChild(user);
+    }
 }

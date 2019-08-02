@@ -1,7 +1,7 @@
 package com.hrtxn.ringtone.project.system.File.controller;
 
 import com.hrtxn.ringtone.common.constant.AjaxResult;
-import com.hrtxn.ringtone.common.utils.FileUtil;
+import com.hrtxn.ringtone.common.utils.StringUtils;
 import com.hrtxn.ringtone.freemark.config.logConfig.Log;
 import com.hrtxn.ringtone.freemark.enums.BusinessType;
 import com.hrtxn.ringtone.freemark.enums.OperatorLogType;
@@ -38,8 +38,7 @@ public class FileController {
     @ResponseBody
     @Log(title = "上传文件", businessType = BusinessType.INSERT, operatorLogType = OperatorLogType.ADMIN)
     public AjaxResult uploadRingFile(@RequestParam("ringFile") MultipartFile ringFile, String ringName, Integer id) {
-        String type = "ring";
-        return fileService.upload(ringFile, ringName, type, id);
+        return fileService.upload(ringFile, ringName, id);
     }
 
     //@PathVariable String apersonId
@@ -53,10 +52,9 @@ public class FileController {
      */
     @PostMapping("/system/upload/companyFile")
     @ResponseBody
-    @Log(title = "上传文件", businessType = BusinessType.INSERT, operatorLogType = OperatorLogType.ADMIN)
+    @Log(title = "上传文件", businessType = BusinessType.INSERT, operatorLogType = OperatorLogType.THREENETS)
     public AjaxResult uploadCompanyFile(@RequestParam("companyFile") MultipartFile companyFile, Integer id) {
-        String type = "company";
-        return fileService.upload(companyFile, "企业资质", type, id);
+        return fileService.upload(companyFile, "企业资质", id);
     }
 
 
@@ -69,10 +67,9 @@ public class FileController {
      */
     @PostMapping("/system/upload/clientFile")
     @ResponseBody
-    @Log(title = "上传文件", businessType = BusinessType.INSERT, operatorLogType = OperatorLogType.ADMIN)
+    @Log(title = "上传文件", businessType = BusinessType.INSERT, operatorLogType = OperatorLogType.THREENETS)
     public AjaxResult uploadClientFile(@RequestParam("clientFile") MultipartFile clientFile, Integer id) {
-        String type = "client";
-        return fileService.upload(clientFile, "客户确认函", type, id);
+        return fileService.upload(clientFile, "客户确认函", id);
     }
 
     /**
@@ -84,10 +81,9 @@ public class FileController {
      */
     @PostMapping("/system/upload/protocolFile")
     @ResponseBody
-    @Log(title = "上传文件", businessType = BusinessType.INSERT, operatorLogType = OperatorLogType.ADMIN)
+    @Log(title = "上传文件", businessType = BusinessType.INSERT, operatorLogType = OperatorLogType.THREENETS)
     public AjaxResult uploadProtocolFile(@RequestParam("protocolFile") MultipartFile protocolFile, Integer id) {
-        String type = "protocol";
-        return fileService.upload(protocolFile, "免短协议", type, id);
+        return fileService.upload(protocolFile, "免短协议", id);
     }
 
     /**
@@ -99,11 +95,22 @@ public class FileController {
      */
     @PostMapping("/system/upload/mainFile")
     @ResponseBody
-    @Log(title = "上传文件", businessType = BusinessType.INSERT, operatorLogType = OperatorLogType.ADMIN)
+    @Log(title = "上传文件", businessType = BusinessType.INSERT, operatorLogType = OperatorLogType.THREENETS)
     public AjaxResult uploadMainFile(@RequestParam("protocolFile") MultipartFile protocolFile, Integer id) {
-        String type = "main";
-        return fileService.upload(protocolFile, "主体证明", type, id);
+        return fileService.upload(protocolFile, "主体证明", id);
     }
 
-
+    @PostMapping("/system/upload/cardImage")
+    @ResponseBody
+    @Log(title = "身份证上传", businessType = BusinessType.INSERT, operatorLogType = OperatorLogType.THREENETS)
+    public AjaxResult cardImage(@RequestParam("file") MultipartFile protocolFile,Integer flag,Integer radom) {
+        if (StringUtils.isNotNull(protocolFile) && StringUtils.isNotNull(flag) && StringUtils.isNotNull(radom)){
+            if (flag == 1){ // 身份证正面照
+                return fileService.upload(protocolFile, "正面照", radom);
+            } else { // 身份证反面照
+                return fileService.upload(protocolFile, "反面照", radom);
+            }
+        }
+        return AjaxResult.error("参数格式不正确！");
+    }
 }
