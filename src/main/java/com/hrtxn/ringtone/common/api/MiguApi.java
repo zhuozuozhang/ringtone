@@ -630,15 +630,15 @@ public class MiguApi implements Serializable {
     /**
      * 上传铃音，还要添加商户登录
      * @param ring
-     * @param trade
+     * @param circleID
      * @param groupName
      * @return
      * @throws IOException
      * @throws NoLoginException
      */
-    public String saveRing(ThreenetsRing ring, String trade, String groupName) throws IOException,NoLoginException {
-        String result = null;
-        String ringName = StringUtils.subString(ring.getRingName(), '.');
+    public String saveRing(ThreenetsRing ring, String circleID, String groupName) throws IOException,NoLoginException {
+        String ringName = ring.getRingName().substring(0,ring.getRingName().indexOf("."));
+        String result = "";
         DefaultHttpClient httpclient = new DefaultHttpClient();
         HttpPost httppost = new HttpPost(importRing_url);
         httpclient.setCookieStore(this.getCookieStore());
@@ -647,24 +647,32 @@ public class MiguApi implements Serializable {
             HttpParams params = httpclient.getParams();
             params.setParameter(CoreProtocolPNames.HTTP_CONTENT_CHARSET, Charset.forName("UTF-8"));
             reqEntity.addPart("ringName", new StringBody(ringName, Charset.forName("UTF-8")));
-            reqEntity.addPart("trade", new StringBody(trade, Charset.forName("UTF-8")));
-            reqEntity.addPart("circleID", new StringBody(ring.getOperateId(), Charset.forName("UTF-8")));
-            reqEntity.addPart("groupName", new StringBody(groupName, Charset.forName("UTF-8")));
+            reqEntity.addPart("circleID", new StringBody("2250ec10-307f-4040-bb4a-fe631f75c254",Charset.forName("UTF-8")));
+            reqEntity.addPart("trade", new StringBody("其他普通行业", Charset.forName("UTF-8")));
             reqEntity.addPart("singer", new StringBody(""));
             reqEntity.addPart("songName", new StringBody(""));
-            reqEntity.addPart("file", new FileBody(ring.getFile(), "video/mp4"));
+            //reqEntity.addPart("file", new FileBody(ring.getFile(), "video/mp4"));
+            //reqEntity.addPart("file", new FileBody(ring.getFile(), "audio/mp3"));
             reqEntity.addPart("ringContent", new StringBody(ring.getRingContent(), Charset.forName("UTF-8")));
             reqEntity.addPart("autoSetType", new StringBody("0"));
             httppost.setEntity(reqEntity);
             HttpResponse response1 = httpclient.execute(httppost);
-            System.out.println(response1);
+            HttpEntity entity = response1.getEntity();
+            result = EntityUtils.toString(entity);
             int statusCode = response1.getStatusLine().getStatusCode();
-            if (statusCode == HttpStatus.SC_OK) {
-                result = EntityUtils.toString(response1.getEntity());
-				System.out.println(result);
-            }
+//            if (statusCode == HttpStatus.SC_OK) {
+//                log.debug("铃音上传服务器正常响应2.....");
+//                //String result = EntityUtils.toString(response1.getEntity());
+//                if (result.contains("铃音名称已经存在，请修改")) {
+//                    ajaxResult.error("铃音名称已经存在，请修改");
+//                }else if (result.contains("集团还有铃音正在分发中，不能上传铃音")) {
+//                    ajaxResult.error("集团还有铃音正在分发中，不能上传铃音");
+//                }else {
+//                    ajaxResult.success(true,"上传成功");
+//                }
+//            }
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("移动 设置铃音 错误信息", e);
         } finally {
             httppost.abort();
             httpclient.getConnectionManager().shutdown();

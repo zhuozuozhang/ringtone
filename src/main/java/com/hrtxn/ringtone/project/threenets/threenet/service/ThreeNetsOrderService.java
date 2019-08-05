@@ -280,6 +280,7 @@ public class ThreeNetsOrderService {
                     List<ThreenetsChildOrder> childOrders = collect.get(1);
                     ThreenetsRing ring = threeNetsRingService.getRing(childOrders.get(0).getRingId());
                     attached.setMiguId(miguAddGroupRespone.getCircleId());
+                    ring.setOperateId(miguAddGroupRespone.getCircleId());
                     utils.saveMiguRing(ring, attached.getMiguId(), order.getCompanyName());
                     for (int i = 0; i < childOrders.size(); i++) {
                         ThreenetsChildOrder childOrder = childOrders.get(i);
@@ -287,6 +288,7 @@ public class ThreeNetsOrderService {
                         childOrders.set(i,childOrder);
                     }
                     threeNetsChildOrderService.batchChindOrder(childOrders);
+                    threeNetsRingService.update(ring);
                 }
             }
             //联通
@@ -297,12 +299,14 @@ public class ThreeNetsOrderService {
                 SwxlGroupResponse swxlGroupResponse = utils.addOrderByLt(order, attached);
                 if (swxlGroupResponse.getStatus() == 0) {
                     attached.setSwxlId(swxlGroupResponse.getGroupId());
+                    ring.setOperateId(swxlGroupResponse.getGroupId());
                     for (int i = 0; i < childOrders.size(); i++) {
                         ThreenetsChildOrder childOrder = childOrders.get(i);
                         childOrder.setOperateId(attached.getSwxlId());
                         childOrders.set(i,childOrder);
                     }
                     threeNetsChildOrderService.batchChindOrder(childOrders);
+                    threeNetsRingService.update(ring);
                 }else{
                     return;
                 }
