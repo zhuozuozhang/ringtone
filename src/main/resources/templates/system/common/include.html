@@ -8,7 +8,7 @@
             <div class="top_r">
                 <span style="color: #ffffff">欢迎！</span>
                 <i>[[${session.username}]]</i>
-                <a th:href="@{/admin/index}" th:target="_blank" class="admin">管理端</a>
+                <a shiro:hasRole="admin" th:href="@{/admin/index}" th:target="_blank" class="admin">管理端</a>
                 <a th:href="@{/loginout}" class="exit">退出登录</a>
             </div>
         </div>

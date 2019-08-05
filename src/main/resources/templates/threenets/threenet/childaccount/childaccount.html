@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<html lang="zh" xmlns:th="http://www.thymeleaf.org"
+      xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
 <title>子账户列表</title>
 <head th:include="threenets/threenet/common/head :: linkcss"></head>
 <link rel="stylesheet" type="text/css" th:href="@{/client/threenets/css/index.css}">
@@ -41,7 +42,7 @@
                 操作:
                 <button type="button" class="layui-btn layui-btn-radius" id="Adds" onclick="AddUser();">添加子账户</button>
                 <button type="button" class="layui-btn layui-btn-radius" id="lower" onclick="openLower(1);">下级代理</button>
-                <button type="button" class="layui-btn layui-btn-radius" id="Alower" onclick="openLower(2);">所有下级代理</button>
+                <button shiro:hasRole="admin" type="button" class="layui-btn layui-btn-radius" id="Alower" onclick="openLower(2);">所有下级代理</button>
             </div>
             <table class="layui-table" id="set">
                 <thead>

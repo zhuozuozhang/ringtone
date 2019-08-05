@@ -129,6 +129,7 @@ public class ThreeNetsRingService {
                 ring.setCreateTime(new Date());
                 ring.setRingName(ring.getRingName()+extensionsName);
                 ring.setOperate(operator);
+
                 //保存铃音
                 threenetsRingMapper.insertThreeNetsRing(ring);
                 if (operator == 1){
@@ -156,6 +157,7 @@ public class ThreeNetsRingService {
         try {
             ring.setFile(new File(RingtoneConfig.getProfile()+ring.getRingWay()));
             ThreeNetsOrderAttached attached = threeNetsOrderAttachedService.selectByParentOrderId(ring.getOrderId());
+            ring.setOperateId(attached.getMiguId());
             apiUtils.saveMiguRing(ring,attached.getMiguId(),ring.getCompanyName());
         }catch (Exception e){
             log.info("添加铃音失败",e);

@@ -35,7 +35,6 @@ public class MyShiroRealm extends AuthorizingRealm {
         if (user != null){
             if (user.getUserRole() == 1){
                 info.addRole("admin");
-                info.addRole("threenets");
             }else{
                 info.addRole("agent");
             }

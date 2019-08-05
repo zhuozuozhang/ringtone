@@ -584,7 +584,8 @@ public class ApiUtils {
      * @throws NoLoginException
      */
     public String saveMiguRing(ThreenetsRing ring, String circleID, String groupName) throws IOException, NoLoginException {
-        return miguApi.saveRing(ring, circleID, groupName);
+        String trade = "其他普通行业";
+        return miguApi.saveRing(ring,trade, groupName);
     }
 
 
