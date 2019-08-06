@@ -1,20 +1,27 @@
 package com.hrtxn.ringtone.common.api;
 
 import com.hrtxn.ringtone.common.exception.NoLoginException;
+import com.hrtxn.ringtone.common.utils.WebClientDevWrapper;
+import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreenetsChildOrder;
+import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreenetsRing;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.CookieStore;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.mime.MultipartEntity;
 import org.apache.http.entity.mime.content.FileBody;
+import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.params.CoreProtocolPNames;
 import org.apache.http.params.HttpParams;
 import org.apache.http.util.EntityUtils;
 
@@ -23,6 +30,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -36,7 +44,7 @@ public class McardApi {
     private static String add_user_url = "https://mcard.imusic.cn/user/createNormalUser";//新增商户
     private static String to_user_list = "https://mcard.imusic.cn/user/userList";//跳转到商户  get   ?userId=1670298
     private static String add_apersonnel_url = "https://mcard.imusic.cn/user/addApersonnel";//新增成员
-    
+
     private static String upload_file_url = "https://mcard.imusic.cn/file/uploadFile";//文件上传
     private static String saveRing_url = "http://mcard.imusic.cn/file/saveRing";//铃音上传
     private static String settingRing_url = "http://mcard.imusic.cn/ring/setUserRing";//设置铃音
@@ -53,42 +61,52 @@ public class McardApi {
     //子渠道商（18888666361）
     private static String child_Distributor_ID_188 = "61204";
 
-    private CookieStore macrdCookie;// 音乐名片登录cookie
+    private CookieStore macrdCookie;// 电信cookie
+    private Date connectTime;// 最新连接时间
 
-    public CookieStore getCookieStore() throws NoLoginException, IOException {
+
+    public CookieStore getCookieStore() {
 
         return this.macrdCookie;
     }
 
+    public void setMacrdCookie(CookieStore swxlCookie) {
+        this.macrdCookie = swxlCookie;
+        this.setConnectTime(new Date());
+    }
 
+    public void setConnectTime(Date connectTime) {
+        this.connectTime = connectTime;
+    }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    /**
+     * 联通GET方式封装
+     *
+     * @param getUrl
+     * @return
+     * @throws NoLoginException
+     * @throws IOException
+     */
+    private String sendGet(String getUrl) throws NoLoginException, IOException {
+        CloseableHttpClient httpclient = HttpClients.custom().setDefaultCookieStore(this.getCookieStore()).build();
+        HttpGet httpGet = new HttpGet(getUrl);
+        CloseableHttpResponse response = httpclient.execute(httpGet);// 进入
+        try {
+            int statusCode = response.getStatusLine().getStatusCode();
+            if (statusCode == HttpStatus.SC_OK) {
+                HttpEntity resEntity = response.getEntity();
+                String resStr = EntityUtils.toString(resEntity);
+                this.setMacrdCookie(this.getCookieStore());
+                return resStr;
+            }
+        } catch (Exception e) {
+            log.error("联通 sendGet 错误信息", e);
+        } finally {
+            httpGet.abort();
+            response.close();
+        }
+        return null;
+    }
 
 
     //添加商户
@@ -151,16 +169,148 @@ public class McardApi {
         return result;
     }
 
-    //添加成员
-
-
-    //上传铃音
-    public String uploadRing(File file){
-        return null;
+    /**
+     * 跳转到对应商户
+     *
+     * @param userId
+     * @return
+     * @throws IOException
+     * @throws NoLoginException
+     */
+    public String toUserList(String userId)throws IOException,NoLoginException {
+        String getUrl = to_user_list + "?userId=" + userId;
+        String result = sendGet(getUrl);
+        return result;
     }
 
-    //上传文件
+    /**
+     * 添加集团成员
+     * 添加成员之前需要进行跳转到对应商户
+     *
+     * @param childOrder
+     * @return
+     */
+    public String addApersonnel(ThreenetsChildOrder childOrder) {
+        String result = null;
+        DefaultHttpClient httpclient = WebClientDevWrapper.wrapClient(new DefaultHttpClient());
+        HttpPost httppost = new HttpPost(settingRing_url);
+        List<NameValuePair> formparams = new ArrayList<NameValuePair>();
+        formparams.add(new BasicNameValuePair("personnelName", childOrder.getLinkman()));
+        formparams.add(new BasicNameValuePair("personnelPhone", childOrder.getLinkmanTel()));
+        httpclient.setCookieStore(this.getCookieStore());
+        try {
+            UrlEncodedFormEntity entity = new UrlEncodedFormEntity(formparams, "utf-8");
+            httppost.setEntity(entity);
+            HttpResponse response = httpclient.execute(httppost);
+            HttpEntity resEntity = response.getEntity();
+            result = EntityUtils.toString(resEntity);
+        } catch (Exception e) {
+            System.out.println(e);
+        } finally {
+            httppost.abort();
+            httpclient.getConnectionManager().shutdown();
+        }
+        return result;
+    }
+
+    /**
+     * 铃音上传
+     *
+     * @param ring
+     * @return
+     */
+    public String uploadRing(ThreenetsRing ring) {
+        String result = null;
+        DefaultHttpClient httpclient = WebClientDevWrapper.wrapClient(new DefaultHttpClient());
+        HttpPost httppost = new HttpPost(saveRing_url);
+        httpclient.setCookieStore(this.getCookieStore());
+        try {
+            MultipartEntity reqEntity = new MultipartEntity();
+            HttpParams params = httpclient.getParams();
+            params.setParameter(CoreProtocolPNames.HTTP_CONTENT_CHARSET, Charset.forName("UTF-8"));
+            reqEntity.addPart("song", new StringBody("惠科门窗", Charset.forName("UTF-8")));
+            reqEntity.addPart("ringName", new StringBody("惠科门窗", Charset.forName("UTF-8")));
+            reqEntity.addPart("ringText", new StringBody("您好：欢迎致电惠科门窗", Charset.forName("UTF-8")));
+            reqEntity.addPart("singer", new StringBody("无", Charset.forName("UTF-8")));
+            reqEntity.addPart("ringFile", new FileBody(ring.getFile(), "audio/mp3"));
+            reqEntity.addPart("ext", new StringBody("mp3", Charset.forName("UTF-8")));
+            reqEntity.addPart("fileName", new StringBody("慧科001.mp3", Charset.forName("UTF-8")));
+            httppost.setEntity(reqEntity);
+            HttpResponse response1 = httpclient.execute(httppost);
+            int statusCode = response1.getStatusLine().getStatusCode();
+            if (statusCode == HttpStatus.SC_OK) {
+                log.debug("铃音上传服务器正常响应2.....");
+                // HttpEntity resEntity = response1.getEntity();
+                result = EntityUtils.toString(response1.getEntity());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            httppost.abort();
+            httpclient.getConnectionManager().shutdown();
+        }
+        return result;
+    }
+
+    /**
+     * 设置铃音
+     *
+     * @param ringId
+     * @param apersonnelId
+     * @return
+     */
+    public String settingRing(String ringId, String apersonnelId) {
+        String result = null;
+        DefaultHttpClient httpclient = WebClientDevWrapper.wrapClient(new DefaultHttpClient());
+        HttpPost httppost = new HttpPost(settingRing_url);
+        List<NameValuePair> formparams = new ArrayList<NameValuePair>();
+        formparams.add(new BasicNameValuePair("ringId", ringId));
+        formparams.add(new BasicNameValuePair("apersonnelId", apersonnelId));
+        httpclient.setCookieStore(this.getCookieStore());
+        try {
+            UrlEncodedFormEntity entity = new UrlEncodedFormEntity(formparams, "utf-8");
+            httppost.setEntity(entity);
+            HttpResponse response = httpclient.execute(httppost);
+            HttpEntity resEntity = response.getEntity();
+            result = EntityUtils.toString(resEntity);
+        } catch (Exception e) {
+            System.out.println(e);
+        } finally {
+            httppost.abort();
+            httpclient.getConnectionManager().shutdown();
+        }
+        return result;
+    }
+
+    /**
+     * 文件上传
+     *
+     * @param file
+     * @return
+     */
     public String uploadFile(File file) {
-        return null;
+        String result = null;
+        DefaultHttpClient httpclient = WebClientDevWrapper.wrapClient(new DefaultHttpClient());
+        HttpPost httppost = new HttpPost(upload_file_url);
+        httpclient.setCookieStore(this.getCookieStore());
+        try {
+            MultipartEntity reqEntity = new MultipartEntity();
+            HttpParams params = httpclient.getParams();
+            params.setParameter(CoreProtocolPNames.HTTP_CONTENT_CHARSET, Charset.forName("UTF-8"));
+            reqEntity.addPart("file", new FileBody(file));
+            httppost.setEntity(reqEntity);
+            HttpResponse response1 = httpclient.execute(httppost);
+            int statusCode = response1.getStatusLine().getStatusCode();
+            if (statusCode == HttpStatus.SC_OK) {
+                log.debug("电信文件上传成功.....");
+                result = EntityUtils.toString(response1.getEntity());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            httppost.abort();
+            httpclient.getConnectionManager().shutdown();
+        }
+        return result;
     }
 }
