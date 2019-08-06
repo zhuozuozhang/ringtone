@@ -1,8 +1,10 @@
 package com.hrtxn.ringtone.project.threenets.threenet.controller;
 
+import com.hrtxn.ringtone.common.api.MiguApi;
 import com.hrtxn.ringtone.common.constant.AjaxResult;
 import com.hrtxn.ringtone.common.domain.BaseRequest;
 import com.hrtxn.ringtone.common.domain.Page;
+import com.hrtxn.ringtone.common.exception.NoLoginException;
 import com.hrtxn.ringtone.freemark.config.logConfig.Log;
 import com.hrtxn.ringtone.freemark.enums.BusinessType;
 import com.hrtxn.ringtone.freemark.enums.OperatorLogType;
@@ -11,12 +13,18 @@ import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreenetsOrder;
 import com.hrtxn.ringtone.project.threenets.threenet.service.ThreeNetsChildOrderService;
 import com.hrtxn.ringtone.project.threenets.threenet.service.ThreeNetsOrderService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.map.HashedMap;
+import org.aspectj.weaver.loadtime.Aj;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpSession;
+import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Author:lile
@@ -220,6 +228,41 @@ public class ThreeNetsChildOrderController {
         } catch (Exception e) {
             log.error("发送短信功能 方法：sendMessage 错误信息", e);
             return AjaxResult.error(e.getMessage());
+        }
+    }
+
+    /**
+     * 移动工具箱-->用户信息
+     * @param ringMsisdn
+     * @param
+     * @return
+     */
+    @PostMapping("/threenets/getUserInfoByRingMsisdn/{ringMsisdn}")
+    @ResponseBody
+    public String getUserInfo(String ringMsisdn, HttpSession session){
+        String userInfo = null;
+        try {
+            return userInfo = threeNetsChildOrderService.getUserInfoByRingMsisdn(ringMsisdn,session);
+        } catch (Exception e) {
+            return "移动工具箱-->用户信息出错";
+        }
+    }
+
+    /**
+     * 联通工具箱-->用户信息
+     * @param phoneNumber
+     * @param session
+     * @return
+     */
+    @PostMapping("/threenets/getUnicomUserInfoByPhoneNumber/{phoneNumber}")
+    @ResponseBody
+    public Map<String , String> getUnicomUserInfoByPhoneNumber(String phoneNumber,HttpSession session) {
+        Map<String, String> map = new HashMap<String,String>();
+        try {
+            return threeNetsChildOrderService.getUnicomUserInfoByPhoneNumber(phoneNumber,session);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
         }
     }
 

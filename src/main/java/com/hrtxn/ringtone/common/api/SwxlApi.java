@@ -756,4 +756,66 @@ public class SwxlApi implements Serializable {
         }
         return result;
     }
+
+    /**
+     * 工具箱-->联通 获取沉默用户信息
+     * @param msisdn
+     * @return
+     * @throws NoLoginException
+     * @throws IOException
+     */
+    public String getSilentMemberByMsisdn(String msisdn) throws NoLoginException, IOException {
+        String content = null;
+        DefaultHttpClient httpclient = WebClientDevWrapper.wrapClient(new DefaultHttpClient());
+        HttpGet httpGet = new HttpGet(silentMember_url+"?msisdn="+msisdn);
+        httpclient.setCookieStore(this.getCookieStore());
+        try {
+            HttpResponse response = httpclient.execute(httpGet);// 进入
+            int statusCode = response.getStatusLine().getStatusCode();
+            if (statusCode == HttpStatus.SC_OK) {
+                HttpEntity resEntity = response.getEntity();
+                content = EntityUtils.toString(resEntity);
+//				this.setMiguCookie(httpclient.getCookieStore());
+            }
+        } catch (ClientProtocolException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            httpGet.abort();
+            httpclient.getConnectionManager().shutdown();
+        }
+        return content;
+    }
+
+    /**
+     * 工具箱-->联通 获取用户操作记录
+     * @param msisdn
+     * @return
+     * @throws NoLoginException
+     * @throws IOException
+     */
+    public String getSystemLogListByMsisdn(String msisdn) throws NoLoginException, IOException {
+        String content = null;
+        DefaultHttpClient httpclient = WebClientDevWrapper.wrapClient(new DefaultHttpClient());
+        HttpGet httpGet = new HttpGet(systemLogList_url+"?msisdn="+msisdn+"&pageSize=100");
+        httpclient.setCookieStore(this.getCookieStore());
+        try {
+            HttpResponse response = httpclient.execute(httpGet);// 进入
+            int statusCode = response.getStatusLine().getStatusCode();
+            if (statusCode == HttpStatus.SC_OK) {
+                HttpEntity resEntity = response.getEntity();
+                content = EntityUtils.toString(resEntity);
+//				this.setMiguCookie(httpclient.getCookieStore());
+            }
+        } catch (ClientProtocolException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            httpGet.abort();
+            httpclient.getConnectionManager().shutdown();
+        }
+        return content;
+    }
 }

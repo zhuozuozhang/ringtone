@@ -1,5 +1,7 @@
 package com.hrtxn.ringtone.project.threenets.threenet.service;
 
+import com.hrtxn.ringtone.common.api.MiguApi;
+import com.hrtxn.ringtone.common.api.SwxlApi;
 import com.hrtxn.ringtone.common.constant.AjaxResult;
 import com.hrtxn.ringtone.common.domain.BaseRequest;
 import com.hrtxn.ringtone.common.domain.Page;
@@ -25,6 +27,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.HttpSession;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
@@ -536,5 +539,56 @@ public class ThreeNetsChildOrderService {
             return AjaxResult.error("获取数据出错！");
         }
         return AjaxResult.error("参数格式不正确！");
+    }
+
+    /**
+     * 移动工具箱-->用户信息
+     * @param ringMsisdn
+     */
+    public String getUserInfoByRingMsisdn(String ringMsisdn,HttpSession session) throws Exception {
+        if (StringUtils.isNotNull(ringMsisdn)) {
+            MiguApi miguApi = null;
+            Object obj2 = session.getAttribute("miguApi");
+            if (obj2 instanceof MiguApi) {
+                miguApi = (MiguApi) obj2;
+            }
+            if (miguApi == null) {
+                miguApi = new MiguApi();
+                session.setAttribute("miguApi", miguApi);
+            }
+            return apiUtils.getUserInfoByRingMsisdn(ringMsisdn);
+        }else {
+            return "未获取到用户号码";
+        }
+
+
+    }
+
+    /**
+     * 联通工具箱-->用户信息
+     * @param phoneNumber
+     * @param session
+     * @return
+     * @throws NoLoginException
+     * @throws IOException
+     */
+    public Map<String, String> getUnicomUserInfoByPhoneNumber(String phoneNumber, HttpSession session) throws NoLoginException, IOException {
+        String silentMemberByMsisdn = null;
+        String systemLogListByMsisdn = null;
+        Map<String, String> map = new HashMap<String, String>();
+        Object obj = session.getAttribute("swxlApi");
+        SwxlApi swxlApi = null;
+        if (obj instanceof SwxlApi) {
+            swxlApi = (SwxlApi) obj;
+        }
+        if (swxlApi == null) {
+            swxlApi = new SwxlApi();
+            session.setAttribute("swxlApi", swxlApi);
+        }
+        silentMemberByMsisdn = apiUtils.getSilentMemberByMsisdn(phoneNumber);
+        systemLogListByMsisdn = apiUtils.getSystemLogListByMsisdn(phoneNumber);
+        map.put("silentMemberByMsisdn", silentMemberByMsisdn);
+        map.put("systemLogListByMsisdn", systemLogListByMsisdn);
+        return map;
     }
 }

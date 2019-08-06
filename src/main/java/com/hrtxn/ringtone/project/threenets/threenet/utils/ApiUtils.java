@@ -666,4 +666,52 @@ public class ApiUtils {
         }
         return AjaxResult.error(msg);
     }
+
+    /**
+     * 移动工具箱-->用户信息
+     * @param ringMsisdn
+     * @return
+     * @throws NoLoginException
+     * @throws IOException
+     */
+    public String getUserInfoByRingMsisdn(String ringMsisdn) throws NoLoginException, IOException {
+        String msg = "查找到了用户信息";
+        if(StringUtils.isNotNull(ringMsisdn)){
+            return miguApi.getUserInfoByRingMsisdn(ringMsisdn);
+        }else {
+            return  "未获取到用户号码";
+        }
+    }
+
+    /**
+     * 联通工具箱-->用户信息-->获取沉默用户信息
+     * @param phoneNumber
+     * @return
+     * @throws NoLoginException
+     * @throws IOException
+     */
+    public String getSilentMemberByMsisdn(String phoneNumber) throws NoLoginException, IOException {
+        String msg = "查找到了用户信息";
+        if(StringUtils.isNotNull(phoneNumber)){
+            return swxlApi.getSilentMemberByMsisdn(phoneNumber);
+        }else {
+            return  "未获取到用户号码";
+        }
+    }
+
+    /**
+     * 联通工具箱-->用户信息-->获取用户操作记录
+     * @param phoneNumber
+     * @return
+     * @throws NoLoginException
+     * @throws IOException
+     */
+    public String getSystemLogListByMsisdn(String phoneNumber) throws NoLoginException, IOException {
+        String msg = "查找到了用户信息";
+        if(StringUtils.isNotNull(phoneNumber)){
+            return swxlApi.getSystemLogListByMsisdn(phoneNumber);
+        }else {
+            return  "未获取到用户号码";
+        }
+    }
 }

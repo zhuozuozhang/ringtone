@@ -78,6 +78,8 @@ public class MiguApi implements Serializable {
     public static String getRingListByMsisdn_url = "http://211.137.107.18:8888/cm/toolbox!getRingListByMsisdn.action";
     public static String delOtherRing_url = "http://211.137.107.18:8888/cm/toolbox!delRing.action";
     public static String refreshRingOrder_url = "http://211.137.107.18:8888/cm/groupInfo!findList.action";
+    public static String toolbox_userInfo_url = "http://211.137.107.18:8888/qycl/platform/platform!getUserInfo.action";
+
 
     public String USER_NAME = "中高俊聪";// 帐号
     public String PASSWORD = "zgjc@ZG330@";// 密码
@@ -719,5 +721,35 @@ public class MiguApi implements Serializable {
 //        MiguApi miguApi = new MiguApi();
 //        String s = miguApi.getRingPage("c9a7ffb7-876c-40aa-88ef-14185f79930b");
 //        System.out.println(s);
+    }
+
+    /**
+     * 移动工具箱-->用户信息
+     * @param msisdn
+     * @return
+     * @throws NoLoginException
+     * @throws IOException
+     */
+    public String getUserInfoByRingMsisdn(String msisdn) throws NoLoginException, IOException {
+        String result = null;
+        DefaultHttpClient httpclient = new DefaultHttpClient();
+        HttpPost httppost = new HttpPost(toolbox_userInfo_url);
+        List<NameValuePair> formparams = new ArrayList<NameValuePair>();
+        formparams.add(new BasicNameValuePair("msisdn", msisdn));
+        httpclient.setCookieStore(this.getCookieStore());
+        try {
+            UrlEncodedFormEntity entity = new UrlEncodedFormEntity(formparams, "utf-8");
+            httppost.setEntity(entity);
+            HttpResponse response = httpclient.execute(httppost);
+            HttpEntity resEntity = response.getEntity();
+            result = EntityUtils.toString(resEntity);
+            this.setMiguCookie(httpclient.getCookieStore());
+        } catch (Exception e) {
+            System.out.println(e);
+        } finally {
+            httppost.abort();
+            httpclient.getConnectionManager().shutdown();
+        }
+        return result;
     }
 }
