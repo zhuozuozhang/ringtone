@@ -51,4 +51,12 @@ public interface UploadfileMapper {
      * @return
      */
     List<Uploadfile> selectByPath(@Param("path") String path);
+
+    /**
+     * 定时器------获取所有无效文件
+     *
+     * @return
+     */
+    List<Uploadfile> selectAllFile();
+
 }

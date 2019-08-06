@@ -27,6 +27,8 @@ public class MyWebConfig implements WebMvcConfigurer {
     public void addViewControllers(ViewControllerRegistry registry) {
         // 设置统一登录入口
         registry.addViewController("/").setViewName("system/login");
+        registry.addViewController("/admin/index").setViewName("admin/index");
+        registry.addViewController("/admin/welcome").setViewName("admin/welcome");
         // 跳转到商户列表
         registry.addViewController("/threenets/threeNetsOrderList").setViewName("threenets/threenet/merchants/merchants");
     }
@@ -41,9 +43,9 @@ public class MyWebConfig implements WebMvcConfigurer {
         // 设置不被拦截资源
         interceptorRegistry.excludePathPatterns("/");
         //interceptorRegistry.excludePathPatterns("/login");
-        interceptorRegistry.excludePathPatterns("/admin/**");
+//        interceptorRegistry.excludePathPatterns("/admin/**");
         interceptorRegistry.excludePathPatterns("/public/**");
-        interceptorRegistry.excludePathPatterns("/system/**");
+//        interceptorRegistry.excludePathPatterns("/system/**");
         interceptorRegistry.excludePathPatterns("/client/**");
         interceptorRegistry.excludePathPatterns("/imageCode");
         interceptorRegistry.excludePathPatterns("/test/**");

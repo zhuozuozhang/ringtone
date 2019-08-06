@@ -63,8 +63,6 @@ shiro:
     # 设置Cookie的过期时间，天为单位
     maxAge: 30
 
-
-
 http:
   maxTotal: 100
   defaultMaxPerRoute: 20

@@ -30,6 +30,21 @@
         operate_id, is_monthly, is_video_user, is_ringtone_user, is_reply_message, province,
         city, operator, user_id,remark
     </sql>
+    <!--定时器 获取子账号信息-->
+    <select id="findThreenetChildTimeTask" resultMap="BaseResultMap">
+        select
+            <include refid="Base_Column_List"/>
+        from
+            tb_threenets_child_order
+        where
+            is_monthly = #{isMonthly}
+        <if test="userId == 24">
+            AND user_id = #{userId}
+        </if>
+        <if test="userId != 24">
+            AND user_id != 24
+        </if>
+    </select>
     <!--根据父级订单ID以及电话号码查询子级订单信息-->
     <select id="findChildOrderByOrderIdAndPhone" resultMap="BaseResultMap">
         select

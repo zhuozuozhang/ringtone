@@ -22,6 +22,7 @@ public class RingService {
     private ThreenetsRingMapper threenetsRingMapper;
 
     public AjaxResult getRingList(Page page) {
+        page.setPage((page.getPage() - 1) * page.getPagesize());
         if (!StringUtils.isNotNull(page)){
             return null;
         }

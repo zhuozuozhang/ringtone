@@ -116,4 +116,13 @@ public interface ThreenetsChildOrderMapper {
      * @return
      */
     ThreenetsChildOrder findChildOrderByOrderIdAndPhone(@Param("orderId") Integer orderId, @Param("phone") String phone);
+
+    /**
+     * 定时器 获取子账号信息
+     *
+     * @param isMonthly
+     * @param userId
+     * @return
+     */
+    List<ThreenetsChildOrder> findThreenetChildTimeTask(@Param("isMonthly") int isMonthly, @Param("userId") int userId);
 }

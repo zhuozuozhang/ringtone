@@ -135,7 +135,7 @@ public class ThreeNetsRingController {
             threeNetsRingService.cloneRing(id);
             return AjaxResult.success(true, "克隆成功！");
         } catch (Exception e) {
-            log.error("下载铃音失败 方法：playRing 错误信息", e);
+            log.error("下载铃音失败 方法：cloneRing 错误信息", e);
             return AjaxResult.error("克隆失败！");
         }
     }
@@ -152,6 +152,7 @@ public class ThreeNetsRingController {
     @ResponseBody
     public void playRing(HttpServletRequest request, HttpServletResponse response, @PathVariable Integer id) throws IOException {
         FileInputStream fileIs = null;
+        OutputStream outStream = null;
         try {
             ThreenetsRing ring = threeNetsRingService.getRing(id);
             fileIs = new FileInputStream(RingtoneConfig.getProfile() + ring.getRingWay());
@@ -159,14 +160,14 @@ public class ThreeNetsRingController {
             byte data[] = new byte[i];
             fileIs.read(data); //读数据
             //response.setContentType("image.png"); //设置返回的文件类型
-            OutputStream outStream = response.getOutputStream(); //得到向客户端输出二进制数据的对象
+            outStream = response.getOutputStream(); //得到向客户端输出二进制数据的对象
             outStream.write(data); //输出数据
+        } catch (Exception e) {
+            log.error("播放铃音失败 方法：playRing 错误信息", e);
+        }finally {
             outStream.flush();
             outStream.close();
             fileIs.close();
-        } catch (Exception e) {
-            log.error("播放铃音失败 方法：playRing 错误信息", e);
-            return;
         }
     }
 

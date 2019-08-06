@@ -34,6 +34,17 @@
                             <h3 th:text="${notice.noticeTitle}">电话邦号码认证上线通知</h3>
                             <div class="ggnr" th:utext="${notice.noticeContent}"></div>
                         </div>
+                        <!--(0.三网/1.号码认证/2.400/3.视频制作/4.号卡/5.铃音录制/6.企业秀/7.来去电名片)-->
+                        <div class="ggxx">发布端：
+                            <sapn th:if="${notice.noticeModule} == 0">三网</sapn>
+                            <sapn th:if="${notice.noticeModule} == 1">号码认证</sapn>
+                            <sapn th:if="${notice.noticeModule} == 2">400</sapn>
+                            <sapn th:if="${notice.noticeModule} == 3">视频制作</sapn>
+                            <sapn th:if="${notice.noticeModule} == 4">号卡</sapn>
+                            <sapn th:if="${notice.noticeModule} == 5">铃音录制</sapn>
+                            <sapn th:if="${notice.noticeModule} == 6">企业秀</sapn>
+                            <sapn th:if="${notice.noticeModule} == 7">来去电名片</sapn>
+                        </div>
                     </td>
                     <td class="ggtime" th:text="${#dates.format(notice.noticeTime,'yyyy-MM-dd HH:mm:ss')}">2019-06-11 15:45:17</td>
                 </tr>

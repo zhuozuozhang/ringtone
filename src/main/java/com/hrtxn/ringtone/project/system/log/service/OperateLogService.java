@@ -1,5 +1,8 @@
 package com.hrtxn.ringtone.project.system.log.service;
 
+import com.hrtxn.ringtone.common.constant.AjaxResult;
+import com.hrtxn.ringtone.common.domain.Page;
+import com.hrtxn.ringtone.common.utils.StringUtils;
 import com.hrtxn.ringtone.project.system.log.domain.OperateLog;
 import com.hrtxn.ringtone.project.system.log.mapper.OperateLogMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,8 +31,14 @@ public class OperateLogService {
         return b;
     }
 
-    public List<OperateLog> findAllOperateLog() {
-        return operateLogMapper.findAllOperateLog();
+    public AjaxResult findAllOperateLog(Page page) {
+        page.setPage((page.getPage() - 1) * page.getPagesize());
+        List<OperateLog> allOperateLog = operateLogMapper.findAllOperateLog(page);
+        int count = operateLogMapper.getCount();
+        if (StringUtils.isNotNull(allOperateLog) && allOperateLog.size() > 0){
+            return AjaxResult.success(allOperateLog,"获取数据成功！",count);
+        }
+        return  AjaxResult.error("无数据！");
     }
 
     public OperateLog findOperateLogById(Integer operateLogId) {

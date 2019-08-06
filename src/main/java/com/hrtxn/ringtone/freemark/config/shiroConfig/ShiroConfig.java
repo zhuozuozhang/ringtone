@@ -58,7 +58,6 @@ public class ShiroConfig {
         //filterChainDefinitionMap.put("/","anon");// 配置登录页不被拦截
         filterChainDefinitionMap.put("/login","anon");// 配置登录页不被拦截
         filterChainDefinitionMap.put("/imageCode","anon");// 配置图片验证码不被拦截
-        filterChainDefinitionMap.put("/test/**","anon");
         // 配置静态资源不被拦截
         filterChainDefinitionMap.put("/**/css/**","anon");
         filterChainDefinitionMap.put("/**/dataTables/**","anon");
@@ -73,7 +72,7 @@ public class ShiroConfig {
         // 如果不设置默认会自动寻找Web工程根目录下的login页面
         shiroFilterFactoryBean.setLoginUrl("/");
         // 登录成功后要跳转的链接
-        shiroFilterFactoryBean.setSuccessUrl("system/login");
+        shiroFilterFactoryBean.setSuccessUrl("system/index");
         // 未授权界面
         shiroFilterFactoryBean.setUnauthorizedUrl("/error/error403Page");
         return shiroFilterFactoryBean;

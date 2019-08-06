@@ -103,4 +103,12 @@ public interface ThreenetsRingMapper {
      * @return
      */
     int getSetRingCount(@Param("orderId") Integer orderId, @Param("operate") Integer operate) throws Exception;
+
+    /**
+     * 获取待审核、激活中的铃音
+     *
+     *@param userId
+     * @return
+     */
+    List<ThreenetsRing> findRingIsNotSuccess(@Param("userId") Integer userId);
 }

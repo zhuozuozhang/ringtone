@@ -16,7 +16,19 @@
     </sql>
     <!-- 获取所有登录记录 -->
     <select id="findAllLoginLog" resultMap="BaseResultMap">
-        SELECT <include refid="Base_Column_List"/> FROM sys_login_log
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM
+        sys_login_log
+        ORDER BY login_log_time DESC
+        LIMIT #{page.page},#{page.pagesize}
+    </select>
+    <!-- 获取所有日志总数 -->
+    <select id="getCount" resultType="int">
+        SELECT
+            COUNT(*)
+        FROM
+            sys_login_log
     </select>
     <!-- 添加登录记录 -->
     <insert id="insertLoginLog" parameterType="com.hrtxn.ringtone.project.system.log.domain.LoginLog">

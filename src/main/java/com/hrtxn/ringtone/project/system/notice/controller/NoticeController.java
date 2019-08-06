@@ -176,10 +176,16 @@ public class NoticeController {
     public String toClinetNoticeListPage(ModelMap map){
         List<Notice> _noticeList = new ArrayList<>();
         try {
-            List<Notice> noticeList = null;//noticeService.findAllNoticeList();
-            for (Notice notice : noticeList) {
-                if (notice.getNoticeStatus()){
-                    _noticeList.add(notice);
+            Page page = new Page();
+            page.setPage(1);
+            page.setPagesize(1000);
+            AjaxResult allNoticeList = noticeService.findAllNoticeList(page);
+            List<Notice> noticeList = (List<Notice>) allNoticeList.get("data");
+            if (StringUtils.isNotNull(noticeList)&&noticeList.size() > 0){
+                for (Notice notice : noticeList) {
+                    if (notice.getNoticeStatus()){
+                        _noticeList.add(notice);
+                    }
                 }
             }
             map.put("noticeList",_noticeList);

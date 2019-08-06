@@ -4,7 +4,6 @@ import com.hrtxn.ringtone.common.exception.NoLoginException;
 import com.hrtxn.ringtone.common.utils.ChaoJiYing;
 import com.hrtxn.ringtone.common.utils.HttpUtils;
 import com.hrtxn.ringtone.common.utils.ShiroUtils;
-import com.hrtxn.ringtone.common.utils.StringUtils;
 import com.hrtxn.ringtone.common.utils.json.JsonUtil;
 import com.hrtxn.ringtone.project.system.user.domain.User;
 import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreeNetsOrderAttached;
@@ -35,6 +34,7 @@ import org.apache.http.params.CoreProtocolPNames;
 import org.apache.http.params.HttpParams;
 import org.apache.http.util.EntityUtils;
 import org.apache.shiro.crypto.hash.Md5Hash;
+import org.apache.shiro.subject.Subject;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -63,7 +63,7 @@ public class MiguApi implements Serializable {
     public static String addGroup_url = "http://211.137.107.18:8888/cm/groupInfo!addGroup.action";//增加商户url
     public static String findCircleRingPageById_url = "http://211.137.107.18:8888/cm/setRingAction!findCircleRingById.action"; // 获取铃音信息
     public static String ADD_PHONE_URL = "http://211.137.107.18:8888/cm/groupInfo!inviteGroupUsers.action";//增加号码地址
-    public static String importRing_url = "http://211.137.107.18:8888/cm/cmRing!importRing.action";// 增加铃音url
+    public static String importRing_url = "http://211.137.107.18:8888/cm/cmRing!importRing.action";//增加铃音url
     public static String uploadRing_url = "http://211.137.107.18:8888/cm/cmRing!uploadRing.action";//增加铃音url
     public static String settingRing_url = "http://211.137.107.18:8888/cm/cmCircleRing!setCircleRingById4User.action"; // 铃音设置
 
@@ -157,15 +157,21 @@ public class MiguApi implements Serializable {
      * @return
      */
     public boolean loginAuto() throws NoLoginException, IOException {
-        String code = getCodeString();
-        int i = 0;
-        boolean flag = login(code);
-        if (!flag) {
+        Subject currentUser = org.apache.shiro.SecurityUtils.getSubject();
+        String userId = currentUser.getPrincipal().toString();
+        String code =getCodeString();
+        int i=0;
+        boolean flag =login(code,userId);
+        if(!flag&&i<3){
             i++;
-            if (i < 3) {
-                flag = login(getCodeString());
-            }
+            this.loginAuto();
         }
+        return flag;
+    }
+
+    public boolean loginAutoParam(String userId) throws NoLoginException, IOException {
+        String code = getCodeString();
+        boolean flag = login(code,userId);
         return flag;
     }
 
@@ -279,14 +285,14 @@ public class MiguApi implements Serializable {
      * @throws NoLoginException
      * @throws IOException
      */
-    public boolean login(String vcode) throws NoLoginException, IOException {
+    public boolean login(String vcode,String userName) throws NoLoginException, IOException {
         boolean isSuccess = false;
         CloseableHttpClient httpclient = HttpClients.custom()
                 .setDefaultCookieStore(this.getCookieStore())
                 .build();
         HttpPost httppost = new HttpPost(MiguApi.LOGIN_URL);
         List<NameValuePair> formParams = new ArrayList<NameValuePair>();
-        String userName = ShiroUtils.getSysUser().getUserName();
+//        String userName = ShiroUtils.getSysUser().getUserName();
         if ("睿智广告001".equals(userName)) {
             formParams.add(new BasicNameValuePair("manager.loginName", "中高俊聪022"));
             String password = new Md5Hash(new Md5Hash("Cmcc1mgyy2%").toString() + vcode).toString();
@@ -647,11 +653,11 @@ public class MiguApi implements Serializable {
             HttpParams params = httpclient.getParams();
             params.setParameter(CoreProtocolPNames.HTTP_CONTENT_CHARSET, Charset.forName("UTF-8"));
             reqEntity.addPart("ringName", new StringBody(ringName, Charset.forName("UTF-8")));
-            reqEntity.addPart("circleID", new StringBody("2250ec10-307f-4040-bb4a-fe631f75c254",Charset.forName("UTF-8")));
+            reqEntity.addPart("circleID", new StringBody(circleID));
             reqEntity.addPart("trade", new StringBody("其他普通行业", Charset.forName("UTF-8")));
             reqEntity.addPart("singer", new StringBody(""));
             reqEntity.addPart("songName", new StringBody(""));
-            //reqEntity.addPart("file", new FileBody(ring.getFile(), "video/mp4"));
+            reqEntity.addPart("file", new FileBody(ring.getFile(), "video/mp4"));
             //reqEntity.addPart("file", new FileBody(ring.getFile(), "audio/mp3"));
             reqEntity.addPart("ringContent", new StringBody(ring.getRingContent(), Charset.forName("UTF-8")));
             reqEntity.addPart("autoSetType", new StringBody("0"));
@@ -659,7 +665,7 @@ public class MiguApi implements Serializable {
             HttpResponse response1 = httpclient.execute(httppost);
             HttpEntity entity = response1.getEntity();
             result = EntityUtils.toString(entity);
-            int statusCode = response1.getStatusLine().getStatusCode();
+            //int statusCode = response1.getStatusLine().getStatusCode();
 //            if (statusCode == HttpStatus.SC_OK) {
 //                log.debug("铃音上传服务器正常响应2.....");
 //                //String result = EntityUtils.toString(response1.getEntity());
@@ -672,7 +678,7 @@ public class MiguApi implements Serializable {
 //                }
 //            }
         } catch (Exception e) {
-            log.error("移动 设置铃音 错误信息", e);
+            e.printStackTrace();
         } finally {
             httppost.abort();
             httpclient.getConnectionManager().shutdown();

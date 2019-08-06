@@ -100,6 +100,14 @@ public class FileController {
         return fileService.upload(protocolFile, "主体证明", id);
     }
 
+    /**
+     * 添加子账号 -- 身份证上传
+     *
+     * @param protocolFile
+     * @param flag
+     * @param radom
+     * @return
+     */
     @PostMapping("/system/upload/cardImage")
     @ResponseBody
     @Log(title = "身份证上传", businessType = BusinessType.INSERT, operatorLogType = OperatorLogType.THREENETS)

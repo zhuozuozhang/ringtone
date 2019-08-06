@@ -27,23 +27,14 @@
                     <th>登录状态</th>
 				</tr>
 			</thead>
-			<tbody>
-				<tr th:each="loginLog:${loginLogList}">
-					<td th:text="${loginLog.loginLogId}">1</td>
-					<td th:text="${loginLog.loginLogUsername}">admin</td>
-					<td th:text="${loginLog.ipAdress}">127.0.0.1</td>
-                    <td th:text="${loginLog.loginLocation}">江苏徐州</td>
-                    <td th:text="${#dates.format(loginLog.loginLogTime,'yyyy-MM-dd HH:mm:ss')}">2019-06-19 17:20:26</td>
-                    <td th:text="${loginLog.loginLogStatus}">登录成功</td>
-				</tr>
-			</tbody>
 		</table>
 	</div>
 </body>
 <div th:include="admin/common/include :: footer"></div>
+<script th:src="@{/admin/js/my/login_log.js}"></script>
 <script type="text/javascript">
 	$(document).ready(function() {
-	    page("#example",4);
-	} );
+        showTable();
+	});
 </script>
 </html>

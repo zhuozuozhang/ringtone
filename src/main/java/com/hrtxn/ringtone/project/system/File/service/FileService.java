@@ -29,7 +29,6 @@ public class FileService {
      *
      * @param file
      * @param fileName
-     * @param type
      * @param orderId
      * @return
      */

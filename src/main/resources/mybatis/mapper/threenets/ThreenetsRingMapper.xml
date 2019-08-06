@@ -16,9 +16,23 @@
         <result column="remark" property="remark" jdbcType="LONGVARCHAR"/>
         <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
     </resultMap>
+
     <sql id="Base_Column_List">
-          id, ring_name, ring_type, ring_status, operate, order_id,operate_id,operate_ring_id,ring_way, ring_content, create_time, remark
+        id, ring_name, ring_type, ring_status, operate, order_id,operate_id,operate_ring_id,ring_way, ring_content, create_time, remark
     </sql>
+    <!--定时器 获取待审核、激活中的铃音-->
+    <select id="findRingIsNotSuccess" resultMap="BaseResultMap">
+        select tr.id, ring_name, ring_type, ring_status, operate, order_id,operate_id,operate_ring_id
+        from tb_threenets_ring tr INNER JOIN tb_threenets_order tor
+        where tr.order_id = tor.id
+        AND ring_status IN (1,2)
+        <if test="userId == 24">
+            AND tor.user_id = #{userId}
+        </if>
+        <if test="userId != 24">
+            AND tor.user_id != 24
+        </if>
+    </select>
 
     <select id="getRing" resultMap="BaseResultMap">
         select

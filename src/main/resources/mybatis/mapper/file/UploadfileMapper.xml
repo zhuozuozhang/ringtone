@@ -13,6 +13,13 @@
     <sql id="Base_Column_List">
         id, filename, path, status, createtime
     </sql>
+    <!--定时器 获取所有无效文件-->
+    <select id="selectAllFile" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from tb_uploadfile
+        where status = 1
+    </select>
 
     <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer">
         select

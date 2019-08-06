@@ -1,6 +1,8 @@
 package com.hrtxn.ringtone.project.system.log.mapper;
 
+import com.hrtxn.ringtone.common.domain.Page;
 import com.hrtxn.ringtone.project.system.log.domain.OperateLog;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -24,7 +26,9 @@ public interface OperateLogMapper {
      * 查询所有操作记录
      * @return
      */
-    List<OperateLog> findAllOperateLog();
+    List<OperateLog> findAllOperateLog(@Param("page")Page page);
 
     OperateLog findOperateLogById(Integer operateLogId);
+
+    int getCount();
 }

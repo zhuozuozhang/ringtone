@@ -13,7 +13,6 @@ import org.apache.shiro.authc.IncorrectCredentialsException;
 import org.apache.shiro.authc.LockedAccountException;
 import org.apache.shiro.authc.UnknownAccountException;
 import org.apache.shiro.authc.UsernamePasswordToken;
-import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.apache.shiro.subject.Subject;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -118,21 +117,21 @@ public class LoginController {
      * 跳转到管理端首页
      * @return
      */
-    @RequiresRoles("admin")
-    @GetMapping("/admin/index")
-    public String toAdminIndexPage(){
-        return "admin/index";
-    }
+//    @RequiresRoles("admin")
+//    @GetMapping("/admin/index")
+//    public String toAdminIndexPage(){
+//        return "admin/index";
+//    }
 
     /**
      * 跳转管理端欢迎页
      * @return
      */
-    @RequiresRoles("admin")
-    @GetMapping("/admin/welcome")
-    public String welcome(){
-        return "admin/welcome";
-    }
+//    @RequiresRoles("admin")
+//    @GetMapping("/admin/welcome")
+//    public String welcome(){
+//        return "admin/welcome";
+//    }
 
     /**
      * 客户端首页

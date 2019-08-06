@@ -36,9 +36,20 @@
 
     <!-- 查询所有操作记录 -->
     <select id="findAllOperateLog" resultMap="BaseResultMap">
-        SELECT <include refid="param"/> FROM sys_operate_log
+        SELECT
+            <include refid="param"/>
+        FROM
+            sys_operate_log
+        ORDER BY operate_log_time DESC
+        LIMIT #{page.page},#{page.pagesize}
     </select>
 
+    <select id="getCount" resultType="int">
+        SELECT
+            COUNT(*)
+        FROM
+            sys_operate_log
+    </select>
     <!-- 根据操作记录ID获取记录详情 -->
     <select id="findOperateLogById" parameterType="integer" resultMap="BaseResultMap">
         SELECT <include refid="param"/> FROM sys_operate_log WHERE operate_log_id = #{operateLogId}
