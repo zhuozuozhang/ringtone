@@ -1,0 +1,997 @@
+<!DOCTYPE html>
+<html style="height:100%">
+<head>
+    <meta charset="utf-8">
+
+    <title>爱音乐音乐名片(https://mcard.imusic.cn)-中国电信彩铃网站-爱音乐爱生活https://mcard.imusic.cn/</title>
+
+    <meta name="description" content="提供高品质音乐排行榜、音乐推荐、精选歌单以及音乐活动等内容">
+    <meta name="keywords" content="爱音乐,在线音乐网站,在线听歌,音乐网站,在线音乐试听,音乐搜索,音乐下载,数字音乐,高品质音乐,高品质mp3， imusic，118100，彩铃，音乐下载，设置彩铃、彩铃管理、赠送彩铃，个性化彩铃、DIY、无线音乐，手机铃声，音乐、音乐盒、音乐包、音乐名片、音乐播放器、电信彩铃、音乐会员">
+
+    <link rel="stylesheet" href="/css/public.css">
+    <script src="/js/jquery.min.js"></script>
+    <script src="/js/layer/layer.js"></script>
+    <script src="/js/menu.js?v=1.3"></script>
+    <script src="/js/common.js"></script>
+
+    <!--[if lt IE 9]>
+    <script src="res/js/json2.js"></script>
+    <script>"abbr,article,aside,footer,header,nav,section,time,figure,figcaption".replace(/\w+/g,function(t){document.createElement(t)})</script>
+    <![endif]-->
+</head>
+<body>
+<header class="header">
+    <img class="logo-image" title="首页" alt="" src="/image/logo.jpg" >
+    <a href="http://www.imusic.cn" title="爱音乐首页">爱音乐首页</a>
+    <a href="/logout">退出</a>
+    <span class="username s2" title="子渠道 - 福州胜果网络科技有限公司">福州胜果网络科技有限公司</span>
+    <span class="username s3" title="主渠道 - 福州胜果网络科技有限公司">福州胜果网络科技有限公司</span>
+    <div id="change-pw"></div>
+
+    <script type="text/javascript">
+
+        /* 	// 子渠道切换
+            $(document).on('click','.header .s2',function(){
+                if($('.alert-block').length > 0) {
+                    return;
+                }
+                var layerload = layer.load(1);
+                $.post('/user/subChannelList',{},function(result){
+                    layer.close(layerload);
+                    $('body').append(result);
+                    $('.alert-block').fadeIn('slow');
+                })
+            });
+
+
+            // 商户切换
+            $(document).on('click','.header .s1',function(){
+                if($('.alert-block').length > 0) {
+                    return;
+                }
+
+                if('61203' == '') return;
+                var layerload = layer.load(1);
+                $.post('/user/normalUserListAlert',{},function(result){
+                    layer.close(layerload);
+                    $('body').append(result);
+                    $('.alert-block').fadeIn('slow');
+                })
+            }); */
+    </script>
+
+
+</header>
+
+<nav class="nav">
+    <ul class="nav-head">
+        <li><a href="/index"  title="首页">首页</a></li>
+        <li class="ring" onmouseenter="Menu.showSubMenu(this);">
+            <a href="javascript:void(0);" title="彩铃制作">彩铃制作</a>
+            <ul class="sub-nav">
+                <li><a href="/ring/ringMakeList" title="彩铃制作">彩铃制作</a></li>
+                <li><a href="/ring/ringMakeList" title="在线合成">在线合成</a></li>
+                <li><a href="/ring/ringRecordList" title="人声录制">人声录制</a></li>
+            </ul>
+        </li>
+        <li><a href="/user/userList" data-value=1 title="成员管理">成员管理</a></li>
+        <li><a href="/ring/ringList" data-value=1 title="设置彩铃">设置彩铃</a></li>
+        <li><a href="/auth/userAuth" data-value=1 title="商户认证">商户认证</a></li>
+        <li class="fl-right" style="position: relative;">
+            <a href="/changeRing/goChangeRing"  title="换铃列表">换铃列表</a>
+            <span style="display: inline-block; width: 20px; text-align: center; height: 20px; line-height: 20px; border-radius: 10px; background: red; color: #fff; position: absolute; right: 0; top: 0;" id="changeRingNews"></span>
+        </li>
+        <li class="fl-right">
+            <a href="javascript:void(0);" class="apersonnelList-nav" data-href="/user/apersonnelList" title="用户列表" data-type=2 onclick="checkUser(this);">用户列表</a>
+
+        </li>
+        <li class="fl-right userlist"  onmouseenter="Menu.showSubMenu(this);" >
+            <a href="javascript:void(0);" data-href="/user/normalBusinessList" title="商户列表" data-type=1 onclick="checkUser(this);">商户列表</a>
+        </li>
+        <li class="fl-right"><a href="/user/channelList"  title="渠道商列表">渠道商列表</a></li>
+        <script>
+            // 判断是否已选择子渠道 或 商户 selectType = 1 :子渠道 2：商户
+            function checkUser(obj){
+                /* if($('.alert-block').length > 0) {
+                    //return;
+                } */
+                var layerload = layer.load(1);
+                $.post('/user/checkUser',{'type':$(obj).attr('data-type')},function(result){
+                    layer.close(layerload);
+                    window.location.href = $(obj).attr('data-href');
+                })
+            }
+
+            $(function() {
+                // 进入调用换铃数
+                $.ajax({
+                    url: '/changeRing/getMessageCount',
+                    type: 'get',
+                    dataType: 'json',
+                    success: function (res) {
+                        if (res.code == 0) {
+                            $("#changeRingNews").text(res.data);
+                        } else {
+                            alert(res.msg);
+                        }
+                    }
+                })
+
+                // 定时器，每分钟执行一次
+                setInterval(function() {
+                    // 查询数据
+                    $.ajax({
+                        url: '/changeRing/getMessageCount',
+                        type: 'get',
+                        dataType: 'json',
+                        success: function (res) {
+                            if (res.code == 0) {
+                                $("#changeRingNews").text(res.data);
+                            } else {
+                                alert(res.msg);
+                            }
+                        }
+                    })
+                }, 60000)
+            })
+        </script></ul>
+</nav>
+
+<div class="bg-block">
+    <div class="wrap userauth-wrap">
+        <div class="title">
+            <h3>新增商户</h3>
+        </div>
+        <section class="auth-info">
+            <form action="" onsubmit="return false;">
+                <input type="hidden" name="ausertype" value="">
+                <input type="hidden" name="codeId" value="">
+                <input  type="hidden" name="provinceChannel" value="">
+                <input type="hidden" id="isFeeType" name="isFeeType" >
+                <input type="hidden" id="makeFee1" name="makeFee1" value="">
+                <input type="hidden" id="feeType" name="feeType" >
+                <input type="hidden" id="aUserProvince" name="aUserProvince">
+                <input type="hidden" id="aUserCity" name="aUserCity">
+                <input type="hidden" id="phoneProvinceCode" name="phoneProvinceCode">
+                <input type="hidden" id="checkUnipayphone" name="checkUnipayphone">
+                <input type="hidden" id="makeFeeType" name="makeFeeType">
+                <input type="hidden" id="phoneCityCode" name="phoneCityCode">
+
+
+                <div class="form-control">
+                    <label style="width:120px;"><i></i>商户手机：</label>
+                    <input type="number" id="auserAccount" name="auserAccount" class="auserAccount"  placeholder="登录手机号" autofocus="autofocus"  maxlength="14" oninput="if(value.length>11)value=value.slice(0,11)">
+                </div>
+                <div class="form-control">
+                    <label><i></i>商户名称：</label>
+                    <input type="text"  name="auserName" class="auserName" placeholder="商户名称" autofocus="autofocus"  onkeyup="value=value.replace(/[^\a-\z\A-\Z0-9\u4E00-\u9FA5\s\.]/g,'')" onpaste="value=value.replace(/[^\a-\z\A-\Z0-9\u4E00-\u9FA5\s\.]/g,'')" oncontextmenu = "value=value.replace(/[^\a-\z\A-\Z0-9\u4E00-\u9FA5\s\.]/g,'')" maxlength="30">
+                </div>
+                <div class="form-control">
+                    <font>允许发展省份：</font>
+                    <span id="selectedRegion" class="region_list">
+		                            <span id="820000" name="check_list_region" >澳门特别行政区</span>
+										<span id="810000" name="check_list_region" >香港特别行政区</span>
+										<span id="710000" name="check_list_region" >台湾省</span>
+										<span id="640000" name="check_list_region" >宁夏回族自治区</span>
+										<span id="630000" name="check_list_region" >青海省</span>
+										<span id="620000" name="check_list_region" >甘肃省</span>
+										<span id="540000" name="check_list_region" >西藏自治区</span>
+										<span id="530000" name="check_list_region" >云南省</span>
+										<span id="520000" name="check_list_region" >贵州省</span>
+										<span id="510000" name="check_list_region" >四川省</span>
+										<span id="500000" name="check_list_region" >重庆市</span>
+										<span id="460000" name="check_list_region" >海南省</span>
+										<span id="450000" name="check_list_region" >广西壮族自治区</span>
+										<span id="430000" name="check_list_region" >湖南省</span>
+										<span id="420000" name="check_list_region" >湖北省</span>
+										<span id="410000" name="check_list_region" >河南省</span>
+										<span id="370000" name="check_list_region" >山东省</span>
+										<span id="360000" name="check_list_region" >江西省</span>
+										<span id="350000" name="check_list_region" >福建省</span>
+										<span id="340000" name="check_list_region" >安徽省</span>
+										<span id="330000" name="check_list_region" >浙江省</span>
+										<span id="320000" name="check_list_region" >江苏省</span>
+										<span id="310000" name="check_list_region" >上海市</span>
+										<span id="230000" name="check_list_region" >黑龙江省</span>
+										<span id="220000" name="check_list_region" >吉林省</span>
+										<span id="210000" name="check_list_region" >辽宁省</span>
+										<span id="150000" name="check_list_region" >内蒙古自治区</span>
+										<span id="140000" name="check_list_region" >山西省</span>
+										<span id="130000" name="check_list_region" >河北省</span>
+										<span id="120000" name="check_list_region" >天津市</span>
+										<span id="110000" name="check_list_region" >北京市</span>
+										<span id="000000" name="check_list_region" >海外</span>
+										</span>
+                </div>
+                <div class="form-control">
+                    <label>所属省市：</label>
+                    <span id="attribution" name="attribution" > </span>
+                </div>
+                <div class="form-control">
+                    <label style="width:120px;"><i></i>联系人：</label>
+                    <input type="text"  name="auserLinkName" class="auserLinkName" placeholder="联系人" maxlength="30" onkeyup="value=value.replace(/[^\a-\z\A-\Z0-9\u4E00-\u9FA5\s\.]/g,'')" onpaste="value=value.replace(/[^\a-\z\A-\Z0-9\u4E00-\u9FA5\s\.]/g,'')" oncontextmenu = "value=value.replace(/[^\a-\z\A-\Z0-9\u4E00-\u9FA5\s\.]/g,'')" >
+                </div>
+                <div class="form-control">
+                    <label><i></i>商户定价：</label>
+                    <select name="auserMoney" id="auserMoney" class="auserMoney" onchange="getChanType()">
+                        <option value="">-价格-</option>
+                    </select>&nbsp元/月
+                </div>
+                <div class="form-control">
+                    <label style="width:120px;"><i></i>联系人电话：</label>
+                    <input type="number" name="auserPhone" class="auserPhone" placeholder="联系人电话" maxlength="30" oninput="if(value.length>11)value=value.slice(0,11)">
+                </div>
+                <div class="form-control">
+                    <label><i></i>收取制作费：</label>
+                    <input type="text" id="isMakeFee" name="isMakeFee" class="isMakeFee"  placeholder="是否收取制作费" maxlength="30" disabled="disabled">
+                </div>
+
+                <div class="form-control">
+                    <label style="width:120px">联系人邮箱：</label>
+                    <input type="text" class="auserEmail" name="auserEmail" placeholder="联系人邮箱" maxlength="30"  >
+                </div>
+                <div class="form-control">
+                    <label><i></i>扣费号码：</label>
+                    <input type="number" name="chargingPhone" class="chargingPhone" placeholder="制作费扣费号码" maxlength="30"  oninput="if(value.length>11)value=value.slice(0,12)" >
+                </div>
+                <div class="form-control">
+                    <label style="width:120px">商家微信：</label>
+                    <input type="text" name="auserWeixin" class="auserWeixin"  placeholder="商家微信" maxlength="30" >
+                </div>
+                <div class="form-control">
+                    <label>易信号：</label>
+                    <input type="text" name="auserYi" class="auserYi" placeholder="易信号" maxlength="30" >
+                </div>
+                <div class="form-control">
+                    <label style="width:120px">蜂巢账号：</label>
+                    <input type="text" name="auserFengChao" class="auserFengChao" placeholder="蜂巢账号" maxlength="30"  >
+                </div>
+                <div class="form-control">
+                    <label>业务受理人：</label>
+                    <input type="text" name="busiSeizedName"  class="busiSeizedName"  placeholder="业务受理人姓名" maxlength="30" onkeyup="value=value.replace(/[^\a-\z\A-\Z0-9\u4E00-\u9FA5\s\.]/g,'')" onpaste="value=value.replace(/[^\a-\z\A-\Z0-9\u4E00-\u9FA5\s\.]/g,'')" oncontextmenu = "value=value.replace(/[^\a-\z\A-\Z0-9\u4E00-\u9FA5\s\.]/g,'')"  >
+                </div>
+                <div class="form-control">
+                    <label style="width:120px">受理人电话：</label>
+                    <input type="text" name="busiSeizedPhone" class="busiSeizedPhone" placeholder="业务受理人电话" maxlength="30"  >
+                </div>
+                <div class="form-control">
+                    <label><i></i>所属行业：</label>
+                    <select name="industry">
+                        <option value=1>其他服务业</option>
+                        <option value=2>餐饮娱乐业</option>
+                        <option value=3>装修五金业</option>
+                        <option value=4>仓储业</option>
+                        <option value=5>汽修业</option>
+                        <option value=6>美容美体业</option>
+                        <option value=7>旅店业</option>
+                        <option value=8>医疗业</option>
+                        <option value=9>地产业</option>
+                        <option value=10>服装业</option>
+                        <option value=11>广告业</option>
+                        <option value=12>代理业</option>
+                    </select>
+                </div>
+                <div class="form-control"  id="selectUnifyPayPhone">
+                    <label><i></i>统付支付：</label>
+                    <select name="isUnifyPay" id="isUnifyPay" class="isUnifyPay"   onchange="forcheck()" >
+
+                        <option value=2>不支持</option>
+                        <option value=1>支持</option>
+                    </select>
+                </div>
+                <div class="form-control"  id = "unifyPayPhone"  style="display:none;">
+                    <label><i></i>统付扣费号：</label>
+                    <input type="number" name="unifyPayPhone" class="unifyPayPhone" placeholder="统付扣费号码（仅支持电信手机号及固话）"   maxlength="30"  oninput="if(value.length>11)value=value.slice(0,12)" >
+                </div>
+
+            </form>
+        </section>
+
+        <div class="clear line-block" style="height:30px"></div>
+
+        <section class="auth-license auth-info" style="height:1000px;">
+            <div class="title">
+                <h3>商户认证</h3>
+            </div>
+            <form action="" onsubmit="return false;">
+                <div class="form-control">
+                    <label class="top"><i></i>营业执照：</label>
+                    <div class="license-img" style="height:220px;" title="支持jpg,jpeg,png,gif,bmp,gif格式">
+                        <img alt="" id="img1" class="img1" src="/image/upload2.png" onclick="$('#licenceFile').click();">
+                    </div>
+                </div>
+
+                <div class="form-control">
+                    <label class="top">法人身份证：</label>
+                    <div class="license-img" style="height:220px;" title="支持jpg,jpeg,png,gif,bmp,gif格式">
+                        <img alt="" class="img2" src="/image/upload2.png" onclick="$('#IdcardFile').click();">
+                    </div>
+                </div>
+
+                <div class="form-control">
+                    <label class="top"><i></i>业务协议：</label>
+                    <div class="license-img" style="height:220px;" title="支持jpg,jpeg,png,gif,bmp,gif格式">
+                        <img alt="" class="img3" src="/image/upload2.png" onclick="$('#userFile').click();">
+                    </div>
+                </div>
+                <div class="form-control">
+                    <label>验证码：</label>
+                    <input type="text" id="imageCode" name="imageCode" class="imageCode" maxlength="6" style="width:120px">
+                    <img class="code-img" alt="" src="/code/imageCode" onclick="this.src='/code/imageCode?d='+ new Date().getTime();">
+                </div>
+                <div class="form-control">
+                    <label></label>
+                    <button class="save">保   存</button>
+                </div>
+
+                <input type="hidden" name="auserBlicencePath" class="auserBlicencePath">
+                <input type="hidden" name="auserCardidPath" class="auserCardidPath">
+                <input type="hidden" name="auserFilePath" class="auserFilePath">
+            </form>
+        </section>
+
+
+
+        <input type="file" id="licenceFile" name="licenceFile"  style="display:none;" onchange="uploadBlicence();">
+        <input type="file" id="IdcardFile" name="IdcardFile" style="display:none;" onchange="uploadIdCard();">
+        <input type="file" id="userFile" name="userFile"  style="display:none;" onchange="uploadUserFile();">
+
+        <div class="clear line-block" style="height:200px"></div>
+    </div>
+</div>
+<footer>
+    <div class="footer">
+        <img alt="" src="/img/dianxin.jpg">
+        <div class="con">
+            <p><a rel="nofollow" target="_blank" href="http://www.miibeian.gov.cn/">[粤ICP备13082515]</a> <a rel="nofollow" data-pageurl="file/certificate2" href="javascript:;">[粤网文[2016]4650-1122号]</a> </p>
+            <p>中国电信集团公司<a data-pageurl="file/certificate" href="javascript:;">[增值电信业务经营许可证A2.B1.B2-20090001]</a></p>
+            <p>版权所有：天翼爱音乐文化科技有限公司 </p>
+        </div>
+        <div class="service">
+            <p>服务时间：08:30 - 22:00</p>
+            <p>客服热线：400-8308100</p>
+        </div>
+    </div>
+</footer><script src="/js/ajaxfileupload.js"></script>
+<script type="text/javascript">
+    $(document).ready(function(){
+        getLoginPhonePro();//页面加载完成，获取登录手机归属地
+        //获取登录手机归属地 wch
+        $("#auserAccount").blur(function(){
+            getLoginPhonePro();
+        });
+        $(".chargingPhone").blur(function(){
+            getChanFeeList();
+        });
+
+    });
+    $(document).ready(function(){
+        var items =false?null :"2"; //页面加载完成获取子渠道支不支持手机统付
+
+        if(items == 2||items=='2'){
+
+            /* 	  hide(document.getElementById("selectUnifyPayPhone")) ; */
+            document.getElementById("selectUnifyPayPhone").style.display = "none";
+            document.getElementById("unifyPayPhone").style.display = "none";
+        }
+
+
+
+    });
+
+
+    $(function(){
+        $('.save').click(function(){
+
+            var auserName = $.trim($('.auserName').val());
+            if(!auserName){
+                $('.auserName').focus();
+                layer.tips('请填写商户名称','.auserName');
+                return false;
+            }
+
+            if(auserName != null && auserName != ''){
+                if(!ValidatorUtil.isAuserName(auserName)){
+                    $('.auserName').focus();
+                    layer.tips('请填写商户名称！（不包含特殊字符）','.auserName');
+                    return;
+                }
+            }
+
+            var auserAccount = $.trim($('.auserAccount').val());
+            if(!auserAccount){
+                $('.auserAccount').focus();
+                layer.tips('请填写登录手机号','.auserAccount');
+                return false;
+            }
+
+            var isUnifyPay = $("#isUnifyPay").val();
+
+            if(isUnifyPay != 1){
+                if(!MobileUtil.isPhone(auserAccount)){
+                    $('.auserAccount').focus();
+                    layer.tips('登录手机号错误','.auserAccount');
+                    return false;
+                }
+            }else{
+                if(!MobileUtil.isPhone(auserAccount) || !MobileUtil.isMobile(auserAccount)){
+                    $('.auserAccount').focus();
+                    layer.tips('登录号码错误','.auserAccount');
+                    return false;
+                }
+            }
+
+            var auserLinkName = $.trim($('.auserLinkName').val());
+            if(!auserLinkName){
+                $('.auserLinkName').focus();
+                layer.tips('请填写联系人','.auserLinkName');
+                return false;
+            }
+
+            if(auserLinkName != null && auserLinkName != ''){
+                if(!ValidatorUtil.isContact(auserLinkName)){
+                    $('.auserLinkName').focus();
+                    layer.tips('请填写联系人！（不包含特殊字符）','.auserLinkName');
+                    return;
+                }
+            }
+
+            var auserEmail = $.trim($('.auserEmail').val());
+            if(auserEmail && auserEmail.indexOf('@') == -1){
+                $('.auserEmail').focus();
+                layer.tips('联系人邮箱错误','.auserEmail');
+                return false;
+            }
+
+            var auserPhone = $.trim($('.auserPhone').val());
+            if(!auserPhone){
+                $('.auserPhone').focus();
+                layer.tips('请填写联系人电话','.auserPhone');
+                return false;
+            }
+
+            if(!MobileUtil.isMobile(auserPhone)){
+                $('.auserPhone').focus();
+                layer.tips('联系人电话错误','.auserPhone');
+                return false;
+            }
+
+            var chargingPhone = $.trim($('.chargingPhone').val());
+            var makeFee1 = $.trim($('#makeFee1').val());
+            var feeTypeValue=$('#auserMoney').children('option:selected').val();//获取当前价格的值
+
+            if(feeTypeValue==null||feeTypeValue==""){
+                $('.auserMoney').focus();
+                layer.tips('请选择一种商户定价！','.auserMoney');
+                return false;
+            }
+
+            var busiSeizedName = $.trim($('.busiSeizedName').val());
+            if(busiSeizedName != null && busiSeizedName != ''){
+                if(!ValidatorUtil.isContact(busiSeizedName)){
+                    $('.busiSeizedName').focus();
+                    layer.tips('受理人错误（不包含特殊字符）','.busiSeizedName');
+                    return false;
+                }
+            }
+            var busiSeizedPhone = $.trim($('.busiSeizedPhone').val());
+            if(busiSeizedPhone){
+                if(!MobileUtil.isMobile(busiSeizedPhone)){
+                    $('.busiSeizedPhone').focus();
+                    layer.tips('受理人号码错误','.busiSeizedPhone');
+                    return false;
+                }
+            }
+
+            if(!$('.auserBlicencePath').val()){
+                window.location.hash='img1';
+                layer.tips('请上传营业执照','.img1');
+                return false;
+            }
+
+            if(!$('.auserFilePath').val()){
+                window.location.hash='img3';
+                layer.tips('请上传业务协议','.img3');
+                return false;
+            }
+
+            var auserWeixin = $.trim($('.auserWeixin').val());
+            if(auserWeixin != null && auserWeixin != ''){
+                if(!ValidatorUtil.isContact(auserWeixin)){
+                    $('.auserWeixin').focus();
+                    layer.tips('微信号错误（不包含特殊字符）','.auserWeixin');
+                    return false;
+                }
+            }
+
+            var auserFengChao = $.trim($('.auserFengChao').val());
+            if(auserFengChao != null && auserFengChao != ''){
+                if(!ValidatorUtil.isContact(auserFengChao)){
+                    $('.auserFengChao').focus();
+                    layer.tips('蜂巢账号错误（不包含特殊字符）','.auserFengChao');
+                    return false;
+                }
+            }
+
+            var auserYi = $.trim($('.auserYi').val());
+            if(auserYi != null && auserYi != ''){
+                if(!ValidatorUtil.isContact(auserYi)){
+                    $('.auserYi').focus();
+                    layer.tips('易信账号错误（不包含特殊字符）','.auserYi');
+                    return false;
+                }
+            }
+            var imageCode = $.trim($('.imageCode').val());
+            if(!imageCode){
+                $('.imageCode').focus();
+                layer.tips('请填写验证码','.imageCode');
+                return false;
+            }
+
+            var unifyPayPhone = $(".unifyPayPhone").val();
+            var isUnifyPayValue = $("#isUnifyPay").val();
+            var checkUnipayphone = $("#checkUnipayphone").val();
+
+
+            if(isUnifyPayValue ==1 && checkUnipayphone == 2){
+                $('.unifyPayPhone').focus();
+                layer.tips('统付号码异常','.unifyPayPhone');
+                //  	 	$(".unifyPayPhone").val('');
+                return false;
+
+            }
+
+
+
+
+
+
+            //////////////
+
+            if(makeFee1!=""&&makeFee1!=null&&makeFee1>0) {
+                isFeeType = $("#isFeeType").val("1");
+            }else{
+                isFeeType = $("#isFeeType").val("0");
+            }
+            if((makeFee1!=""&&makeFee1!=null&&makeFee1>0)){//提交注册，制作费收取时，并且制作费的费用大于0元时，对收费号码做为空判断
+                if(!chargingPhone){
+                    $('.chargingPhone').focus();
+                    layer.tips('请填写扣费号码','.chargingPhone');
+                    return false;
+                }
+                if(!MobileUtil.isMobile(chargingPhone)){
+                    $('.chargingPhone').focus();
+                    layer.tips('扣费号码错误','.chargingPhone');
+                    return false;
+                }else{
+                    var d = {};
+                    d["newChargingPhone"] = chargingPhone;
+                    d["fee"] = 1;
+
+                    var layerload = layer.load(2,{shade: [0.3, '#393D49']});
+                    $.post('/user/getPhoneAddress',d,function(result){
+                        layer.close(layerload);
+                        if(result.code == '0000'){
+                            if(result.data.auserState!=null && result.data.auserState!=2){
+                                layer.msg("此号码已用于商户扣费号码，请重新输入！");
+                                return false;
+                            }else{
+                                if(result.data.MNOs == 1){
+
+                                    if(result.data.province != null  && result.data.province !=""){
+
+
+                                        if(result.data.province.indexOf('新疆')!=-1|| result.data.province.indexOf('广东')!=-1){
+                                            layer.msg("新疆、广东暂不支持发展业务");
+                                            return false;
+                                        }else{
+                                            if(typeof(result.data.feeType) != "undefined" || result.data.feeType != null || result.data.feeType != 0){
+                                                if(result.data.provinceCode != $("#phoneProvinceCode").val()) {
+                                                    layer.msg("请填写" + $("#aUserProvince").val() + "电信手机号码，其他省份无效");
+                                                    return false;
+                                                }
+                                            }else{
+                                                layer.msg("目前"+result.data.privonce+"省份暂不支持电信代扣,请重新输入！");
+                                                return false;
+                                            }
+                                        }
+
+                                    }else{
+                                        layer.msg("此扣费号码异常！");
+                                        return false;
+
+                                    }
+
+                                }else{
+                                    layer.msg("目前仅电信支持扣费，请输入电信手机号码!");
+                                    return false;
+                                }
+                            }
+                            createNormalUser();
+                        }else{
+                            layer.msg(result.message);
+                            return false;
+                        }
+                    });
+                }
+            } else {
+                createNormalUser();
+            }
+        });
+    });
+
+    function createNormalUser(){
+        var d = {};
+        var t = $('form').serializeArray();
+        $.each(t, function() {
+            d[this.name] = $.trim(this.value);
+        });
+        var layerload = layer.load(2,{shade: [0.3, '#393D49']});
+        $.post('/user/createNormalUser',d,function(result){
+            layer.close(layerload);
+            if(result.code == '0000'){
+                layer.alert("新增成功！");
+                window.location.href = '/user/normalBusinessList';
+            }else{
+                layer.msg(result.message);
+            }
+        });
+    }
+
+
+    function getLoginPhonePro(){
+        //$("#auserMoneyId").hide();
+        var loginPhone = $("#auserAccount").val();
+        if(loginPhone == ""){
+            $('.auserAccount').focus();
+            layer.tips('请输入手机号码','.auserAccount');
+            return false;
+        }else if(!MobileUtil.isMobile(loginPhone)){
+            $('.auserAccount').focus();
+            layer.tips('登录手机号错误','.auserAccount');
+            return false;
+        }else{
+            var d = {};
+            d["loginPhone"] = loginPhone;
+            d["fee"] = 1;
+            var layerload = layer.load(2,{shade: [0.3, '#393D49']});
+            $.post('/user/getPhoneAddress',d,function(result){
+                layer.close(layerload);
+                if(result.code == '0000'){
+                    // $("#attribution").show();
+                    var context = result.data.province + "省-" + result.data.city + "市";
+                    $("#attribution").text(context);
+                    $("#aUserProvince").val(result.data.province);
+                    $("#aUserCity").val(result.data.city);
+                    $("#phoneProvinceCode").val(result.data.provinceCode);
+                    $("#phoneCityCode").val(result.data.cityCode);
+                    if($("#selectedRegion").children("span").length<=0 ||$("#selectedRegion").find('span[id="'+result.data.provinceCode+'"]').length>0 || $("#selectedRegion").find('span[id="'+result.data.cityCode+'"]').length>0){
+
+                        var context = result.data.province + "省-" + result.data.city + "市";
+                        $("#attribution").val(context);
+                        getChanFeeList();//根据所在省份，更新音乐名片的商户定价
+                    } else {
+                        $("#attribution").text("该号码所在省份(" + context + ")不允许发展业务!");
+                        $("#aUserProvince").val("");
+                        $("#aUserCity").val("");
+                        $("#phoneProvinceCode").val("");
+                    }
+                }else{
+                    layer.msg("获取号码所在省份失败");
+                }
+            });
+        }
+    };
+
+    function getChanFeeList() {//通过省份id，刷新音乐名片商户定价
+        //$("#auserMoneyId").hide();
+        //$("#makeFeePhoneText").hide();
+
+        var provinceId = $("#phoneProvinceCode").val();//获取当前制作费手机号的省份
+        var chargingPhone = $.trim($('.chargingPhone').val());//获取扣费号码
+        var cityId = $("#phoneCityCode").val();//获取当前制作费手机号的城市
+        var feeType = null;
+        if(provinceId==null||provinceId==""){
+            layer.msg("请填写正确的登录手机号！");
+        }
+        var d = {};
+        d["provinceId"] = provinceId;
+        d["chargingPhone"] = chargingPhone;
+        d["cityId"] = cityId;
+        // var layerload = layer.load(2,{shade: [0.3, '#393D49']});
+        $.post('/fee/getChannelProvinceFee',d,function(result){
+            //layer.close(layerload);
+            if(result.code == '0000'){
+                var chanProFeeList = result.data;
+                if(chanProFeeList!=undefined){
+                    document.getElementById('auserMoney').options.length = 0;  //清空原有的option
+                    var str="<option value=''>-价格-</option>";
+                    $.each(chanProFeeList,function(num,chanProFee){
+                        if(chanProFee.feeType==62 || chanProFee.feeType==61){
+                            str+="<option value='"+chanProFee.feeType+"'>"+chanProFee.fee+"(湖北专用)"+"</option>" ;
+                        }else{
+                            str+="<option value='"+chanProFee.feeType+"'>"+chanProFee.fee+"</option>" ;
+                        }
+
+                    });
+                    $("#auserMoney").html(str);
+                }
+            }else{
+                layer.msg("获取号码所在省份价格失败");
+            }
+        });
+    }
+
+    function getChanType() {//通过登录手机号的省份id和商户定价，刷新是否收取制作费
+        $("#chargingPhone").attr("disabled","disabled");
+        var auserId = "";//获取当前子渠道的id
+        var provinceId = $("#phoneProvinceCode").val();//获取当前制作费手机号的省份
+        var feeType=$('#auserMoney').children('option:selected').val();//获取当前价格的值
+        var chargingPhone = $.trim($('.chargingPhone').val());//获取扣费号码
+        var cityId = $("#phoneCityCode").val();//获取当前制作费手机号的城市
+        $("#feeType").val(feeType);
+        if(provinceId==null||provinceId==""){
+            layer.msg("请填写正确的登录手机号！");
+        }
+        if(feeType!=null && feeType!=""){
+
+            var d = {};
+            d["provinceId"] = provinceId;
+            d["feeType"] = feeType;
+            d["chargingPhone"] = chargingPhone;
+            d["cityId"] = cityId;
+            //  var layerload = layer.load(2,{shade: [0.3, '#393D49']});
+            $.post('/fee/getChannelProvinceFee',d,function(result){
+                //layer.close(layerload);
+                if(result.code == '0000'){
+                    var chanProFeeList = result.data;
+                    var isMakeFeeFlag = chanProFeeList[0].isMakeFee;
+                    if(isMakeFeeFlag==1){
+                        $("#chargingPhone").attr("disabled",true);
+                        $("#makeFee1").val(chanProFeeList[0].fee);
+                        $("#makeFeeType").val(chanProFeeList[0].makeFeeType);
+                        $("#isMakeFee").val("收取");
+                    }else{
+                        $("#chargingPhone").attr("disabled",false);
+                        $("#isMakeFee").val("不收取");
+                    }
+                }else{
+                    layer.msg("获取号码所在省份制作费失败");
+                }
+            });
+        }
+    }
+
+    // 上传营业执照
+    function uploadBlicence(){
+        var filename = $('#licenceFile').val();
+        var ext = filename.substring(filename.lastIndexOf('.') + 1,filename.length).toLowerCase();
+
+        if(!(ext == 'jpg' || ext == 'jpeg' || ext == 'png' || ext == 'bmp' || ext == 'gif')){
+            layer.msg('请上传图片文件');
+            return;
+        }
+
+        layer.load(2,{shade: [0.3, '#393D49']});
+        $.ajaxFileUpload({
+            url: '/file/uploadFile',
+            type: 'post',
+            data: {},
+            secureuri: false,
+            fileElementId: ['licenceFile'],
+            dataType: 'json',
+            success: function (result, status) {
+                layer.closeAll();
+                if(result.code == '0000'){
+                    var path = result.data[0].path;
+                    var url = result.data[0].url;
+                    $('.img1').attr('src',url);
+                    $('input[name=auserBlicencePath]').val(path);
+                }else{
+                    layer.msg(result.message);
+                }
+            },
+            error: function (result, status, e) {
+                console.log(result);
+                console.log(status);
+                console.log(e);
+            }
+        });
+    }
+
+    // 上传营业执照
+    function uploadIdCard(){
+        var filename = $('#IdcardFile').val();
+        var ext = filename.substring(filename.lastIndexOf('.') + 1,filename.length).toLowerCase();
+
+        if(!(ext == 'jpg' || ext == 'jpeg' || ext == 'png' || ext == 'bmp' || ext == 'gif')){
+            layer.msg('请上传图片文件');
+            return;
+        }
+
+        layer.load(2,{shade: [0.3, '#393D49']});
+        $.ajaxFileUpload({
+            url: '/file/uploadFile',
+            type: 'post',
+            data: {},
+            secureuri: false,
+            fileElementId: ['IdcardFile'],
+            dataType: 'json',
+            success: function (result, status) {
+                layer.closeAll();
+                if(result.code == '0000'){
+                    var path = result.data[0].path;
+                    var url = result.data[0].url;
+                    $('.img2').attr('src',url);
+                    $('input[name=auserCardidPath]').val(path);
+                }else{
+                    layer.msg(result.message);
+                }
+            },
+            error: function (result, status, e) {
+                console.log(result);
+                console.log(status);
+                console.log(e);
+            }
+        });
+    }
+
+    // 上传业务协议
+    function uploadUserFile(){
+        var filename = $('#userFile').val();
+        var ext = filename.substring(filename.lastIndexOf('.') + 1,filename.length).toLowerCase();
+
+        if(!(ext == 'jpg' || ext == 'jpeg' || ext == 'png' || ext == 'bmp' || ext == 'gif')){
+            layer.msg('请上传图片文件');
+            return;
+        }
+
+        layer.load(2,{shade: [0.3, '#393D49']});
+        $.ajaxFileUpload({
+            url: '/file/uploadFile',
+            type: 'post',
+            data: {},
+            secureuri: false,
+            fileElementId: ['userFile'],
+            dataType: 'json',
+            success: function (result, status) {
+                layer.closeAll();
+                if(result.code == '0000'){
+                    var path = result.data[0].path;
+                    var url = result.data[0].url;
+                    $('.img3').attr('src',url);
+                    $('input[name=auserFilePath]').val(path);
+                }else{
+                    layer.msg(result.message);
+                }
+            },
+            error: function (result, status, e) {
+                console.log(result);
+                console.log(status);
+                console.log(e);
+            }
+        });
+    }
+
+
+    function forcheck(){
+        // var myselect = document.getElementById("isUnifyPay");
+        var value = $("#isUnifyPay").val();
+        if(value == 1 ){
+            //$("#id")[0].style.display = 'none';
+            $("#unifyPayPhone").show();
+        }
+        if(value == 2){
+
+            $(".unifyPayPhone").val("");
+            $("#unifyPayPhone").hide();
+        }
+
+
+
+
+
+        //var value = myselect.options[index].value;
+        //alert("dsdsds<><>"+ value);
+    }
+
+
+
+
+    $(".unifyPayPhone").blur(function(){
+        var a = $("#checkUnipayphone").val();
+
+        var unifyPayPhone = $(".unifyPayPhone").val();
+
+        // if(!MobileUtil.isPhone(unifyPayPhone)){
+        // 	$("#checkUnipayphone").val('2');
+        //    $('.unifyPayPhone').focus();
+        //    layer.tips('统付付费号码异常,仅支持电信手机号码','.unifyPayPhone');
+        //    return false;
+        // }
+
+        if(!MobileUtil.isMobile(unifyPayPhone)){
+            $("#checkUnipayphone").val('2');
+            $('.unifyPayPhone').focus();
+            layer.tips('统付付费号码异常,仅支持电信手机号码及电信固话','.unifyPayPhone');
+            return false;
+        }
+
+
+
+        var d = {};
+
+
+        d["unifyPayPhone"] = unifyPayPhone;
+        d["requestType"] = 1441;
+
+        var layerload = layer.load(2,{shade: [0.3, '#393D49']});
+        $.post('/user/getPhoneAddress',d,function(result){
+            layer.close(layerload);
+            if(result.code == '0000'){
+                if(result.data.auserState!=null && result.data.auserState!=2){
+                    $("#checkUnipayphone").val('2');
+                    $('.unifyPayPhone').focus();
+                    layer.tips('此号码已被使用，请更换','.unifyPayPhone');
+                    return false;
+                }else{
+                    if(result.data.MNOs == 1){
+
+                        if(result.data.province != null  && result.data.province !=""){
+
+
+                            if(result.data.province.indexOf('新疆')!=-1|| result.data.province.indexOf('广东')!=-1){
+                                $("#checkUnipayphone").val('2');
+                                $('.unifyPayPhone').focus();
+                                layer.tips('新疆、广东暂不支持发展业务','.unifyPayPhone');
+                                return false;
+                            }else{
+                                if(typeof(result.data.feeType) != "undefined" || result.data.feeType != null || result.data.feeType != 0){
+                                    if(result.data.provinceCode != $("#phoneProvinceCode").val()) {
+                                        $("#checkUnipayphone").val('2');
+                                        $('.unifyPayPhone').focus();
+                                        layer.tips("请填写" + $("#aUserProvince").val() + "电信手机号码，其他省份无效",'.unifyPayPhone');
+                                        return false;
+                                    }
+                                }else{
+                                    $("#checkUnipayphone").val('2');
+                                    $('.unifyPayPhone').focus();
+                                    layer.tips('目前"+result.data.privonce+"省份暂不支持电信代扣,请重新输入！','.unifyPayPhone');
+                                    return false;
+                                }
+                            }
+
+                        }else{
+                            $("#checkUnipayphone").val('2');
+                            $('.unifyPayPhone').focus();
+                            layer.tips('此扣费号码异常','.unifyPayPhone');
+                            return false;
+
+                        }
+                        $("#checkUnipayphone").val('1');
+
+
+                    }else{
+                        $("#checkUnipayphone").val('2');
+                        $('.unifyPayPhone').focus();
+                        layer.tips('目前仅电信支持扣费，请输入电信手机号码或电信固话!','.unifyPayPhone');
+                        return false;
+                    }
+                }
+
+            }else{
+                $("#checkUnipayphone").val('2');
+                $('.unifyPayPhone').focus();
+                layer.msg(result.message);
+                return false;
+            }
+        });
+    });
+
+
+
+
+
+</script>
+</body>
+</html>
