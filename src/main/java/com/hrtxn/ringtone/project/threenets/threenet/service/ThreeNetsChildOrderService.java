@@ -600,6 +600,36 @@ public class ThreeNetsChildOrderService {
     }
 
     /**
+     * 批量删除个人铃音设置
+     * @param msisdn
+     * @param vals
+     * @return
+     * @throws NoLoginException
+     * @throws IOException
+     */
+    public AjaxResult batchDeleteRingSet(String msisdn, String vals) throws NoLoginException, IOException {
+        if (StringUtils.isNotNull(msisdn) && StringUtils.isNotNull(vals)){
+            return apiUtils.batchDeleteRingSet(msisdn,vals);
+        }
+        return AjaxResult.success(false,"参数不正确");
+    }
+
+    /**
+     * 批量删除个人铃音库
+     * @param msisdn
+     * @param vals
+     * @return
+     * @throws NoLoginException
+     * @throws IOException
+     */
+    public AjaxResult batchDeleteRing(String msisdn, String vals) throws NoLoginException, IOException {
+        if (StringUtils.isNotNull(msisdn) && StringUtils.isNotNull(vals)){
+            return apiUtils.batchDeleteRing(msisdn,vals);
+        }
+        return AjaxResult.success(false,"参数不正确");
+    }
+
+    /**
      * 联通工具箱-->用户信息
      * @param phoneNumber
      * @param session
@@ -626,6 +656,4 @@ public class ThreeNetsChildOrderService {
         map.put("systemLogListByMsisdn", systemLogListByMsisdn);
         return map;
     }
-
-
 }

@@ -807,4 +807,40 @@ public class ApiUtils {
         }
         return AjaxResult.success(false,"参数不正确");
     }
+
+    /**
+     * 批量删除个人铃音设置
+     * @param msisdn
+     * @param vals
+     * @return
+     * @throws NoLoginException
+     * @throws IOException
+     */
+    public AjaxResult batchDeleteRingSet(String msisdn, String vals) throws NoLoginException, IOException {
+        if(StringUtils.isNotNull(msisdn) && StringUtils.isNotNull(vals)){
+            Map<String, String> map = new HashMap<String, String>();
+            String jsonStr = "["+vals+"]";
+            map.put("delRingSetting",miguApi.delRingSetting(jsonStr, msisdn));
+            return AjaxResult.success(map,"删除成功！");
+        }
+        return AjaxResult.success(false,"参数不正确");
+    }
+
+    /**
+     * 批量删除个人铃音库
+     * @param msisdn
+     * @param vals
+     * @return
+     * @throws NoLoginException
+     * @throws IOException
+     */
+    public AjaxResult batchDeleteRing(String msisdn, String vals) throws NoLoginException, IOException {
+        if(StringUtils.isNotNull(msisdn) && StringUtils.isNotNull(vals)){
+            Map<String, String> map = new HashMap<String, String>();
+            String jsonStr = "["+vals+"]";
+            map.put("delRing",miguApi.delOtherRing(jsonStr, msisdn));
+            return AjaxResult.success(map,"删除成功！");
+        }
+        return AjaxResult.success(false,"参数不正确");
+    }
 }

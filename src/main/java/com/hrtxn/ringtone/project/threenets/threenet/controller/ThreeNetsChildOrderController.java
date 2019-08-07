@@ -286,7 +286,7 @@ public class ThreeNetsChildOrderController {
     }
 
     /**
-     * 移动工具箱-->删除铃音-->删除个人铃音库
+     * 移动工具箱-->删除铃音-->删除某条个人铃音库
      * @param msisdn
      * @param toneIds
      * @param type
@@ -303,6 +303,43 @@ public class ThreeNetsChildOrderController {
             return AjaxResult.error(e.getMessage());
         }
     }
+
+    /**
+     * 批量删除个人铃音设置
+     * @param msisdn
+     * @param vals
+     * @return
+     */
+    @PutMapping("/threenets/batchDeleteRingSet")
+    @ResponseBody
+    @Log(title = "批量删除个人铃音设置",businessType = BusinessType.DELETE,operatorLogType = OperatorLogType.THREENETS)
+    public AjaxResult batchDeleteRingSet(String msisdn,String vals){
+        try {
+            return threeNetsChildOrderService.batchDeleteRingSet(msisdn,vals);
+        } catch (Exception e) {
+            log.error("批量删除个人铃音设置 方法：batchDeleteRingSet 错误信息",e);
+            return AjaxResult.error(e.getMessage());
+        }
+    }
+
+    /**
+     * 批量删除个人铃音库
+     * @param msisdn
+     * @param vals
+     * @return
+     */
+    @PutMapping("/threenets/batchDeleteRing")
+    @ResponseBody
+    @Log(title = "批量删除个人铃音库",businessType = BusinessType.DELETE,operatorLogType = OperatorLogType.THREENETS)
+    public AjaxResult batchDeleteRing(String msisdn,String vals){
+        try {
+            return threeNetsChildOrderService.batchDeleteRing(msisdn,vals);
+        } catch (Exception e) {
+            log.error("批量删除个人铃音库 方法：batchDeleteRing 错误信息",e);
+            return AjaxResult.error(e.getMessage());
+        }
+    }
+
     /**
      * 联通工具箱-->用户信息
      * @param phoneNumber
