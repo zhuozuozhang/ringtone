@@ -214,6 +214,9 @@
         <if test="param != null and param.id != null and param.id != ''">
             AND r.order_id = #{param.id}
         </if>
+        <if test="param != null and param.isMonthly != null and param.isMonthly != ''">
+            AND r.ring_status = #{param.isMonthly}
+        </if>
     </sql>
     <!-- 根据父级ID删除铃音 -->
     <delete id="deleteByParadeOrderId" parameterType="java.lang.Integer">

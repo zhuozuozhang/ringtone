@@ -27,9 +27,21 @@
 
     <sql id="Base_Column_List">
         id, linkman, linkman_tel, status, create_date, ring_name, ring_id, parent_order_id,operate_order_id,payment_type,
-        operate_id, is_monthly, is_video_user, is_ringtone_user, is_reply_message, province,
-        city, operator, user_id,remark
+        operate_id, is_monthly, is_video_user, is_ringtone_user, is_reply_message, province,city, operator, user_id,remark
     </sql>
+    <!--管理端首页  根据条件获取子账号数量-->
+    <select id="getPhoneCount" resultType="int">
+        select count(*) from tb_threenets_child_order
+        where 1=1
+        <if test="operate != null and operate != ''">
+            AND operator = #{operate}
+        </if>
+        <if test="isMonthly != null and isMonthly != '' ">
+            AND is_monthly = #{isMonthly}
+        </if>
+        order by create_date desc
+    </select>
+
     <!--定时器 获取子账号信息-->
     <select id="findThreenetChildTimeTask" resultMap="BaseResultMap">
         select

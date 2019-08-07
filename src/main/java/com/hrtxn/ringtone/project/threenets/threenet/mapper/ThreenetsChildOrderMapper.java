@@ -125,4 +125,13 @@ public interface ThreenetsChildOrderMapper {
      * @return
      */
     List<ThreenetsChildOrder> findThreenetChildTimeTask(@Param("isMonthly") int isMonthly, @Param("userId") int userId);
+
+    /**
+     * 管理端首页--根据条件获取子账号数量
+     *
+     * @param operate
+     * @param isMonthly
+     * @return
+     */
+    Integer getPhoneCount(@Param("operate") Integer operate, @Param("isMonthly") Integer isMonthly);
 }

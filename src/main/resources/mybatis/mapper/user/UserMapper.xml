@@ -122,6 +122,9 @@
         FROM
             tb_user
         WHERE 1 = 1
+        <if test="baseRequest != null and baseRequest.userStatus != null and baseRequest.userStatus != ''">
+            AND user_status = #{baseRequest.userStatus}
+        </if>
         <if test="baseRequest != null and baseRequest.name != null and baseRequest.name != ''">
             AND user_name LIKE '%${baseRequest.name}%'
         </if>

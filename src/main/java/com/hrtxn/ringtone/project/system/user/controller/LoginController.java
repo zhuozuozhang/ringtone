@@ -1,21 +1,28 @@
 package com.hrtxn.ringtone.project.system.user.controller;
 
 import com.google.code.kaptcha.Constants;
+import com.hrtxn.ringtone.common.domain.BaseRequest;
 import com.hrtxn.ringtone.common.utils.AddressUtils;
 import com.hrtxn.ringtone.common.utils.MD5Utils;
 import com.hrtxn.ringtone.common.utils.ShiroUtils;
 import com.hrtxn.ringtone.freemark.config.AsyncConfig.AsyncConfig;
 import com.hrtxn.ringtone.project.system.log.domain.LoginLog;
 import com.hrtxn.ringtone.project.system.user.domain.LoginParam;
+import com.hrtxn.ringtone.project.system.user.service.UserService;
+import com.hrtxn.ringtone.project.threenets.threenet.service.ThreeNetsChildOrderService;
+import com.hrtxn.ringtone.project.threenets.threenet.service.ThreeNetsRingService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.IncorrectCredentialsException;
 import org.apache.shiro.authc.LockedAccountException;
 import org.apache.shiro.authc.UnknownAccountException;
 import org.apache.shiro.authc.UsernamePasswordToken;
+import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.apache.shiro.subject.Subject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 
@@ -32,6 +39,13 @@ import java.util.Objects;
 @Slf4j
 @Controller
 public class LoginController {
+
+    @Autowired
+    private UserService userService;
+    @Autowired
+    private ThreeNetsChildOrderService threeNetsChildOrderService;
+    @Autowired
+    private ThreeNetsRingService threeNetsRingService;
 
     /**
      * 执行登陆操作
@@ -72,12 +86,19 @@ public class LoginController {
             UsernamePasswordToken token = new UsernamePasswordToken(loginParam.getUsername(),MD5Utils.GetMD5Code(loginParam.getPassword()),false);
             // 执行登录操作
             subject.login(token);
-            // 将用户名存到session中
-            session.setAttribute("username",ShiroUtils.getSysUser().getUserName());
-            // 异步操作，执行修改登录时间以及添加登录日志
-            loginLog.setLoginLogStatus("登录成功");
-            AsyncConfig.ac().loginLogTask(ShiroUtils.getSysUser(),loginLog);
-            return "redirect:/system/index";
+
+            Boolean status = ShiroUtils.getSysUser().getUserStatus();
+            if (status){
+                // 将用户名存到session中
+                session.setAttribute("username",ShiroUtils.getSysUser().getUserName());
+                // 异步操作，执行修改登录时间以及添加登录日志
+                loginLog.setLoginLogStatus("登录成功");
+                AsyncConfig.ac().loginLogTask(ShiroUtils.getSysUser(),loginLog);
+                return "redirect:/system/index";
+            } else {
+                ShiroUtils.getSubject().logout();
+                msg = "您已被禁止登录，请联系管理员解除";
+            }
         } catch (UnknownAccountException e) {
             log.info("UnknownAccountException -- > 账号不正确");
             msg = "账号不正确";
@@ -127,11 +148,83 @@ public class LoginController {
      * 跳转管理端欢迎页
      * @return
      */
-//    @RequiresRoles("admin")
-//    @GetMapping("/admin/welcome")
-//    public String welcome(){
-//        return "admin/welcome";
-//    }
+    @RequiresRoles("admin")
+    @GetMapping("/admin/welcome")
+    public String welcome(ModelMap map){
+        // 数据统计
+        // 1、用户（总用户数、正常用户）
+        // 总数
+        int userCount = userService.getCount(null);
+        map.put("userCount",userCount);
+        // 正常
+        int userSuccCount = userService.getCount(1);
+        map.put("userSuccCount",userSuccCount);
+
+        // 2、号码（总号码数、移动总数/已包月数、电信总数/已包月数、联通总数/已包月数）
+        // 总数
+        Integer phoneCount = threeNetsChildOrderService.getPhoneCount(null,null);
+        map.put("phoneCount",phoneCount);
+
+        // 移动
+        // 移动总数
+        Integer miguPhoneCount = threeNetsChildOrderService.getPhoneCount(1,null);
+        // 移动已包月数
+        Integer miguPhoneSuccCount = threeNetsChildOrderService.getPhoneCount(1,2);
+        map.put("miguPhoneCount",miguPhoneCount+"/"+miguPhoneSuccCount);
+
+        // 电信
+        // 电信总数
+        Integer mcardPhoneCount = threeNetsChildOrderService.getPhoneCount(2,null);
+        // 电信已包月数
+        Integer mcardPhoneSuccCount = threeNetsChildOrderService.getPhoneCount(2,2);
+        map.put("mcardPhoneCount",mcardPhoneCount+"/"+mcardPhoneSuccCount);
+
+        // 联通
+        // 联通总数
+        Integer swxlPhoneCount = threeNetsChildOrderService.getPhoneCount(3,null);
+        // 联通已包月数
+        Integer swxlPhoneSuccCount = threeNetsChildOrderService.getPhoneCount(3,2);
+        map.put("swxlPhoneCount",swxlPhoneCount+"/"+swxlPhoneSuccCount);
+
+        // 3、铃音（总铃音数、移动总数/已包月数、电信总数/已包月数、联通总数/已包月数）
+        // 总数
+        int ringCount = threeNetsRingService.getCount(null);
+        map.put("ringCount",ringCount);
+        // 移动总数
+        BaseRequest miguBaseRequest = new BaseRequest();
+        miguBaseRequest.setOperator(1);
+        int miguRingCount = threeNetsRingService.getCount(miguBaseRequest);
+        // 移动激活成功数量
+        BaseRequest miguSuccBaseRequest = new BaseRequest();
+        miguSuccBaseRequest.setIsMonthly(3);
+        miguSuccBaseRequest.setOperator(1);
+        int miguRingSuccCount = threeNetsRingService.getCount(miguSuccBaseRequest);
+        map.put("miguRingCount",miguRingCount+"/"+miguRingSuccCount);
+
+        // 电信总数
+        BaseRequest mcardBaseRequest = new BaseRequest();
+        mcardBaseRequest.setOperator(2);
+        int mcardRingCount = threeNetsRingService.getCount(mcardBaseRequest);
+        // 电信激活成功数量
+        BaseRequest mcardSuccBaseRequest = new BaseRequest();
+        mcardSuccBaseRequest.setIsMonthly(3);
+        mcardSuccBaseRequest.setOperator(2);
+        int mcardRingSuccCount = threeNetsRingService.getCount(mcardSuccBaseRequest);
+        map.put("mcardRingCount",mcardRingCount+"/"+mcardRingSuccCount);
+
+        // 联通总数
+        BaseRequest swxlBaseRequest = new BaseRequest();
+        swxlBaseRequest.setOperator(3);
+        int swxlRingCount = threeNetsRingService.getCount(swxlBaseRequest);
+        // 联通激活成功数量
+        BaseRequest swxlSuccBaseRequest = new BaseRequest();
+        swxlSuccBaseRequest.setIsMonthly(3);
+        swxlSuccBaseRequest.setOperator(3);
+        int swxlRingSuccCount = threeNetsRingService.getCount(swxlSuccBaseRequest);
+        map.put("swxlRingCount",swxlRingCount+"/"+swxlRingSuccCount);
+
+        return "admin/welcome";
+    }
 
     /**
      * 客户端首页

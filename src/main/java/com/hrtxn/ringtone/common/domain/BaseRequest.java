@@ -28,6 +28,8 @@ public class BaseRequest {
     private String month;
 
     private String year;
+    // 用户状态
+    private Integer userStatus;
 
 
     //企业资质

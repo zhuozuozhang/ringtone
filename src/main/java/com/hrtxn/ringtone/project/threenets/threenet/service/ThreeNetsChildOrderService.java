@@ -103,31 +103,33 @@ public class ThreeNetsChildOrderService {
      */
     private ThreenetsChildOrder getParameters(BaseRequest request) {
         ThreenetsChildOrder order = new ThreenetsChildOrder();
-        order.setParentOrderId(request.getId());
-        Integer userRole = ShiroUtils.getSysUser().getUserRole();
-        if (userRole != 1) {
-            order.setUserId(ShiroUtils.getSysUser().getId());
-        }
-        if (request.getTimeType() == null && request.getIsMonthly() == null) {
-            return order;
-        }
-        if (!request.getTimeType().toString().equals("0")) {
-            order.setEnd(DateUtils.formatNow());
-            if ("1".equals(request.getTimeType().toString())) {//一天
-                order.setStart(DateUtils.getPastDate(1));
-            } else if ("2".equals(request.getTimeType().toString())) {//一周
-                order.setStart(DateUtils.getPastDate(7));
-            } else if ("3".equals(request.getTimeType().toString())) {//半个月
-                order.setStart(DateUtils.getPastDate(15));
-            } else {//一个月
-                order.setStart(DateUtils.getPastDate(65));
+        if (StringUtils.isNotNull(request)){
+            order.setParentOrderId(request.getId());
+            Integer userRole = ShiroUtils.getSysUser().getUserRole();
+            if (userRole != 1) {
+                order.setUserId(ShiroUtils.getSysUser().getId());
             }
-        }
-        if (!request.getIsMonthly().toString().equals("0")) {
-            order.setIsMonthly(request.getIsMonthly());
-            if ("4".equals(request.getIsMonthly())) {
-                order.setIsMonthly(2);
-                order.setIsReplyMessage(true);
+            if (request.getTimeType() == null && request.getIsMonthly() == null) {
+                return order;
+            }
+            if (!request.getTimeType().toString().equals("0")) {
+                order.setEnd(DateUtils.formatNow());
+                if ("1".equals(request.getTimeType().toString())) {//一天
+                    order.setStart(DateUtils.getPastDate(1));
+                } else if ("2".equals(request.getTimeType().toString())) {//一周
+                    order.setStart(DateUtils.getPastDate(7));
+                } else if ("3".equals(request.getTimeType().toString())) {//半个月
+                    order.setStart(DateUtils.getPastDate(15));
+                } else {//一个月
+                    order.setStart(DateUtils.getPastDate(65));
+                }
+            }
+            if (!request.getIsMonthly().toString().equals("0")) {
+                order.setIsMonthly(request.getIsMonthly());
+                if ("4".equals(request.getIsMonthly())) {
+                    order.setIsMonthly(2);
+                    order.setIsReplyMessage(true);
+                }
             }
         }
         return order;
@@ -536,5 +538,16 @@ public class ThreeNetsChildOrderService {
             return AjaxResult.error("获取数据出错！");
         }
         return AjaxResult.error("参数格式不正确！");
+    }
+
+    /**
+     * 管理端首页--根据条件获取子账号数量
+     *
+     * @param operate
+     * @param isMonthly
+     * @return
+     */
+    public Integer getPhoneCount(Integer operate, Integer isMonthly) {
+        return threenetsChildOrderMapper.getPhoneCount(operate,isMonthly);
     }
 }

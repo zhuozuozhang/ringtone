@@ -58,7 +58,7 @@ function showTable() {
     }, {
         targets: [5],
         render: function (data, type, row, meta) {
-            return '<a><span onclick="openPlayer(' + row.id + ');">试听</span></a>'
+            return '<a><span onclick="openPlayer(' + row.id + ');">试听</span></a>';
         }
     }, {
         targets: [6],

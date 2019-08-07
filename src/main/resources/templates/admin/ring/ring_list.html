@@ -64,16 +64,26 @@
         },{
             targets: [7],
             render: function (data, type, row, meta) {
-                var id = row.id;
-                var ringType = row.ringType;
-                if ("音频" == ringType) {
-                    return "<div><audio style='height: 25px;width: 245px;' src='/threenets/playRing/"+id+"' controls>点击试听</audio></div>";
-                }else{
-                    return "<div><video style='height: 100px;width: 245px;' src='/threenets/playRing/"+id+"' controls>点击试听</video></div>";
-                }
+                return '<a><span onclick="openPlayer(' + row.id + ');">试听</span></a>';
+                // var ringType = row.ringType;
+                // if ("音频" == ringType) {
+                //     return "<div><audio style='height: 25px;width: 245px;' src='/threenets/playRing/"+row.id+"' controls>点击试听</audio></div>";
+                // }else{
+                //     return "<div><video style='height: 100px;width: 245px;' src='/threenets/playRing/"+row.id+"' controls>点击试听</video></div>";
+                // }
             }
         }];
         page("#ring_table", 15, {}, "/admin/getRingList", columns, columnDefs);
+    }
+
+    //在线试听
+    function openPlayer(id) {
+        layer.open({
+            type: 1,
+            title: '在线试听',
+            area: ['800px', '560px'],
+            content: '<video id="ovideo" autoplay loop src="/threenets/playRing/' + id + '" controls="controls" preload="auto" allowfullscreen="true" quality="high" width="800px" height="514px" align="middle" allowscriptaccess="always" flashvars="isAutoPlay=true" type="application/x-shockwave-flash"></video>'
+        });
     }
 </script>
 </html>

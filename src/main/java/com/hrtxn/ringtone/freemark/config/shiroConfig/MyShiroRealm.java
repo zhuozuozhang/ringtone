@@ -49,10 +49,6 @@ public class MyShiroRealm extends AuthorizingRealm {
         User user = null;
         try {
             user = userMapper.findUserByUserName(token.getUsername());
-            // 状态
-            if (!user.getUserStatus()){
-                return null;
-            }
         } catch (Exception e) {
             log.error("shiro 登录认证,方法：【{}】,错误信息：【{}】","doGetAuthenticationInfo",e);
         }

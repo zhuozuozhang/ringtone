@@ -11,11 +11,9 @@
 				<li class="layui-nav-item">
 					<a href="javascript:;">[[${session.username}]]</a>
 					<dl class="layui-nav-child"> 
-						<dd><a onclick="x_admin_show('个人信息','http://www.baidu.com')">个人信息</a></dd>
 						<dd><a th:href="@{/loginout}">退出</a></dd>
 					</dl>
 				</li>
-				<li class="layui-nav-item to-index"><a href="http://www.baidu.com" target="-blank">前台首页</a></li>
 			</ul>
 		</div>
 		<div class="left-nav">
@@ -34,11 +32,17 @@
 									<cite>用户列表</cite>
 								</a>
 							</li>
+							<li>
+								<a _href="/admin/userList">
+									<i class="iconfont">&#xe6a7;</i>
+									<cite>用户搜索</cite>
+								</a>
+							</li>
 						</ul>
 					</li>
 					<li>
 						<a href="javascript:;">
-							<i class="iconfont">&#xe6b8;</i>
+							<i class="iconfont">&#xe713;</i>
 							<cite>铃音管理</cite>
 							<i class="iconfont nav_right">&#xe6a7;</i>
 						</a>
@@ -53,7 +57,7 @@
 					</li>
 					<li>
 						<a href="javascript:;">
-							<i class="iconfont">&#xe6b8;</i>
+							<i class="iconfont">&#xe725;</i>
 							<cite>号码认证</cite>
 							<i class="iconfont nav_right">&#xe6a7;</i>
 						</a>
@@ -86,7 +90,7 @@
 					</li>
 					<li>
 						<a href="javascript:;">
-							<i class="iconfont">&#xe6b8;</i>
+							<i class="iconfont">&#xe6ce;</i>
 							<cite>公众号管理</cite>
 							<i class="iconfont nav_right">&#xe6a7;</i>
 						</a>
@@ -105,7 +109,7 @@
 							</li>
 							<li>
 								<a _href="html/member-list.html">
-									<i class="iconfont">&#xe6a7;</i>
+									<i class="iconfont">&#xe6b8;</i>
 									<cite>订单列表</cite>
 								</a>
 							</li >
@@ -119,7 +123,7 @@
 					</li>
 					<li>
 						<a href="javascript:;">
-							<i class="iconfont">&#xe6b8;</i>
+							<i class="iconfont">&#xe6a8;</i>
 							<cite>公告管理</cite>
 							<i class="iconfont nav_right">&#xe6a7;</i>
 						</a>
@@ -134,7 +138,7 @@
 					</li>
 					<li>
 						<a href="javascript:;">
-							<i class="iconfont">&#xe6ae;</i>
+							<i class="iconfont">&#xe757;</i>
 							<cite>数据统计</cite>
 							<i class="iconfont nav_right">&#xe6a7;</i>
 						</a>
@@ -155,7 +159,7 @@
 					</li> 
 					<li>
 						<a href="javascript:;">
-							<i class="iconfont">&#xe6b8;</i>
+							<i class="iconfont">&#xe761;</i>
 							<cite>系统管理</cite>
 							<i class="iconfont nav_right">&#xe6a7;</i>
 						</a>

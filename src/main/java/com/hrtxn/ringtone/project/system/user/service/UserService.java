@@ -267,4 +267,16 @@ public class UserService {
         }
         return AjaxResult.error("参数格式不正确！");
     }
+
+    /**
+     * 获取用户总数
+     *
+     * @param status
+     * @return
+     */
+    public int getCount(Integer status) {
+        BaseRequest request = new BaseRequest();
+        request.setUserStatus(status);
+        return userMapper.getUserCountByCon(request);
+    }
 }
