@@ -632,28 +632,31 @@ public class ThreeNetsChildOrderService {
     /**
      * 联通工具箱-->用户信息
      * @param phoneNumber
-     * @param session
      * @return
      * @throws NoLoginException
      * @throws IOException
      */
-    public Map<String, String> getUnicomUserInfoByPhoneNumber(String phoneNumber, HttpSession session) throws NoLoginException, IOException {
-        String silentMemberByMsisdn = null;
-        String systemLogListByMsisdn = null;
-        Map<String, String> map = new HashMap<String, String>();
-        Object obj = session.getAttribute("swxlApi");
-        SwxlApi swxlApi = null;
-        if (obj instanceof SwxlApi) {
-            swxlApi = (SwxlApi) obj;
+    public AjaxResult getUnicomUserInfoByPhoneNumber(String phoneNumber) throws NoLoginException, IOException {
+        if(StringUtils.isNotNull(phoneNumber)){
+            Map<String, String> map = new HashMap<String, String>();
+            map.put("silentMemberByMsisdn", apiUtils.getSilentMemberByMsisdn(phoneNumber));
+            map.put("systemLogListByMsisdn", apiUtils.getSystemLogListByMsisdn(phoneNumber));
+            return AjaxResult.success(map,"查找到了");
         }
-        if (swxlApi == null) {
-            swxlApi = new SwxlApi();
-            session.setAttribute("swxlApi", swxlApi);
+        return AjaxResult.success(false,"参数不正确");
+    }
+
+    /**
+     * 联通工具箱-->用户信息-->删除某条用户信息
+     * @param msisdn
+     * @return
+     * @throws NoLoginException
+     * @throws IOException
+     */
+    public AjaxResult deleteSilentMemberByMsisdn(String msisdn) throws NoLoginException, IOException {
+        if(StringUtils.isNotNull(msisdn)){
+            return apiUtils.deleteSilentMemberByMsisdn(msisdn);
         }
-        silentMemberByMsisdn = apiUtils.getSilentMemberByMsisdn(phoneNumber);
-        systemLogListByMsisdn = apiUtils.getSystemLogListByMsisdn(phoneNumber);
-        map.put("silentMemberByMsisdn", silentMemberByMsisdn);
-        map.put("systemLogListByMsisdn", systemLogListByMsisdn);
-        return map;
+        return AjaxResult.success(false,"参数不正确");
     }
 }

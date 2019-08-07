@@ -343,18 +343,34 @@ public class ThreeNetsChildOrderController {
     /**
      * 联通工具箱-->用户信息
      * @param phoneNumber
-     * @param session
      * @return
      */
-    @PostMapping("/threenets/getUnicomUserInfoByPhoneNumber/{phoneNumber}")
+    @PutMapping("/threenets/getUnicomUserInfoByPhoneNumber/{phoneNumber}")
     @ResponseBody
-    public Map<String , String> getUnicomUserInfoByPhoneNumber(String phoneNumber,HttpSession session) {
-        Map<String, String> map = new HashMap<String,String>();
+    @Log(title = "联通工具箱-->用户信息",operatorLogType = OperatorLogType.THREENETS)
+    public AjaxResult getUnicomUserInfoByPhoneNumber(@PathVariable String phoneNumber) {
         try {
-            return threeNetsChildOrderService.getUnicomUserInfoByPhoneNumber(phoneNumber,session);
+            return threeNetsChildOrderService.getUnicomUserInfoByPhoneNumber(phoneNumber);
         } catch (Exception e) {
-            e.printStackTrace();
-            return null;
+            log.error("联通工具箱-->用户信息 方法：getUnicomUserInfoByPhoneNumber 错误信息", e);
+            return AjaxResult.error(e.getMessage());
+        }
+    }
+
+    /**
+     * 联通工具箱-->用户信息-->删除某条用户信息
+     * @param msisdn
+     * @return
+     */
+    @PutMapping("/threenets/deleteSilentMemberByMsisdn/{msisdn}")
+    @ResponseBody
+    @Log(title = "联通工具箱-->用户信息-->删除某条用户信息",businessType = BusinessType.DELETE,operatorLogType = OperatorLogType.THREENETS)
+    public AjaxResult deleteSilentMemberByMsisdn(@PathVariable String msisdn) {
+        try {
+            return threeNetsChildOrderService.deleteSilentMemberByMsisdn(msisdn);
+        } catch (Exception e) {
+            log.error("联通工具箱-->用户信息-->删除某条用户信息 方法：deleteSilentMemberByMsisdn 错误信息", e);
+            return AjaxResult.error(e.getMessage());
         }
     }
 

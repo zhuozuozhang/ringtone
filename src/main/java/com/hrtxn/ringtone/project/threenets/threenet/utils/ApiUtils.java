@@ -696,7 +696,6 @@ public class ApiUtils {
      * @throws IOException
      */
     public String getSilentMemberByMsisdn(String phoneNumber) throws NoLoginException, IOException {
-        String msg = "查找到了用户信息";
         if(StringUtils.isNotNull(phoneNumber)){
             return swxlApi.getSilentMemberByMsisdn(phoneNumber);
         }else {
@@ -712,7 +711,6 @@ public class ApiUtils {
      * @throws IOException
      */
     public String getSystemLogListByMsisdn(String phoneNumber) throws NoLoginException, IOException {
-        String msg = "查找到了用户信息";
         if(StringUtils.isNotNull(phoneNumber)){
             return swxlApi.getSystemLogListByMsisdn(phoneNumber);
         }else {
@@ -840,6 +838,22 @@ public class ApiUtils {
             String jsonStr = "["+vals+"]";
             map.put("delRing",miguApi.delOtherRing(jsonStr, msisdn));
             return AjaxResult.success(map,"删除成功！");
+        }
+        return AjaxResult.success(false,"参数不正确");
+    }
+
+    /**
+     * 联通工具箱-->用户信息-->删除某条用户信息
+     * @param msisdn
+     * @return
+     * @throws NoLoginException
+     * @throws IOException
+     */
+    public AjaxResult deleteSilentMemberByMsisdn(String msisdn) throws NoLoginException, IOException {
+        if(StringUtils.isNotNull(msisdn)){
+            Map<String, String> map = new HashMap<String, String>();
+            map.put("delSilentMember",swxlApi.deleteSilentMemberByMsisdn(msisdn));
+            return AjaxResult.success(map,"删除成功");
         }
         return AjaxResult.success(false,"参数不正确");
     }

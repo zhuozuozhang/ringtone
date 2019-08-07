@@ -8,16 +8,16 @@
     <meta name="renderer" content="webkit">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
-    <link rel="stylesheet" href="../../public/layui/css/layui.css">
-    <link rel="stylesheet" href="../../public/css/commer.css">
-    <link rel="stylesheet" type="text/css" href="../../public/dataTables/jquery.dataTables.min.css">
-    <link rel="stylesheet" href="../../client/threenets/css/head.css">
+    <link rel="stylesheet" type="text/css" th:href="@{/public/layui/css/layui.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/public/css/commer.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/public/dataTables/jquery.dataTables.min.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/client/threenets/css/head.css}">
 </head>
 
 <body>
     <div style="width:850px;margin:10px auto;">
         <div style="padding-top:10px;padding-left:0px;font-size:16px;">
-            手机号：<input type="text" id="phoneNumber" maxlength="11">
+            手机号：<input type="text" id="phoneNum" maxlength="11">
             <button type="button" class="btn btn-primary" id="sear" onclick="getUnicomUserInfoByPhoneNumber();">搜索</button>
             <button type="button" class="btn btn-primary" id="sear" onclick="resetPhoneNumberText();">清空</button>
         </div>
@@ -82,35 +82,31 @@
 <script>
     //搜索
     function getUnicomUserInfoByPhoneNumber() {
-        var phoneNumber = $("#phoneNumber").val();
-        if (phoneNumber.length < 11) {
-            $(".userInfoTable").html("<td colspan='6' style='color:#F00;'>请输入正确的联通手机号码！</td>");
-            $(".tbody").html("<tr><td colspan='4' style='color:#F00;'>请输入正确的联通手机号码！</td></tr>");
+        var phoneNumber = $("#phoneNum").val();
+        if(phoneNumber == null || phoneNumber ==""){
+            layer.msg("请输入联通的手机号码！",{icon: 0, time: 3000});
             return;
-        } else {
-            // formDialog("正在查询...");
-            var url = "/threenets/getUnicomUserInfoByPhoneNumber/" + phoneNumber;
-            $.post(url, {
-                "phoneNumber": phoneNumber
-            }, function (data, textstatus) {
-                // art.dialog({
-                //     id: 'formDialog'
-                // }).close();
+        }else if (phoneNumber.length < 11) {
+            layer.msg("请输入正确的联通手机号码！",{icon: 0, time: 3000});
+            return;
+        }
+        var url = "/threenets/getUnicomUserInfoByPhoneNumber/" + phoneNumber;
+        AjaxPut(url,{
+            phoneNumber:phoneNumber
+        },function (res) {
+            if (res.code == 200 && res.data) {
+                var data = res.data;
                 if(data != null){
                     var silentMemberByMsisdn = $.parseJSON(data.silentMemberByMsisdn);
                     var systemLogListByMsisdn = $.parseJSON(data.systemLogListByMsisdn);
-
                     if(!silentMemberByMsisdn.success || !systemLogListByMsisdn.success){
-                        $(".userInfoTable").html("<td colspan='6' style='color:#F00;'>抱歉,系统没有查询到数据</td>")
-                        $(".tbody").html("<tr><td colspan='4' style='color:#F00;'>抱歉,系统没有查询到数据</td></tr>")
+                        layer.msg("都不成功",{icon: 5,time: 3000});
                         return;
                     }
                     var silentMemberByMsisdnData = silentMemberByMsisdn.data.data;
                     var systemLogListByMsisdnData = systemLogListByMsisdn.data.data;
 
                     if(silentMemberByMsisdnData != null && silentMemberByMsisdnData.length > 0){
-
-
                         for(var i = 0; i < silentMemberByMsisdnData.length; i++ ){
                             var str = "";
                             str += "<tr>";
@@ -128,7 +124,7 @@
                                 str += "<td>-</td>";
                             }
                             if(silentMemberByMsisdnData[i].isSilent){
-                                str += "<td><a style='color: #000;' href='javascript:deleteSilentMemberByMsisdn(\""+silentMemberByMsisdnData[i].msisdn+"\");'>&nbsp;删除&nbsp;&nbsp;&nbsp;&nbsp;</a></td>";
+                                str += "<td><a class='layui-icon layui-icon-delete' title='删除' href='javascript:deleteSilentMemberByMsisdn(\""+silentMemberByMsisdnData[i].msisdn+"\");'></a></td>";
                             }else{
                                 str += "<td>-</td>";
                             }
@@ -169,73 +165,58 @@
                             $(".tbody").html("<tr><td colspan='4' style='color:#F00;'>抱歉,系统没有查询到数据</td></tr>")
                         }
                     }
-                }else{
-                    tipDialog("获取失败");
+                }else {
+                    layer.msg("data为null",{icon: 5,time: 3000});
                 }
-            }, "json");
-        }
+            }else{
+                layer.msg("服务器异常",{icon: 5,time: 3000})
+                // res.code==200&&res.data
+            }
+        });
     }
 
+    //重置搜索框
     function resetPhoneNumberText() {
-        $("#phoneNumber").val("");
+        $("#phoneNum").val("");
     }
 
-        // //分页
-        // $(document).ready(function () {
-        //     $('#per').DataTable({
-        //         "ordering": true, //禁止排序
-        //         "searching": false, //搜索框
-        //         "bLengthChange": false,
-        //         "language": {
-        //             "decimal": ",",
-        //             "thousands": ".",k
-        //             "lengthMenu": " _MENU_ ",
-        //             "zeroRecords": "没有找到记录",
-        //             "info": "",
-        //             "infoEmpty": "",
-        //             "infoFiltered": "",
-        //             "paginate": {
-        //                 // "first" : "",
-        //                 "sPrevious": "上一页",
-        //                 "sNext": "下一页",
-        //                 // "sLast" : ""
-        //             }
-        //         }
-        //     });
-        // });
-
-        function tipDialog(info){
-            art.dialog({
-                time: 2,
-                lock: true,
-                content: info
-            });
+    //删除联通用户
+    function deleteSilentMemberByMsisdn(msisdn) {
+        var msisdn = $("#phoneNum").val();
+        if(msisdn == null || msisdn ==""){
+            layer.msg("请输入联通手机号",{icon: 0, time: 3000});
+            return;
         }
+        var url = "/threenets/deleteSilentMemberByMsisdn/"+msisdn;
+        AjaxPut(url,{
+            msisdn:msisdn
+        },function (res) {
+            if (res.code == 200 && res.data) {
+                getUnicomUserInfoByPhoneNumber(msisdn);
+                $("#userInfoTable").DataTable().ajax.reload(null, true);
+                $("#per").DataTable().ajax.reload(null, true);
+            }else{
+                layer.msg(res.msg, {icon: 5, time: 3000});
+            }
+        });
+    }
 
-        function formDialog(info){
-            art.dialog({
-                id:'formDialog',
-                lock: true,
-                content: info
-            });
-        }
-
-        //时间戳转换为yyyy-MM-dd HH:mm:ss格式的时间
-        function formatUnixtimestamp (unixtimestamp){
-            var date = new Date(unixtimestamp);
-            var y = date.getFullYear();
-            var m = date.getMonth() + 1;
-            m = m < 10 ? ('0' + m) : m;
-            var d = date.getDate();
-            d = d < 10 ? ('0' + d) : d;
-            var h = date.getHours();
-            h = h < 10 ? ('0' + h) : h;
-            var minute = date.getMinutes();
-            var second = date.getSeconds();
-            minute = minute < 10 ? ('0' + minute) : minute;
-            second = second < 10 ? ('0' + second) : second;
-            return y + '-' + m + '-' + d+' '+h+':'+minute+':'+second;
-        }
+    //时间戳转换为yyyy-MM-dd HH:mm:ss格式的时间
+    function formatUnixtimestamp(unixtimestamp) {
+        var date = new Date(unixtimestamp);
+        var y = date.getFullYear();
+        var m = date.getMonth() + 1;
+        m = m < 10 ? ('0' + m) : m;
+        var d = date.getDate();
+        d = d < 10 ? ('0' + d) : d;
+        var h = date.getHours();
+        h = h < 10 ? ('0' + h) : h;
+        var minute = date.getMinutes();
+        var second = date.getSeconds();
+        minute = minute < 10 ? ('0' + minute) : minute;
+        second = second < 10 ? ('0' + second) : second;
+        return y + '-' + m + '-' + d + ' ' + h + ':' + minute + ':' + second;
+    }
 </script>
 
 </html>

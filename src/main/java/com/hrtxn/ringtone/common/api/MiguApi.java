@@ -732,25 +732,10 @@ public class MiguApi implements Serializable {
      * @throws IOException
      */
     public String getUserInfoByRingMsisdn(String msisdn) throws NoLoginException, IOException {
-        String result = null;
-        DefaultHttpClient httpclient = new DefaultHttpClient();
-        HttpPost httppost = new HttpPost(toolbox_userInfo_url);
-        List<NameValuePair> formparams = new ArrayList<NameValuePair>();
-        formparams.add(new BasicNameValuePair("msisdn", msisdn));
-        httpclient.setCookieStore(this.getCookieStore());
-        try {
-            UrlEncodedFormEntity entity = new UrlEncodedFormEntity(formparams, "utf-8");
-            httppost.setEntity(entity);
-            HttpResponse response = httpclient.execute(httppost);
-            HttpEntity resEntity = response.getEntity();
-            result = EntityUtils.toString(resEntity);
-            this.setMiguCookie(httpclient.getCookieStore());
-        } catch (Exception e) {
-            System.out.println(e);
-        } finally {
-            httppost.abort();
-            httpclient.getConnectionManager().shutdown();
-        }
+        HashMap map = new HashMap();
+        map.put("msisdn",msisdn);
+        String result = sendPost(map,toolbox_userInfo_url);
+        log.info("移动工具箱-->用户信息 参数：{} 结果：{}",msisdn,result);
         return result;
     }
 
@@ -762,25 +747,10 @@ public class MiguApi implements Serializable {
      * @throws IOException
      */
     public String getRingSettingListByMsisdn(String msisdn) throws NoLoginException, IOException {
-        String result = null;
-        DefaultHttpClient httpclient = new DefaultHttpClient();
-        HttpPost httppost = new HttpPost(getRingSettingListByMsisdn_url);
-        List<NameValuePair> formparams = new ArrayList<NameValuePair>();
-        formparams.add(new BasicNameValuePair("msisdn", msisdn));
-        httpclient.setCookieStore(this.getCookieStore());
-        try {
-            UrlEncodedFormEntity entity = new UrlEncodedFormEntity(formparams,"utf-8");
-            httppost.setEntity(entity);
-            HttpResponse response = httpclient.execute(httppost);
-            HttpEntity resEntity = response.getEntity();
-            result = EntityUtils.toString(resEntity);
-            log.info(result);
-        } catch (Exception e) {
-            System.out.println(e);
-        } finally {
-            httppost.abort();
-            httpclient.getConnectionManager().shutdown();
-        }
+        HashMap map = new HashMap();
+        map.put("msisdn",msisdn);
+        String result = sendPost(map,getRingSettingListByMsisdn_url);
+        log.info("移动工具箱-->删除铃音-->取得个人铃音设置列表 参数：{} 结果：{}",msisdn,result);
         return result;
     }
 
@@ -793,26 +763,11 @@ public class MiguApi implements Serializable {
      * @throws IOException
      */
     public String delRingSetting(String data, String msisdn) throws NoLoginException, IOException {
-        String result = null;
-        DefaultHttpClient httpclient = new DefaultHttpClient();
-        HttpPost httppost = new HttpPost(delRingSetting_url);
-        List<NameValuePair> formparams = new ArrayList<NameValuePair>();
-        formparams.add(new BasicNameValuePair("data", data));
-        formparams.add(new BasicNameValuePair("msisdn", msisdn));
-        httpclient.setCookieStore(this.getCookieStore());
-        try {
-            UrlEncodedFormEntity entity = new UrlEncodedFormEntity(formparams, "utf-8");
-            httppost.setEntity(entity);
-            HttpResponse response = httpclient.execute(httppost);
-            HttpEntity resEntity = response.getEntity();
-            result = EntityUtils.toString(resEntity);
-            System.out.println("result=" + result);
-        } catch (Exception e) {
-            System.out.println(e);
-        } finally {
-            httppost.abort();
-            httpclient.getConnectionManager().shutdown();
-        }
+        HashMap map = new HashMap();
+        map.put("data",data);
+        map.put("msisdn",msisdn);
+        String result = sendPost(map,delRingSetting_url);
+        log.info("移动工具箱-->用户信息-->删除个人铃音设置列表 参数：{} 结果：{}",data,msisdn,result);
         return result;
     }
 
@@ -824,25 +779,10 @@ public class MiguApi implements Serializable {
      * @throws IOException
      */
     public String getRingListByMsisdn(String msisdn) throws NoLoginException, IOException {
-        String result = null;
-        DefaultHttpClient httpclient = new DefaultHttpClient();
-        HttpPost httppost = new HttpPost(getRingListByMsisdn_url);
-        List<NameValuePair> formparams = new ArrayList<NameValuePair>();
-        formparams.add(new BasicNameValuePair("msisdn", msisdn));
-        httpclient.setCookieStore(this.getCookieStore());
-        try {
-            UrlEncodedFormEntity entity = new UrlEncodedFormEntity(formparams,"utf-8");
-            httppost.setEntity(entity);
-            HttpResponse response = httpclient.execute(httppost);
-            HttpEntity resEntity = response.getEntity();
-            result = EntityUtils.toString(resEntity);
-            log.info(result);
-        } catch (Exception e) {
-            System.out.println(e);
-        } finally {
-            httppost.abort();
-            httpclient.getConnectionManager().shutdown();
-        }
+        HashMap map = new HashMap();
+        map.put("msisdn",msisdn);
+        String result = sendPost(map,getRingListByMsisdn_url);
+        log.info("移动工具箱-->用户信息-->获得个人铃音库列表 参数：{} 结果：{}",msisdn,result);
         return result;
     }
 
@@ -855,26 +795,11 @@ public class MiguApi implements Serializable {
      * @throws IOException
      */
     public String delOtherRing(String toneIds, String msisdn) throws NoLoginException, IOException {
-        String result = null;
-        DefaultHttpClient httpclient = new DefaultHttpClient();
-        HttpPost httppost = new HttpPost(delOtherRing_url);
-        List<NameValuePair> formparams = new ArrayList<NameValuePair>();
-        formparams.add(new BasicNameValuePair("toneIds", toneIds));
-        formparams.add(new BasicNameValuePair("msisdn", msisdn));
-        httpclient.setCookieStore(this.getCookieStore());
-        try {
-            UrlEncodedFormEntity entity = new UrlEncodedFormEntity(formparams, "utf-8");
-            httppost.setEntity(entity);
-            HttpResponse response = httpclient.execute(httppost);
-            HttpEntity resEntity = response.getEntity();
-            result = EntityUtils.toString(resEntity);
-            System.out.println("result=" + result);
-        } catch (Exception e) {
-            System.out.println(e);
-        } finally {
-            httppost.abort();
-            httpclient.getConnectionManager().shutdown();
-        }
+        HashMap map = new HashMap();
+        map.put("toneIds",toneIds);
+        map.put("msisdn",msisdn);
+        String result = sendPost(map,delOtherRing_url);
+        log.info("移动工具箱-->删除铃音-->删除多余铃音 参数：{} 结果：{}",toneIds,msisdn,result);
         return result;
     }
 }
