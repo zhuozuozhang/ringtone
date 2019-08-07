@@ -11,7 +11,6 @@ ringtone:
   # 获取ip地址开关
   addressEnabled: true
 
-
 # tomcate 基本配置
 server:
   # tomcate 端口号
@@ -51,6 +50,10 @@ spring:
     cache: false
   jackson:
     date-format: yyyy-MM-dd HH:mm:ss
+  servlet:
+    multipart:
+      max-file-size: 40MB
+      max-request-size: 40MB
 # 是否开启springboot 调试模式
 #debug: true
 
@@ -70,4 +73,3 @@ http:
   connectionRequestTimeout : 500
   socketTimeout: 10000
   staleConnectionCheckEnabled: true
-
