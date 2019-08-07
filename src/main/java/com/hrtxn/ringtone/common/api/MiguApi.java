@@ -650,14 +650,16 @@ public class MiguApi implements Serializable {
         httpclient.setCookieStore(this.getCookieStore());
         try {
             MultipartEntity reqEntity = new MultipartEntity();
-            HttpParams params = httpclient.getParams();
-            params.setParameter(CoreProtocolPNames.HTTP_CONTENT_CHARSET, Charset.forName("UTF-8"));
             reqEntity.addPart("ringName", new StringBody(ringName, Charset.forName("UTF-8")));
-            reqEntity.addPart("circleID", new StringBody(circleID));
+            reqEntity.addPart("circleID", new StringBody("2250ec10-307f-4040-bb4a-fe631f75c254", Charset.forName("UTF-8")));
             reqEntity.addPart("trade", new StringBody("其他普通行业", Charset.forName("UTF-8")));
             reqEntity.addPart("singer", new StringBody(""));
             reqEntity.addPart("songName", new StringBody(""));
-            reqEntity.addPart("file", new FileBody(ring.getFile(), "video/mp4"));
+            if (ring.getRingType().equals("视频")){
+                reqEntity.addPart("file", new FileBody(ring.getFile(), "video/mp4"));
+            }else{
+                reqEntity.addPart("file", new FileBody(ring.getFile(), "audio/mp3"));
+            }
             //reqEntity.addPart("file", new FileBody(ring.getFile(), "audio/mp3"));
             reqEntity.addPart("ringContent", new StringBody(ring.getRingContent(), Charset.forName("UTF-8")));
             reqEntity.addPart("autoSetType", new StringBody("0"));

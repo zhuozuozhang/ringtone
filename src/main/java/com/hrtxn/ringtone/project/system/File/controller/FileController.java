@@ -31,14 +31,14 @@ public class FileController {
      *
      * @param ringFile
      * @param ringName
-     * @param id
+     * @param parentOrderId
      * @return
      */
     @PostMapping("/system/upload/ringFile")
     @ResponseBody
     @Log(title = "上传文件", businessType = BusinessType.INSERT, operatorLogType = OperatorLogType.ADMIN)
-    public AjaxResult uploadRingFile(@RequestParam("ringFile") MultipartFile ringFile, String ringName, Integer id) {
-        return fileService.upload(ringFile, ringName, id);
+    public AjaxResult uploadRingFile(@RequestParam("ringFile") MultipartFile ringFile, String ringName, Integer parentOrderId) {
+        return fileService.upload(ringFile, ringName, parentOrderId);
     }
 
     //@PathVariable String apersonId
@@ -47,14 +47,14 @@ public class FileController {
      * 添加企业资质
      *
      * @param companyFile
-     * @param id
+     * @param parentOrderId
      * @return
      */
     @PostMapping("/system/upload/companyFile")
     @ResponseBody
     @Log(title = "上传文件", businessType = BusinessType.INSERT, operatorLogType = OperatorLogType.THREENETS)
-    public AjaxResult uploadCompanyFile(@RequestParam("companyFile") MultipartFile companyFile, Integer id) {
-        return fileService.upload(companyFile, "企业资质", id);
+    public AjaxResult uploadCompanyFile(@RequestParam("companyFile") MultipartFile companyFile, Integer parentOrderId) {
+        return fileService.upload(companyFile, "企业资质", parentOrderId);
     }
 
 
@@ -62,42 +62,42 @@ public class FileController {
      * 客户确认涵
      *
      * @param clientFile
-     * @param id
+     * @param parentOrderId
      * @return
      */
     @PostMapping("/system/upload/clientFile")
     @ResponseBody
     @Log(title = "上传文件", businessType = BusinessType.INSERT, operatorLogType = OperatorLogType.THREENETS)
-    public AjaxResult uploadClientFile(@RequestParam("clientFile") MultipartFile clientFile, Integer id) {
-        return fileService.upload(clientFile, "客户确认函", id);
+    public AjaxResult uploadClientFile(@RequestParam("clientFile") MultipartFile clientFile, Integer parentOrderId) {
+        return fileService.upload(clientFile, "客户确认函", parentOrderId);
     }
 
     /**
      * 免短协议
      *
      * @param protocolFile
-     * @param id
+     * @param parentOrderId
      * @return
      */
     @PostMapping("/system/upload/protocolFile")
     @ResponseBody
     @Log(title = "上传文件", businessType = BusinessType.INSERT, operatorLogType = OperatorLogType.THREENETS)
-    public AjaxResult uploadProtocolFile(@RequestParam("protocolFile") MultipartFile protocolFile, Integer id) {
-        return fileService.upload(protocolFile, "免短协议", id);
+    public AjaxResult uploadProtocolFile(@RequestParam("protocolFile") MultipartFile protocolFile, Integer parentOrderId) {
+        return fileService.upload(protocolFile, "免短协议", parentOrderId);
     }
 
     /**
      * 主题证明
      *
      * @param protocolFile
-     * @param id
+     * @param parentOrderId
      * @return
      */
     @PostMapping("/system/upload/mainFile")
     @ResponseBody
     @Log(title = "上传文件", businessType = BusinessType.INSERT, operatorLogType = OperatorLogType.THREENETS)
-    public AjaxResult uploadMainFile(@RequestParam("protocolFile") MultipartFile protocolFile, Integer id) {
-        return fileService.upload(protocolFile, "主体证明", id);
+    public AjaxResult uploadMainFile(@RequestParam("protocolFile") MultipartFile protocolFile, Integer parentOrderId) {
+        return fileService.upload(protocolFile, "主体证明", parentOrderId);
     }
 
     /**

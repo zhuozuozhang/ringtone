@@ -3,7 +3,9 @@ package com.hrtxn.ringtone.common.api;
 import com.hrtxn.ringtone.common.exception.NoLoginException;
 import com.hrtxn.ringtone.common.utils.WebClientDevWrapper;
 import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreenetsChildOrder;
+import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreenetsOrder;
 import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreenetsRing;
+import com.hrtxn.ringtone.project.threenets.threenet.json.mcard.McardAddGroupRespone;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -110,7 +112,7 @@ public class McardApi {
 
 
     //添加商户
-    public String addGroup() throws IOException, NoLoginException {
+    public McardAddGroupRespone addGroup(ThreenetsOrder order) throws IOException, NoLoginException {
         String result = null;
 
         CloseableHttpClient httpclient = HttpClients.custom().setDefaultCookieStore(this.getCookieStore()).build();
@@ -130,8 +132,8 @@ public class McardApi {
         formparams.add(new BasicNameValuePair("makeFeeType", ""));
         formparams.add(new BasicNameValuePair("phoneCityCode", "320300"));
         formparams.add(new BasicNameValuePair("auserAccount", "15380170139"));
-        formparams.add(new BasicNameValuePair("auserName", "九方愉悦商贸"));
-        formparams.add(new BasicNameValuePair("auserLinkName", "李乐"));
+        formparams.add(new BasicNameValuePair("auserName", order.getCompanyName()));
+        formparams.add(new BasicNameValuePair("auserLinkName", order.getCompanyLinkman()));
         formparams.add(new BasicNameValuePair("auserMoney", "11"));
         formparams.add(new BasicNameValuePair("auserPhone", "15380170139"));
         formparams.add(new BasicNameValuePair("auserEmail", ""));
@@ -166,7 +168,7 @@ public class McardApi {
                 log.error("response.close(); 错误信息", e);
             }
         }
-        return result;
+        return new McardAddGroupRespone();
     }
 
     /**

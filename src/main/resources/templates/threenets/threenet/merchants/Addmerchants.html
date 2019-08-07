@@ -200,7 +200,7 @@
                         <p class="fl">
                             <i style="color: #000;">自带铃音</i>
                         </p>
-                        <input type="hidden" id="RINGTYPE" name="RINGTYPE" value="2">
+                        <input type="hidden" id="ringType" name="ringType" value="2">
                     </div>
                 </li>
                 <li class="clearfix bellType">
@@ -238,6 +238,7 @@
             </ul>
         </div>
         <input type="hidden" id="orderId" name="id">
+        <input type="hidden" id="parentOrderId" name="parentOrderId">
         <div id="tijiao" class="newBlocPage-button" lay-submit lay-filter="formDemo">确定提交</div>
     </div>
 </form>
@@ -295,7 +296,9 @@
         $("#orderId").val("")
         //添加控制
         $("#ringName,#ringFile,#ringContent").attr("disabled", true);
-
+        $('input[name="mianduan"]').click(function () {
+           alert("in")
+        });
     });
 
     //控制新增商户
@@ -314,8 +317,9 @@
                 "linkmanTel": tel
             }, function (result) {
                 layer.msg(result.msg);
-                if (result.code == 200){
+                if (result.code == 200) {
                     $("#orderId").val(result.data);
+                    $("#parentOrderId").val(result.data);
                     $("#ringName").val(name);
                     $("#ringName,#ringFile,#ringContent").attr("disabled", false);
                 }
@@ -344,6 +348,7 @@
     function matchingOperate(phones) {
         AjaxPost('/threenets/getOperate', {"phone": phones}, function (result) {
             if (result.code == 200) {
+                $("#fee,#fee1,#qyzzdiv,#fee2,#sfmd,#fee3,#fee4,#rsmy").hide();
                 //移动
                 if (result.data[0] > 0) {
                     $("#fee").show();
@@ -417,11 +422,13 @@
             layer.msg("铃音文件格式为mp3或wav,视频文件格式为mp4或mov");
             return;
         } else if (ext == "mp3" || ext == "wav") {
+            $("#ringType").val("音频")
             if (size > 1) {
                 layer.msg("音频文件不能大于1M");
                 return;
             }
         } else if (ext == "mp4" || ext == "wov") {
+            $("#ringType").val("视频")
             if (size > 15) {
                 layer.msg("视频文件不能大于40M");
                 return;
@@ -429,7 +436,7 @@
         }
         uploadFile("ringFile")
     })
-    ////上传主体证明
+    //上传主体证明
     $("form").on("change", "#qyzz8", function (e) {
         $(".ying").html(this.value);
     })
@@ -454,12 +461,33 @@
         });
         //监听提交
         form.on('submit(formDemo)', function (data) {
-            // layer.msg(JSON.stringify(data.field));
             var orderId = $("#orderId").val();
+            //如果没有orderid则说明建立本地商户出错
             if (isnull(orderId)) {
                 layer.msg("保存失败！请检查对应项是否有错误！", {icon: 2, time: 2000});
                 return;
             }
+            //使用视频彩铃时只能添加移动用户
+            if ($("#ringType").val() === "视频" && ($("#phone_dianxin").html() > 0 || $("#phone_liantong").html() > 0)) {
+                layer.msg("视频铃音只适用于移动用户，请勿使用移动之外的号码！");
+                return;
+            }
+            //存在电信用户时需要验证电信的文件
+            if ($("#phone_dianxin").html() > 0 && $("#companyUrl").val() == "") {
+                layer.msg("电信用户需要上传企业资质!");
+                return;
+            }
+            if ($("#phone_dianxin").html() > 0 && $("#clientUrl").val() == "") {
+                layer.msg("电信用户需要上传客户确认函!");
+                return;
+            }
+            //联通开通免短需要设置免短协议
+            if ($("input[name='mianduan']:checked").val() == "是" && $("#protocolUrl").val() == "") {
+                layer.msg("开通免短需要上传免短协议!");
+                return;
+            }
+
+
             $("#Form").submit();
             let index = parent.layer.getFrameIndex(window.name); //获取窗口索引
             parent.layer.close(index);

@@ -257,7 +257,7 @@ public class ThreeNetsOrderService {
         //保存子订单
         //threeNetsChildOrderService.batchChindOrder(childOrders);
         //保存线上
-        saveOnlineOrder(threenetsOrder,attached,childOrders);
+        //saveOnlineOrder(threenetsOrder,attached,childOrders);
         return AjaxResult.success(threenetsOrder, "保存成功！");
     }
 
