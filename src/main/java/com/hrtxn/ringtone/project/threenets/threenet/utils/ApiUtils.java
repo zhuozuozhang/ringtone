@@ -22,15 +22,20 @@ import com.hrtxn.ringtone.project.threenets.threenet.json.swxl.*;
 import com.hrtxn.ringtone.project.threenets.threenet.mapper.ThreenetsChildOrderMapper;
 import com.hrtxn.ringtone.project.threenets.threenet.mapper.ThreenetsRingMapper;
 import lombok.extern.slf4j.Slf4j;
+import net.sf.json.JSON;
 import net.sf.json.JSONObject;
+import org.aspectj.weaver.loadtime.Aj;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.springframework.boot.jackson.JsonObjectDeserializer;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Author:zcy
@@ -674,13 +679,13 @@ public class ApiUtils {
      * @throws NoLoginException
      * @throws IOException
      */
-    public String getUserInfoByRingMsisdn(String ringMsisdn) throws NoLoginException, IOException {
-        String msg = "查找到了用户信息";
+    public AjaxResult getUserInfoByRingMsisdn(String ringMsisdn) throws NoLoginException, IOException {
         if(StringUtils.isNotNull(ringMsisdn)){
-            return miguApi.getUserInfoByRingMsisdn(ringMsisdn);
-        }else {
-            return  "未获取到用户号码";
+            Map<String, String> map = new HashMap<String, String>();
+            map.put("userInfo",miguApi.getUserInfoByRingMsisdn(ringMsisdn));
+            return AjaxResult.success(map,"查找到了");
         }
+        return AjaxResult.success(false,"未获取到用户号码");
     }
 
     /**
@@ -713,5 +718,54 @@ public class ApiUtils {
         }else {
             return  "未获取到用户号码";
         }
+    }
+
+    //    String userInfo =null;
+//		try {
+//        MiguApi miguApi = null;
+//        Object obj2 = session.getAttribute("miguApiLT");
+//        if (obj2 instanceof MiguApiLT) {
+//            miguApi = (MiguApiLT) obj2;
+//        }
+//        if (miguApi == null) {
+//            miguApi = new MiguApiLT();
+//            session.setAttribute("miguApiLT", miguApi);
+//        }
+//        userInfo = miguApi.getUserInfo(msisdn);
+//    } catch (MiguNologinException e) {
+//        System.out.println("工具箱--》用户信息出错{["+e.getMessage()+"]}");
+//    }
+//		return userInfo;
+
+    /**
+     * 移动工具箱-->删除铃音-->搜索
+     * @param msisdn
+     * @return
+     * @throws NoLoginException
+     * @throws IOException
+     */
+    public AjaxResult findRingInfoByMsisdn(String msisdn) throws NoLoginException, IOException {
+        if(StringUtils.isNotNull(msisdn)){
+            Map<String, String> map = new HashMap<String, String>();
+            map.put("ringSettingListByMsisdn",miguApi.getRingSettingListByMsisdn(msisdn));
+            map.put("ringListByMsisdn",miguApi.getRingListByMsisdn(msisdn));
+            System.out.println(map);
+            return AjaxResult.success(map,"查找到了");
+        }
+        return AjaxResult.success(false,"查找失败");
+    }
+
+    public AjaxResult singleDeleteRingSet(String msisdn, String settingID, String toneID, String type) throws NoLoginException, IOException {
+        if(StringUtils.isNotNull(msisdn) && StringUtils.isNotNull(settingID) &&
+                StringUtils.isNotNull(toneID) && StringUtils.isNotNull(type)){
+            Map<String, String> map = new HashMap<String, String>();
+            String jsonStr = "[{\"toneID\":\""+toneID+"\",\"type\":\""+type+"\",\"settingID\":\""+settingID+"\"}]";
+            String delRingSetting  = miguApi.delRingSetting(jsonStr,msisdn);
+            map.put("delRingSetting",delRingSetting);
+            if(delRingSetting.contains("true")){
+                return AjaxResult.success(map,"删除成功！");
+            }
+        }
+        return AjaxResult.success(false,"为获取到需要的信息");
     }
 }

@@ -74,8 +74,9 @@ public class MiguApi implements Serializable {
     public static String ringSetting_url = "http://211.137.107.18:8888/cm/groupInfo!ringSetting.action";
     public static String deleteCircleRingById_url = "http://211.137.107.18:8888/cm/cmCircleRing!deleteCircleRingById.action";
     public static String deletePhone_url = "http://211.137.107.18:8888/cm/groupInfo!deleteUserByMemberId.action";
-    public static String getRingSettingListByMsisdn_url = "http://211.137.107.18:8888/cm/toolbox!getRingSettingListByMsisdn.action";
-    public static String getRingListByMsisdn_url = "http://211.137.107.18:8888/cm/toolbox!getRingListByMsisdn.action";
+    public static String getRingSettingListByMsisdn_url = "http://211.137.107.18:8888/cm/toolbox!getRingSettingListByMsisdn.action"; //获取个人铃音设置信息
+    public static String getRingListByMsisdn_url = "http://211.137.107.18:8888/cm/toolbox!getRingListByMsisdn.action"; //获取个人铃音库信息
+    public static String delRingSetting_url = "http://211.137.107.18:8888/cm/toolbox!delRingSetting.action"; //删除个人铃音设置
     public static String delOtherRing_url = "http://211.137.107.18:8888/cm/toolbox!delRing.action";
     public static String refreshRingOrder_url = "http://211.137.107.18:8888/cm/groupInfo!findList.action";
     public static String toolbox_userInfo_url = "http://211.137.107.18:8888/qycl/platform/platform!getUserInfo.action";
@@ -744,6 +745,98 @@ public class MiguApi implements Serializable {
             HttpEntity resEntity = response.getEntity();
             result = EntityUtils.toString(resEntity);
             this.setMiguCookie(httpclient.getCookieStore());
+        } catch (Exception e) {
+            System.out.println(e);
+        } finally {
+            httppost.abort();
+            httpclient.getConnectionManager().shutdown();
+        }
+        return result;
+    }
+
+    /**
+     * 工具箱-->删除铃音-->取得个人铃音设置列表
+     * @param msisdn
+     * @return
+     * @throws NoLoginException
+     * @throws IOException
+     */
+    public String getRingSettingListByMsisdn(String msisdn) throws NoLoginException, IOException {
+        String result = null;
+        DefaultHttpClient httpclient = new DefaultHttpClient();
+        HttpPost httppost = new HttpPost(getRingSettingListByMsisdn_url);
+        List<NameValuePair> formparams = new ArrayList<NameValuePair>();
+        formparams.add(new BasicNameValuePair("msisdn", msisdn));
+        httpclient.setCookieStore(this.getCookieStore());
+        try {
+            UrlEncodedFormEntity entity = new UrlEncodedFormEntity(formparams,"utf-8");
+            httppost.setEntity(entity);
+            HttpResponse response = httpclient.execute(httppost);
+            HttpEntity resEntity = response.getEntity();
+            result = EntityUtils.toString(resEntity);
+            log.info(result);
+        } catch (Exception e) {
+            System.out.println(e);
+        } finally {
+            httppost.abort();
+            httpclient.getConnectionManager().shutdown();
+        }
+        return result;
+    }
+
+    /**
+     * 工具箱-->删除铃音-->删除个人铃音设置列表
+     * @param data
+     * @param msisdn
+     * @return
+     * @throws NoLoginException
+     * @throws IOException
+     */
+    public String delRingSetting(String data, String msisdn) throws NoLoginException, IOException {
+        String result = null;
+        DefaultHttpClient httpclient = new DefaultHttpClient();
+        HttpPost httppost = new HttpPost(delRingSetting_url);
+        List<NameValuePair> formparams = new ArrayList<NameValuePair>();
+        formparams.add(new BasicNameValuePair("data", data));
+        formparams.add(new BasicNameValuePair("msisdn", msisdn));
+        httpclient.setCookieStore(this.getCookieStore());
+        try {
+            UrlEncodedFormEntity entity = new UrlEncodedFormEntity(formparams, "utf-8");
+            httppost.setEntity(entity);
+            HttpResponse response = httpclient.execute(httppost);
+            HttpEntity resEntity = response.getEntity();
+            result = EntityUtils.toString(resEntity);
+            System.out.println("result=" + result);
+        } catch (Exception e) {
+            System.out.println(e);
+        } finally {
+            httppost.abort();
+            httpclient.getConnectionManager().shutdown();
+        }
+        return result;
+    }
+
+    /**
+     * 个人铃音库列表
+     * @param msisdn
+     * @return
+     * @throws NoLoginException
+     * @throws IOException
+     */
+    public String getRingListByMsisdn(String msisdn) throws NoLoginException, IOException {
+        String result = null;
+        DefaultHttpClient httpclient = new DefaultHttpClient();
+        HttpPost httppost = new HttpPost(getRingListByMsisdn_url);
+        List<NameValuePair> formparams = new ArrayList<NameValuePair>();
+        formparams.add(new BasicNameValuePair("msisdn", msisdn));
+        httpclient.setCookieStore(this.getCookieStore());
+        try {
+            UrlEncodedFormEntity entity = new UrlEncodedFormEntity(formparams,"utf-8");
+            httppost.setEntity(entity);
+            HttpResponse response = httpclient.execute(httppost);
+            HttpEntity resEntity = response.getEntity();
+            result = EntityUtils.toString(resEntity);
+            log.info(result);
         } catch (Exception e) {
             System.out.println(e);
         } finally {

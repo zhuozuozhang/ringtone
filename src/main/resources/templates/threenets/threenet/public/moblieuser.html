@@ -19,6 +19,7 @@
         <div style="padding-top:10px;padding-left:0px;font-size:16px;">
             手机号：<input type="text" id="ringMsisdn" maxlength="11">
             <button type="button" class="btn btn-primary" id="sear" onclick="getUserInfoByRingMsisdn();">搜索</button>
+            <button type="button" class="btn btn-primary" id="sear" onclick="resetRingMsisdnText();">清空</button>
         </div>
         <div class="layui-row per">
             <div class="layui-col-md4">
@@ -38,8 +39,8 @@
                     <th>付费状态</th>
                 </tr>
             </thead>
-            <tbody>
-                <tr class="userInfoTable">
+            <tbody class="userInfoTable">
+<!--                <tr >-->
 <!--                    <td>佛山照明鸿昌灯饰6</td>-->
 <!--                    <td>中高俊聪</td>-->
 <!--                    <td>2019-02-21 12:12:23</td>-->
@@ -48,7 +49,7 @@
 <!--                    <td>否</td>-->
 <!--                    <td>暂无数据</td>-->
 <!--                    <td>欠费</td>-->
-                </tr>
+<!--                </tr>-->
             </tbody>
         </table>
         <div class="layui-row per">
@@ -90,80 +91,85 @@
 
     //搜索
     /* 工具箱--》用户信息获取 */
-    function getUserInfoByRingMsisdn(){
+    function getUserInfoByRingMsisdn() {
         var ringMsisdn = $("#ringMsisdn").val();
-        if(ringMsisdn.length < 11){
-            $(".userInfoTable").html("<td colspan='8' style='color:#F00;'>请输入正确的移动手机号码！</td>");
-            $(".tbody").html("<tr><td colspan='3' style='color:#F00;'>请输入正确的移动手机号码！</td></tr>");
+        if (ringMsisdn == null || ringMsisdn == "") {
+            layer.msg("请输入手机号", {icon: 0, time: 3000});
             return;
-        }else{
-            var url = "/threenets/getUserInfoByRingMsisdn/"+ringMsisdn;
-            $.post(url, {
-                "ringMsisdn" : ringMsisdn
-            }, function(data, textstatus) {
-                if(data != null){
-                    if(data.total == 0){
-                        $(".userInfoTable").html("<td colspan='8' style='color:#F00;'>抱歉,系统没有查询到数据</td>");
-                        $(".tbody").html("<tr><td colspan='3' style='color:#F00;'>抱歉,系统没有查询到数据</td></tr>");
-                        return;
-                    }
-                    var userLog = data.userLog;
-                    var userCurrentInfo = data.userCurrentInfo;
-                    var str = "";
-                    if(userCurrentInfo != null){
-                        str += "<td>"+userCurrentInfo.group+"</td>";
-                        str += "<td>"+userCurrentInfo.sa+"</td>";
-                        str += "<td>"+userCurrentInfo.ctime+"</td>";
-                        str += "<td>"+userCurrentInfo.closeTime+"</td>";
-                        if(userCurrentInfo.payType == "GE"){
-                            str += "<td>"+userCurrentInfo.price+"元个付</td>";
-                        }
-                        if(userCurrentInfo.applyForSmsNotification == 0){
-                            str += "<td>否</td>";
-                        }
-                        str += "<td>"+userCurrentInfo.userRingName+"</td>";
-                        if(userCurrentInfo.freezeStatus == 0){
-                            str += "<td>正常</td>";
-                        }else{
-                            str += "<td>欠费</td>";
-                        }
-                        $(".userInfoTable").html(str);
-                    }else{
-                        $(".userInfoTable").html("<td colspan='8' style='color:#F00;'>抱歉,系统没有查询到数据</td>");
-                    }
-                    if(userLog != null){
-                        var str = "";
-                        for(var i = 0; i < userLog.length; i++){
-                            str += "<tr>";
-                            str += "<td>"+userLog[i].msisdn+"</td>";
-                            str += "<td>"+userLog[i].content+"</td>";
-                            str += "<td>"+userLog[i].ctime+"</td>";
-                            str += "</tr>";
-                        }
-                        $(".tbody").html(str);
-                    }else{
-                        $(".tbody").html("<tr><td style='color:#F00;'>抱歉,系统没有查询到数据</td></tr>");
-                    }
-                }else{
-                    tipDialog("获取失败");
+        } else if (ringMsisdn.length < 11) {
+            layer.msg("请输入正确的移动手机号码！");
+            // $(".userInfoTable").html("<td colspan='8' style='color:#F00;'>请输入正确的移动手机号码！</td>");
+            // $(".tbody").html("<tr><td colspan='3' style='color:#F00;'>请输入正确的移动手机号码！</td></tr>");
+            return;
+        }
+        var url = "/threenets/getUserInfoByRingMsisdn/" + ringMsisdn;
+        AjaxPut(url,{
+            ringMsisdn : ringMsisdn
+        },function (res) {
+            if(res.code == 200 && res.data){
+                var data = res.data;
+                if(data.total == 0){
+                    $(".userInfoTable").html("<td colspan='8' style='color:#F00;'>抱歉,系统没有查询到数据</td>");
+                    $(".tbody").html("<tr><td colspan='3' style='color:#F00;'>抱歉,系统没有查询到数据</td></tr>");
+                    return;
                 }
-            }, "json");
+                var userInfo = $.parseJSON(data.userInfo);
+                var userLog = userInfo.userLog;
+                var userCurrentInfo = userInfo.userCurrentInfo;
+                if(userLog.length == 0 && userCurrentInfo.length == 0){
+                    $(".userInfoTable").html("");
+                    $(".tbody").html("");
+                    layer.msg("无数据",{icon: 2,time: 3000});
+                    return;
+                }
+                if(userCurrentInfo.length == 0){
+                    layer.msg("用户当前信息无数据",{icon: 2,time: 3000})
+                }else{
+                    var str = "";
+                    str += "<tr>"
+                    str += "<td>" + userCurrentInfo.group + "</td>";
+                    str += "<td>" + userCurrentInfo.sa + "</td>";
+                    str += "<td>" + userCurrentInfo.ctime + "</td>";
+                    str += "<td>" + userCurrentInfo.closeTime + "</td>";
+                    if (userCurrentInfo.payType == "GE") {
+                        str += "<td>" + userCurrentInfo.price + "元个付</td>";
+                    }
+                    if (userCurrentInfo.applyForSmsNotification == 0) {
+                        str += "<td>否</td>";
+                    }
+                    str += "<td>" + userCurrentInfo.userRingName + "</td>";
+                    if (userCurrentInfo.freezeStatus == 0) {
+                        str += "<td>正常</td>";
+                    } else {
+                        str += "<td>欠费</td>";
+                    }
+                    str += "</tr>";
 
+                    $(".userInfoTable").html(str);
+                }
+                //用户操作记录
+                if (userInfo.length == 0) {
+                    layer.msg("用户操作记录列表无数据", {icon: 2, time: 3000});
+                }else{
+                    var str = "";
+                    for (var i = 0; i < userLog.length; i++) {
+                        str += "<tr>";
+                        str += "<td>" + userLog[i].msisdn + "</td>";
+                        str += "<td>" + userLog[i].content + "</td>";
+                        str += "<td>" + userLog[i].ctime + "</td>";
+                        str += "</tr>";
+                    }
+                    $(".tbody").html(str);
+                }
+            }else {
+                layer(res.msg,{icon: 5,time: 3000});
+            }
+        });
     }
-    // function getUserInfoByRingMsisdn(){
-    //     var ringMsisdn = $("#ringMsisdn").val();
-    //     var url = "/threenets/getUserInfoByRingMsisdn/"+ringMsisdn;
-    //     AjaxPut(url,{},function (res) {
-    //         if (res.code == 200 && res.data) {
-    //             layer.msg('查找到了用户！', {icon: 6, time: 3000});
-    //             $("#userInfoTable").DataTable().ajax.reload(null, false);
-    //         } else {
-    //             layer.msg(res.msg, {icon: 5, time: 3000});
-    //         }
-    //     });
 
+    function resetRingMsisdnText() {
+        $("#ringMsisdn").val("");
     }
-
 
 </script>
 

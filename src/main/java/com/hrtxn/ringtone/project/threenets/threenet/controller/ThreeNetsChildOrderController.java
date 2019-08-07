@@ -234,17 +234,51 @@ public class ThreeNetsChildOrderController {
     /**
      * 移动工具箱-->用户信息
      * @param ringMsisdn
-     * @param
      * @return
      */
-    @PostMapping("/threenets/getUserInfoByRingMsisdn/{ringMsisdn}")
+    @PutMapping("/threenets/getUserInfoByRingMsisdn/{ringMsisdn}")
     @ResponseBody
-    public String getUserInfo(String ringMsisdn, HttpSession session){
-        String userInfo = null;
+    @Log(title = "移动工具箱-->获取用户信息",operatorLogType = OperatorLogType.THREENETS)
+    public AjaxResult getUserInfo(String ringMsisdn){
         try {
-            return userInfo = threeNetsChildOrderService.getUserInfoByRingMsisdn(ringMsisdn,session);
+            return threeNetsChildOrderService.getUserInfoByRingMsisdn(ringMsisdn);
         } catch (Exception e) {
-            return "移动工具箱-->用户信息出错";
+            return AjaxResult.success(false,"移动工具箱-->用户信息出错");
+        }
+    }
+
+    /**
+     * 移动工具箱-->删除铃音-->搜索
+     * @param msisdn
+     * @return
+     */
+    @PutMapping("/threenets/findRingInfoByMsisdn/{msisdn}")
+    @ResponseBody
+    @Log(title = "移动工具箱-->删除铃音-->搜索",operatorLogType = OperatorLogType.THREENETS)
+    public AjaxResult findRingInfoByMsisdn(@PathVariable String msisdn){
+        try {
+            return threeNetsChildOrderService.findRingInfoByMsisdn(msisdn);
+        } catch (Exception e) {
+            return AjaxResult.success(false,"搜索失败");
+        }
+    }
+
+    /**
+     * 移动工具箱-->删除铃音-->删除个人铃音设置
+     * @param msisdn
+     * @param settingID
+     * @param toneID
+     * @param type
+     * @return
+     */
+    @PutMapping("/threenets/singleDeleteRingSet/{msisdn}")
+    @ResponseBody
+    @Log(title = "通过移动手机号、设置ID、铃音ID、铃音类型删除个人铃音设置",businessType = BusinessType.DELETE,operatorLogType = OperatorLogType.THREENETS)
+    public AjaxResult singleDeleteRingSet(@PathVariable String msisdn,String settingID,String toneID,String type){
+        try {
+            return threeNetsChildOrderService.singleDeleteRingSet(msisdn,settingID,toneID,type);
+        } catch (Exception e) {
+            return AjaxResult.success(false,"删除失败！");
         }
     }
 

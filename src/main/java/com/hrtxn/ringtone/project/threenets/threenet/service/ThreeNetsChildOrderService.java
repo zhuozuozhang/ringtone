@@ -544,24 +544,36 @@ public class ThreeNetsChildOrderService {
     /**
      * 移动工具箱-->用户信息
      * @param ringMsisdn
+     * @return
      */
-    public String getUserInfoByRingMsisdn(String ringMsisdn,HttpSession session) throws Exception {
+    public AjaxResult getUserInfoByRingMsisdn(String ringMsisdn) throws Exception {
         if (StringUtils.isNotNull(ringMsisdn)) {
-            MiguApi miguApi = null;
-            Object obj2 = session.getAttribute("miguApi");
-            if (obj2 instanceof MiguApi) {
-                miguApi = (MiguApi) obj2;
-            }
-            if (miguApi == null) {
-                miguApi = new MiguApi();
-                session.setAttribute("miguApi", miguApi);
-            }
             return apiUtils.getUserInfoByRingMsisdn(ringMsisdn);
         }else {
-            return "未获取到用户号码";
+            return AjaxResult.success(false,"未获取到用户号码");
         }
+    }
 
+    /**
+     * 移动工具箱-->删除铃音-->搜索
+     * @param msisdn
+     * @return
+     * @throws NoLoginException
+     * @throws IOException
+     */
+    public AjaxResult findRingInfoByMsisdn(String msisdn) throws NoLoginException, IOException {
+        if(StringUtils.isNotNull(msisdn)){
+            return apiUtils.findRingInfoByMsisdn(msisdn);
+        }
+        return AjaxResult.success(false,"搜索失败");
+    }
 
+    public AjaxResult singleDeleteRingSet(String msisdn, String settingID, String toneID, String type) throws NoLoginException, IOException {
+        if(StringUtils.isNotNull(msisdn) && StringUtils.isNotNull(settingID) &&
+                StringUtils.isNotNull(toneID) && StringUtils.isNotNull(type)){
+            return apiUtils.singleDeleteRingSet(msisdn,settingID,toneID,type);
+        }
+        return AjaxResult.success(false,"删除失败");
     }
 
     /**
@@ -591,4 +603,7 @@ public class ThreeNetsChildOrderService {
         map.put("systemLogListByMsisdn", systemLogListByMsisdn);
         return map;
     }
+
+
+
 }
