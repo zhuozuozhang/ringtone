@@ -243,7 +243,8 @@ public class ThreeNetsChildOrderController {
         try {
             return threeNetsChildOrderService.getUserInfoByRingMsisdn(ringMsisdn);
         } catch (Exception e) {
-            return AjaxResult.success(false,"移动工具箱-->用户信息出错");
+            log.error("移动工具箱-->获取用户信息 方法：getUserInfo 错误信息", e);
+            return AjaxResult.error(e.getMessage());
         }
     }
 
@@ -259,7 +260,8 @@ public class ThreeNetsChildOrderController {
         try {
             return threeNetsChildOrderService.findRingInfoByMsisdn(msisdn);
         } catch (Exception e) {
-            return AjaxResult.success(false,"搜索失败");
+            log.error("移动工具箱-->删除铃音-->搜索 方法：findRingInfoByMsisdn 错误信息", e);
+            return AjaxResult.error(e.getMessage());
         }
     }
 
@@ -273,15 +275,34 @@ public class ThreeNetsChildOrderController {
      */
     @PutMapping("/threenets/singleDeleteRingSet/{msisdn}")
     @ResponseBody
-    @Log(title = "通过移动手机号、设置ID、铃音ID、铃音类型删除个人铃音设置",businessType = BusinessType.DELETE,operatorLogType = OperatorLogType.THREENETS)
+    @Log(title = "通过移动手机号、设置ID、铃音ID、铃音类型删除某条个人铃音设置",businessType = BusinessType.DELETE,operatorLogType = OperatorLogType.THREENETS)
     public AjaxResult singleDeleteRingSet(@PathVariable String msisdn,String settingID,String toneID,String type){
         try {
             return threeNetsChildOrderService.singleDeleteRingSet(msisdn,settingID,toneID,type);
         } catch (Exception e) {
-            return AjaxResult.success(false,"删除失败！");
+            log.error("删除某条个人铃音设置 方法：singleDeleteRingSet 错误信息",e);
+            return AjaxResult.error(e.getMessage());
         }
     }
 
+    /**
+     * 移动工具箱-->删除铃音-->删除个人铃音库
+     * @param msisdn
+     * @param toneIds
+     * @param type
+     * @return
+     */
+    @PutMapping("/threenets/singleDeleteRing/{msisdn}")
+    @ResponseBody
+    @Log(title = "通过移动手机号、铃音ID、铃音类型删除某条个人铃音库",businessType = BusinessType.DELETE,operatorLogType = OperatorLogType.THREENETS)
+    public AjaxResult singleDeleteRing(@PathVariable String msisdn,String toneIds,String type){
+        try {
+            return threeNetsChildOrderService.singleDeleteRing(msisdn,toneIds,type);
+        } catch (Exception e) {
+            log.error("删除某条个人铃音库 方法：singleDeleteRing 错误信息",e);
+            return AjaxResult.error(e.getMessage());
+        }
+    }
     /**
      * 联通工具箱-->用户信息
      * @param phoneNumber

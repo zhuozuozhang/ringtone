@@ -685,7 +685,7 @@ public class ApiUtils {
             map.put("userInfo",miguApi.getUserInfoByRingMsisdn(ringMsisdn));
             return AjaxResult.success(map,"查找到了");
         }
-        return AjaxResult.success(false,"未获取到用户号码");
+        return AjaxResult.success(false,"参数不正确");
     }
 
     /**
@@ -752,9 +752,19 @@ public class ApiUtils {
             System.out.println(map);
             return AjaxResult.success(map,"查找到了");
         }
-        return AjaxResult.success(false,"查找失败");
+        return AjaxResult.success(false,"参数不正确");
     }
 
+    /**
+     * 移动工具箱-->删除铃音-->删除个人铃音设置
+     * @param msisdn
+     * @param settingID
+     * @param toneID
+     * @param type
+     * @return
+     * @throws NoLoginException
+     * @throws IOException
+     */
     public AjaxResult singleDeleteRingSet(String msisdn, String settingID, String toneID, String type) throws NoLoginException, IOException {
         if(StringUtils.isNotNull(msisdn) && StringUtils.isNotNull(settingID) &&
                 StringUtils.isNotNull(toneID) && StringUtils.isNotNull(type)){
@@ -766,6 +776,35 @@ public class ApiUtils {
                 return AjaxResult.success(map,"删除成功！");
             }
         }
-        return AjaxResult.success(false,"为获取到需要的信息");
+        return AjaxResult.success(false,"参数不正确");
+    }
+
+    /**
+     * 移动工具箱-->删除铃音-->删除个人铃音库
+     * @param msisdn
+     * @param toneIds
+     * @param type
+     * @return
+     */
+    public AjaxResult singleDeleteRing(String msisdn, String toneIds, String type) throws NoLoginException, IOException {
+//        MiguApi miguApi = null;
+//        Object obj2 = session.getAttribute("miguApiLT");
+//        if (obj2 instanceof MiguApiLT) {
+//            miguApi = (MiguApiLT) obj2;
+//        }
+//        if (miguApi == null) {
+//            miguApi = new MiguApiLT();
+//            session.setAttribute("miguApiLT", miguApi);
+//        }
+//        String delRing = miguApi.delOtherRing(toneIds+"|"+type, msisdn);
+//        if (delRing.contains("true")) {
+//            return true;
+//        }
+        if(StringUtils.isNotNull(msisdn) && StringUtils.isNotNull(toneIds) && StringUtils.isNotNull(type)){
+            Map<String, String> map = new HashMap<String, String>();
+            map.put("delRing",miguApi.delOtherRing(toneIds+"|"+type, msisdn));
+            return AjaxResult.success(map,"删除成功");
+        }
+        return AjaxResult.success(false,"参数不正确");
     }
 }

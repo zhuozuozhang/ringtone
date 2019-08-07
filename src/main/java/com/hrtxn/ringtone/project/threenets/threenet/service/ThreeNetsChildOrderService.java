@@ -549,9 +549,8 @@ public class ThreeNetsChildOrderService {
     public AjaxResult getUserInfoByRingMsisdn(String ringMsisdn) throws Exception {
         if (StringUtils.isNotNull(ringMsisdn)) {
             return apiUtils.getUserInfoByRingMsisdn(ringMsisdn);
-        }else {
-            return AjaxResult.success(false,"未获取到用户号码");
         }
+        return AjaxResult.success(false,"参数不正确！");
     }
 
     /**
@@ -565,15 +564,39 @@ public class ThreeNetsChildOrderService {
         if(StringUtils.isNotNull(msisdn)){
             return apiUtils.findRingInfoByMsisdn(msisdn);
         }
-        return AjaxResult.success(false,"搜索失败");
+        return AjaxResult.success(false,"参数不正确");
     }
 
+    /**
+     * 移动工具箱-->删除铃音-->删除个人铃音设置
+     * @param msisdn
+     * @param settingID
+     * @param toneID
+     * @param type
+     * @return
+     * @throws NoLoginException
+     * @throws IOException
+     */
     public AjaxResult singleDeleteRingSet(String msisdn, String settingID, String toneID, String type) throws NoLoginException, IOException {
         if(StringUtils.isNotNull(msisdn) && StringUtils.isNotNull(settingID) &&
                 StringUtils.isNotNull(toneID) && StringUtils.isNotNull(type)){
             return apiUtils.singleDeleteRingSet(msisdn,settingID,toneID,type);
         }
-        return AjaxResult.success(false,"删除失败");
+        return AjaxResult.success(false,"参数不正确");
+    }
+
+    /**
+     * 移动工具箱-->删除铃音-->删除个人铃音库
+     * @param msisdn
+     * @param toneIds
+     * @param type
+     * @return
+     */
+    public AjaxResult singleDeleteRing(String msisdn, String toneIds, String type) throws NoLoginException, IOException {
+        if(StringUtils.isNotNull(msisdn) && StringUtils.isNotNull(toneIds) && StringUtils.isNotNull(type)){
+            return apiUtils.singleDeleteRing(msisdn,toneIds,type);
+        }
+        return AjaxResult.success(false,"参数不正确！");
     }
 
     /**
@@ -603,7 +626,6 @@ public class ThreeNetsChildOrderService {
         map.put("systemLogListByMsisdn", systemLogListByMsisdn);
         return map;
     }
-
 
 
 }
