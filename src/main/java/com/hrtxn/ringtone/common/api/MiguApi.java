@@ -77,10 +77,13 @@ public class MiguApi implements Serializable {
     public static String ringSetting_url = "http://211.137.107.18:8888/cm/groupInfo!ringSetting.action";
     public static String deleteCircleRingById_url = "http://211.137.107.18:8888/cm/cmCircleRing!deleteCircleRingById.action";
     public static String deletePhone_url = "http://211.137.107.18:8888/cm/groupInfo!deleteUserByMemberId.action";
-    public static String getRingSettingListByMsisdn_url = "http://211.137.107.18:8888/cm/toolbox!getRingSettingListByMsisdn.action";
-    public static String getRingListByMsisdn_url = "http://211.137.107.18:8888/cm/toolbox!getRingListByMsisdn.action";
-    public static String delOtherRing_url = "http://211.137.107.18:8888/cm/toolbox!delRing.action";
+    public static String getRingSettingListByMsisdn_url = "http://211.137.107.18:8888/cm/toolbox!getRingSettingListByMsisdn.action"; //获取个人铃音设置信息
+    public static String getRingListByMsisdn_url = "http://211.137.107.18:8888/cm/toolbox!getRingListByMsisdn.action"; //获取个人铃音库信息
+    public static String delRingSetting_url = "http://211.137.107.18:8888/cm/toolbox!delRingSetting.action"; //删除个人铃音设置
+    public static String delOtherRing_url = "http://211.137.107.18:8888/cm/toolbox!delRing.action"; //删除个人铃音库
     public static String refreshRingOrder_url = "http://211.137.107.18:8888/cm/groupInfo!findList.action";
+    public static String toolbox_userInfo_url = "http://211.137.107.18:8888/qycl/platform/platform!getUserInfo.action";
+
 
     public String USER_NAME = "中高俊聪";// 帐号
     public String PASSWORD = "zgjc@ZG330@";// 密码
@@ -732,5 +735,84 @@ public class MiguApi implements Serializable {
 //        MiguApi miguApi = new MiguApi();
 //        String s = miguApi.getRingPage("c9a7ffb7-876c-40aa-88ef-14185f79930b");
 //        System.out.println(s);
+    }
+
+    /**
+     * 移动工具箱-->用户信息
+     * @param msisdn
+     * @return
+     * @throws NoLoginException
+     * @throws IOException
+     */
+    public String getUserInfoByRingMsisdn(String msisdn) throws NoLoginException, IOException {
+        HashMap map = new HashMap();
+        map.put("msisdn",msisdn);
+        String result = sendPost(map,toolbox_userInfo_url);
+        log.info("移动工具箱-->用户信息 参数：{} 结果：{}",msisdn,result);
+        return result;
+    }
+
+    /**
+     * 工具箱-->删除铃音-->取得个人铃音设置列表
+     * @param msisdn
+     * @return
+     * @throws NoLoginException
+     * @throws IOException
+     */
+    public String getRingSettingListByMsisdn(String msisdn) throws NoLoginException, IOException {
+        HashMap map = new HashMap();
+        map.put("msisdn",msisdn);
+        String result = sendPost(map,getRingSettingListByMsisdn_url);
+        log.info("移动工具箱-->删除铃音-->取得个人铃音设置列表 参数：{} 结果：{}",msisdn,result);
+        return result;
+    }
+
+    /**
+     * 工具箱-->删除铃音-->删除个人铃音设置列表
+     * @param data
+     * @param msisdn
+     * @return
+     * @throws NoLoginException
+     * @throws IOException
+     */
+    public String delRingSetting(String data, String msisdn) throws NoLoginException, IOException {
+        HashMap map = new HashMap();
+        map.put("data",data);
+        map.put("msisdn",msisdn);
+        String result = sendPost(map,delRingSetting_url);
+        log.info("移动工具箱-->用户信息-->删除个人铃音设置列表 参数：{} 结果：{}",data,msisdn,result);
+        return result;
+    }
+
+    /**
+     * 个人铃音库列表
+     * @param msisdn
+     * @return
+     * @throws NoLoginException
+     * @throws IOException
+     */
+    public String getRingListByMsisdn(String msisdn) throws NoLoginException, IOException {
+        HashMap map = new HashMap();
+        map.put("msisdn",msisdn);
+        String result = sendPost(map,getRingListByMsisdn_url);
+        log.info("移动工具箱-->用户信息-->获得个人铃音库列表 参数：{} 结果：{}",msisdn,result);
+        return result;
+    }
+
+    /**
+     * 小工具，删除多余铃音
+     * @param toneIds 铃音id
+     * @param msisdn 号码
+     * @return
+     * @throws NoLoginException
+     * @throws IOException
+     */
+    public String delOtherRing(String toneIds, String msisdn) throws NoLoginException, IOException {
+        HashMap map = new HashMap();
+        map.put("toneIds",toneIds);
+        map.put("msisdn",msisdn);
+        String result = sendPost(map,delOtherRing_url);
+        log.info("移动工具箱-->删除铃音-->删除多余铃音 参数：{} 结果：{}",toneIds,msisdn,result);
+        return result;
     }
 }

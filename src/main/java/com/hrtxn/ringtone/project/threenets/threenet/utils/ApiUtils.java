@@ -30,7 +30,9 @@ import org.jsoup.select.Elements;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Author:zcy
@@ -1047,5 +1049,191 @@ public class ApiUtils {
             }
         }
         return AjaxResult.error(msg);
+    }
+
+    /**
+     * 移动工具箱-->用户信息
+     * @param ringMsisdn
+     * @return
+     * @throws NoLoginException
+     * @throws IOException
+     */
+    public AjaxResult getUserInfoByRingMsisdn(String ringMsisdn) throws NoLoginException, IOException {
+        if(StringUtils.isNotNull(ringMsisdn)){
+            Map<String, String> map = new HashMap<String, String>();
+            map.put("userInfo",miguApi.getUserInfoByRingMsisdn(ringMsisdn));
+            return AjaxResult.success(map,"查找到了");
+        }
+        return AjaxResult.success(false,"参数不正确");
+    }
+
+    /**
+     * 联通工具箱-->用户信息-->获取沉默用户信息
+     * @param phoneNumber
+     * @return
+     * @throws NoLoginException
+     * @throws IOException
+     */
+    public String getSilentMemberByMsisdn(String phoneNumber) throws NoLoginException, IOException {
+        if(StringUtils.isNotNull(phoneNumber)){
+            return swxlApi.getSilentMemberByMsisdn(phoneNumber);
+        }else {
+            return  "未获取到用户号码";
+        }
+    }
+
+    /**
+     * 联通工具箱-->用户信息-->获取用户操作记录
+     * @param phoneNumber
+     * @return
+     * @throws NoLoginException
+     * @throws IOException
+     */
+    public String getSystemLogListByMsisdn(String phoneNumber) throws NoLoginException, IOException {
+        if(StringUtils.isNotNull(phoneNumber)){
+            return swxlApi.getSystemLogListByMsisdn(phoneNumber);
+        }else {
+            return  "未获取到用户号码";
+        }
+    }
+
+    //    String userInfo =null;
+//		try {
+//        MiguApi miguApi = null;
+//        Object obj2 = session.getAttribute("miguApiLT");
+//        if (obj2 instanceof MiguApiLT) {
+//            miguApi = (MiguApiLT) obj2;
+//        }
+//        if (miguApi == null) {
+//            miguApi = new MiguApiLT();
+//            session.setAttribute("miguApiLT", miguApi);
+//        }
+//        userInfo = miguApi.getUserInfo(msisdn);
+//    } catch (MiguNologinException e) {
+//        System.out.println("工具箱--》用户信息出错{["+e.getMessage()+"]}");
+//    }
+//		return userInfo;
+
+    /**
+     * 移动工具箱-->删除铃音-->搜索
+     * @param msisdn
+     * @return
+     * @throws NoLoginException
+     * @throws IOException
+     */
+    public AjaxResult findRingInfoByMsisdn(String msisdn) throws NoLoginException, IOException {
+        if(StringUtils.isNotNull(msisdn)){
+            Map<String, String> map = new HashMap<String, String>();
+            map.put("ringSettingListByMsisdn",miguApi.getRingSettingListByMsisdn(msisdn));
+            map.put("ringListByMsisdn",miguApi.getRingListByMsisdn(msisdn));
+            System.out.println(map);
+            return AjaxResult.success(map,"查找到了");
+        }
+        return AjaxResult.success(false,"参数不正确");
+    }
+
+    /**
+     * 移动工具箱-->删除铃音-->删除个人铃音设置
+     * @param msisdn
+     * @param settingID
+     * @param toneID
+     * @param type
+     * @return
+     * @throws NoLoginException
+     * @throws IOException
+     */
+    public AjaxResult singleDeleteRingSet(String msisdn, String settingID, String toneID, String type) throws NoLoginException, IOException {
+        if(StringUtils.isNotNull(msisdn) && StringUtils.isNotNull(settingID) &&
+                StringUtils.isNotNull(toneID) && StringUtils.isNotNull(type)){
+            Map<String, String> map = new HashMap<String, String>();
+            String jsonStr = "[{\"toneID\":\""+toneID+"\",\"type\":\""+type+"\",\"settingID\":\""+settingID+"\"}]";
+            String delRingSetting  = miguApi.delRingSetting(jsonStr,msisdn);
+            map.put("delRingSetting",delRingSetting);
+            if(delRingSetting.contains("true")){
+                return AjaxResult.success(map,"删除成功！");
+            }
+        }
+        return AjaxResult.success(false,"参数不正确");
+    }
+
+    /**
+     * 移动工具箱-->删除铃音-->删除个人铃音库
+     * @param msisdn
+     * @param toneIds
+     * @param type
+     * @return
+     */
+    public AjaxResult singleDeleteRing(String msisdn, String toneIds, String type) throws NoLoginException, IOException {
+//        MiguApi miguApi = null;
+//        Object obj2 = session.getAttribute("miguApiLT");
+//        if (obj2 instanceof MiguApiLT) {
+//            miguApi = (MiguApiLT) obj2;
+//        }
+//        if (miguApi == null) {
+//            miguApi = new MiguApiLT();
+//            session.setAttribute("miguApiLT", miguApi);
+//        }
+//        String delRing = miguApi.delOtherRing(toneIds+"|"+type, msisdn);
+//        if (delRing.contains("true")) {
+//            return true;
+//        }
+        if(StringUtils.isNotNull(msisdn) && StringUtils.isNotNull(toneIds) && StringUtils.isNotNull(type)){
+            Map<String, String> map = new HashMap<String, String>();
+            map.put("delRing",miguApi.delOtherRing(toneIds+"|"+type, msisdn));
+            return AjaxResult.success(map,"删除成功");
+        }
+        return AjaxResult.success(false,"参数不正确");
+    }
+
+    /**
+     * 批量删除个人铃音设置
+     * @param msisdn
+     * @param vals
+     * @return
+     * @throws NoLoginException
+     * @throws IOException
+     */
+    public AjaxResult batchDeleteRingSet(String msisdn, String vals) throws NoLoginException, IOException {
+        if(StringUtils.isNotNull(msisdn) && StringUtils.isNotNull(vals)){
+            Map<String, String> map = new HashMap<String, String>();
+            String jsonStr = "["+vals+"]";
+            map.put("delRingSetting",miguApi.delRingSetting(jsonStr, msisdn));
+            return AjaxResult.success(map,"删除成功！");
+        }
+        return AjaxResult.success(false,"参数不正确");
+    }
+
+    /**
+     * 批量删除个人铃音库
+     * @param msisdn
+     * @param vals
+     * @return
+     * @throws NoLoginException
+     * @throws IOException
+     */
+    public AjaxResult batchDeleteRing(String msisdn, String vals) throws NoLoginException, IOException {
+        if(StringUtils.isNotNull(msisdn) && StringUtils.isNotNull(vals)){
+            Map<String, String> map = new HashMap<String, String>();
+            String jsonStr = "["+vals+"]";
+            map.put("delRing",miguApi.delOtherRing(jsonStr, msisdn));
+            return AjaxResult.success(map,"删除成功！");
+        }
+        return AjaxResult.success(false,"参数不正确");
+    }
+
+    /**
+     * 联通工具箱-->用户信息-->删除某条用户信息
+     * @param msisdn
+     * @return
+     * @throws NoLoginException
+     * @throws IOException
+     */
+    public AjaxResult deleteSilentMemberByMsisdn(String msisdn) throws NoLoginException, IOException {
+        if(StringUtils.isNotNull(msisdn)){
+            Map<String, String> map = new HashMap<String, String>();
+            map.put("delSilentMember",swxlApi.deleteSilentMemberByMsisdn(msisdn));
+            return AjaxResult.success(map,"删除成功");
+        }
+        return AjaxResult.success(false,"参数不正确");
     }
 }

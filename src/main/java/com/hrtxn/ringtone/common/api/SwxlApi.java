@@ -24,6 +24,7 @@ import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.CookieStore;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.utils.URLEncodedUtils;
@@ -758,5 +759,111 @@ public class SwxlApi implements Serializable {
             httpclient.getConnectionManager().shutdown();
         }
         return result;
+    }
+
+    /**
+     * 工具箱-->联通 获取沉默用户信息
+     * @param msisdn
+     * @return
+     * @throws NoLoginException
+     * @throws IOException
+     */
+    public String getSilentMemberByMsisdn(String msisdn) throws NoLoginException, IOException {
+//        String result = null;
+//        HashMap map = new HashMap();
+//        map.put("msisdn", msisdn);
+//        result = sendPost(map, silentMember_url+"?msisdn="+msisdn);
+//        log.info("联通发送链接短信 参数：{} 结果：{}", msisdn, result);
+//        return result;
+
+        String content = null;
+        DefaultHttpClient httpclient = WebClientDevWrapper.wrapClient(new DefaultHttpClient());
+        HttpGet httpGet = new HttpGet(silentMember_url+"?msisdn="+msisdn);
+        httpclient.setCookieStore(this.getCookieStore());
+        try {
+            HttpResponse response = httpclient.execute(httpGet);// 进入
+            int statusCode = response.getStatusLine().getStatusCode();
+            if (statusCode == HttpStatus.SC_OK) {
+                HttpEntity resEntity = response.getEntity();
+                content = EntityUtils.toString(resEntity);
+            }
+        } catch (ClientProtocolException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            httpGet.abort();
+            httpclient.getConnectionManager().shutdown();
+        }
+        return content;
+    }
+
+    /**
+     * 工具箱-->联通 获取用户操作记录
+     * @param msisdn
+     * @return
+     * @throws NoLoginException
+     * @throws IOException
+     */
+    public String getSystemLogListByMsisdn(String msisdn) throws NoLoginException, IOException {
+//        String result = null;
+//        HashMap map = new HashMap();
+//        map.put("msisdn", msisdn);
+//        result = sendPost(map, systemLogList_url+"?msisdn="+msisdn+"&pageSize=100");
+//        log.info("联通发送链接短信 参数：{} 结果：{}", msisdn, result);
+//        return result;
+
+        String content = null;
+        DefaultHttpClient httpclient = WebClientDevWrapper.wrapClient(new DefaultHttpClient());
+        HttpGet httpGet = new HttpGet(systemLogList_url+"?msisdn="+msisdn+"&pageSize=100");
+        httpclient.setCookieStore(this.getCookieStore());
+        try {
+            HttpResponse response = httpclient.execute(httpGet);// 进入
+            int statusCode = response.getStatusLine().getStatusCode();
+            if (statusCode == HttpStatus.SC_OK) {
+                HttpEntity resEntity = response.getEntity();
+                content = EntityUtils.toString(resEntity);
+//				this.setMiguCookie(httpclient.getCookieStore());
+            }
+        } catch (ClientProtocolException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            httpGet.abort();
+            httpclient.getConnectionManager().shutdown();
+        }
+        return content;
+    }
+
+    /**
+     * 工具箱-》联通删除用户信息
+     * @param msisdn
+     * @return
+     * @throws NoLoginException
+     * @throws IOException
+     */
+    public String deleteSilentMemberByMsisdn(String msisdn) throws NoLoginException, IOException {
+        String content = null;
+        DefaultHttpClient httpclient = WebClientDevWrapper.wrapClient(new DefaultHttpClient());
+        HttpDelete httpDel = new HttpDelete(delete_url+msisdn);
+        httpclient.setCookieStore(this.getCookieStore());
+        try {
+            HttpResponse response = httpclient.execute(httpDel);// 进入
+            int statusCode = response.getStatusLine().getStatusCode();
+            if (statusCode == HttpStatus.SC_OK) {
+                HttpEntity resEntity = response.getEntity();
+                content = EntityUtils.toString(resEntity);
+//				this.setMiguCookie(httpclient.getCookieStore());
+            }
+        } catch (ClientProtocolException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            httpDel.abort();
+            httpclient.getConnectionManager().shutdown();
+        }
+        return content;
     }
 }

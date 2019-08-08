@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 
-<html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
 
 <head>
     <meta charset="utf-8">
@@ -8,25 +8,25 @@
     <meta name="renderer" content="webkit">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
-    <link rel="stylesheet" href="../../public/layui/css/layui.css">
-    <link rel="stylesheet" href="../../public/css/commer.css">
-    <link rel="stylesheet" type="text/css" href="../../public/dataTables/jquery.dataTables.min.css">
-    <link rel="stylesheet" href="../../client/threenets/css/head.css">
+    <link rel="stylesheet" type="text/css" th:href="@{/public/layui/css/layui.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/public/css/commer.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/public/dataTables/jquery.dataTables.min.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/client/threenets/css/head.css}">
 </head>
 
 <body>
     <div style="width:850px;margin:10px auto;">
         <div style="padding-top:10px;padding-left:0px;font-size:16px;">
-            手机号：<input type="text" id="ringMsisdn" maxlength="11">
-            <button type="button" class="btn btn-primary" id="sear" onclick="deleteRingSeting();">搜索</button>
-            <button type="button" class="btn btn-primary" id="sear" onclick="deleteRingSeting();">清空</button>
+            手机号：<input type="tel" id="phoneNum">
+            <button type="button" class="btn btn-primary" id="sear" onclick="getUnicomUserInfoByPhoneNumber();">搜索</button>
+            <button type="button" class="btn btn-primary" id="sear" onclick="resetPhoneNumberText();">清空</button>
         </div>
         <div class="layui-row per">
             <div class="layui-col-md4">
                 <div class="grid-demo grid-demo-bg1 lt">用户当前信息</div>
             </div>
         </div>
-        <table class="layui-table" id="set" style="width:850px">
+        <table class="layui-table" id="userInfoTable" style="width:850px">
             <thead>
                 <tr>
                     <th>号码</th>
@@ -37,18 +37,15 @@
                     <th>操作</th>
                 </tr>
             </thead>
-            <tbody>
-                <tr>
-                    <td>12345678912</td>
-                    <td>辽宁</td>
-                    <td>2019-02-21 12:12:23</td>
-                    <td>已包月</td>
-                    <td>2019-02-21 12:12:23</td>
-                    <td><i class="layui-icon layui-icon-delete" title="删除" onclick="Delete();"></i></td>
-                </tr>
-                <tr>
-                    <td colspan="8">暂无数据</td>
-                </tr>
+            <tbody class="userInfoTable">
+<!--                <tr class="">-->
+<!--                    <td>12345678912</td>-->
+<!--                    <td>辽宁</td>-->
+<!--                    <td>2019-02-21 12:12:23</td>-->
+<!--                    <td>已包月</td>-->
+<!--                    <td>2019-02-21 12:12:23</td>-->
+<!--                    <td><i class="layui-icon layui-icon-delete" title="删除" onclick="Delete();"></i></td>-->
+<!--                </tr>-->
             </tbody>
         </table>
         <div class="layui-row per">
@@ -65,13 +62,13 @@
                     <th>说明</th>
                 </tr>
             </thead>
-            <tbody>
-                <tr>
-                    <td>科月网络0078</td>
-                    <td>2019-02-27T11:48:01</td>
-                    <td>12345678912</td>
-                    <td>系统通过10658830端口向用户下发开通业务确认短信成功</td>
-                </tr>
+            <tbody class="tbody">
+<!--                <tr >-->
+<!--                    <td>科月网络0078</td>-->
+<!--                    <td>2019-02-27T11:48:01</td>-->
+<!--                    <td>12345678912</td>-->
+<!--                    <td>系统通过10658830端口向用户下发开通业务确认短信成功</td>-->
+<!--                </tr>-->
             </tbody>
         </table>
     </div>
@@ -79,47 +76,145 @@
 <script src="../../public/js/jquery-2.1.4.min.js"></script>
 <script src="../../public/layui/layui.js"></script>
 <script type="text/javascript" src="../../public/dataTables/jquery.dataTables.min.js"></script>
+<script type="text/javascript" th:src="@{/public/layui/layui.js}"></script>
+<script type="text/javascript" th:src="@{/public/layui/lay/modules/layer.js}"></script>
+<script type="text/javascript" th:src="@{/public/js/ajax.js}"></script>
 <script>
     //搜索
-    function deleteRingSeting(){
-        //loading层
-        var loadingIndex = layer.load(2, { //icon支持传入0-2
-            shade: [0.5, 'gray'], //0.5透明度的灰色背景
-            content: '加载中...',
-            success: function (layero) {
-                layero.find('.layui-layer-content').css({
-                    'padding-top': '39px',
-                    'width': '60px'
-                });
-                setTimeout(function(){ 
-                    layer.close(loadingIndex);//关闭loading
-                }, 3000);
+    function getUnicomUserInfoByPhoneNumber() {
+        var phoneNumber = $("#phoneNum").val().trim();
+        if(phoneNumber == null || phoneNumber ==""){
+            layer.msg("请输入联通的手机号码！",{icon: 0, time: 3000});
+            return;
+        }else if (phoneNumber.length < 11) {
+            layer.msg("请输入正确的联通手机号码！",{icon: 0, time: 3000});
+            return;
+        }
+        var url = "/threenets/getUnicomUserInfoByPhoneNumber/" + phoneNumber;
+        AjaxPut(url,{
+            phoneNumber:phoneNumber
+        },function (res) {
+            if (res.code == 200 && res.data) {
+                var data = res.data;
+                if(data != null){
+                    var silentMemberByMsisdn = $.parseJSON(data.silentMemberByMsisdn);
+                    var systemLogListByMsisdn = $.parseJSON(data.systemLogListByMsisdn);
+                    if(!silentMemberByMsisdn.success || !systemLogListByMsisdn.success){
+                        layer.msg("都不成功",{icon: 5,time: 3000});
+                        return;
+                    }
+                    var silentMemberByMsisdnData = silentMemberByMsisdn.data.data;
+                    var systemLogListByMsisdnData = systemLogListByMsisdn.data.data;
+
+                    if(silentMemberByMsisdnData != null && silentMemberByMsisdnData.length > 0){
+                        for(var i = 0; i < silentMemberByMsisdnData.length; i++ ){
+                            var str = "";
+                            str += "<tr>";
+                            str += "<td>"+silentMemberByMsisdnData[i].msisdn+"</td>";
+                            str += "<td>"+silentMemberByMsisdnData[i].provinceName+"</td>";
+                            str += "<td>"+formatUnixtimestamp(silentMemberByMsisdnData[i].ctime)+"</td>";
+                            if(silentMemberByMsisdnData[i].monthStatus == 0){
+                                str += "<td>已包月</td>";
+                            }else{
+                                str += "<td>未包月</td>";
+                            }
+                            if(silentMemberByMsisdnData[i].closeTime != null){
+                                str += "<td>"+silentMemberByMsisdnData[i].closeTime+"</td>";
+                            }else{
+                                str += "<td>-</td>";
+                            }
+                            if(silentMemberByMsisdnData[i].isSilent){
+                                str += "<td><a class='layui-icon layui-icon-delete' title='删除' href='javascript:deleteSilentMemberByMsisdn(\""+silentMemberByMsisdnData[i].msisdn+"\");'></a></td>";
+                            }else{
+                                str += "<td>-</td>";
+                            }
+                            str += "</tr>";
+                        }
+                        $(".userInfoTable").html(str);
+                    }else{
+                        if(silentMemberByMsisdn.recode == '500'){
+                            layer.msg("内部错误",{icon:2, time:3000})
+                        }else if(silentMemberByMsisdn.recode == '7777777'){
+                            layer.msg(silentMemberByMsisdnData.message,{icon:2, time:3000})
+                        }else{
+                            layer.msg("抱歉,系统没有查询到用户当前信息",{icon:5, time:3000})
+                        }
+                    }
+
+                    if(systemLogListByMsisdnData != null && systemLogListByMsisdnData.length > 0){
+                        var str = "";
+                        for(var i = 0; i < systemLogListByMsisdnData.length; i++ ){
+                            str += "<tr>";
+                            if(systemLogListByMsisdnData[i].managerName != null){
+                                str += "<td>"+systemLogListByMsisdnData[i].managerName+"</td>";
+                            }else{
+                                str += "<td>-</td>";
+                            }
+                            str += "<td>"+formatUnixtimestamp(systemLogListByMsisdnData[i].ctime)+"</td>";
+                            str += "<td>"+systemLogListByMsisdnData[i].msisdn+"</td>";
+                            str += "<td>"+systemLogListByMsisdnData[i].resultDesc+"</td>";
+                            str += "</tr>";
+                        }
+                        $(".tbody").html(str);
+                    }else{
+                        if(systemLogListByMsisdn.recode == '500'){
+                            layer.msg("内部错误",{icon:2, time:3000})
+                        }else if(systemLogListByMsisdn.recode == '7777777'){
+                            layer.msg(systemLogListByMsisdn.message,{icon:2, time:3000})
+                        }else{
+                            layer.msg("抱歉,系统没有查询到用户操作记录",{icon:5, time:3000})
+                        }
+                    }
+                }else {
+                    layer.msg("data为null",{icon: 5,time: 3000});
+                }
+            }else{
+                layer.msg("服务器异常",{icon: 5,time: 3000})
+                // res.code==200&&res.data
             }
         });
     }
-    //分页
-    $(document).ready(function() {
-        $('#per').DataTable({
-            "ordering": true, //禁止排序
-            "searching":false, //搜索框
-            "bLengthChange":false,
-            "language": {
-                "decimal":",",
-                "thousands":".",
-                "lengthMenu": " _MENU_ ",
-                "zeroRecords": "没有找到记录",
-                "info": "",
-                "infoEmpty": "",
-                "infoFiltered": "",
-                "paginate" :{
-                    // "first" : "",
-                    "sPrevious" : "上一页",
-                    "sNext" : "下一页",
-                    // "sLast" : ""
-                }
+
+    //重置搜索框
+    function resetPhoneNumberText() {
+        $("#phoneNum").val("");
+    }
+
+    //删除联通用户
+    function deleteSilentMemberByMsisdn(msisdn) {
+        var msisdn = $("#phoneNum").val().trim();
+        if(msisdn == null || msisdn ==""){
+            layer.msg("请输入联通手机号",{icon: 0, time: 3000});
+            return;
+        }
+        var url = "/threenets/deleteSilentMemberByMsisdn/"+msisdn;
+        AjaxPut(url,{
+            msisdn:msisdn
+        },function (res) {
+            if (res.code == 200 && res.data) {
+                getUnicomUserInfoByPhoneNumber(msisdn);
+            }else{
+                layer.msg(res.msg, {icon: 5, time: 3000});
             }
         });
-    });
+    }
+
+    //时间戳转换为yyyy-MM-dd HH:mm:ss格式的时间
+    function formatUnixtimestamp(unixtimestamp) {
+        var date = new Date(unixtimestamp);
+        var y = date.getFullYear();
+        var m = date.getMonth() + 1;
+        m = m < 10 ? ('0' + m) : m;
+        var d = date.getDate();
+        d = d < 10 ? ('0' + d) : d;
+        var h = date.getHours();
+        h = h < 10 ? ('0' + h) : h;
+        var minute = date.getMinutes();
+        var second = date.getSeconds();
+        minute = minute < 10 ? ('0' + minute) : minute;
+        second = second < 10 ? ('0' + second) : second;
+        return y + '-' + m + '-' + d + ' ' + h + ':' + minute + ':' + second;
+    }
 </script>
 
 </html>
