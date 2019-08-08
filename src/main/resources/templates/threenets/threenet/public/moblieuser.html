@@ -17,7 +17,7 @@
 <body>
     <div style="width:850px;margin:10px auto;">
         <div style="padding-top:10px;padding-left:0px;font-size:16px;">
-            手机号：<input type="text" id="ringMsisdn" maxlength="11">
+            手机号：<input type="tel" id="ringMsisdn">
             <button type="button" class="btn btn-primary" id="sear" onclick="getUserInfoByRingMsisdn();">搜索</button>
             <button type="button" class="btn btn-primary" id="sear" onclick="resetRingMsisdnText();">清空</button>
         </div>
@@ -130,7 +130,11 @@
                     str += "<td>" + userCurrentInfo.group + "</td>";
                     str += "<td>" + userCurrentInfo.sa + "</td>";
                     str += "<td>" + userCurrentInfo.ctime + "</td>";
-                    str += "<td>" + userCurrentInfo.closeTime + "</td>";
+                    if(userCurrentInfo.closeTime == null){
+                        str += "<td>未知</td>";
+                    }else{
+                        str += "<td>" + userCurrentInfo.closeTime + "</td>";
+                    }
                     if (userCurrentInfo.payType == "GE") {
                         str += "<td>" + userCurrentInfo.price + "元个付</td>";
                     }

@@ -17,7 +17,7 @@
 <body>
     <div style="width:850px;margin:10px auto;">
         <div style="padding-top:10px;padding-left:0px;font-size:16px;">
-            手机号：<input type="text" id="phoneNum" maxlength="11">
+            手机号：<input type="tel" id="phoneNum">
             <button type="button" class="btn btn-primary" id="sear" onclick="getUnicomUserInfoByPhoneNumber();">搜索</button>
             <button type="button" class="btn btn-primary" id="sear" onclick="resetPhoneNumberText();">清空</button>
         </div>
@@ -133,11 +133,11 @@
                         $(".userInfoTable").html(str);
                     }else{
                         if(silentMemberByMsisdn.recode == '500'){
-                            $(".userInfoTable").html("<tr><td colspan='6' style='color:#F00;'>内部错误</td></tr>")
+                            layer.msg("内部错误",{icon:2, time:3000})
                         }else if(silentMemberByMsisdn.recode == '7777777'){
-                            $(".userInfoTable").html("<tr><td colspan='6' style='color:#F00;'>"+silentMemberByMsisdnData.message+"</td></tr>")
+                            layer.msg(silentMemberByMsisdnData.message,{icon:2, time:3000})
                         }else{
-                            $(".userInfoTable").html("<tr><td colspan='6' style='color:#F00;'>抱歉,系统没有查询到数据</td></tr>")
+                            layer.msg("抱歉,系统没有查询到用户当前信息",{icon:5, time:3000})
                         }
                     }
 
@@ -158,11 +158,11 @@
                         $(".tbody").html(str);
                     }else{
                         if(systemLogListByMsisdn.recode == '500'){
-                            $(".tbody").html("<tr><td colspan='4' style='color:#F00;'>内部错误</td></tr>")
+                            layer.msg("内部错误",{icon:2, time:3000})
                         }else if(systemLogListByMsisdn.recode == '7777777'){
-                            $(".tbody").html("<tr><td colspan='4' style='color:#F00;'>"+systemLogListByMsisdn.message+"</td></tr>")
+                            layer.msg(systemLogListByMsisdn.message,{icon:2, time:3000})
                         }else{
-                            $(".tbody").html("<tr><td colspan='4' style='color:#F00;'>抱歉,系统没有查询到数据</td></tr>")
+                            layer.msg("抱歉,系统没有查询到用户操作记录",{icon:5, time:3000})
                         }
                     }
                 }else {
@@ -193,8 +193,6 @@
         },function (res) {
             if (res.code == 200 && res.data) {
                 getUnicomUserInfoByPhoneNumber(msisdn);
-                $("#userInfoTable").DataTable().ajax.reload(null, true);
-                $("#per").DataTable().ajax.reload(null, true);
             }else{
                 layer.msg(res.msg, {icon: 5, time: 3000});
             }
