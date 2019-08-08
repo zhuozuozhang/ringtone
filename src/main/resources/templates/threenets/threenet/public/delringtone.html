@@ -124,7 +124,7 @@
 <script>
     //搜索
     function findRingInfoByMsisdn() {
-        var msisdn = $("#ringMsisdn").val();
+        var msisdn = $("#ringMsisdn").val().trim();
         if(msisdn == null || msisdn ==""){
             layer.msg("请输入手机号",{icon: 0, time: 3000});
             return;
@@ -239,7 +239,7 @@
     //删除某一行个人铃音设置
     function singleDeleteRingSetting(settingID,toneID,type){
         if(confirm("删除该铃音设置会将相同设置ID的铃音设置一起删掉，确认删除？")){
-            var msisdn = $("#ringMsisdn").val();
+            var msisdn = $("#ringMsisdn").val().trim();
             if(msisdn == null || msisdn ==""){
                 layer.msg("请输入移动手机号",{icon: 0, time: 3000});
                 return;
@@ -278,7 +278,7 @@
     //删除某一行个人铃音库
     function singleDeleteRing(toneIds,type){
         if(confirm("确认删除该铃音？")){
-            var msisdn = $("#ringMsisdn").val();
+            var msisdn = $("#ringMsisdn").val().trim();
             if(msisdn == null || msisdn ==""){
                 layer.msg("请输入手机号",{icon: 0, time: 3000});
                 return;
@@ -291,7 +291,6 @@
             }, function (res) {
                 if (res.code == 200 && res.data) {
                     findRingInfoByMsisdn(msisdn);
-                    // $("#set").DataTable().ajax.reload(msisdn, true);
                 }else{
                     layer.msg(res.msg, {icon: 5, time: 3000});
                 }
@@ -301,12 +300,11 @@
     //批量删除个人铃音设置
     function delRingSettingListByMsisdn(){
         if (confirm("删除选中的铃音设置会将相同设置ID的铃音设置一起删掉，确认删除？")) {
-            var msisdn = $("#ringMsisdn").val();
+            var msisdn = $("#ringMsisdn").val().trim();
             if (msisdn == null || msisdn == "") {
                 layer.msg("请输入手机号", {icon: 0, time: 3000});
                 return;
             }
-
             var valArr = new Array;
             $(".ringSettingListByMsisdnTbody :checkbox[checked]").each(function (i) {
                 valArr[i] = $(this).val();
@@ -323,31 +321,17 @@
             }, function (res) {
                 if (res.code == 200 && res.data) {
                     findRingInfoByMsisdn(msisdn);
-                    // $("#set").DataTable().ajax.reload(msisdn, true);
                 } else {
                     layer.msg(res.msg, {icon: 5, time: 3000});
                 }
             });
-            // $.post(url, {
-            //     "msisdn" : msisdn,
-            //     "vals" : vals
-            // }, function(data, textstatus) {
-            //     art.dialog({
-            //         id : 'formDialog'
-            //     }).close();
-            //     if(data){
-            //         deleteRingSeting();
-            //     }else{
-            //         tipDialog("删除失败！");
-            //     }
-            // }, "json");
         }
 
     }
     //批量删除个人铃音库列表
     function delRingListByMsisdn(){
         if(confirm("确认删除选中的铃音?")){
-            var msisdn = $("#ringMsisdn").val();
+            var msisdn = $("#ringMsisdn").val().trim();
             if(msisdn == null || msisdn ==""){
                 layer.msg("请输入手机号",{icon: 0, time: 3000});
                 return;
@@ -368,25 +352,10 @@
             },function (res) {
                 if (res.code == 200 && res.data) {
                     findRingInfoByMsisdn(msisdn);
-                    // $("#set").DataTable().ajax.reload(msisdn, true);
                 }else{
                     layer.msg(res.msg, {icon: 5, time: 3000});
                 }
             });
-            //
-            // $.post(url, {
-            //     "msisdn" : msisdn,
-            //     "vals" : vals
-            // }, function(data, textstatus) {
-            //     art.dialog({
-            //         id : 'formDialog'
-            //     }).close();
-            //     if(data){
-            //         deleteRingSeting();
-            //     }else{
-            //         tipDialog("删除失败！");
-            //     }
-            // }, "json");
         }
     }
 

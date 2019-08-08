@@ -82,7 +82,7 @@
 <script>
     //搜索
     function getUnicomUserInfoByPhoneNumber() {
-        var phoneNumber = $("#phoneNum").val();
+        var phoneNumber = $("#phoneNum").val().trim();
         if(phoneNumber == null || phoneNumber ==""){
             layer.msg("请输入联通的手机号码！",{icon: 0, time: 3000});
             return;
@@ -182,7 +182,7 @@
 
     //删除联通用户
     function deleteSilentMemberByMsisdn(msisdn) {
-        var msisdn = $("#phoneNum").val();
+        var msisdn = $("#phoneNum").val().trim();
         if(msisdn == null || msisdn ==""){
             layer.msg("请输入联通手机号",{icon: 0, time: 3000});
             return;

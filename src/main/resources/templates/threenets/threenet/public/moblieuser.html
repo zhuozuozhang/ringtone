@@ -92,7 +92,7 @@
     //搜索
     /* 工具箱--》用户信息获取 */
     function getUserInfoByRingMsisdn() {
-        var ringMsisdn = $("#ringMsisdn").val();
+        var ringMsisdn = $("#ringMsisdn").val().trim();
         if (ringMsisdn == null || ringMsisdn == "") {
             layer.msg("请输入手机号", {icon: 0, time: 3000});
             return;
