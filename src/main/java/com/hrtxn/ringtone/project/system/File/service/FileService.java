@@ -1,13 +1,18 @@
 package com.hrtxn.ringtone.project.system.File.service;
 
 import com.hrtxn.ringtone.common.constant.AjaxResult;
+import com.hrtxn.ringtone.common.utils.DateUtils;
 import com.hrtxn.ringtone.common.utils.FileUtil;
 import com.hrtxn.ringtone.project.system.File.domain.Uploadfile;
 import com.hrtxn.ringtone.project.system.File.mapper.UploadfileMapper;
+import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreenetsRing;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.util.Date;
 import java.util.List;
 
@@ -51,9 +56,10 @@ public class FileService {
 
     /**
      * 修改文件使用状态
+     *
      * @param path
      */
-    public void updateStatus (String path){
+    public void updateStatus(String path) {
         Uploadfile uploadfile = new Uploadfile();
         uploadfile.setPath(path);
         uploadfile.setStatus(2);
@@ -62,9 +68,10 @@ public class FileService {
 
     /**
      * 修改文件使用状态
+     *
      * @param path
      */
-    public void deleteFile (String path){
+    public void deleteFile(String path) {
         Uploadfile uploadfile = new Uploadfile();
         uploadfile.setPath(path);
         uploadfile.setStatus(1);
@@ -76,9 +83,20 @@ public class FileService {
      *
      * @return
      */
-    public List<Uploadfile> listUploadfile(Integer orderId){
-        String path = "\\"+orderId;
+    public List<Uploadfile> listUploadfile(Integer orderId) {
+        String path = "\\" + orderId;
         return uploadfileMapper.selectByPath(path);
     }
 
+    public String cloneFile(ThreenetsRing ring) {
+        try {
+            File file = new File(ring.getRingWay());
+            FileInputStream inputStream = new FileInputStream(file);
+            MultipartFile multipartFile = new MockMultipartFile(file.getName(), inputStream);
+            String fileName = ring.getRingName().substring(0, ring.getRingName().length() - 10) + DateUtils.getTimeRadom();
+            return FileUtil.uploadFile(multipartFile, ring.getOrderId(), fileName);
+        } catch (Exception e) {
+            return null;
+        }
+    }
 }

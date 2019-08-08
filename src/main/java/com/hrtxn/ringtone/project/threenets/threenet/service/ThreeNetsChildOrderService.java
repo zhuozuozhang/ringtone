@@ -12,6 +12,7 @@ import com.hrtxn.ringtone.freemark.config.systemConfig.RingtoneConfig;
 import com.hrtxn.ringtone.project.system.json.JuhePhone;
 import com.hrtxn.ringtone.project.system.json.JuhePhoneResult;
 import com.hrtxn.ringtone.project.threenets.threenet.domain.*;
+import com.hrtxn.ringtone.project.threenets.threenet.json.mcard.McardAddGroupRespone;
 import com.hrtxn.ringtone.project.threenets.threenet.json.migu.MiguAddGroupRespone;
 import com.hrtxn.ringtone.project.threenets.threenet.json.migu.MiguAddPhoneRespone;
 import com.hrtxn.ringtone.project.threenets.threenet.json.swxl.SwxlGroupResponse;
@@ -185,7 +186,8 @@ public class ThreeNetsChildOrderService {
                     }
                 }
                 if (operator == 2) {
-                    batchChindOrder(list,rings.get(0));
+                    List<ThreenetsChildOrder> orders = addMcardByDx(order, attached, list);
+                    batchChindOrder(orders,rings.get(0));
                     if (ringMap.get(2) == null){
                         ThreenetsRing threenetsRing = rings.get(0);
                         threenetsRing.setOperate(2);
@@ -239,7 +241,6 @@ public class ThreeNetsChildOrderService {
     }
 
     /**
-     * x
      * 新增联通成员
      *
      * @param attached
@@ -275,6 +276,40 @@ public class ThreeNetsChildOrderService {
             list.set(i,childOrder);
         }
         return list;
+    }
+
+    /**
+     * 电信添加用户
+     *
+     * @param order
+     * @param attached
+     * @param list
+     * @return
+     * @throws IOException
+     * @throws NoLoginException
+     */
+    public List<ThreenetsChildOrder> addMcardByDx(ThreenetsOrder order,ThreeNetsOrderAttached attached,List<ThreenetsChildOrder> list)throws IOException,NoLoginException{
+        if (attached.getMcardId() == null) {
+            //新增电信商户需要先上传审核文件
+
+
+            //没有电信商户，先新增商户
+            McardAddGroupRespone respone = apiUtils.addOrderByDx(order, attached);
+            if (respone.getCode().equals("200")) {
+                attached.setMcardId(null);
+                threeNetsOrderAttachedService.update(attached);
+            } else {
+                return new ArrayList<>();
+            }
+        }
+        //特殊处理，需要先进入对应商户，然后进行成员添加
+        List<ThreenetsChildOrder> childOrders = apiUtils.addPhoneByDx(list,attached.getMcardId());
+        for (int i = 0; i < childOrders.size(); i++) {
+            ThreenetsChildOrder childOrder = childOrders.get(i);
+            childOrder.setOperateId(attached.getMiguId());
+            childOrders.set(i,childOrder);
+        }
+        return childOrders;
     }
 
     /**
@@ -538,6 +573,125 @@ public class ThreeNetsChildOrderService {
             return AjaxResult.error("获取数据出错！");
         }
         return AjaxResult.error("参数格式不正确！");
+    }
+
+    /**
+     * 移动工具箱-->用户信息
+     * @param ringMsisdn
+     * @return
+     */
+    public AjaxResult getUserInfoByRingMsisdn(String ringMsisdn) throws Exception {
+        if (StringUtils.isNotNull(ringMsisdn)) {
+            return apiUtils.getUserInfoByRingMsisdn(ringMsisdn);
+        }
+        return AjaxResult.success(false,"参数不正确！");
+    }
+
+    /**
+     * 移动工具箱-->删除铃音-->搜索
+     * @param msisdn
+     * @return
+     * @throws NoLoginException
+     * @throws IOException
+     */
+    public AjaxResult findRingInfoByMsisdn(String msisdn) throws NoLoginException, IOException {
+        if(StringUtils.isNotNull(msisdn)){
+            return apiUtils.findRingInfoByMsisdn(msisdn);
+        }
+        return AjaxResult.success(false,"参数不正确");
+    }
+
+    /**
+     * 移动工具箱-->删除铃音-->删除个人铃音设置
+     * @param msisdn
+     * @param settingID
+     * @param toneID
+     * @param type
+     * @return
+     * @throws NoLoginException
+     * @throws IOException
+     */
+    public AjaxResult singleDeleteRingSet(String msisdn, String settingID, String toneID, String type) throws NoLoginException, IOException {
+        if(StringUtils.isNotNull(msisdn) && StringUtils.isNotNull(settingID) &&
+                StringUtils.isNotNull(toneID) && StringUtils.isNotNull(type)){
+            return apiUtils.singleDeleteRingSet(msisdn,settingID,toneID,type);
+        }
+        return AjaxResult.success(false,"参数不正确");
+    }
+
+    /**
+     * 移动工具箱-->删除铃音-->删除个人铃音库
+     * @param msisdn
+     * @param toneIds
+     * @param type
+     * @return
+     */
+    public AjaxResult singleDeleteRing(String msisdn, String toneIds, String type) throws NoLoginException, IOException {
+        if(StringUtils.isNotNull(msisdn) && StringUtils.isNotNull(toneIds) && StringUtils.isNotNull(type)){
+            return apiUtils.singleDeleteRing(msisdn,toneIds,type);
+        }
+        return AjaxResult.success(false,"参数不正确！");
+    }
+
+    /**
+     * 批量删除个人铃音设置
+     * @param msisdn
+     * @param vals
+     * @return
+     * @throws NoLoginException
+     * @throws IOException
+     */
+    public AjaxResult batchDeleteRingSet(String msisdn, String vals) throws NoLoginException, IOException {
+        if (StringUtils.isNotNull(msisdn) && StringUtils.isNotNull(vals)){
+            return apiUtils.batchDeleteRingSet(msisdn,vals);
+        }
+        return AjaxResult.success(false,"参数不正确");
+    }
+
+    /**
+     * 批量删除个人铃音库
+     * @param msisdn
+     * @param vals
+     * @return
+     * @throws NoLoginException
+     * @throws IOException
+     */
+    public AjaxResult batchDeleteRing(String msisdn, String vals) throws NoLoginException, IOException {
+        if (StringUtils.isNotNull(msisdn) && StringUtils.isNotNull(vals)){
+            return apiUtils.batchDeleteRing(msisdn,vals);
+        }
+        return AjaxResult.success(false,"参数不正确");
+    }
+
+    /**
+     * 联通工具箱-->用户信息
+     * @param phoneNumber
+     * @return
+     * @throws NoLoginException
+     * @throws IOException
+     */
+    public AjaxResult getUnicomUserInfoByPhoneNumber(String phoneNumber) throws NoLoginException, IOException {
+        if(StringUtils.isNotNull(phoneNumber)){
+            Map<String, String> map = new HashMap<String, String>();
+            map.put("silentMemberByMsisdn", apiUtils.getSilentMemberByMsisdn(phoneNumber));
+            map.put("systemLogListByMsisdn", apiUtils.getSystemLogListByMsisdn(phoneNumber));
+            return AjaxResult.success(map,"查找到了");
+        }
+        return AjaxResult.success(false,"参数不正确");
+    }
+
+    /**
+     * 联通工具箱-->用户信息-->删除某条用户信息
+     * @param msisdn
+     * @return
+     * @throws NoLoginException
+     * @throws IOException
+     */
+    public AjaxResult deleteSilentMemberByMsisdn(String msisdn) throws NoLoginException, IOException {
+        if(StringUtils.isNotNull(msisdn)){
+            return apiUtils.deleteSilentMemberByMsisdn(msisdn);
+        }
+        return AjaxResult.success(false,"参数不正确");
     }
 
     /**

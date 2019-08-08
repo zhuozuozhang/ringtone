@@ -1,6 +1,7 @@
 package com.hrtxn.ringtone.project.system.File.controller;
 
 import com.hrtxn.ringtone.common.constant.AjaxResult;
+import com.hrtxn.ringtone.common.utils.DateUtils;
 import com.hrtxn.ringtone.common.utils.StringUtils;
 import com.hrtxn.ringtone.freemark.config.logConfig.Log;
 import com.hrtxn.ringtone.freemark.enums.BusinessType;
@@ -38,6 +39,7 @@ public class FileController {
     @ResponseBody
     @Log(title = "上传文件", businessType = BusinessType.INSERT, operatorLogType = OperatorLogType.ADMIN)
     public AjaxResult uploadRingFile(@RequestParam("ringFile") MultipartFile ringFile, String ringName, Integer parentOrderId) {
+        ringName = ringName + DateUtils.getTimeRadom();
         return fileService.upload(ringFile, ringName, parentOrderId);
     }
 

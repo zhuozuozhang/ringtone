@@ -11,12 +11,18 @@ import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreenetsOrder;
 import com.hrtxn.ringtone.project.threenets.threenet.service.ThreeNetsChildOrderService;
 import com.hrtxn.ringtone.project.threenets.threenet.service.ThreeNetsOrderService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.map.HashedMap;
+import org.aspectj.weaver.loadtime.Aj;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpSession;
+import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Author:lile
@@ -219,6 +225,149 @@ public class ThreeNetsChildOrderController {
             return threeNetsChildOrderService.sendMessage(type,flag,data);
         } catch (Exception e) {
             log.error("发送短信功能 方法：sendMessage 错误信息", e);
+            return AjaxResult.error(e.getMessage());
+        }
+    }
+
+    /**
+     * 移动工具箱-->用户信息
+     * @param ringMsisdn
+     * @return
+     */
+    @PutMapping("/threenets/getUserInfoByRingMsisdn/{ringMsisdn}")
+    @ResponseBody
+    @Log(title = "移动工具箱-->获取用户信息",operatorLogType = OperatorLogType.THREENETS)
+    public AjaxResult getUserInfo(String ringMsisdn){
+        try {
+            return threeNetsChildOrderService.getUserInfoByRingMsisdn(ringMsisdn);
+        } catch (Exception e) {
+            log.error("移动工具箱-->获取用户信息 方法：getUserInfo 错误信息", e);
+            return AjaxResult.error(e.getMessage());
+        }
+    }
+
+    /**
+     * 移动工具箱-->删除铃音-->搜索
+     * @param msisdn
+     * @return
+     */
+    @PutMapping("/threenets/findRingInfoByMsisdn/{msisdn}")
+    @ResponseBody
+    @Log(title = "移动工具箱-->删除铃音-->搜索",operatorLogType = OperatorLogType.THREENETS)
+    public AjaxResult findRingInfoByMsisdn(@PathVariable String msisdn){
+        try {
+            return threeNetsChildOrderService.findRingInfoByMsisdn(msisdn);
+        } catch (Exception e) {
+            log.error("移动工具箱-->删除铃音-->搜索 方法：findRingInfoByMsisdn 错误信息", e);
+            return AjaxResult.error(e.getMessage());
+        }
+    }
+
+    /**
+     * 移动工具箱-->删除铃音-->删除个人铃音设置
+     * @param msisdn
+     * @param settingID
+     * @param toneID
+     * @param type
+     * @return
+     */
+    @PutMapping("/threenets/singleDeleteRingSet/{msisdn}")
+    @ResponseBody
+    @Log(title = "通过移动手机号、设置ID、铃音ID、铃音类型删除某条个人铃音设置",businessType = BusinessType.DELETE,operatorLogType = OperatorLogType.THREENETS)
+    public AjaxResult singleDeleteRingSet(@PathVariable String msisdn,String settingID,String toneID,String type){
+        try {
+            return threeNetsChildOrderService.singleDeleteRingSet(msisdn,settingID,toneID,type);
+        } catch (Exception e) {
+            log.error("删除某条个人铃音设置 方法：singleDeleteRingSet 错误信息",e);
+            return AjaxResult.error(e.getMessage());
+        }
+    }
+
+    /**
+     * 移动工具箱-->删除铃音-->删除某条个人铃音库
+     * @param msisdn
+     * @param toneIds
+     * @param type
+     * @return
+     */
+    @PutMapping("/threenets/singleDeleteRing/{msisdn}")
+    @ResponseBody
+    @Log(title = "通过移动手机号、铃音ID、铃音类型删除某条个人铃音库",businessType = BusinessType.DELETE,operatorLogType = OperatorLogType.THREENETS)
+    public AjaxResult singleDeleteRing(@PathVariable String msisdn,String toneIds,String type){
+        try {
+            return threeNetsChildOrderService.singleDeleteRing(msisdn,toneIds,type);
+        } catch (Exception e) {
+            log.error("删除某条个人铃音库 方法：singleDeleteRing 错误信息",e);
+            return AjaxResult.error(e.getMessage());
+        }
+    }
+
+    /**
+     * 批量删除个人铃音设置
+     * @param msisdn
+     * @param vals
+     * @return
+     */
+    @PutMapping("/threenets/batchDeleteRingSet")
+    @ResponseBody
+    @Log(title = "批量删除个人铃音设置",businessType = BusinessType.DELETE,operatorLogType = OperatorLogType.THREENETS)
+    public AjaxResult batchDeleteRingSet(String msisdn,String vals){
+        try {
+            return threeNetsChildOrderService.batchDeleteRingSet(msisdn,vals);
+        } catch (Exception e) {
+            log.error("批量删除个人铃音设置 方法：batchDeleteRingSet 错误信息",e);
+            return AjaxResult.error(e.getMessage());
+        }
+    }
+
+    /**
+     * 批量删除个人铃音库
+     * @param msisdn
+     * @param vals
+     * @return
+     */
+    @PutMapping("/threenets/batchDeleteRing")
+    @ResponseBody
+    @Log(title = "批量删除个人铃音库",businessType = BusinessType.DELETE,operatorLogType = OperatorLogType.THREENETS)
+    public AjaxResult batchDeleteRing(String msisdn,String vals){
+        try {
+            return threeNetsChildOrderService.batchDeleteRing(msisdn,vals);
+        } catch (Exception e) {
+            log.error("批量删除个人铃音库 方法：batchDeleteRing 错误信息",e);
+            return AjaxResult.error(e.getMessage());
+        }
+    }
+
+    /**
+     * 联通工具箱-->用户信息
+     * @param phoneNumber
+     * @return
+     */
+    @PutMapping("/threenets/getUnicomUserInfoByPhoneNumber/{phoneNumber}")
+    @ResponseBody
+    @Log(title = "联通工具箱-->用户信息",operatorLogType = OperatorLogType.THREENETS)
+    public AjaxResult getUnicomUserInfoByPhoneNumber(@PathVariable String phoneNumber) {
+        try {
+            return threeNetsChildOrderService.getUnicomUserInfoByPhoneNumber(phoneNumber);
+        } catch (Exception e) {
+            log.error("联通工具箱-->用户信息 方法：getUnicomUserInfoByPhoneNumber 错误信息", e);
+            return AjaxResult.error(e.getMessage());
+        }
+    }
+
+    /**
+     * 联通工具箱-->用户信息-->删除某条用户信息
+     * @param msisdn
+     * @return
+     */
+    @PutMapping("/threenets/deleteSilentMemberByMsisdn/{msisdn}")
+    @ResponseBody
+    @Log(title = "联通工具箱-->用户信息-->删除某条用户信息",businessType = BusinessType.DELETE,operatorLogType = OperatorLogType.THREENETS)
+    public AjaxResult deleteSilentMemberByMsisdn(@PathVariable String msisdn) {
+        try {
+            return threeNetsChildOrderService.deleteSilentMemberByMsisdn(msisdn);
+        } catch (Exception e) {
+            log.error("联通工具箱-->用户信息-->删除某条用户信息 方法：deleteSilentMemberByMsisdn 错误信息", e);
             return AjaxResult.error(e.getMessage());
         }
     }

@@ -16,6 +16,7 @@ import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreenetsChildOrder;
 import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreenetsOrder;
 import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreenetsRing;
 import com.hrtxn.ringtone.project.threenets.threenet.json.migu.MiguAddGroupRespone;
+import com.hrtxn.ringtone.project.threenets.threenet.json.migu.MiguAddRingRespone;
 import com.hrtxn.ringtone.project.threenets.threenet.json.swxl.SwxlGroupResponse;
 import com.hrtxn.ringtone.project.threenets.threenet.mapper.ThreenetsOrderMapper;
 import com.hrtxn.ringtone.project.threenets.threenet.utils.ApiUtils;
@@ -234,6 +235,7 @@ public class ThreeNetsOrderService {
         List<ThreenetsChildOrder> childOrders = new ArrayList<>();
         //将子订单数据按照网段区分
         Map<Integer, List<ThreenetsChildOrder>> collect = childOrderList.stream().collect(Collectors.groupingBy(ThreenetsChildOrder::getOperator));
+        int num = 1;
         for (Integer operator : collect.keySet()) {
             ThreenetsRing ring = new ThreenetsRing();
             ring.setRingWay(order.getRingUrl());
@@ -242,6 +244,10 @@ public class ThreeNetsOrderService {
             ring.setRingContent(order.getRingContent());
             ring.setRingName(order.getRingName());
             ring.setOperate(operator);
+            if (num > 1){
+                String file = fileService.cloneFile(ring);
+                ring.setRingWay(file);
+            }
             threeNetsRingService.save(ring);
             List<ThreenetsChildOrder> list = collect.get(operator);
             for (int i = 0; i < list.size(); i++) {
@@ -253,11 +259,12 @@ public class ThreeNetsOrderService {
                 childOrder.setPaymentType(Integer.parseInt(order.getPaymentType()));
                 childOrders.add(childOrder);
             }
+            num++;
         }
         //保存子订单
-        //threeNetsChildOrderService.batchChindOrder(childOrders);
+        threeNetsChildOrderService.batchChindOrder(childOrders);
         //保存线上
-        //saveOnlineOrder(threenetsOrder,attached,childOrders);
+        saveOnlineOrder(threenetsOrder,attached,childOrders);
         return AjaxResult.success(threenetsOrder, "保存成功！");
     }
 
@@ -281,14 +288,20 @@ public class ThreeNetsOrderService {
                     ThreenetsRing ring = threeNetsRingService.getRing(childOrders.get(0).getRingId());
                     attached.setMiguId(miguAddGroupRespone.getCircleId());
                     ring.setOperateId(miguAddGroupRespone.getCircleId());
-                    utils.saveMiguRing(ring, attached.getMiguId(), order.getCompanyName());
+                    MiguAddRingRespone ringRespone = utils.saveMiguRing(ring, attached.getMiguId(), order.getCompanyName());
+                    if (ringRespone.isSuccess()){
+                        ring.setOperateRingId(ringRespone.getRingId());
+                        threeNetsRingService.update(ring);
+                    }else{
+                        threeNetsRingService.delete(ring.getId());
+                        fileService.deleteFile(ring.getRingWay());
+                    }
                     for (int i = 0; i < childOrders.size(); i++) {
                         ThreenetsChildOrder childOrder = childOrders.get(i);
                         childOrder.setOperateId(attached.getMiguId());
                         childOrders.set(i,childOrder);
                     }
                     threeNetsChildOrderService.batchChindOrder(childOrders);
-                    threeNetsRingService.update(ring);
                 }
             }
             //联通
@@ -300,6 +313,11 @@ public class ThreeNetsOrderService {
                 if (swxlGroupResponse.getStatus() == 0) {
                     attached.setSwxlId(swxlGroupResponse.getGroupId());
                     ring.setOperateId(swxlGroupResponse.getGroupId());
+                    boolean addRingByLt = utils.addRingByLt(ring, attached.getSwxlId());
+                    if (!addRingByLt){
+                        threeNetsRingService.delete(ring.getId());
+                        fileService.deleteFile(ring.getRingWay());
+                    }
                     for (int i = 0; i < childOrders.size(); i++) {
                         ThreenetsChildOrder childOrder = childOrders.get(i);
                         childOrder.setOperateId(attached.getSwxlId());
