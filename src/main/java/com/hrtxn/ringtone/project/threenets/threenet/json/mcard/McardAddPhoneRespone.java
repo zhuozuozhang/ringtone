@@ -4,11 +4,11 @@ import lombok.Data;
 
 /**
  * Author:lile
- * Date:2019/8/7 9:33
+ * Date:2019-08-08 15:19
  * Description:
  */
 @Data
-public class McardAddGroupRespone {
+public class McardAddPhoneRespone {
     private String code;
-    private String message;
+    private String msg;
 }

@@ -680,8 +680,8 @@ public class SwxlApi implements Serializable {
      * @param ring
      * return flag:true 返回 ring.ringId 为 商务炫铃铃音ID
      */
-    public String addRing(ThreenetsRing ring,String circleID) throws IOException,NoLoginException{
-        String result = null;
+    public boolean addRing(ThreenetsRing ring,String circleID) throws IOException,NoLoginException{
+        boolean flag = false;
         DefaultHttpClient httpclient = WebClientDevWrapper.wrapClient(new DefaultHttpClient());
         HttpPost httppost = new HttpPost(importSwxlRing_URL);
         httpclient.setCookieStore(this.getCookieStore());
@@ -696,9 +696,12 @@ public class SwxlApi implements Serializable {
             HttpResponse response1 = httpclient.execute(httppost);
             int statusCode = response1.getStatusLine().getStatusCode();
             if (statusCode == HttpStatus.SC_OK) {
-                log.debug("铃音上传服务器正常响应2.....");
+                log.debug("铃音上传服务器正常响应.....");
                 // HttpEntity resEntity = response1.getEntity();
-                result = EntityUtils.toString(response1.getEntity());
+                String result = EntityUtils.toString(response1.getEntity());
+                flag = !result.contains("铃音名称已经存在，请修改");
+                // 铃音文件时长超过48秒
+                this.setSwxlCookie(httpclient.getCookieStore());
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -706,7 +709,7 @@ public class SwxlApi implements Serializable {
             httppost.abort();
             httpclient.getConnectionManager().shutdown();
         }
-        return result;
+        return flag;
     }
 
     /**

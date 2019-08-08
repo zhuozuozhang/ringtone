@@ -11,6 +11,7 @@ import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreenetsOrder;
 import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreenetsRing;
 import com.hrtxn.ringtone.project.threenets.threenet.json.migu.MiguAddGroupRespone;
 import com.hrtxn.ringtone.project.threenets.threenet.json.migu.MiguAddPhoneRespone;
+import com.hrtxn.ringtone.project.threenets.threenet.json.migu.MiguAddRingRespone;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -19,11 +20,14 @@ import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.CookieStore;
+import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.ContentType;
 import org.apache.http.entity.mime.MultipartEntity;
+import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -636,56 +640,58 @@ public class MiguApi implements Serializable {
     /**
      * 上传铃音，还要添加商户登录
      * @param ring
-     * @param circleID
+     * @param trade
      * @param groupName
      * @return
      * @throws IOException
      * @throws NoLoginException
      */
-    public String saveRing(ThreenetsRing ring, String circleID, String groupName) throws IOException,NoLoginException {
+    public MiguAddRingRespone saveRing(ThreenetsRing ring, String trade, String groupName) throws IOException,NoLoginException {
+        MiguAddRingRespone miguAddRingRespone = new MiguAddRingRespone();
         String ringName = ring.getRingName().substring(0,ring.getRingName().indexOf("."));
-        String result = "";
-        DefaultHttpClient httpclient = new DefaultHttpClient();
+        String result = null;
+        CloseableHttpClient httpclient = HttpClients.custom().setDefaultCookieStore(this.getCookieStore()).build();
         HttpPost httppost = new HttpPost(importRing_url);
-        httpclient.setCookieStore(this.getCookieStore());
+        MultipartEntityBuilder builder = MultipartEntityBuilder.create();
+        // 上传的文件
+        builder.addBinaryBody("file", ring.getFile());
+        builder.addTextBody("ringName", ringName, ContentType.TEXT_PLAIN.withCharset("UTF-8"));
+        builder.addTextBody("circleID", "2250ec10-307f-4040-bb4a-fe631f75c254", ContentType.TEXT_PLAIN.withCharset("UTF-8"));
+        builder.addTextBody("trade", trade, ContentType.TEXT_PLAIN.withCharset("UTF-8"));
+        builder.addTextBody("singer", "");
+        builder.addTextBody("songName", "");
+        builder.addTextBody("ringContent", ring.getRingContent(), ContentType.TEXT_PLAIN.withCharset("UTF-8"));
+        builder.addTextBody("autoSetType", "0");
+        HttpEntity httpEntity = builder.build();
+        httppost.setEntity(httpEntity);
+        HttpResponse response = httpclient.execute(httppost);
         try {
-            MultipartEntity reqEntity = new MultipartEntity();
-            reqEntity.addPart("ringName", new StringBody(ringName, Charset.forName("UTF-8")));
-            reqEntity.addPart("circleID", new StringBody("2250ec10-307f-4040-bb4a-fe631f75c254", Charset.forName("UTF-8")));
-            reqEntity.addPart("trade", new StringBody("其他普通行业", Charset.forName("UTF-8")));
-            reqEntity.addPart("singer", new StringBody(""));
-            reqEntity.addPart("songName", new StringBody(""));
-            if (ring.getRingType().equals("视频")){
-                reqEntity.addPart("file", new FileBody(ring.getFile(), "video/mp4"));
-            }else{
-                reqEntity.addPart("file", new FileBody(ring.getFile(), "audio/mp3"));
+            HttpEntity resEntity = response.getEntity();
+            result = EntityUtils.toString(resEntity);
+            //log.info("移动 设置铃音 参数：{},{},{} 结果：{}",phones,ringId,circleId,result);
+            this.setMiguCookie(this.getCookieStore());
+            int statusCode = response.getStatusLine().getStatusCode();
+            if (statusCode == HttpStatus.SC_OK) {
+                log.debug("铃音上传服务器正常响应2.....");
+                //String result = EntityUtils.toString(response1.getEntity());
+                if (result.contains("铃音名称已经存在，请修改")) {
+                    miguAddRingRespone.setMsg("铃音名称已经存在，请修改");
+                    miguAddRingRespone.setSuccess(false);
+                }else if (result.contains("集团还有铃音正在分发中，不能上传铃音")) {
+                    miguAddRingRespone.setMsg("集团还有铃音正在分发中，不能上传铃音");
+                    miguAddRingRespone.setSuccess(false);
+                }else {
+                    miguAddRingRespone.setMsg("上传成功");
+                    miguAddRingRespone.setSuccess(true);
+                }
             }
-            //reqEntity.addPart("file", new FileBody(ring.getFile(), "audio/mp3"));
-            reqEntity.addPart("ringContent", new StringBody(ring.getRingContent(), Charset.forName("UTF-8")));
-            reqEntity.addPart("autoSetType", new StringBody("0"));
-            httppost.setEntity(reqEntity);
-            HttpResponse response1 = httpclient.execute(httppost);
-            HttpEntity entity = response1.getEntity();
-            result = EntityUtils.toString(entity);
-            //int statusCode = response1.getStatusLine().getStatusCode();
-//            if (statusCode == HttpStatus.SC_OK) {
-//                log.debug("铃音上传服务器正常响应2.....");
-//                //String result = EntityUtils.toString(response1.getEntity());
-//                if (result.contains("铃音名称已经存在，请修改")) {
-//                    ajaxResult.error("铃音名称已经存在，请修改");
-//                }else if (result.contains("集团还有铃音正在分发中，不能上传铃音")) {
-//                    ajaxResult.error("集团还有铃音正在分发中，不能上传铃音");
-//                }else {
-//                    ajaxResult.success(true,"上传成功");
-//                }
-//            }
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
             httppost.abort();
             httpclient.getConnectionManager().shutdown();
         }
-        return result;
+        return miguAddRingRespone;
     }
 
     /**

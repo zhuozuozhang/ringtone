@@ -2,10 +2,12 @@ package com.hrtxn.ringtone.common.api;
 
 import com.hrtxn.ringtone.common.exception.NoLoginException;
 import com.hrtxn.ringtone.common.utils.WebClientDevWrapper;
+import com.hrtxn.ringtone.common.utils.json.JsonUtil;
 import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreenetsChildOrder;
 import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreenetsOrder;
 import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreenetsRing;
 import com.hrtxn.ringtone.project.threenets.threenet.json.mcard.McardAddGroupRespone;
+import com.hrtxn.ringtone.project.threenets.threenet.json.mcard.McardAddPhoneRespone;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -192,7 +194,8 @@ public class McardApi {
      * @param childOrder
      * @return
      */
-    public String addApersonnel(ThreenetsChildOrder childOrder) {
+    public McardAddPhoneRespone addApersonnel(ThreenetsChildOrder childOrder) {
+        McardAddPhoneRespone addPhoneRespone = new McardAddPhoneRespone();
         String result = null;
         DefaultHttpClient httpclient = WebClientDevWrapper.wrapClient(new DefaultHttpClient());
         HttpPost httppost = new HttpPost(settingRing_url);
@@ -206,13 +209,14 @@ public class McardApi {
             HttpResponse response = httpclient.execute(httppost);
             HttpEntity resEntity = response.getEntity();
             result = EntityUtils.toString(resEntity);
+            addPhoneRespone = (McardAddPhoneRespone) JsonUtil.getObject4JsonString(result, McardAddPhoneRespone.class);
         } catch (Exception e) {
             System.out.println(e);
         } finally {
             httppost.abort();
             httpclient.getConnectionManager().shutdown();
         }
-        return result;
+        return addPhoneRespone;
     }
 
     /**
@@ -221,7 +225,9 @@ public class McardApi {
      * @param ring
      * @return
      */
-    public String uploadRing(ThreenetsRing ring) {
+    public boolean uploadRing(ThreenetsRing ring) {
+        boolean flag = false;
+        String ringName = ring.getRingName().substring(0,ring.getRingName().indexOf("."));
         String result = null;
         DefaultHttpClient httpclient = WebClientDevWrapper.wrapClient(new DefaultHttpClient());
         HttpPost httppost = new HttpPost(saveRing_url);
@@ -230,13 +236,13 @@ public class McardApi {
             MultipartEntity reqEntity = new MultipartEntity();
             HttpParams params = httpclient.getParams();
             params.setParameter(CoreProtocolPNames.HTTP_CONTENT_CHARSET, Charset.forName("UTF-8"));
-            reqEntity.addPart("song", new StringBody("惠科门窗", Charset.forName("UTF-8")));
-            reqEntity.addPart("ringName", new StringBody("惠科门窗", Charset.forName("UTF-8")));
-            reqEntity.addPart("ringText", new StringBody("您好：欢迎致电惠科门窗", Charset.forName("UTF-8")));
+            reqEntity.addPart("song", new StringBody(ringName, Charset.forName("UTF-8")));
+            reqEntity.addPart("ringName", new StringBody(ringName, Charset.forName("UTF-8")));
+            reqEntity.addPart("ringText", new StringBody(ring.getRingContent(), Charset.forName("UTF-8")));
             reqEntity.addPart("singer", new StringBody("无", Charset.forName("UTF-8")));
             reqEntity.addPart("ringFile", new FileBody(ring.getFile(), "audio/mp3"));
             reqEntity.addPart("ext", new StringBody("mp3", Charset.forName("UTF-8")));
-            reqEntity.addPart("fileName", new StringBody("慧科001.mp3", Charset.forName("UTF-8")));
+            reqEntity.addPart("fileName", new StringBody(ring.getRingName(), Charset.forName("UTF-8")));
             httppost.setEntity(reqEntity);
             HttpResponse response1 = httpclient.execute(httppost);
             int statusCode = response1.getStatusLine().getStatusCode();
@@ -244,6 +250,7 @@ public class McardApi {
                 log.debug("铃音上传服务器正常响应2.....");
                 // HttpEntity resEntity = response1.getEntity();
                 result = EntityUtils.toString(response1.getEntity());
+                flag = true;
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -251,7 +258,7 @@ public class McardApi {
             httppost.abort();
             httpclient.getConnectionManager().shutdown();
         }
-        return result;
+        return flag;
     }
 
     /**

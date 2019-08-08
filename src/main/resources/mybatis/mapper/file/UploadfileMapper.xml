@@ -33,7 +33,7 @@
         where id = #{id,jdbcType=INTEGER}
     </delete>
 
-    <insert id="insertSelective" parameterType="com.hrtxn.ringtone.project.system.File.domain.Uploadfile">
+    <insert id="insertSelective" parameterType="com.hrtxn.ringtone.project.system.File.domain.Uploadfile" useGeneratedKeys="true" keyProperty="id" >
         insert into tb_uploadfile
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="id != null">

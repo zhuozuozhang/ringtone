@@ -11,6 +11,7 @@ import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreeNetsOrderAttach
 import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreenetsChildOrder;
 import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreenetsOrder;
 import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreenetsRing;
+import com.hrtxn.ringtone.project.threenets.threenet.json.migu.MiguAddRingRespone;
 import com.hrtxn.ringtone.project.threenets.threenet.mapper.ThreenetsOrderMapper;
 import com.hrtxn.ringtone.project.threenets.threenet.mapper.ThreenetsRingMapper;
 import com.hrtxn.ringtone.project.threenets.threenet.utils.ApiUtils;
@@ -37,8 +38,7 @@ import java.util.stream.Collectors;
 @Slf4j
 public class ThreeNetsRingService {
 
-    private final String[] VIDEO = {"mp4", "mov"};
-    private final String[] AUDIO = {"wav", "mp3"};
+    private final String[] VIDEO = {".mp4", ".mov"};
 
     @Autowired
     private ThreenetsOrderMapper threenetsOrderMapper;
@@ -58,10 +58,11 @@ public class ThreeNetsRingService {
 
     /**
      * 根据订单id获取父级订单
+     *
      * @param id
      * @return
      */
-    public ThreenetsOrder getOrderById(Integer id)throws Exception{
+    public ThreenetsOrder getOrderById(Integer id) throws Exception {
         return threenetsOrderMapper.selectByPrimaryKey(id);
     }
 
@@ -113,38 +114,44 @@ public class ThreeNetsRingService {
     }
 
     @Transactional
-    public ThreenetsRing saveRing(ThreenetsRing ring) {
-        try{
-            ThreenetsOrder order = threenetsOrderMapper.selectByPrimaryKey(ring.getOrderId());
-            ring.setCompanyName(order.getCompanyName());
-            BaseRequest request = new BaseRequest();
-            request.setParentId(ring.getOrderId());
-            List<ThreenetsChildOrder> childOrderList = threeNetsChildOrderService.getChildOrder(request);
-            Map<Integer, List<ThreenetsChildOrder>> collect = childOrderList.stream().collect(Collectors.groupingBy(ThreenetsChildOrder::getOperator));
-            for (Integer operator:collect.keySet()) {
-                String extensionsName = ring.getRingWay().substring(ring.getRingWay().indexOf("."));
-                boolean isVideo = Arrays.asList(VIDEO).contains(extensionsName);
-                ring.setRingType(isVideo ? "视频" : "音频");
-                ring.setRingStatus(2);
-                ring.setCreateTime(new Date());
-                ring.setRingName(ring.getRingName()+extensionsName);
-                ring.setOperate(operator);
-
-                //保存铃音
-                threenetsRingMapper.insertThreeNetsRing(ring);
-                if (operator == 1){
-                    saveMiguRing(ring);
-                }
-                if (operator == 3){
-                    //saveSwxlRing(ring);
-                }
+    public AjaxResult saveRing(ThreenetsRing ring) throws Exception {
+        ThreenetsOrder order = threenetsOrderMapper.selectByPrimaryKey(ring.getOrderId());
+        ring.setCompanyName(order.getCompanyName());
+        BaseRequest request = new BaseRequest();
+        request.setParentId(ring.getOrderId());
+        List<ThreenetsChildOrder> childOrderList = threeNetsChildOrderService.getChildOrder(request);
+        Map<Integer, List<ThreenetsChildOrder>> collect = childOrderList.stream().collect(Collectors.groupingBy(ThreenetsChildOrder::getOperator));
+        int num = 1;
+        for (Integer operator : collect.keySet()) {
+            String extensionsName = ring.getRingWay().substring(ring.getRingWay().indexOf("."));
+            boolean isVideo = Arrays.asList(VIDEO).contains(extensionsName);
+            ring.setRingType(isVideo ? "视频" : "音频");
+            ring.setRingStatus(2);
+            ring.setCreateTime(new Date());
+            ring.setRingName(ring.getRingName() + extensionsName);
+            ring.setOperate(operator);
+            if (ring.getRingType().equals("视频") && operator != 1) {
+                continue;
             }
-            //修改文件状态
-            fileService.updateStatus(ring.getRingWay());
-        }catch (Exception e){
-            log.info("添加铃音失败",e);
+            if (num > 1){
+                String path = fileService.cloneFile(ring);
+                ring.setRingWay(path);
+            }
+            if (operator == 1) {
+                threenetsRingMapper.insertThreeNetsRing(ring);
+                saveMiguRing(ring);
+            }
+            if (operator == 3) {
+                threenetsRingMapper.insertThreeNetsRing(ring);
+                saveSwxlRing(ring);
+            }
+            if (operator == 2) {
+                threenetsRingMapper.insertThreeNetsRing(ring);
+                saveMcardRing(ring);
+            }
+            num++;
         }
-        return ring;
+        return AjaxResult.success(ring, "保存成功");
     }
 
     /**
@@ -153,36 +160,54 @@ public class ThreeNetsRingService {
      * @param ring
      */
     @Synchronized
-    private void saveMiguRing(ThreenetsRing ring){
-        try {
-            ring.setFile(new File(RingtoneConfig.getProfile()+ring.getRingWay()));
-            ThreeNetsOrderAttached attached = threeNetsOrderAttachedService.selectByParentOrderId(ring.getOrderId());
-            ring.setOperateId(attached.getMiguId());
-            apiUtils.saveMiguRing(ring,attached.getMiguId(),ring.getCompanyName());
-            ring.setOperateId(attached.getMiguId());
+    private MiguAddRingRespone saveMiguRing(ThreenetsRing ring) throws IOException, NoLoginException {
+        ring.setFile(new File(RingtoneConfig.getProfile() + ring.getRingWay()));
+        ThreeNetsOrderAttached attached = threeNetsOrderAttachedService.selectByParentOrderId(ring.getOrderId());
+        ring.setOperateId(attached.getMiguId());
+        MiguAddRingRespone ringRespone = apiUtils.saveMiguRing(ring, attached.getMiguId(), ring.getCompanyName());
+        if (ringRespone != null && ringRespone.isSuccess()) {
+            //保存铃音
+            ring.setOperateRingId(ringRespone.getRingId());
             threenetsRingMapper.updateByPrimaryKeySelective(ring);
-        }catch (Exception e){
-            log.info("添加铃音失败",e);
+            fileService.updateStatus(ring.getRingWay());
         }
-
+        return ringRespone;
     }
 
     /**
      * 保存联通铃音
+     *
      * @param ring
      */
-    private void saveSwxlRing(ThreenetsRing ring){
-        try {
-            ring.setFile(new File(RingtoneConfig.getProfile()+ring.getRingWay()));
-            ThreeNetsOrderAttached attached = threeNetsOrderAttachedService.selectByParentOrderId(ring.getOrderId());
-            apiUtils.addRingByLt(ring,attached.getSwxlId());
-            ring.setOperateId(attached.getSwxlId());
+    @Synchronized
+    private void saveSwxlRing(ThreenetsRing ring) throws IOException, NoLoginException {
+        ring.setFile(new File(RingtoneConfig.getProfile() + ring.getRingWay()));
+        ThreeNetsOrderAttached attached = threeNetsOrderAttachedService.selectByParentOrderId(ring.getOrderId());
+        ring.setOperateId(attached.getSwxlId());
+        boolean ringByLt = apiUtils.addRingByLt(ring, attached.getSwxlId());
+        if (ringByLt) {
             threenetsRingMapper.updateByPrimaryKeySelective(ring);
-        }catch (Exception e){
-
+            fileService.updateStatus(ring.getRingWay());
         }
     }
 
+    /**
+     * 保存电信铃音
+     *
+     * @param ring
+     * @throws IOException
+     * @throws NoLoginException
+     */
+    private void saveMcardRing(ThreenetsRing ring)throws IOException,NoLoginException{
+        ring.setFile(new File(RingtoneConfig.getProfile() + ring.getRingWay()));
+        ThreeNetsOrderAttached attached = threeNetsOrderAttachedService.selectByParentOrderId(ring.getOrderId());
+        ring.setOperateId(attached.getSwxlId());
+        boolean flag = apiUtils.addRingByDx(ring);
+        if (flag) {
+            threenetsRingMapper.updateByPrimaryKeySelective(ring);
+            fileService.updateStatus(ring.getRingWay());
+        }
+    }
     /**
      * 保存铃音
      *
@@ -196,7 +221,7 @@ public class ThreeNetsRingService {
         ring.setRingType(isVideo ? "视频" : "音频");
         ring.setRingStatus(2);
         ring.setCreateTime(new Date());
-        ring.setRingName(ring.getRingName()+extensionsName);
+        ring.setRingName(ring.getRingName() + extensionsName);
         //保存铃音
         threenetsRingMapper.insertThreeNetsRing(ring);
         //修改文件状态
@@ -230,10 +255,10 @@ public class ThreeNetsRingService {
         ThreenetsRing ring = threenetsRingMapper.selectByPrimaryKey(id);
         ring.setRingStatus(2);
         threenetsRingMapper.insertThreeNetsRing(ring);
-        if (ring.getOperate() == 3){
+        if (ring.getOperate() == 3) {
             saveSwxlRing(ring);
         }
-        if (ring.getOperate() == 1){
+        if (ring.getOperate() == 1) {
             saveMiguRing(ring);
         }
     }
@@ -275,10 +300,10 @@ public class ThreeNetsRingService {
      */
     public AjaxResult setRing(String phones, Integer orderId, Integer operate, Integer id) throws Exception {
         if (StringUtils.isNotEmpty(phones) && StringUtils.isNotNull(orderId)
-                && StringUtils.isNotNull(operate)  && StringUtils.isNotNull(id)){
+                && StringUtils.isNotNull(operate) && StringUtils.isNotNull(id)) {
             // 根据ID获取铃音信息
             ThreenetsRing threenetsRing = threenetsRingMapper.selectByPrimaryKey(id);
-            if (StringUtils.isNotNull(threenetsRing)){
+            if (StringUtils.isNotNull(threenetsRing)) {
                 return apiUtils.setRing(phones, threenetsRing, operate, orderId);
             } else {
                 return AjaxResult.error("无铃音数据！");
@@ -288,7 +313,7 @@ public class ThreeNetsRingService {
     }
 
     /**
-     *获取设置铃音激活成功铃音数据数据
+     * 获取设置铃音激活成功铃音数据数据
      *
      * @param page
      * @param orderId
@@ -297,11 +322,11 @@ public class ThreeNetsRingService {
      */
     public AjaxResult getThreeNetsRingSetingList(Page page, Integer orderId, Integer operate) throws Exception {
         page.setPage((page.getPage() - 1) * page.getPagesize());
-        List<ThreenetsRing> ringList = threenetsRingMapper.getSetRingList(page,orderId,operate);
+        List<ThreenetsRing> ringList = threenetsRingMapper.getSetRingList(page, orderId, operate);
         // 获取设置铃音激活成功铃音总数
-        int count = threenetsRingMapper.getSetRingCount(orderId,operate);
-        if(ringList.size() > 0){
-            return AjaxResult.success(ringList,"获取数据成功！",count);
+        int count = threenetsRingMapper.getSetRingCount(orderId, operate);
+        if (ringList.size() > 0) {
+            return AjaxResult.success(ringList, "获取数据成功！", count);
         }
         return AjaxResult.error("无数据！");
     }
@@ -311,7 +336,7 @@ public class ThreeNetsRingService {
      *
      * @param ring
      */
-    public void update(ThreenetsRing ring){
+    public void update(ThreenetsRing ring) {
         threenetsRingMapper.updateByPrimaryKeySelective(ring);
     }
 }

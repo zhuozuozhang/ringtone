@@ -166,34 +166,21 @@
             if (name == '' || name == null) {
                 return
             }
-            // $.ajax({
-            //     url: '/system/upload/ringFile',
-            //     type: 'POST',
-            //     cache: false,
-            //     data: new FormData($('#Form')[0]),
-            //     processData: false,
-            //     contentType: false,
-            //     success: function(res) {
-            //         layer.msg(res.msg, {icon: 1, time: 1000});
-            //         $("#ringWay").val(res.data);
-            //     },
-            //     error: function(err) {
-            //         layer.msg(err.msg, {icon: 2, time: 1000});
-            //     }
-            // })
-            $.ajaxFileUpload({
-                url:'/system/upload/ringFile',
-                secureuri:false,
-                fileElementId:'file',//file标签的id
-                dataType: 'json',//返回数据的类型
-                data:{"parentOrderId":'4443'},//一同上传的数据
-                success: function (data) {
-                    alert(data)
+            $.ajax({
+                url: '/system/upload/ringFile',
+                type: 'POST',
+                cache: false,
+                data: new FormData($('#Form')[0]),
+                processData: false,
+                contentType: false,
+                success: function(res) {
+                    layer.msg(res.msg, {icon: 1, time: 1000});
+                    $("#ringWay").val(res.data);
                 },
-                error: function (data, e) {
-                    alert(e);
+                error: function(err) {
+                    layer.msg(err.msg, {icon: 2, time: 1000});
                 }
-            });
+            })
         }
     </script>
 

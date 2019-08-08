@@ -12,6 +12,7 @@ import com.hrtxn.ringtone.freemark.config.systemConfig.RingtoneConfig;
 import com.hrtxn.ringtone.project.system.json.JuhePhone;
 import com.hrtxn.ringtone.project.system.json.JuhePhoneResult;
 import com.hrtxn.ringtone.project.threenets.threenet.domain.*;
+import com.hrtxn.ringtone.project.threenets.threenet.json.mcard.McardAddGroupRespone;
 import com.hrtxn.ringtone.project.threenets.threenet.json.migu.MiguAddGroupRespone;
 import com.hrtxn.ringtone.project.threenets.threenet.json.migu.MiguAddPhoneRespone;
 import com.hrtxn.ringtone.project.threenets.threenet.json.swxl.SwxlGroupResponse;
@@ -185,7 +186,8 @@ public class ThreeNetsChildOrderService {
                     }
                 }
                 if (operator == 2) {
-                    batchChindOrder(list,rings.get(0));
+                    List<ThreenetsChildOrder> orders = addMcardByDx(order, attached, list);
+                    batchChindOrder(orders,rings.get(0));
                     if (ringMap.get(2) == null){
                         ThreenetsRing threenetsRing = rings.get(0);
                         threenetsRing.setOperate(2);
@@ -239,7 +241,6 @@ public class ThreeNetsChildOrderService {
     }
 
     /**
-     * x
      * 新增联通成员
      *
      * @param attached
@@ -275,6 +276,40 @@ public class ThreeNetsChildOrderService {
             list.set(i,childOrder);
         }
         return list;
+    }
+
+    /**
+     * 电信添加用户
+     *
+     * @param order
+     * @param attached
+     * @param list
+     * @return
+     * @throws IOException
+     * @throws NoLoginException
+     */
+    public List<ThreenetsChildOrder> addMcardByDx(ThreenetsOrder order,ThreeNetsOrderAttached attached,List<ThreenetsChildOrder> list)throws IOException,NoLoginException{
+        if (attached.getMcardId() == null) {
+            //新增电信商户需要先上传审核文件
+
+
+            //没有电信商户，先新增商户
+            McardAddGroupRespone respone = apiUtils.addOrderByDx(order, attached);
+            if (respone.getCode().equals("200")) {
+                attached.setMcardId(null);
+                threeNetsOrderAttachedService.update(attached);
+            } else {
+                return new ArrayList<>();
+            }
+        }
+        //特殊处理，需要先进入对应商户，然后进行成员添加
+        List<ThreenetsChildOrder> childOrders = apiUtils.addPhoneByDx(list,attached.getMcardId());
+        for (int i = 0; i < childOrders.size(); i++) {
+            ThreenetsChildOrder childOrder = childOrders.get(i);
+            childOrder.setOperateId(attached.getMiguId());
+            childOrders.set(i,childOrder);
+        }
+        return childOrders;
     }
 
     /**
