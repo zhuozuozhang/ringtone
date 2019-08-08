@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hrtxn.ringtone.project.system.user.mapper.RoleRelationMapper">
+
+    <resultMap id="BaseResultMap" type="com.hrtxn.ringtone.project.system.user.domain.RoleRelation">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="user_id" property="userId" jdbcType="INTEGER"/>
+        <result column="menu_id" property="menuId" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, user_id, menu_id
+    </sql>
+    <!-- 获取当前用户拥有的菜单 -->
+    <select id="findRoleRelationByUserId" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM
+        tb_role_relation
+        WHERE
+        user_id = #{id,jdbcType=INTEGER}
+    </select>
+    <!--删除用户对应的菜单-->
+    <delete id="deleteRoleRelationByUserId" parameterType="java.lang.Integer">
+        delete from
+            tb_role_relation
+        where
+            user_id = #{userId,jdbcType=INTEGER}
+     </delete>
+
+
+    <insert id="insertRoleRelation" parameterType="RoleRelation">
+      insert into
+          tb_role_relation (user_id, menu_id)
+      values
+        <foreach collection="menuArr" item="menuArr" separator=",">
+            (#{userId,jdbcType=INTEGER}, #{menuArr,jdbcType=INTEGER})
+        </foreach>
+  </insert>
+
+
+    <insert id="insertSelective" parameterType="RoleRelation">
+        insert into tb_role_relation
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="userId != null">
+                user_id,
+            </if>
+            <if test="menuId != null">
+                menu_id,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=INTEGER},
+            </if>
+            <if test="userId != null">
+                #{userId,jdbcType=INTEGER},
+            </if>
+            <if test="menuId != null">
+                #{menuId,jdbcType=INTEGER},
+            </if>
+        </trim>
+    </insert>
+</mapper>

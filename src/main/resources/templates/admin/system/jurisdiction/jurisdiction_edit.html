@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:include="admin/common/include :: header"></head>
+<body class="form-wrap">
+<div class="x-body">
+    <form class="layui-form">
+        <div>
+            <input type="checkbox" name="menu" lay-skin="primary" th:each ="menu : ${menuList}" th:title="${menu.menu}" th:attr ="checked=${menu.check}? true : false,bind_data=${menu.id}">
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-input-block" style="margin: 20px 0px;">
+                <button class="layui-btn" lay-submit lay-filter="update">修改</button>
+            </div>
+        </div>
+        <input type="hidden" name="userId" id="userId" th:value="${id}">
+    </form>
+</div>
+<div th:include="admin/common/include :: footer"></div>
+<script>
+    layui.use(['form', 'layer'], function () {
+        $ = layui.jquery;
+        var form = layui.form, layer = layui.layer;
+        form.render();
+        //监听提交
+        form.on('submit(update)', function (data) {
+            console.log(data);
+            var userId = $("#userId").val();
+            var arr = new Array();
+            var menus = document.getElementsByName("menu");
+            for (var i = 0; i < menus.length; i++){
+                if (menus[i].checked){
+                    arr.push($(menus[i]).attr("bind_data"))
+                }
+            }
+            AjaxPut("/admin/updateRoleRelation",{
+                userId:userId,
+                menuArr:arr
+            },function (res) {
+                if (res.code == 200 && res.data){
+                    layer.alert(res.msg, {icon: 6}, function () {
+                        // 获得frame索引
+                        var index = parent.layer.getFrameIndex(window.name);
+                        //关闭当前frame
+                        parent.layer.close(index);
+                    });
+                } else {
+                    layer.msg(res.msg, {icon: 5, time: 1000});
+                }
+            });
+            return false;
+        });
+    });
+</script>
+</body>
+</html>
