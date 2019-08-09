@@ -41,19 +41,7 @@ public class ThreenetsOrder implements Serializable {
     private Integer childOrderQuantityByMonthly;
     // 总数/包月
     private String peopleNum;
-    // 用户名称
-    private String userName;
-
 
     //-------------------------------提交三网文件--------------------------------------
-    private File serviceProtocolFile;
-
-    private File businesslicenseFile;
-
     private File upLoadAgreement;
-
-    private String mcardId;//音乐名片系统id   和咪咕id
-    private String verifycode;//音乐名片 扣费验证码
-    private String feePhone;//音乐名片 扣费手机号
-    private String makeFee;//音乐名片制作费
 }

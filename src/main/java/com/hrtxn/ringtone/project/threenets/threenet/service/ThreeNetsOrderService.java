@@ -15,6 +15,7 @@ import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreeNetsOrderAttach
 import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreenetsChildOrder;
 import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreenetsOrder;
 import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreenetsRing;
+import com.hrtxn.ringtone.project.threenets.threenet.json.mcard.McardAddGroupRespone;
 import com.hrtxn.ringtone.project.threenets.threenet.json.migu.MiguAddGroupRespone;
 import com.hrtxn.ringtone.project.threenets.threenet.json.migu.MiguAddRingRespone;
 import com.hrtxn.ringtone.project.threenets.threenet.json.swxl.SwxlGroupResponse;
@@ -261,10 +262,8 @@ public class ThreeNetsOrderService {
             }
             num++;
         }
-        //保存子订单
-        threeNetsChildOrderService.batchChindOrder(childOrders);
         //保存线上
-        saveOnlineOrder(threenetsOrder,attached,childOrders);
+        saveOnlineOrder(threenetsOrder,attached,childOrders,order);
         return AjaxResult.success(threenetsOrder, "保存成功！");
     }
 
@@ -274,9 +273,8 @@ public class ThreeNetsOrderService {
      * @param list
      */
     @Synchronized
-    private void saveOnlineOrder(ThreenetsOrder order, ThreeNetsOrderAttached attached, List<ThreenetsChildOrder> list) {
+    private void saveOnlineOrder(ThreenetsOrder order, ThreeNetsOrderAttached attached, List<ThreenetsChildOrder> list,OrderRequest orderRequest) {
         Map<Integer, List<ThreenetsChildOrder>> collect = list.stream().collect(Collectors.groupingBy(ThreenetsChildOrder::getOperator));
-        List<Uploadfile> fileList = fileService.listUploadfile(order.getId());
         ApiUtils utils = new ApiUtils();
         try {
             // 移动
@@ -331,6 +329,21 @@ public class ThreeNetsOrderService {
             }
             //电信
             if (collect.get(2) != null){
+                //文件上传
+                if (orderRequest.getCompanyUrl()!=null){
+                    String path = utils.mcardUploadFile(new File(orderRequest.getCompanyUrl()));
+                    attached.setBusinessLicense(path);
+                }
+                if (orderRequest.getClientUrl()!=null){
+                    String path = utils.mcardUploadFile(new File(orderRequest.getClientUrl()));
+                    attached.setConfirmLetter(path);
+                }
+                if (orderRequest.getMainUrl()!=null){
+                    String path = utils.mcardUploadFile(new File(orderRequest.getMainUrl()));
+                    attached.setSubjectProve(path);
+                }
+                McardAddGroupRespone groupRespone = utils.addOrderByDx(order, attached);
+                attached.setMcardId(groupRespone.getData().getAuserId());
 
             }
             //保存订单附表

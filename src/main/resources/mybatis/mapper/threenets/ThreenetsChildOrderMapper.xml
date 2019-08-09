@@ -103,6 +103,12 @@
         <if test="param.operator != null and param.operator != ''">
             AND operator = #{param.operator}
         </if>
+        <if test="param.arrayById != null">
+            AND o.user_id in
+            <foreach collection="param.arrayById" item="id" index="index" open="(" close=")" separator=",">
+                #{id}
+            </foreach>
+        </if>
         GROUP BY DATE_FORMAT( create_date, '%Y-%m-%d' ) DESC,is_monthly
         ) a
         where DATE_FORMAT(a.dateTimes, '%Y-%m' ) ='${param.month}'
@@ -122,6 +128,12 @@
         </if>
         <if test="param.operator != null and param.operator != ''">
             AND operator = #{param.operator}
+        </if>
+        <if test="param.arrayById != null">
+            AND o.user_id in
+            <foreach collection="param.arrayById" item="id" index="index" open="(" close=")" separator=",">
+                #{id}
+            </foreach>
         </if>
         GROUP BY DATE_FORMAT( create_date, '%Y-%m' ) DESC,is_monthly
         ) a

@@ -28,6 +28,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -915,7 +916,7 @@ public class ApiUtils {
         McardAddGroupRespone mcardAddGroupRespone = null;
         //添加商户，同步三次
         for (int i = 0; i < 3; i++) {
-            mcardAddGroupRespone = mcardApi.addGroup(ringOrder);
+            mcardAddGroupRespone = mcardApi.addGroup(ringOrder,attached);
             if (mcardAddGroupRespone != null){
                 break;
             }
@@ -1235,5 +1236,15 @@ public class ApiUtils {
             return AjaxResult.success(map,"删除成功");
         }
         return AjaxResult.success(false,"参数不正确");
+    }
+
+    /**
+     * 电信上传文件
+     *
+     * @param file
+     * @return
+     */
+    public String mcardUploadFile(File file){
+        return mcardApi.uploadFile(file);
     }
 }

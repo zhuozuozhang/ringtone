@@ -28,6 +28,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Author:zcy
@@ -242,8 +244,28 @@ public class UserService {
      * @return
      */
     public List<User> getChildUserList() throws Exception {
+        Page page = new Page(0, 9999);
         Integer id = ShiroUtils.getSysUser().getId();
-        return userMapper.findChildUser(id, null);
+        List<UserVo> list = userMapper.getUserList(page, new BaseRequest());
+        Map<Integer, List<UserVo>> map = list.stream().collect(Collectors.groupingBy(User::getParentId));
+        List<User> userList = new ArrayList<>();
+        User user = userMapper.findUserById(id);
+        userList.add(user);
+        recursion(map.get(id),map,userList);
+        return userList;
+    }
+
+    //递归
+    private void recursion(List<UserVo> list,Map<Integer, List<UserVo>> map,List<User> userList) {
+        if (list == null || list.isEmpty()){
+            return;
+        }
+        userList.addAll(list);
+        for (int i = 0; i < list.size(); i++) {
+            UserVo vo = list.get(i);
+            List<UserVo> vos = map.get(vo.getId());
+            recursion(vos, map,userList);
+        }
     }
 
     /**
@@ -306,7 +328,7 @@ public class UserService {
             } else {
                 // 电话号码为空，则获取当前登录账号
                 User user = ShiroUtils.getSysUser();
-                if (StringUtils.isNotNull(user)){
+                if (StringUtils.isNotNull(user)) {
                     // 获取当前账号上级代理（根据ID查询）
 
                     // 获取当前账号下级代理（根据parent_id）
@@ -325,19 +347,19 @@ public class UserService {
      * @throws Exception
      */
     public AjaxResult updateUserStatus(Integer id) throws Exception {
-        if (StringUtils.isNotNull(id)){
+        if (StringUtils.isNotNull(id)) {
             // 根据ID查询用户信息
             User user = userMapper.findUserById(id);
-            if (StringUtils.isNotNull(user)){
-                if (user.getUserRole() == 1){
+            if (StringUtils.isNotNull(user)) {
+                if (user.getUserRole() == 1) {
                     user.setUserRole(2);
-                }else {
+                } else {
                     user.setUserRole(1);
                 }
                 // 修改用户角色
                 int i = userMapper.updateUserById(user);
-                if (i > 0){
-                    return AjaxResult.success(true,"修改成功！");
+                if (i > 0) {
+                    return AjaxResult.success(true, "修改成功！");
                 }
                 return AjaxResult.error("修改用户角色失败！");
             }
@@ -354,15 +376,15 @@ public class UserService {
      */
     public List<Menu> jurisdictiction(Integer id) {
         List<Menu> menuList = new ArrayList<>();
-        if (StringUtils.isNotNull(id)){
+        if (StringUtils.isNotNull(id)) {
             // 获取全部的菜单
             menuList = menuMapper.findAllMenu();
             // 获取当前用户拥有的菜单
             List<RoleRelation> roleRelationList = roleRelationMapper.findRoleRelationByUserId(id);
             // 判断是否选中
-            for (int i = 0; i < menuList.size(); i++){
-                for (int j = 0; j < roleRelationList.size(); j++){
-                    if (menuList.get(i).getId() == roleRelationList.get(j).getMenuId()){
+            for (int i = 0; i < menuList.size(); i++) {
+                for (int j = 0; j < roleRelationList.size(); j++) {
+                    if (menuList.get(i).getId() == roleRelationList.get(j).getMenuId()) {
                         menuList.get(i).setCheck(true);
                     }
                 }
@@ -373,17 +395,17 @@ public class UserService {
 
     @Transactional
     public AjaxResult updateRoleRelation(Integer userId, int[] menuArr) {
-        if (StringUtils.isNotNull(userId)){
+        if (StringUtils.isNotNull(userId)) {
             // 删除ID对应的菜单
             roleRelationMapper.deleteRoleRelationByUserId(userId);
             // 执行批量添加菜单操作
-            if (StringUtils.isNotNull(menuArr)){
-                int i = roleRelationMapper.insertRoleRelation(userId,menuArr);
-                if (i > 0){
-                    return AjaxResult.success(true,"设置成功!");
+            if (StringUtils.isNotNull(menuArr)) {
+                int i = roleRelationMapper.insertRoleRelation(userId, menuArr);
+                if (i > 0) {
+                    return AjaxResult.success(true, "设置成功!");
                 }
-            } else{
-                return AjaxResult.success(true,"设置成功!");
+            } else {
+                return AjaxResult.success(true, "设置成功!");
             }
         }
         return AjaxResult.error("参数格式不正确！");

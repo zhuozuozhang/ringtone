@@ -3,6 +3,7 @@ package com.hrtxn.ringtone.common.api;
 import com.hrtxn.ringtone.common.exception.NoLoginException;
 import com.hrtxn.ringtone.common.utils.WebClientDevWrapper;
 import com.hrtxn.ringtone.common.utils.json.JsonUtil;
+import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreeNetsOrderAttached;
 import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreenetsChildOrder;
 import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreenetsOrder;
 import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreenetsRing;
@@ -114,9 +115,9 @@ public class McardApi {
 
 
     //添加商户
-    public McardAddGroupRespone addGroup(ThreenetsOrder order) throws IOException, NoLoginException {
+    public McardAddGroupRespone addGroup(ThreenetsOrder order,ThreeNetsOrderAttached attached) throws IOException, NoLoginException {
         String result = null;
-
+        McardAddGroupRespone groupRespone = new McardAddGroupRespone();
         CloseableHttpClient httpclient = HttpClients.custom().setDefaultCookieStore(this.getCookieStore()).build();
         HttpPost httppost = new HttpPost(add_user_url);
         List<NameValuePair> formparams = new ArrayList<NameValuePair>();
@@ -160,6 +161,7 @@ public class McardApi {
         try {
             HttpEntity resEntity = response.getEntity();
             result = EntityUtils.toString(resEntity);
+            groupRespone = (McardAddGroupRespone) JsonUtil.getObject4JsonString(result, McardAddGroupRespone.class);
         } catch (Exception e) {
             log.error("移动 设置铃音 错误信息", e);
         } finally {
@@ -170,7 +172,7 @@ public class McardApi {
                 log.error("response.close(); 错误信息", e);
             }
         }
-        return new McardAddGroupRespone();
+        return groupRespone;
     }
 
     /**
