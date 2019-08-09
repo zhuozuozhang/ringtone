@@ -1,15 +1,23 @@
 package com.hrtxn.ringtone.common.api;
 
+import com.hrtxn.ringtone.common.constant.AjaxResult;
 import com.hrtxn.ringtone.common.exception.NoLoginException;
+import com.hrtxn.ringtone.common.utils.ChaoJiYing;
 import com.hrtxn.ringtone.common.utils.WebClientDevWrapper;
 import com.hrtxn.ringtone.common.utils.json.JsonUtil;
+import com.hrtxn.ringtone.common.utils.juhe.JuhePhoneUtils;
+import com.hrtxn.ringtone.project.system.json.JuhePhone;
+import com.hrtxn.ringtone.project.system.json.JuhePhoneResult;
 import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreeNetsOrderAttached;
 import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreenetsChildOrder;
 import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreenetsOrder;
 import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreenetsRing;
 import com.hrtxn.ringtone.project.threenets.threenet.json.mcard.McardAddGroupRespone;
 import com.hrtxn.ringtone.project.threenets.threenet.json.mcard.McardAddPhoneRespone;
+import com.hrtxn.ringtone.project.threenets.threenet.json.mcard.McardPhoneAddressRespone;
 import lombok.extern.slf4j.Slf4j;
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -31,12 +39,15 @@ import org.apache.http.params.HttpParams;
 import org.apache.http.util.EntityUtils;
 
 import javax.servlet.http.Cookie;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Random;
 
 /**
  * Author:lile
@@ -46,7 +57,9 @@ import java.util.List;
 @Slf4j
 public class McardApi {
 
+    private static String to_normal_user = "https://mcard.imusic.cn/user/addNormalUser";
     private static String add_user_url = "https://mcard.imusic.cn/user/createNormalUser";//新增商户
+    private static String phone_address_url = "https://mcard.imusic.cn/user/getPhoneAddress";
     private static String to_user_list = "https://mcard.imusic.cn/user/userList";//跳转到商户  get   ?userId=1670298
     private static String add_apersonnel_url = "https://mcard.imusic.cn/user/addApersonnel";//新增成员
 
@@ -57,14 +70,10 @@ public class McardApi {
     private static String normal_list = "http://mcard.imusic.cn/user/loadNormalBusinessList";//获取客户列表
     private static String refresh_apersonnel = "http://mcard.imusic.cn/user/refreshApersonnel";//刷新用户信息
 
+    private static String code_url = "http://mcard.imusic.cn/code/imageCode?d";
     //主渠道商id
     private static String parent = "61203";
-    //子渠道商（17712033392）
-    private static String child_Distributor_ID_177 = "594095";
-    //子渠道商（18159093112）
-    private static String child_Distributor_ID_181 = "296577";
-    //子渠道商（18888666361）
-    private static String child_Distributor_ID_188 = "61204";
+
 
     private CookieStore macrdCookie;// 电信cookie
     private Date connectTime;// 最新连接时间
@@ -113,34 +122,132 @@ public class McardApi {
         return null;
     }
 
+    /**
+     * 调用远程验证码接口，取得验证码
+     *
+     * @return
+     * @throws NoLoginException
+     * @throws IOException
+     */
+    public String getCodeString() {
+        String code = null;
+        DefaultHttpClient httpclientCode = new DefaultHttpClient();
+        long time = new Date().getTime();
+        HttpGet httpCode = new HttpGet(code_url + "?d=" + time);//
+        HttpResponse codeResponse;
+        try {
+            // 获取验证码
+            codeResponse = httpclientCode.execute(httpCode);
+            InputStream ins1 = codeResponse.getEntity().getContent();
+            this.setMacrdCookie(httpclientCode.getCookieStore());
+            ByteArrayOutputStream os = new ByteArrayOutputStream();
+            byte[] buff = new byte[100];
+            int rc = 0;
+            while ((rc = ins1.read(buff, 0, 100)) > 0) {
+                os.write(buff, 0, rc);
+            }
+            byte[] in2b = os.toByteArray();
+            String codestr = ChaoJiYing.PostPic("wwewwe", "wyc19931224", "899622", "4004", "4", in2b);
+            //{"err_no":0,"err_str":"OK","pic_id":"3068410332412700001","pic_str":"0572","md5":"9f847dfdb63ca1ddf9d5beb86a4c8594"}
+            System.out.println("验证码识别：" + codestr);
+            JSONArray jsonStr = JSONArray.fromObject("[" + codestr + "]");
+            for (int i = 0; i < jsonStr.size(); i++) {
+                JSONObject json = jsonStr.getJSONObject(i);
+                Integer err_no = Integer.parseInt(json.getString("err_no"));
+                code = json.getString("pic_str");
+                if (err_no == 0) {
+                    if (code != null && code.length() == 4) {
+                        code = json.getString("pic_str");
+                        break;
+                    } else {
+                        getCodeString();
+                    }
+                } else {
+                    getCodeString();
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            httpCode.abort();
+            httpclientCode.getConnectionManager().shutdown();
+        }
+        return code;
+    }
+
+    /**
+     * 获取手机号地址
+     *
+     * @param phone
+     * @return
+     */
+    public McardPhoneAddressRespone phoneAdd(String phone){
+        McardPhoneAddressRespone respone = new McardPhoneAddressRespone();
+        String result = null;
+        DefaultHttpClient httpclient = WebClientDevWrapper.wrapClient(new DefaultHttpClient());
+        HttpPost httppost = new HttpPost(phone_address_url);
+        List<NameValuePair> formparams = new ArrayList<NameValuePair>();
+        formparams.add(new BasicNameValuePair("loginPhone", phone));
+        formparams.add(new BasicNameValuePair("fee", "1"));
+        httpclient.setCookieStore(this.getCookieStore());
+        try {
+            UrlEncodedFormEntity entity = new UrlEncodedFormEntity(formparams, "utf-8");
+            httppost.setEntity(entity);
+            HttpResponse response = httpclient.execute(httppost);
+            HttpEntity resEntity = response.getEntity();
+            result = EntityUtils.toString(resEntity);
+            respone = (McardPhoneAddressRespone) JsonUtil.getObject4JsonString(result, McardPhoneAddressRespone.class);
+        } catch (Exception e) {
+            System.out.println(e);
+        } finally {
+            httppost.abort();
+            httpclient.getConnectionManager().shutdown();
+        }
+        return respone;
+    }
+
+    /**
+     * 跳转到对应经销商
+     *
+     * @param subuserid
+     * @return
+     * @throws IOException
+     * @throws NoLoginException
+     */
+    public String toNormalUser(String subuserid)throws IOException,NoLoginException {
+        String getUrl = to_normal_user + "?subuserid=" + subuserid+"&parent=61204";
+        String result = sendGet(getUrl);
+        return result;
+    }
 
     //添加商户
-    public McardAddGroupRespone addGroup(ThreenetsOrder order,ThreeNetsOrderAttached attached) throws IOException, NoLoginException {
+    public McardAddGroupRespone addGroup(ThreenetsOrder order,ThreeNetsOrderAttached attached) throws IOException{
+        McardPhoneAddressRespone respone = phoneAdd(order.getLinkmanTel());
         String result = null;
         McardAddGroupRespone groupRespone = new McardAddGroupRespone();
         CloseableHttpClient httpclient = HttpClients.custom().setDefaultCookieStore(this.getCookieStore()).build();
         HttpPost httppost = new HttpPost(add_user_url);
-        List<NameValuePair> formparams = new ArrayList<NameValuePair>();
 
+        List<NameValuePair> formparams = new ArrayList<NameValuePair>();
         formparams.add(new BasicNameValuePair("ausertype", ""));
         formparams.add(new BasicNameValuePair("codeId", ""));
         formparams.add(new BasicNameValuePair("provinceChannel", ""));
         formparams.add(new BasicNameValuePair("isFeeType", "0"));
         formparams.add(new BasicNameValuePair("makeFee", ""));
-        formparams.add(new BasicNameValuePair("feeType", "11"));
-        formparams.add(new BasicNameValuePair("aUserProvince", "江苏"));
-        formparams.add(new BasicNameValuePair("aUserCity", "徐州"));
-        formparams.add(new BasicNameValuePair("phoneProvinceCode", "320000"));
+        formparams.add(new BasicNameValuePair("feeType", attached.getMcardPrice().toString()));
+        formparams.add(new BasicNameValuePair("aUserProvince", respone.getProvince()));
+        formparams.add(new BasicNameValuePair("aUserCity", respone.getCity()));
+        formparams.add(new BasicNameValuePair("phoneProvinceCode", respone.getProvinceCode()));
         formparams.add(new BasicNameValuePair("checkUnipayphone", ""));
         formparams.add(new BasicNameValuePair("makeFeeType", ""));
-        formparams.add(new BasicNameValuePair("phoneCityCode", "320300"));
-        formparams.add(new BasicNameValuePair("auserAccount", "15380170139"));
+        formparams.add(new BasicNameValuePair("phoneCityCode", respone.getCityCode()));
+        formparams.add(new BasicNameValuePair("auserAccount", order.getLinkmanTel()));
         formparams.add(new BasicNameValuePair("auserName", order.getCompanyName()));
         formparams.add(new BasicNameValuePair("auserLinkName", order.getCompanyLinkman()));
-        formparams.add(new BasicNameValuePair("auserMoney", "11"));
-        formparams.add(new BasicNameValuePair("auserPhone", "15380170139"));
+        formparams.add(new BasicNameValuePair("auserMoney", attached.getMcardPrice().toString()));
+        formparams.add(new BasicNameValuePair("auserPhone", order.getLinkmanTel()));
         formparams.add(new BasicNameValuePair("auserEmail", ""));
-        formparams.add(new BasicNameValuePair("chargingPhone", "15380170139"));
+        formparams.add(new BasicNameValuePair("chargingPhone", order.getLinkmanTel()));
         formparams.add(new BasicNameValuePair("auserWeixin", ""));
         formparams.add(new BasicNameValuePair("auserYi", ""));
         formparams.add(new BasicNameValuePair("auserFengChao", ""));
@@ -149,11 +256,10 @@ public class McardApi {
         formparams.add(new BasicNameValuePair("industry", "1"));
         formparams.add(new BasicNameValuePair("isUnifyPay", "2"));
         formparams.add(new BasicNameValuePair("unifyPayPhone", ""));
-        formparams.add(new BasicNameValuePair("imageCode", "ts3f"));
-        formparams.add(new BasicNameValuePair("auserBlicencePath", "/pic.diy.v1/nets/mcard/DiyFile/image/2019/08/05/4284b0e7-e95d-4738-bbd1-363019be4c95.jpg"));
-        formparams.add(new BasicNameValuePair("auserCardidPath", ""));
-        formparams.add(new BasicNameValuePair("auserFilePath", "/pic.diy.v1/nets/mcard/DiyFile/image/2019/08/05/9d92e869-4942-4d3a-9e54-dc839ef3a211.jpg"));
-
+        formparams.add(new BasicNameValuePair("imageCode", getCodeString()));
+        formparams.add(new BasicNameValuePair("auserBlicencePath", attached.getBusinessLicense()));
+        formparams.add(new BasicNameValuePair("auserCardidPath", attached.getConfirmLetter()));
+        formparams.add(new BasicNameValuePair("auserFilePath", attached.getSubjectProve()));
         UrlEncodedFormEntity entity = new UrlEncodedFormEntity(formparams, "utf-8");
         httppost.setEntity(entity);
 
@@ -163,7 +269,7 @@ public class McardApi {
             result = EntityUtils.toString(resEntity);
             groupRespone = (McardAddGroupRespone) JsonUtil.getObject4JsonString(result, McardAddGroupRespone.class);
         } catch (Exception e) {
-            log.error("移动 设置铃音 错误信息", e);
+            log.error("电信 新增商户 错误", e);
         } finally {
             try {
                 httppost.abort();
@@ -200,7 +306,7 @@ public class McardApi {
         McardAddPhoneRespone addPhoneRespone = new McardAddPhoneRespone();
         String result = null;
         DefaultHttpClient httpclient = WebClientDevWrapper.wrapClient(new DefaultHttpClient());
-        HttpPost httppost = new HttpPost(settingRing_url);
+        HttpPost httppost = new HttpPost(add_apersonnel_url);
         List<NameValuePair> formparams = new ArrayList<NameValuePair>();
         formparams.add(new BasicNameValuePair("personnelName", childOrder.getLinkman()));
         formparams.add(new BasicNameValuePair("personnelPhone", childOrder.getLinkmanTel()));

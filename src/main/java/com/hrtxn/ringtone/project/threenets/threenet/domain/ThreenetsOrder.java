@@ -42,6 +42,7 @@ public class ThreenetsOrder implements Serializable {
     // 总数/包月
     private String peopleNum;
 
-    //-------------------------------提交三网文件--------------------------------------
+    //----联通保存订单文件
     private File upLoadAgreement;
+    //----归属地
 }

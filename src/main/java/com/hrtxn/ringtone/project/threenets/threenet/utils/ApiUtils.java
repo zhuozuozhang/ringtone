@@ -30,10 +30,7 @@ import org.jsoup.select.Elements;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Author:zcy
@@ -47,6 +44,14 @@ public class ApiUtils {
     private static SwxlApi swxlApi = new SwxlApi();
     private static McardApi mcardApi = new McardApi();
 
+    private static String[] TENRMB = {"北京", "天津", "河北", "山西", "辽宁", "吉林", "黑龙江", "上海", "江苏", "浙江", "福建", "河南", "湖南", "广东", "河南", "广西", "重庆", "四川", "陕西", "青海", "宁夏", "西藏"};
+    private static String[] TWENTYRMB = {"湖北", "山东", "江西", "贵州", "内蒙古", "新疆", "甘肃", "云南", "安徽"};
+    //子渠道商（17712033392）(四川)
+    private static String child_Distributor_ID_177 = "594095";
+    //子渠道商（18159093112）
+    private static String child_Distributor_ID_181 = "296577";
+    //子渠道商（18888666361）
+    private static String child_Distributor_ID_188 = "61204";
     /**
      * 获取号码信息
      *
@@ -906,18 +911,26 @@ public class ApiUtils {
     /**
      * 保存电信订单
      *
-     * @param ringOrder
+     * @param order
      * @param attached
      * @return
      * @throws IOException
      * @throws NoLoginException
      */
-    public McardAddGroupRespone addOrderByDx(ThreenetsOrder ringOrder, ThreeNetsOrderAttached attached) throws IOException, NoLoginException {
+    public McardAddGroupRespone addOrderByDx(ThreenetsOrder order, ThreeNetsOrderAttached attached) throws IOException, NoLoginException {
         McardAddGroupRespone mcardAddGroupRespone = null;
+        //资费
+        boolean flag = Arrays.asList(TENRMB).contains(order.getProvince());
+        attached.setMcardPrice(flag ? 2 : 11);
+        if (flag){
+            mcardApi.toNormalUser(child_Distributor_ID_188);
+        }else{
+            mcardApi.toNormalUser(child_Distributor_ID_181);
+        }
         //添加商户，同步三次
         for (int i = 0; i < 3; i++) {
-            mcardAddGroupRespone = mcardApi.addGroup(ringOrder,attached);
-            if (mcardAddGroupRespone != null){
+            mcardAddGroupRespone = mcardApi.addGroup(order, attached);
+            if (mcardAddGroupRespone != null) {
                 break;
             }
         }
@@ -962,7 +975,7 @@ public class ApiUtils {
      * @throws IOException
      * @throws NoLoginException
      */
-    public boolean addRingByDx(ThreenetsRing ring)throws IOException,NoLoginException{
+    public boolean addRingByDx(ThreenetsRing ring) throws IOException, NoLoginException {
         return mcardApi.uploadRing(ring);
     }
 
@@ -1012,12 +1025,12 @@ public class ApiUtils {
      * @throws IOException
      * @throws NoLoginException
      */
-    public List<ThreenetsChildOrder> addPhoneByDx(List<ThreenetsChildOrder> orders,String circleId)throws IOException,NoLoginException{
+    public List<ThreenetsChildOrder> addPhoneByDx(List<ThreenetsChildOrder> orders, String circleId) throws IOException, NoLoginException {
         List<ThreenetsChildOrder> newList = new ArrayList<>();
         mcardApi.toUserList(circleId);
         for (int i = 0; i < orders.size(); i++) {
             McardAddPhoneRespone mcardAddPhoneRespone = mcardApi.addApersonnel(orders.get(i));
-            if (mcardAddPhoneRespone.getCode().equals("200")){
+            if (mcardAddPhoneRespone.getCode().equals("200")) {
                 newList.add(orders.get(i));
             }
         }
@@ -1054,47 +1067,50 @@ public class ApiUtils {
 
     /**
      * 移动工具箱-->用户信息
+     *
      * @param ringMsisdn
      * @return
      * @throws NoLoginException
      * @throws IOException
      */
     public AjaxResult getUserInfoByRingMsisdn(String ringMsisdn) throws NoLoginException, IOException {
-        if(StringUtils.isNotNull(ringMsisdn)){
+        if (StringUtils.isNotNull(ringMsisdn)) {
             Map<String, String> map = new HashMap<String, String>();
-            map.put("userInfo",miguApi.getUserInfoByRingMsisdn(ringMsisdn));
-            return AjaxResult.success(map,"查找到了");
+            map.put("userInfo", miguApi.getUserInfoByRingMsisdn(ringMsisdn));
+            return AjaxResult.success(map, "查找到了");
         }
-        return AjaxResult.success(false,"参数不正确");
+        return AjaxResult.success(false, "参数不正确");
     }
 
     /**
      * 联通工具箱-->用户信息-->获取沉默用户信息
+     *
      * @param phoneNumber
      * @return
      * @throws NoLoginException
      * @throws IOException
      */
     public String getSilentMemberByMsisdn(String phoneNumber) throws NoLoginException, IOException {
-        if(StringUtils.isNotNull(phoneNumber)){
+        if (StringUtils.isNotNull(phoneNumber)) {
             return swxlApi.getSilentMemberByMsisdn(phoneNumber);
-        }else {
-            return  "未获取到用户号码";
+        } else {
+            return "未获取到用户号码";
         }
     }
 
     /**
      * 联通工具箱-->用户信息-->获取用户操作记录
+     *
      * @param phoneNumber
      * @return
      * @throws NoLoginException
      * @throws IOException
      */
     public String getSystemLogListByMsisdn(String phoneNumber) throws NoLoginException, IOException {
-        if(StringUtils.isNotNull(phoneNumber)){
+        if (StringUtils.isNotNull(phoneNumber)) {
             return swxlApi.getSystemLogListByMsisdn(phoneNumber);
-        }else {
-            return  "未获取到用户号码";
+        } else {
+            return "未获取到用户号码";
         }
     }
 
@@ -1117,24 +1133,26 @@ public class ApiUtils {
 
     /**
      * 移动工具箱-->删除铃音-->搜索
+     *
      * @param msisdn
      * @return
      * @throws NoLoginException
      * @throws IOException
      */
     public AjaxResult findRingInfoByMsisdn(String msisdn) throws NoLoginException, IOException {
-        if(StringUtils.isNotNull(msisdn)){
+        if (StringUtils.isNotNull(msisdn)) {
             Map<String, String> map = new HashMap<String, String>();
-            map.put("ringSettingListByMsisdn",miguApi.getRingSettingListByMsisdn(msisdn));
-            map.put("ringListByMsisdn",miguApi.getRingListByMsisdn(msisdn));
+            map.put("ringSettingListByMsisdn", miguApi.getRingSettingListByMsisdn(msisdn));
+            map.put("ringListByMsisdn", miguApi.getRingListByMsisdn(msisdn));
             System.out.println(map);
-            return AjaxResult.success(map,"查找到了");
+            return AjaxResult.success(map, "查找到了");
         }
-        return AjaxResult.success(false,"参数不正确");
+        return AjaxResult.success(false, "参数不正确");
     }
 
     /**
      * 移动工具箱-->删除铃音-->删除个人铃音设置
+     *
      * @param msisdn
      * @param settingID
      * @param toneID
@@ -1144,21 +1162,22 @@ public class ApiUtils {
      * @throws IOException
      */
     public AjaxResult singleDeleteRingSet(String msisdn, String settingID, String toneID, String type) throws NoLoginException, IOException {
-        if(StringUtils.isNotNull(msisdn) && StringUtils.isNotNull(settingID) &&
-                StringUtils.isNotNull(toneID) && StringUtils.isNotNull(type)){
+        if (StringUtils.isNotNull(msisdn) && StringUtils.isNotNull(settingID) &&
+                StringUtils.isNotNull(toneID) && StringUtils.isNotNull(type)) {
             Map<String, String> map = new HashMap<String, String>();
-            String jsonStr = "[{\"toneID\":\""+toneID+"\",\"type\":\""+type+"\",\"settingID\":\""+settingID+"\"}]";
-            String delRingSetting  = miguApi.delRingSetting(jsonStr,msisdn);
-            map.put("delRingSetting",delRingSetting);
-            if(delRingSetting.contains("true")){
-                return AjaxResult.success(map,"删除成功！");
+            String jsonStr = "[{\"toneID\":\"" + toneID + "\",\"type\":\"" + type + "\",\"settingID\":\"" + settingID + "\"}]";
+            String delRingSetting = miguApi.delRingSetting(jsonStr, msisdn);
+            map.put("delRingSetting", delRingSetting);
+            if (delRingSetting.contains("true")) {
+                return AjaxResult.success(map, "删除成功！");
             }
         }
-        return AjaxResult.success(false,"参数不正确");
+        return AjaxResult.success(false, "参数不正确");
     }
 
     /**
      * 移动工具箱-->删除铃音-->删除个人铃音库
+     *
      * @param msisdn
      * @param toneIds
      * @param type
@@ -1178,16 +1197,17 @@ public class ApiUtils {
 //        if (delRing.contains("true")) {
 //            return true;
 //        }
-        if(StringUtils.isNotNull(msisdn) && StringUtils.isNotNull(toneIds) && StringUtils.isNotNull(type)){
+        if (StringUtils.isNotNull(msisdn) && StringUtils.isNotNull(toneIds) && StringUtils.isNotNull(type)) {
             Map<String, String> map = new HashMap<String, String>();
-            map.put("delRing",miguApi.delOtherRing(toneIds+"|"+type, msisdn));
-            return AjaxResult.success(map,"删除成功");
+            map.put("delRing", miguApi.delOtherRing(toneIds + "|" + type, msisdn));
+            return AjaxResult.success(map, "删除成功");
         }
-        return AjaxResult.success(false,"参数不正确");
+        return AjaxResult.success(false, "参数不正确");
     }
 
     /**
      * 批量删除个人铃音设置
+     *
      * @param msisdn
      * @param vals
      * @return
@@ -1195,17 +1215,18 @@ public class ApiUtils {
      * @throws IOException
      */
     public AjaxResult batchDeleteRingSet(String msisdn, String vals) throws NoLoginException, IOException {
-        if(StringUtils.isNotNull(msisdn) && StringUtils.isNotNull(vals)){
+        if (StringUtils.isNotNull(msisdn) && StringUtils.isNotNull(vals)) {
             Map<String, String> map = new HashMap<String, String>();
-            String jsonStr = "["+vals+"]";
-            map.put("delRingSetting",miguApi.delRingSetting(jsonStr, msisdn));
-            return AjaxResult.success(map,"删除成功！");
+            String jsonStr = "[" + vals + "]";
+            map.put("delRingSetting", miguApi.delRingSetting(jsonStr, msisdn));
+            return AjaxResult.success(map, "删除成功！");
         }
-        return AjaxResult.success(false,"参数不正确");
+        return AjaxResult.success(false, "参数不正确");
     }
 
     /**
      * 批量删除个人铃音库
+     *
      * @param msisdn
      * @param vals
      * @return
@@ -1213,29 +1234,30 @@ public class ApiUtils {
      * @throws IOException
      */
     public AjaxResult batchDeleteRing(String msisdn, String vals) throws NoLoginException, IOException {
-        if(StringUtils.isNotNull(msisdn) && StringUtils.isNotNull(vals)){
+        if (StringUtils.isNotNull(msisdn) && StringUtils.isNotNull(vals)) {
             Map<String, String> map = new HashMap<String, String>();
-            String jsonStr = "["+vals+"]";
-            map.put("delRing",miguApi.delOtherRing(jsonStr, msisdn));
-            return AjaxResult.success(map,"删除成功！");
+            String jsonStr = "[" + vals + "]";
+            map.put("delRing", miguApi.delOtherRing(jsonStr, msisdn));
+            return AjaxResult.success(map, "删除成功！");
         }
-        return AjaxResult.success(false,"参数不正确");
+        return AjaxResult.success(false, "参数不正确");
     }
 
     /**
      * 联通工具箱-->用户信息-->删除某条用户信息
+     *
      * @param msisdn
      * @return
      * @throws NoLoginException
      * @throws IOException
      */
     public AjaxResult deleteSilentMemberByMsisdn(String msisdn) throws NoLoginException, IOException {
-        if(StringUtils.isNotNull(msisdn)){
+        if (StringUtils.isNotNull(msisdn)) {
             Map<String, String> map = new HashMap<String, String>();
-            map.put("delSilentMember",swxlApi.deleteSilentMemberByMsisdn(msisdn));
-            return AjaxResult.success(map,"删除成功");
+            map.put("delSilentMember", swxlApi.deleteSilentMemberByMsisdn(msisdn));
+            return AjaxResult.success(map, "删除成功");
         }
-        return AjaxResult.success(false,"参数不正确");
+        return AjaxResult.success(false, "参数不正确");
     }
 
     /**
@@ -1244,7 +1266,7 @@ public class ApiUtils {
      * @param file
      * @return
      */
-    public String mcardUploadFile(File file){
+    public String mcardUploadFile(File file) {
         return mcardApi.uploadFile(file);
     }
 }

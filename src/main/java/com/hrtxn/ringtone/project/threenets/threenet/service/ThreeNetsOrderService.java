@@ -210,6 +210,8 @@ public class ThreeNetsOrderService {
     public AjaxResult save(OrderRequest order) throws Exception {
         //验证订单是否修改
         ThreenetsOrder threenetsOrder = threenetsOrderMapper.selectByPrimaryKey(order.getId());
+        threenetsOrder.setCompanyName(order.getCompanyName());
+        threenetsOrder.setCompanyLinkman(order.getCompanyLinkman());
         if (!threenetsOrder.getLinkmanTel().equals(order.getLinkmanTel())) {
             //如果更改手机号则更改手机号归属地
             threenetsOrder = JuhePhoneUtils.getPhone(threenetsOrder);
@@ -342,9 +344,10 @@ public class ThreeNetsOrderService {
                     String path = utils.mcardUploadFile(new File(orderRequest.getMainUrl()));
                     attached.setSubjectProve(path);
                 }
+                List<ThreenetsChildOrder> childOrders = collect.get(2);
+                order.setLinkmanTel(childOrders.get(0).getLinkmanTel());
                 McardAddGroupRespone groupRespone = utils.addOrderByDx(order, attached);
                 attached.setMcardId(groupRespone.getData().getAuserId());
-
             }
             //保存订单附表
             threeNetsOrderAttachedService.update(attached);
