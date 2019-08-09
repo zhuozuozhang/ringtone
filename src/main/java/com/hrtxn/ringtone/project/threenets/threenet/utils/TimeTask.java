@@ -32,7 +32,7 @@ public class TimeTask {
      * 每天00:05执行
      * 删除status为1的数据
      */
-    @Scheduled(cron = "0 05 00 ? * *")
+    @Scheduled(cron = "0 30 02 ? * *")
     public void deleteFile() {
         // 获取所有无效文件
         List<Uploadfile> uploadfileList = SpringUtils.getBean(UploadfileMapper.class).selectAllFile();

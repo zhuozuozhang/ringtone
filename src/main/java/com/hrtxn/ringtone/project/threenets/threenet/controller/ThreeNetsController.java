@@ -156,7 +156,7 @@ public class ThreeNetsController {
         try {
             return threeNetsService.getMonthData(request);
         } catch (Exception e) {
-            log.error("获取子账号列表 方法：getDbusinessDate 错误信息", e);
+            log.error("获取月统计 方法：getDbusinessDate 错误信息", e);
         }
         return null;
     }

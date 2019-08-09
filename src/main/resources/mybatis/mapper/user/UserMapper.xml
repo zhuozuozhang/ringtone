@@ -129,7 +129,6 @@
             AND user_name LIKE '%${baseRequest.name}%'
         </if>
     </select>
-
     <!-- 修改用户信息 -->
     <update id="updateUserById" parameterType="com.hrtxn.ringtone.project.system.user.domain.User">
         UPDATE tb_user

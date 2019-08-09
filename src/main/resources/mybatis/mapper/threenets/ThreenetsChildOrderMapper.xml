@@ -50,6 +50,8 @@
             tb_threenets_child_order
         where
             is_monthly = #{isMonthly}
+        AND DATEDIFF(NOW(),create_date) &lt;= 7
+        AND DATEDIFF(NOW(),create_date) &gt;= 0
         <if test="userId == 24">
             AND user_id = #{userId}
         </if>

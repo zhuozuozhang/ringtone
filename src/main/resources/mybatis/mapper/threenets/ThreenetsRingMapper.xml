@@ -25,6 +25,8 @@
         select tr.id, ring_name, ring_type, ring_status, operate, order_id,operate_id,operate_ring_id
         from tb_threenets_ring tr INNER JOIN tb_threenets_order tor
         where tr.order_id = tor.id
+        AND DATEDIFF(NOW(),create_time) &lt;= 7
+        AND DATEDIFF(NOW(),create_time) &gt;= 0
         AND ring_status IN (1,2)
         <if test="userId == 24">
             AND tor.user_id = #{userId}

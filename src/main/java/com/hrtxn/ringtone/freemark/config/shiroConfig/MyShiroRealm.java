@@ -11,7 +11,6 @@ import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Date;
 import java.util.List;
@@ -23,13 +22,6 @@ import java.util.List;
  */
 @Slf4j
 public class MyShiroRealm extends AuthorizingRealm {
-
-    private UserMapper userMapper;
-
-    @Autowired
-    private void setUserMapper(UserMapper userMapper) {
-        this.userMapper = userMapper;
-    }
 
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principalCollection) {
