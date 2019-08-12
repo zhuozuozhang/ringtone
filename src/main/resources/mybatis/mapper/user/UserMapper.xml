@@ -59,22 +59,12 @@
         LIMIT #{page.page},#{page.pagesize}
     </select>
     <!-- 根据ID获取用户信息 -->
-    <select id="findUserById" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    <select id="findUserById" parameterType="java.lang.Integer" resultMap="supResultMap">
         SELECT
             <include refid="Base_Column_List"/>
         FROM
             tb_user u
-        WHERE
-        id = #{id}
-    </select>
-    <!-- 根据电话号码获取用户信息 -->
-    <select id="findUserByUserTel" parameterType="java.lang.String" resultMap="BaseResultMap">
-        SELECT
-        <include refid="Base_Column_List"/>
-        FROM
-        tb_user u
-        WHERE
-        user_tel = #{phone}
+        WHERE id = #{id}
     </select>
     <!-- 根据父级ID获取用户信息 -->
     <select id="findUserByparentId" parameterType="java.lang.Integer" resultMap="supResultMap">
@@ -87,7 +77,18 @@
             AND u.parent_id = #{id}
         </if>
         ORDER BY user_time DESC
-        LIMIT #{page},#{pagesize}
+        <if test="page != null and page != '' and pagesize != null and pagesize !='' ">
+            LIMIT #{page},#{pagesize}
+        </if>
+    </select>
+    <!-- 根据电话号码获取用户信息 -->
+    <select id="findUserByUserTel" parameterType="java.lang.String" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM
+        tb_user u
+        WHERE
+        user_tel = #{phone}
     </select>
 
     <select id="findChildUser" parameterType="java.lang.Integer" resultMap="supResultMap">

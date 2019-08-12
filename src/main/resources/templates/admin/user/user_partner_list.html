@@ -1,13 +1,17 @@
 <!DOCTYPE html>
 <html lang="zh" xmlns:th="http://www.thymeleaf.org">
 <head th:include="admin/common/include :: header"></head>
-<body class="layui-anim layui-anim-up">
+<style>
+    .layui-form {width: 90%;}
+    th,td {text-align: center!important;}
+</style>
+<body class="layui-fluid">
 <div class="x-nav">
 		<span class="layui-breadcrumb">
 			<a href="">首页</a>
 			<a href="">用户管理</a>
 			<a>
-				<cite>用户列表</cite>
+				<cite>用户搜索</cite>
 			</a>
 		</span>
     <a class="layui-btn layui-btn-primary layui-btn-small" style="line-height:1.6em;margin-top:3px;float:right"
@@ -15,37 +19,77 @@
         <i class="layui-icon" style="line-height:38px">ဂ</i>
     </a>
 </div>
-<div class="x-body">
+<div class="layui-container" style="width:100%;margin-top: 30px;">
     <div class="layui-row">
-        <form class="layui-form layui-col-md12 x-so" action="javascript:void(0);">
-            <input type="text" name="userName" placeholder="请输入用户名" autocomplete="off" class="layui-input userName">
-            <button class="layui-btn" onclick="showRingTable()"><i class="layui-icon">&#xe615;</i></button>
+        <form class="layui-form layui-col-md12 x-so">
+            <input type="text" name="username" placeholder="请输入电话号码" autocomplete="off" class="layui-input userTel">
+            <button type="button" class="layui-btn" onclick="serach();"><i class="layui-icon"></i></button>
         </form>
     </div>
-    <table class="layui-table" id="user_table">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>用户名1</th>
-                <th>手机号</th>
-                <th>邮箱</th>
-                <th>角色</th>
-                <th>状态</th>
-                <th>包月总数</th>
-                <th>认证账户余额</th>
-                <th>上级渠道商</th>
-                <th>创建时间</th>
-                <th>操作</th>
-            </tr>
-        </thead>
-    </table>
+    <div class="layui-row">
+        <div class="layui-col-md6">
+            <div class="layui-form">
+                <table class="layui-table" id="up">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>用户名</th>
+                            <th>手机号</th>
+                            <th>状态</th>
+                            <th>上级渠道商</th>
+                            <th>创建时间</th>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+        </div>
+        <div class="layui-col-md6">
+            <div class="layui-form">
+                <table class="layui-table" id="low">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>用户名</th>
+                            <th>手机号</th>
+                            <th>状态</th>
+                            <th width="100px">上级渠道商</th>
+                            <th>创建时间</th>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+        </div>
+    </div>
 </div>
 </body>
 <div th:include="admin/common/include :: footer"></div>
-<script th:src="@{/admin/js/my/user_list.js}"></script>
-<script type="text/javascript">
-    $(document).ready(function () {
-        showRingTable();
-    });
+<script>
+    var columns = [
+        {"data": null,"width":50},
+        {"data": "userName"},
+        {"data": "userTel","width":100},
+        {"data": "userStatus"},
+        {"data": "parentUserName"},
+        {"data": "userTime"}
+    ];
+
+    var columnDefs = [{
+        targets: [3],
+        render:function (data, type, row, meta) {
+            var userStatus = row.userStatus;
+            var id = row.id;
+            if(userStatus == 1){
+                return "<span class=\"layui-btn layui-btn-normal layui-btn-sm\">已启用</span>"
+            }else{
+                return "<span class=\"layui-btn layui-btn-normal layui-btn-sm layui-btn-danger\">已禁用</span>";
+            }
+        }
+    }];
+    showlow("/admin/getLowUser","#low",{
+        userTel:null
+    },columns,columnDefs);
+    showlow("/admin/getUpUser","#up",{
+        userTel:null
+    },columns,columnDefs);
 </script>
 </html>

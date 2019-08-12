@@ -122,12 +122,11 @@ public class UserController {
     @PutMapping("/admin/updateUserStatus")
     @ResponseBody
     @Log(title = "修改用户状态", businessType = BusinessType.UPDATE, operatorLogType = OperatorLogType.ADMIN)
-    public AjaxResult updateUserStatus(Integer id, Boolean userStatus) {
+    public AjaxResult updateUserStatus(Integer id, Boolean userStatus) throws Exception {
         User user = new User();
         user.setId(id);
         user.setUserStatus(userStatus);
-        boolean b = userService.updateUserById(user);
-        return AjaxResult.success(b, "更新成功");
+        return userService.updateUserById(user);
     }
 
     /**
@@ -222,18 +221,38 @@ public class UserController {
         return userService.updateRoleRelation(userId, menuArr);
     }
 
-
     /**
-     * 获取各级代理用户
+     * 根据电话号码获取所有下级代理商
      *
-     * @param
+     * @param userTel
      * @return
      */
-    @PostMapping("/admin/findUserPartnerList")
-    @RequiresRoles("admin")
+    @PostMapping("/admin/getLowUser")
     @ResponseBody
-    public AjaxResult findUserPartnerList(Page page, String phone) {
-        return userService.findUserPartnerList(page, phone);
+    public AjaxResult getLowUser(String userTel){
+        try {
+            return userService.getLowUser(userTel);
+        } catch (Exception e) {
+            log.error("获取下级代理商--->"+e);
+            return AjaxResult.error(e.getMessage());
+        }
+    }
+
+    /**
+     * 获取上级代理商
+     *
+     * @param userTel
+     * @return
+     */
+    @PostMapping("/admin/getUpUser")
+    @ResponseBody
+    public AjaxResult getUpUser(String userTel){
+        try {
+            return userService.getUpUser(userTel);
+        } catch (Exception e) {
+            log.error("获取上级代理商--->"+e);
+            return AjaxResult.error(e.getMessage());
+        }
     }
 
     /****************************************************** 大大的分界线 *************************************************/

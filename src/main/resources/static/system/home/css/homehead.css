@@ -1,6 +1,6 @@
 /* CSS Document */
 .header {
-	background-color: #2C1235;
+
 }
 .top {
 	height: 80px;
@@ -57,27 +57,28 @@
 	background-size:20px;
 }
 .top .top_r .exit {
-	background-image: url(../images/btcdl.png);
+	background-image: url(../images/tcdl.png);
 	background-repeat: no-repeat;
 	background-position: 10px center;
 	background-size: 20px;
-	color: #FFF;
+	color: #666;
 }
 .top .top_r .admin {
-	background-image: url(../images/bgly.png);
+	background-image: url(../images/gly.png);
 	background-repeat: no-repeat;
 	background-position: 10px center;
 	background-size: 20px;
-	color: #FFF;
+	color: #666;
 }
 .top .top_r span {
-	display: block;
+	/*display: block;*/
 	float: left;
-	height: 48px;
-	width: 48px;
-	overflow: hidden;
+	/*height: 48px;*/
+	/*width: 48px;*/
+	/*overflow: hidden;*/
 	/*border-radius: 50%;*/
-	/*border: 1px solid #FFF;*/
+	
+	/*box-shadow:#999 0 0 20px;*/
 }
 .top .top_r span img {
 	height: 100%;
@@ -88,10 +89,10 @@
 	float: left;
 	width: 120px;
 	margin-left: 10px;
-	color: #FFF;
+	color: #666;
 	overflow: hidden;
-text-overflow:ellipsis;
-white-space: nowrap;
+	text-overflow: ellipsis;
+	white-space: nowrap;
 }
 
 
@@ -100,8 +101,10 @@ white-space: nowrap;
 	border-bottom-width: 1px;
 	border-top-style: solid;
 	border-bottom-style: solid;
-	border-top-color: #CCC;
-	border-bottom-color: #CCC;
+	border-top-color: #D9D9D9;
+	border-bottom-color: #D9D9D9;
+	background-color: #FFF;
+	opacity: 0.7;
 }
 
 .menu .cdwbk {
@@ -120,5 +123,5 @@ white-space: nowrap;
 	margin-top: 10px;
 }
 .menu .cdwbk .dqxx {
-	color: #FF4103;
+	color: #0569FD;
 }

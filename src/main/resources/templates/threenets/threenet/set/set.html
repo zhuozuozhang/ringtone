@@ -58,7 +58,7 @@
                         <div class="layui-form-item">
                             <label class="layui-form-label">手机</label>
                             <div class="layui-input-inline">
-                                <input type="text" disabled="disabled" th:value="${user.userTel}" autocomplete="off" class="layui-input">
+                                <input type="text" disabled th:value="${user.userTel}" required lay-verify="userTel" autocomplete="off" id="userTel" class="layui-input">
                             </div>
                         </div>
                         <div class="layui-form-item">
@@ -78,25 +78,20 @@
     //表单提交
     layui.use('form', function(){
         var form = layui.form;
-        // form.verify({
-        //     userEmail: function(value){
-        //         if(!isEmail(value)){
-        //             return '请输入正确的邮箱';
-        //         }
-        //     },
-        //     userGuhua:function (value) {
-        //         if (!isNotEmpty(value)){
-        //             return "电话不能为空";
-        //         }
-        //     }
-        // });
+        form.verify({
+            userTel:function (value) {
+                if (!isNotEmpty(value) || !isTel(value)){
+                    return "电话号码格式不正确！";
+                }
+            }
+        });
         //监听提交
         form.on('submit(formDemo)', function(data){
             var userEmail = $("#userEmail").val();
             var userGuhua = $("#userGuhua").val();
             AjaxPut("/threenets/personalInformation",{
                 userEmail:userEmail,
-                userGuhua:userGuhua
+                userGuhua:userGuhua,
             },function (res) {
                 if (res.code == 200 && res.data){
                     layer.msg("修改成功",{icon: 1,time:1000});

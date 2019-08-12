@@ -8,38 +8,43 @@
 </head>
 
 <body>
-    <div class="header">
-        <div class="logo"><img th:src="@{/public/images/cllogo.jpg}"></div>
+<div class="head"><img th:src="@{/system/login/images/top.png}"></div>
+<div class="wbk">
+    <div class="wbk_z">
+        <div class="imgbk"><img th:src="@{/system/login/images/login_qycl.png}"></div>
+        <div class="imgbk"><img th:src="@{/system/login/images/login_dhrz.png}"></div>
+        <div class="imgbk"><img th:src="@{/system/login/images/login_400.png}"></div>
+        <div class="imgbk"><img th:src="@{/system/login/images/login_qyx.png}"></div>
+        <div class="imgbk"><img th:src="@{/system/login/images/login_wzjs.png}"></div>
+        <div class="imgbk"><img th:src="@{/system/login/images/login_xcx.png}"></div>
+        <div class="imgbk"><img th:src="@{/system/login/images/login_ly.png}"></div>
+        <div class="imgbk"><img th:src="@{/system/login/images/login_llk.png}"></div>
+        <div class="imgbk"><img th:src="@{/system/login/images/login_gjx.png}"></div>
     </div>
-    <div class="wbk">
-        <div class="nbk">
-            <div class="nbk_z">
-                企业彩铃 企业有声名片
+    <form class="login-form" th:action="@{/login}" th:method="post">
+        <div class="wbk_y">
+            <h3>企业联盟</h3>
+            <div class="inputbk">
+                <div class="icon"><img th:src="@{/system/login/images/zhangh.png}"></div>
+                <input type="text" id="user_name" name="username" placeholder="请输入用户名">
             </div>
-            <form class="login-form" th:action="@{/login}" th:method="post">
-                <div class="nbk_y">
-                    <div class="dltitle">欢迎登录</div>
-                    <div class="srbk phone">
-                        <input id="user_name" type="text" name="username" placeholder="请输入账号">
-                    </div>
-                    <div class="srbk psd">
-                        <input id="password" type="password" name="password" placeholder="请输入密码">
-                    </div>
-                    <div class="srbk yzm">
-                        <input type="text" id="imageCode" name="captchaCode" class="txtVerification" placeholder="请验证码">
-                        <div class="yzy">
-                            <span>
-                                <img class="yzmImage imgcode" th:src="@{/imageCode(type=char)}">
-                            </span>
-                        </div>
-                    </div>
-                    <div class="dlan login">登 录</div>
-                    <span th:text="${msg}" style="color: red;:none;"></span>
+            <div class="inputbk">
+                <div class="icon"><img th:src="@{/system/login/images/password.png}"></div>
+                <input type="password" id="password" name="password" placeholder="请输入用户密码">
+            </div>
+            <div class="inputbk yzm">
+                <div class="icon"><img th:src="@{/system/login/images/code.png}"></div>
+                <input type="text" id="imageCode" name="captchaCode" class="txtVerification" placeholder="请验证码">
+                <div class="yzy" onClick="captcha();" tampode>
+                    <img class="yzmImage imgcode" th:src="@{/imageCode(type=char)}">
                 </div>
-            </form>
+            </div>
+            <div class="dlan login">登 录</div>
+            <div style="text-align: center;"><span th:text="${msg}" style="color: red;:none;"></span></div>
         </div>
-    </div>
-    <div class="dibu">Copyright © 2019 Zhong Gao Jun cong</div>
+    </form>
+    <div class="zsy"></div>
+</div>
 </body>
 <div th:include="admin/common/include :: footer"></div>
 <script type="text/javascript" th:inline="javascript">
@@ -59,7 +64,6 @@
             $(".imgcode").attr("src", url);
         });
     });
-
     // 检查用户名密码是否为空
     function check_login() {
         var name = $("#user_name").val();

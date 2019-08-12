@@ -8,7 +8,7 @@ import com.hrtxn.ringtone.project.system.log.domain.OperateLog;
 import com.hrtxn.ringtone.project.system.log.service.LoginLogService;
 import com.hrtxn.ringtone.project.system.log.service.OperateLogService;
 import com.hrtxn.ringtone.project.system.user.domain.User;
-import com.hrtxn.ringtone.project.system.user.service.UserService;
+import com.hrtxn.ringtone.project.system.user.mapper.UserMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeansException;
 import org.springframework.context.annotation.Bean;
@@ -84,7 +84,7 @@ public class AsyncConfig {
                 _user.setLoginIp(loginLog.getIpAdress());
                 _user.setLoginTime(new Date());
                 _user.setId(user.getId());
-                boolean b1 = SpringUtils.getBean(UserService.class).updateUserById(_user);
+                int b1 = SpringUtils.getBean(UserMapper.class).updateUserById(_user);
                 log.info(" 执行修改登录时间、ip，结果：【{}】",b1);
                 // 2、添加登录记录
                 boolean b = SpringUtils.getBean(LoginLogService.class).insertLoginLog(loginLog);

@@ -1,5 +1,5 @@
 @charset "utf-8";
-.header {
+/*.header {
 	padding-top: 20px;
 	padding-bottom: 20px;
 }
@@ -69,11 +69,11 @@
 	float: left;
 }
 .wbk .nbk .nbk_y .yzm #imageCode {
-	width: 257px;
+	width: 150px;
 }
 .wbk .nbk .nbk_y .yzm .yzy {
 	float: right;
-	/*width: 50%;*/
+	width: 50%;
 	cursor: pointer;
 }
 .wbk .nbk .nbk_y .yzm .yzy span {
@@ -131,9 +131,158 @@
 	color: #FFF;
 }
 
+
+
+
+
 .dibu {
 	line-height: 100px;
 	height: 100px;
 	text-align: center;
 	color: #999;
+}
+*/
+body {
+    height: 100%;
+    background-image: url(../images/background.png);
+    background-repeat: no-repeat;
+    background-position: center top;
+}
+
+.head {
+    width: 1300px;
+    margin-right: auto;
+    margin-left: auto;
+    margin-bottom: 60px;
+    padding-top: 80px;
+}
+
+.head img {
+    width: 100%;
+}
+
+.wbk {
+    width: 1300px;
+    margin-right: auto;
+    margin-left: auto;
+}
+
+.wbk .wbk_z {
+    float: left;
+    width: 660px;
+    margin-left: 70px;
+}
+
+.wbk .wbk_z .imgbk {
+    float: left;
+    margin-right: 15px;
+    margin-left: 15px;
+    margin-bottom: 20px;
+    border-radius: 10px;
+    width: 180px;
+}
+
+.wbk .wbk_z .imgbk img {
+    width: 100%;
+}
+
+.wbk .wbk_y {
+    float: right;
+    height: 525px;
+    width: 500px;
+    background-color: #FFF;
+    opacity: 0.8;
+    border-radius: 10px;
+    margin-right: 50px;
+}
+
+.wbk .wbk_y h3 {
+    display: block;
+    width: 350px;
+    margin-right: auto;
+    margin-left: auto;
+    color: #CCC;
+    font-size: 48px;
+    line-height: 120px;
+    padding-top: 30px;
+    font-weight: normal;
+}
+
+.wbk .wbk_y .inputbk {
+    height: 46px;
+    width: 350px;
+    border: 1px solid #CCC;
+    margin-right: auto;
+    margin-left: auto;
+    margin-bottom: 20px;
+    border-radius: 5px;
+}
+
+.wbk .wbk_y .inputbk .icon {
+    float: left;
+    height: 20px;
+    width: 20px;
+    margin-top: 13px;
+    margin-right: 13px;
+    margin-left: 13px;
+}
+
+.wbk .wbk_y .inputbk input {
+    width: 290px;
+    background-color: #fff;
+    line-height: 24px;
+    height: 24px;
+    margin-top: 12px;
+    border-top-style: none;
+    border-right-style: none;
+    border-bottom-style: none;
+    border-left-style: solid;
+    font-size: 14px;
+    border-left-width: 1px;
+    border-left-color: #CCC;
+    padding-left: 13px;
+    float: left;
+    outline: none;
+}
+
+.wbk .wbk_y .inputbk.yzm {
+    margin-bottom: 40px;
+}
+
+.wbk .wbk_y .inputbk.yzm input {
+    width: 200px;
+    /*border-right-width: 1px;*/
+    /*border-right-style: solid;*/
+    /*border-right-color: #CCC;*/
+}
+
+.wbk .wbk_y .inputbk.yzm .yzy {
+    float: left;
+    width: 104px;
+    height: 46px;
+    text-align: center;
+    /*margin-left: 5px;*/
+    /*margin-top: 5px;*/
+    cursor: pointer;
+}
+
+.wbk .wbk_y .inputbk.yzm .yzy img {
+    max-width: 100%;
+    height: 100%;
+}
+
+.wbk .wbk_y .dlan {
+    line-height: 46px;
+    height: 46px;
+    width: 350px;
+    margin-right: auto;
+    margin-left: auto;
+    text-align: center;
+    background-image: url(../images/anbj.jpg);
+    background-repeat: no-repeat;
+    background-position: center top;
+    background-size: 100% 100%;
+    color: #FFF;
+    border-radius: 5px;
+    cursor: pointer;
 }

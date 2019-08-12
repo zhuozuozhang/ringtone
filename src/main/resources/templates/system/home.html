@@ -1,11 +1,10 @@
 <!DOCTYPE>
-<html lang="zh" xmlns:th="http://www.thymeleaf.org"
-      xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <title>企业彩铃</title>
     <link rel="stylesheet" type="text/css" th:href="@{/public/css/common.css}">
-    <link rel="stylesheet" type="text/css" th:href="@{/system/home/css/home.css}" >
+    <link rel="stylesheet" type="text/css" th:href="@{/system/home/css/home.css}">
     <link rel="stylesheet" type="text/css" th:href="@{/system/home/css/homehead.css}">
 </head>
 
@@ -23,83 +22,76 @@
             <shiro:hasPermission name="1">
                 <div class="xzbk">
                     <a href="/threenets/threeNetsTaskList" target="_blank">
-                        <span>三网平台</span>
-                        <i><img th:src="@{/system/home/images/phon.png}"></i>
+                        <span>企业彩铃<br/>视频彩铃</span>
+                        <i><img th:src="@{/system/home/images/home_qycl.png}"></i>
                     </a>
                 </div>
             </shiro:hasPermission>
             <shiro:hasPermission name="2">
                 <div class="xzbk">
-                    <a href="order/index.html" target="_blank">
-                        <span>号码认证</span>
-                        <i><img th:src="@{/system/home/images/hmrz.png}"></i>
+                    <a href="#" target="_blank">
+                        <span>电话认证<br/>挂机短信彩印</span>
+                        <i><img th:src="@{/system/home/images/home_dhrz.png}"></i>
                     </a>
                 </div>
             </shiro:hasPermission>
             <shiro:hasPermission name="3">
-                <div class="xzbk bxs">
+                <div class="xzbk">
                     <a href="#" target="_blank">
-                        <span>400网站</span>
-                        <i><img th:src="@{/system/home/images/400.png}"></i>
+                        <span>400电话</span>
+                        <i><img th:src="@{/system/home/images/home_400.png}"></i>
                     </a>
                 </div>
             </shiro:hasPermission>
             <shiro:hasPermission name="4">
-                <div class="xzbk bxs">
+                <div class="xzbk">
                     <a href="#" target="_blank">
-                        <span>视频制作</span>
-                        <i><img th:src="@{/system/home/images/shipin.png}"></i>
+                        <span>企业秀</span>
+                        <i><img th:src="@{/system/home/images/home_qyx.png}"></i>
                     </a>
                 </div>
             </shiro:hasPermission>
             <shiro:hasPermission name="5">
-                <div class="xzbk bxs">
+                <div class="xzbk">
                     <a href="#" target="_blank">
-                        <span>号卡</span>
-                        <i><img th:src="@{/system/home/images/kahao.png}"></i>
+                        <span>网站建设/万词霸屏<br/>快排优化</span>
+                        <i><img th:src="@{/system/home/images/home_wzjs.png}"></i>
                     </a>
                 </div>
             </shiro:hasPermission>
             <shiro:hasPermission name="6">
-                <div class="xzbk bxs">
+                <div class="xzbk">
                     <a href="#" target="_blank">
-                        <span>微信小程序</span>
-                        <i><img th:src="@{/system/home/images/wxxcx.png}"></i>
+                        <span>微信/百度/抖音<br/>小程序</span>
+                        <i><img th:src="@{/system/home/images/home_xcx.png}"></i>
                     </a>
                 </div>
             </shiro:hasPermission>
             <shiro:hasPermission name="7">
-                <div class="xzbk bxs">
-                    <a href="#" target="_blank">
-                        <span>铃音录制</span>
-                        <i><img th:src="@{/system/home/images/lingy.png}"></i>
-                    </a>
-                </div>
+            <div class="xzbk">
+                <a href="#" target="_blank">
+                    <span>铃音录制<br/>视频制作</span>
+                    <i><img th:src="@{/system/home/images/home_lylz.png}"></i>
+                </a>
+            </div>
             </shiro:hasPermission>
             <shiro:hasPermission name="8">
-                <div class="xzbk bxs">
+                <div class="xzbk">
                     <a href="#" target="_blank">
-                        <span>企业秀</span>
-                        <i><img th:src="@{/system/home/images/qyx.png}"></i>
+                        <span>流量卡/号卡</span>
+                        <i><img th:src="@{/system/home/images/home_kh.png}"></i>
                     </a>
                 </div>
             </shiro:hasPermission>
             <shiro:hasPermission name="9">
-                <div class="xzbk bxs">
-                    <a href="#" target="_blank">
-                        <span>来去电名片</span>
-                        <i><img th:src="@{/system/home/images/ldmp.png}"></i>
-                    </a>
-                </div>
-            </shiro:hasPermission>
-            <shiro:hasPermission name="10">
-                <div class="xzbk bxs">
+                <div class="xzbk">
                     <a href="#" target="_blank">
                         <span>工具库</span>
-                        <i><img th:src="@{/system/home/images/gjk.png}"></i>
+                        <i><img th:src="@{/system/home/images/home_gjx.png}"></i>
                     </a>
                 </div>
             </shiro:hasPermission>
+            <div class="zsy"></div>
         </div>
     </div>
 </body>

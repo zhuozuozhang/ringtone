@@ -3,7 +3,6 @@ package com.hrtxn.ringtone.project.system.user.service;
 import com.hrtxn.ringtone.common.constant.AjaxResult;
 import com.hrtxn.ringtone.common.domain.BaseRequest;
 import com.hrtxn.ringtone.common.domain.Page;
-import com.hrtxn.ringtone.common.exception.NoLoginException;
 import com.hrtxn.ringtone.common.utils.MD5Utils;
 import com.hrtxn.ringtone.common.utils.ShiroUtils;
 import com.hrtxn.ringtone.common.utils.StringUtils;
@@ -24,7 +23,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpSession;
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -64,8 +62,12 @@ public class UserService {
      * @param user
      * @return
      */
-    public boolean updateUserById(User user) {
-        return userMapper.updateUserById(user) > 0 ? true : false;
+    public AjaxResult updateUserById(User user) throws Exception {
+        int i = userMapper.updateUserById(user);
+        if (i > 0){
+            return AjaxResult.success(true,"修改成功！");
+        }
+        return AjaxResult.error("修改失败！");
     }
 
     /**
@@ -263,12 +265,22 @@ public class UserService {
      * @param user
      * @return
      */
-    public AjaxResult insertUser(User user) throws NoLoginException, IOException {
+    public AjaxResult insertUser(User user) throws Exception {
         if (StringUtils.isNotNull(user)
                 && StringUtils.isNotEmpty(user.getUserName())
                 && StringUtils.isNotEmpty(user.getUserPassword())
                 && StringUtils.isNotEmpty(user.getUserTel())) {
 
+            // 判断登录名是否重复
+            User userByUserName = userMapper.findUserByUserName(user.getUserName());
+            if (StringUtils.isNotNull(userByUserName)){
+                return AjaxResult.error("用户名重复！");
+            }
+            // 判断电话号码是否重复
+            User userByUserTel = userMapper.findUserByUserTel(user.getUserTel());
+            if (StringUtils.isNotNull(userByUserTel)){
+                return AjaxResult.error("电话号码重复!");
+            }
             String passwprd = MD5Utils.GetMD5Code(user.getUserPassword());
             user.setUserPassword(passwprd);
 
@@ -282,7 +294,7 @@ public class UserService {
                 user.setIdGroupReverseFile(new File(RingtoneConfig.getProfile() + user.getUserCardFan()));
             }
             // 执行添加子账号操作
-            return apiUtils.insertUser(user);
+//            return apiUtils.insertUser(user);
         }
         return AjaxResult.error("参数格式不正确！");
     }
@@ -297,24 +309,6 @@ public class UserService {
         BaseRequest request = new BaseRequest();
         request.setUserStatus(status);
         return userMapper.getUserCountByCon(request);
-    }
-
-    public AjaxResult findUserPartnerList(Page page, String phone) {
-        if (StringUtils.isNotNull(page)) {
-            if (StringUtils.isNotEmpty(phone)) {
-
-            } else {
-                // 电话号码为空，则获取当前登录账号
-                User user = ShiroUtils.getSysUser();
-                if (StringUtils.isNotNull(user)){
-                    // 获取当前账号上级代理（根据ID查询）
-
-                    // 获取当前账号下级代理（根据parent_id）
-
-                }
-            }
-        }
-        return AjaxResult.error("参数格式不正确！");
     }
 
     /**
@@ -371,7 +365,14 @@ public class UserService {
         return menuList;
     }
 
-    @Transactional
+    /**
+     *  设置用户权限
+     *
+     * @param userId
+     * @param menuArr
+     * @return
+     */
+    @Transactional(rollbackFor = Exception.class)
     public AjaxResult updateRoleRelation(Integer userId, int[] menuArr) {
         if (StringUtils.isNotNull(userId)){
             // 删除ID对应的菜单
@@ -388,4 +389,95 @@ public class UserService {
         }
         return AjaxResult.error("参数格式不正确！");
     }
+
+    /**
+     * 根据电话号码获取所有下级代理商
+     *
+     * @param userTel
+     * @return
+     * @throws Exception
+     */
+    public AjaxResult getLowUser(String userTel) throws Exception {
+        User user;
+        List<UserVo> userVoList;
+        // 判断号码是否为空
+        if (StringUtils.isNotEmpty(userTel)){
+            // 不为空则获取该电话号码下的子级代理商
+            user = userMapper.findUserByUserTel(userTel);
+        }else{
+            // 为空则获取当前登录者下的子级代理商
+            user = ShiroUtils.getSysUser();
+        }
+        if (StringUtils.isNotNull(user)){
+            userVoList = userMapper.findUserByparentId(null, null, user.getId());
+            List<UserVo> users = getLowNode(userVoList);
+            return AjaxResult.success(users,"获取数据成功！");
+        }
+        return AjaxResult.error("无数据！");
+    }
+
+    public AjaxResult getUpUser(String userTel) throws Exception {
+        User user;
+        List<UserVo> userVoList = new ArrayList<>();
+        // 判断电话号码是否为空
+        if (StringUtils.isNotEmpty(userTel)){
+            // 不为空则获取该电话号码下的上级代理商
+            user = userMapper.findUserByUserTel(userTel);
+        } else {
+            // 为空则获取当前登录者下的上级代理商
+            user = ShiroUtils.getSysUser();
+        }
+        if (StringUtils.isNotNull(user)){
+            userVoList = getUpNode(userVoList,user.getParentId());
+            return AjaxResult.success(userVoList,"获取数据成功！");
+        }
+        return AjaxResult.error("无数据！");
+    }
+
+    /**
+     * 递归查询当前登录者下的所有子账号，不分等级
+     *
+     * @param users
+     * @return
+     * @throws Exception
+     */
+    public List<UserVo> getLowNode(List<UserVo> users) throws Exception {
+        if(users !=null && users.size()!=0){
+            for(int i=0;i<users.size();i++){
+                List<UserVo> list = userMapper.findUserByparentId(null, null,users.get(i).getId());
+                if (list != null && list.size() != 0) {
+                    for (UserVo user : list) {
+                        users.add(user);
+                    }
+                    getLowNode(list);
+                }
+            }
+        }
+        return users;
+    }
+
+    public List<UserVo> getUpNode(List<UserVo> userVoList,Integer parentId) throws Exception {
+//        List<UserVo> userVoList = new ArrayList<>();
+        if (parentId != 0){
+            User _user = userMapper.findUserById(parentId);
+            if (StringUtils.isNotNull(_user)){
+                UserVo userVo = new UserVo();
+                userVo.setUserTel(_user.getUserTel());
+                userVo.setParentUserName("顶级");
+                userVo.setUserName(_user.getUserName());
+                userVo.setUserStatus(_user.getUserStatus());
+                userVo.setUserTime(_user.getUserTime());
+                if (_user.getParentId() != 0){
+                    User user = userMapper.findUserById(_user.getParentId());
+                    if (StringUtils.isNotNull(user)){
+                        userVo.setParentUserName(user.getUserName());
+                    }
+                }
+                userVoList.add(userVo);
+            }
+            getUpNode(userVoList,_user.getParentId());
+        }
+        return userVoList;
+    }
+
 }

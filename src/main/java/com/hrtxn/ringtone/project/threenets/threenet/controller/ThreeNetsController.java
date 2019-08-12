@@ -2,7 +2,6 @@ package com.hrtxn.ringtone.project.threenets.threenet.controller;
 
 import com.hrtxn.ringtone.common.constant.AjaxResult;
 import com.hrtxn.ringtone.common.domain.BaseRequest;
-import com.hrtxn.ringtone.common.exception.NoLoginException;
 import com.hrtxn.ringtone.common.utils.MD5Utils;
 import com.hrtxn.ringtone.common.utils.ShiroUtils;
 import com.hrtxn.ringtone.common.utils.StringUtils;
@@ -26,7 +25,6 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
-import java.io.IOException;
 import java.util.List;
 
 /**
@@ -226,11 +224,12 @@ public class ThreeNetsController {
     @Log(title = "个人信息-->个人设置", businessType = BusinessType.UPDATE, operatorLogType = OperatorLogType.THREENETS)
     public AjaxResult personalInformation(User user) {
         user.setId(ShiroUtils.getSysUser().getId());
-        boolean b = userService.updateUserById(user);
-        if (b) {
-            return AjaxResult.success(true, "修改成功");
+        try {
+            return userService.updateUserById(user);
+        } catch (Exception e) {
+            log.error("个人信息-->个人设置 --->"+e);
+            return AjaxResult.error(e.getMessage());
         }
-        return null;
     }
 
     /**
@@ -261,10 +260,7 @@ public class ThreeNetsController {
                     _user.setUserPassword(MD5Utils.GetMD5Code(newPassword));
                 }
             }
-            boolean b = userService.updateUserById(_user);
-            if (b) {
-                return AjaxResult.success(true, "修改密码成功");
-            }
+            return userService.updateUserById(_user);
         } catch (Exception e) {
             log.error("个人信息-->修改密码 方法：updatePasswor 错误信息", e);
         }
@@ -373,8 +369,13 @@ public class ThreeNetsController {
     @PostMapping("/threenets/insertUser")
     @ResponseBody
     @Log(title = "添加子账号",businessType = BusinessType.INSERT,operatorLogType = OperatorLogType.THREENETS)
-    public AjaxResult insertUser(User user) throws NoLoginException, IOException {
-        return userService.insertUser(user);
+    public AjaxResult insertUser(User user){
+        try {
+            return userService.insertUser(user);
+        } catch (Exception e) {
+            log.error("添加子账号--->"+e);
+            return AjaxResult.error(e.getMessage());
+        }
     }
 
     /**

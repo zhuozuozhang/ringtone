@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>数据列表</title>
+    <meta name="renderer" content="webkit|ie-comp|ie-stand">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi" />
+    <meta http-equiv="Cache-Control" content="no-siteapp" />
+    <link rel="stylesheet" th:href="@{/admin/css/font.css}">
+    <link rel="stylesheet" th:href="@{/admin/css/xadmin.css}">
+</head>
+
+<body>
+    <div class="x-nav">
+            <span class="layui-breadcrumb">
+                <a href="">首页</a>
+                <a href="">数据统计</a>
+                <a>
+                    <cite>按月统计</cite>
+                </a>
+            </span>
+        <a class="layui-btn layui-btn-primary layui-btn-small" style="line-height:1.6em;margin-top:3px;float:right" href="javascript:location.replace(location.href);" title="刷新">
+            <i class="layui-icon" style="line-height:38px">ဂ</i>
+        </a>
+    </div>
+    <div class="x-body">
+        <div class="layui-row">
+            <form class="layui-form layui-col-md12 x-so" action="javascript:;">
+                <div class="layui-col-md2">
+                    <select name="operate" lay-verify="" style="display: block;height: 38px;" id="operate">
+                        <option value="">全部</option>
+                        <option value="1">移动</option>
+                        <option value="2">电信</option>
+                        <option value="3">联通</option>
+                    </select>
+                </div>
+                <input class="layui-input" placeholder="请选择日期" name="start" id="start" style="margin: 0 20px;">
+                <button class="layui-btn" onclick="searchData();"><i class="layui-icon">&#xe615;</i></button>
+            </form>
+        </div>
+        <div id="main" style="width: 100%;height:400px;"></div>
+    </div>
+</body>
+<script src="public/js/jquery.min.js" th:src="@{/public/js/jquery.min.js}"></script>
+<script th:src="@{/admin/js/echarts/echarts.min.js}"></script>
+<script type="text/javascript" th:src="@{/admin/lib/layui/layui.js}" charset="utf-8"></script>
+<script type="text/javascript" th:src="@{/public/layui/lay/modules/layer.js}"></script>
+<script th:src="@{/public/js/ajax.js}"></script>
+<script type="text/javascript">
+
+    $(function () {
+        layui.use('laydate', function() {
+            var laydate = layui.laydate;
+            //执行一个laydate实例
+            laydate.render({
+                elem: '#start' //指定元素
+                ,type:'month'
+                ,value:new Date()
+            });
+        });
+        searchData();
+    });
+
+    function searchData() {
+        var start = $("#start").val();
+        var operate = $("#operate").val();
+        // 获取数据
+        AjaxPost("/admin/echartsData",{
+            start:start,
+            operate:operate,
+            type:1
+        },function (res) {
+            var dataTime = res.data.dataTime;
+            var addUser = res.data.addUser;
+            var unsubscribeUser = res.data.unsubscribeUser;
+            var cumulativeUser = res.data.cumulativeUser;
+            echart(dataTime,addUser,unsubscribeUser,cumulativeUser);
+        });
+
+    }
+
+    function echart(dataTime,addUser,unsubscribeUser,cumulativeUser) {
+        // 基于准备好的dom，初始化echarts实例
+        var myChart = echarts.init(document.getElementById('main'));
+        // 指定图表的配置项和数据
+        var option = {
+            title: {
+                text: '数据统计'
+            },
+            tooltip: {
+                trigger: 'axis'
+            },
+            legend: {
+                data: ['新增', '退订', '总数']
+            },
+            grid: {
+                left: '3%',
+                right: '4%',
+                bottom: '3%',
+                containLabel: true
+            },
+            toolbox: {
+                feature: {
+                    saveAsImage: {}
+                }
+            },
+            xAxis: {
+                type: 'category',
+                boundaryGap: false,
+                data:dataTime
+            },
+            yAxis: {
+                type: 'value'
+            },
+            series: [{
+                name: '新增',
+                type: 'line',
+                stack: '总量',
+                data:addUser
+            }, {
+                name: '退订',
+                type: 'line',
+                stack: '总量',
+                data: unsubscribeUser
+            }, {
+                name: '总数',
+                type: 'line',
+                stack: '总量',
+                data: cumulativeUser
+            }]
+        };
+        // 使用刚指定的配置项和数据显示图表。
+        myChart.setOption(option);
+    }
+</script>
+</html>
