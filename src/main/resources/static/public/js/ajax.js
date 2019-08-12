@@ -108,6 +108,7 @@ function AjaxPut(url,data,callback) {
         url: url,
         type: "PUT",
         data:data,
+        traditional: true,
         beforeSend:function(){
             layuiLoding = layer.load(0, { //icon支持传入0-2
                 time:false,

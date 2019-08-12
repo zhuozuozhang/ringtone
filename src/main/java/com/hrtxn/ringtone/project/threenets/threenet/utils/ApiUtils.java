@@ -23,17 +23,14 @@ import com.hrtxn.ringtone.project.threenets.threenet.mapper.ThreenetsChildOrderM
 import com.hrtxn.ringtone.project.threenets.threenet.mapper.ThreenetsRingMapper;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.json.JSONObject;
-import org.aspectj.weaver.loadtime.Aj;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Author:zcy
@@ -47,6 +44,14 @@ public class ApiUtils {
     private static SwxlApi swxlApi = new SwxlApi();
     private static McardApi mcardApi = new McardApi();
 
+    private static String[] TENRMB = {"北京", "天津", "河北", "山西", "辽宁", "吉林", "黑龙江", "上海", "江苏", "浙江", "福建", "河南", "湖南", "广东", "河南", "广西", "重庆", "四川", "陕西", "青海", "宁夏", "西藏"};
+    private static String[] TWENTYRMB = {"湖北", "山东", "江西", "贵州", "内蒙古", "新疆", "甘肃", "云南", "安徽"};
+    //子渠道商（17712033392）(四川)
+    private static String child_Distributor_ID_177 = "594095";
+    //子渠道商（18159093112）
+    private static String child_Distributor_ID_181 = "296577";
+    //子渠道商（18888666361）
+    private static String child_Distributor_ID_188 = "61204";
     /**
      * 获取号码信息
      *
@@ -914,6 +919,14 @@ public class ApiUtils {
      */
     public McardAddGroupRespone addOrderByDx(ThreenetsOrder ringOrder, ThreeNetsOrderAttached attached) throws IOException, NoLoginException {
         McardAddGroupRespone mcardAddGroupRespone = null;
+        //资费
+        boolean flag = Arrays.asList(TENRMB).contains(order.getProvince());
+        attached.setMcardPrice(flag ? 2 : 11);
+        if (flag){
+            mcardApi.toNormalUser(child_Distributor_ID_188);
+        }else{
+            mcardApi.toNormalUser(child_Distributor_ID_181);
+        }
         //添加商户，同步三次
         for (int i = 0; i < 3; i++) {
             mcardAddGroupRespone = mcardApi.addGroup(ringOrder);
@@ -1235,6 +1248,16 @@ public class ApiUtils {
             return AjaxResult.success(map,"删除成功");
         }
         return AjaxResult.success(false,"参数不正确");
+    }
+
+    /**
+     * 电信上传文件
+     *
+     * @param file
+     * @return
+     */
+    public String mcardUploadFile(File file) {
+        return mcardApi.uploadFile(file);
     }
 
     public AjaxResult findCricleMsgList(String migu_id) throws IOException, NoLoginException {

@@ -157,7 +157,7 @@ public class ThreeNetsChildOrderService {
         if (attached.getSwxlPrice() == null) {
             attached.setSwxlPrice(threenetsChildOrder.getSwxlPrice());
         }
-        saveThreenetsPhone(attached, list);
+        saveThreenetsPhone(attached, list,request);
         return AjaxResult.success(true, "保存成功");
     }
 
@@ -167,7 +167,7 @@ public class ThreeNetsChildOrderService {
      * @param childOrders
      */
     @Synchronized
-    public void saveThreenetsPhone(ThreeNetsOrderAttached attached, List<ThreenetsChildOrder> childOrders) {
+    public void saveThreenetsPhone(ThreeNetsOrderAttached attached, List<ThreenetsChildOrder> childOrders,BaseRequest request) {
         try {
             List<ThreenetsRing> rings = threenetsRingMapper.selectByOrderId(attached.getParentOrderId());
             Map<Integer, List<ThreenetsRing>> ringMap = rings.stream().collect(Collectors.groupingBy(ThreenetsRing::getOperate));
@@ -186,7 +186,7 @@ public class ThreeNetsChildOrderService {
                     }
                 }
                 if (operator == 2) {
-                    List<ThreenetsChildOrder> orders = addMcardByDx(order, attached, list);
+                    List<ThreenetsChildOrder> orders = addMcardByDx(order, attached, list,request);
                     batchChindOrder(orders,rings.get(0));
                     if (ringMap.get(2) == null){
                         ThreenetsRing threenetsRing = rings.get(0);
@@ -288,11 +288,21 @@ public class ThreeNetsChildOrderService {
      * @throws IOException
      * @throws NoLoginException
      */
-    public List<ThreenetsChildOrder> addMcardByDx(ThreenetsOrder order,ThreeNetsOrderAttached attached,List<ThreenetsChildOrder> list)throws IOException,NoLoginException{
+    public List<ThreenetsChildOrder> addMcardByDx(ThreenetsOrder order,ThreeNetsOrderAttached attached,List<ThreenetsChildOrder> list,BaseRequest request)throws IOException,NoLoginException{
         if (attached.getMcardId() == null) {
             //新增电信商户需要先上传审核文件
-
-
+            if (request.getCompanyUrl()!=null){
+                String path = apiUtils.mcardUploadFile(new File(request.getCompanyUrl()));
+                attached.setBusinessLicense(path);
+            }
+            if (request.getClientUrl()!=null){
+                String path = apiUtils.mcardUploadFile(new File(request.getClientUrl()));
+                attached.setConfirmLetter(path);
+            }
+            if (request.getMainUrl()!=null){
+                String path = apiUtils.mcardUploadFile(new File(request.getMainUrl()));
+                attached.setSubjectProve(path);
+            }
             //没有电信商户，先新增商户
             McardAddGroupRespone respone = apiUtils.addOrderByDx(order, attached);
             if (respone.getCode().equals("200")) {

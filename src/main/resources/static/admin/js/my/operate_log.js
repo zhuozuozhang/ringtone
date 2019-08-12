@@ -81,5 +81,5 @@ function showTable() {
                 + "<i class=\"layui-icon\">&#xe63c;</i></a>";
         }
     }];
-    page("#example", 10, {}, "/admin/findAllOperateLog", columns, columnDefs);
+    page("#example", 16, {}, "/admin/findAllOperateLog", columns, columnDefs);
 }

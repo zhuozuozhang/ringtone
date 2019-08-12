@@ -27,7 +27,10 @@ public class MyWebConfig implements WebMvcConfigurer {
     public void addViewControllers(ViewControllerRegistry registry) {
         // 设置统一登录入口
         registry.addViewController("/").setViewName("system/login");
-        registry.addViewController("/admin/index").setViewName("admin/index");
+        // 客户端首页
+        registry.addViewController("/system/index").setViewName("system/home");
+        // 跳转到权限设置页面
+        registry.addViewController("/admin/toJurisdictionPage").setViewName("admin/system/jurisdiction/jurisdiction");
         // 跳转到商户列表
         registry.addViewController("/threenets/threeNetsOrderList").setViewName("threenets/threenet/merchants/merchants");
     }

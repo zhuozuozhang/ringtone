@@ -2,12 +2,14 @@ package com.hrtxn.ringtone.project.threenets.threenet.service;
 
 import com.hrtxn.ringtone.common.constant.AjaxResult;
 import com.hrtxn.ringtone.common.domain.BaseRequest;
+import com.hrtxn.ringtone.common.domain.Page;
 import com.hrtxn.ringtone.common.utils.ShiroUtils;
 import com.hrtxn.ringtone.common.utils.StringUtils;
 import com.hrtxn.ringtone.common.utils.juhe.JuhePhoneUtils;
 import com.hrtxn.ringtone.project.system.json.JuhePhone;
 import com.hrtxn.ringtone.project.system.json.JuhePhoneResult;
 import com.hrtxn.ringtone.project.system.user.domain.User;
+import com.hrtxn.ringtone.project.system.user.domain.UserVo;
 import com.hrtxn.ringtone.project.system.user.mapper.UserMapper;
 import com.hrtxn.ringtone.project.threenets.threenet.domain.PlotBarPhone;
 import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreeNetsOrderAttached;
@@ -56,11 +58,11 @@ public class ThreeNetsService {
      * @param id
      * @return
      */
-    public ThreeNetsOrderAttached getOrderAttached(Integer id){
+    public ThreeNetsOrderAttached getOrderAttached(Integer id) {
         return threeNetsOrderAttachedMapper.selectByParentOrderId(id);
     }
+
     /**
-     *
      * @param id
      * @param session
      * @return
@@ -96,14 +98,13 @@ public class ThreeNetsService {
      * @param request
      * @return
      */
-    public AjaxResult getMonthData(BaseRequest request) {
-        Integer pid = null;
+    public AjaxResult getMonthData(BaseRequest request) throws Exception {
         if (request.getUserId() == null) {
             request.setUserId(ShiroUtils.getSysUser().getId());
         }
         if (request.getUserId().equals(0)) {
             request.setUserId(null);
-            request.setParentId(ShiroUtils.getSysUser().getId());
+            request.setArrayById(getChildUserList());
         }
         List<PlotBarPhone> list = threenetsChildOrderMapper.getMonthData(request);
         list = formatterDate(list, request);
@@ -116,18 +117,46 @@ public class ThreeNetsService {
      * @param request
      * @return
      */
-    public AjaxResult getYearData(BaseRequest request) {
-        Integer pid = null;
+    public AjaxResult getYearData(BaseRequest request) throws Exception {
         if (request.getUserId() == null) {
             request.setUserId(ShiroUtils.getSysUser().getId());
         }
         if (request.getUserId().equals(0)) {
             request.setUserId(null);
-            request.setParentId(ShiroUtils.getSysUser().getId());
+            request.setArrayById(getChildUserList());
         }
         List<PlotBarPhone> list = threenetsChildOrderMapper.getYearData(request);
         list = formatterDate(list, request);
         return AjaxResult.success(list, "获取成功");
+    }
+
+    public Integer [] getChildUserList() throws Exception {
+        Page page = new Page(0, 9999);
+        Integer id = ShiroUtils.getSysUser().getId();
+        List<UserVo> list = userMapper.getUserList(page, new BaseRequest());
+        Map<Integer, List<UserVo>> map = list.stream().collect(Collectors.groupingBy(User::getParentId));
+        List<User> userList = new ArrayList<>();
+        recursion(map.get(id), map, userList);
+        Integer [] ids = new Integer[userList.size()+1];
+        for (int i = 0; i < userList.size(); i++) {
+            User user = userList.get(i);
+            ids[i] = user.getId();
+        }
+        ids[userList.size()] = id;
+        return ids;
+    }
+
+    //递归
+    private void recursion(List<UserVo> list, Map<Integer, List<UserVo>> map, List<User> userList) {
+        if (list == null || list.isEmpty()) {
+            return;
+        }
+        userList.addAll(list);
+        for (int i = 0; i < list.size(); i++) {
+            UserVo vo = list.get(i);
+            List<UserVo> vos = map.get(vo.getId());
+            recursion(vos, map, userList);
+        }
     }
 
     /**
@@ -172,33 +201,33 @@ public class ThreeNetsService {
      * @param phones
      * @return
      */
-    public AjaxResult matchingOperate(String phones)throws Exception {
+    public AjaxResult matchingOperate(String phones) throws Exception {
         String regR = "\n\r";
         String regN = "\n";
-        phones = phones.replace(regR,"br").replace(regN,"br");
+        phones = phones.replace(regR, "br").replace(regN, "br");
         String[] phone = phones.split("br");
         int yidong = 0;
         int dianxin = 0;
         int liantong = 0;
         int sum = 0;
-        for (String p: phone) {
+        for (String p : phone) {
             boolean mobileNO = isMobileNO(p);
-            if (!mobileNO){
-                return AjaxResult.error("#号码"+p+"不正确！");
+            if (!mobileNO) {
+                return AjaxResult.error("#号码" + p + "不正确！");
             }
             sum++;
             JuhePhone juhePhone = JuhePhoneUtils.getPhone(p);
-            JuhePhoneResult result = (JuhePhoneResult)juhePhone.getResult();
-            if (result.getCompany().equals("移动")){
+            JuhePhoneResult result = (JuhePhoneResult) juhePhone.getResult();
+            if (result.getCompany().equals("移动")) {
                 yidong++;
-            }else if(result.getCompany().equals("联通")){
+            } else if (result.getCompany().equals("联通")) {
                 liantong++;
-            }else{
+            } else {
                 dianxin++;
             }
         }
-        Integer[] count = {yidong,dianxin,liantong,sum};
-        return AjaxResult.success(count,"匹配成功");
+        Integer[] count = {yidong, dianxin, liantong, sum};
+        return AjaxResult.success(count, "匹配成功");
     }
 
     /**

@@ -49,20 +49,21 @@ public class LoginController {
 
     /**
      * 执行登陆操作
+     *
      * @param loginParam
      * @param map
      * @param session
      * @return
      */
     @PostMapping("/login")
-    public String login(LoginParam loginParam, Map<String ,Object> map, HttpSession session){
+    public String login(LoginParam loginParam, Map<String, Object> map, HttpSession session) {
         String msg = "";
         // 构造登录记录实体类
         LoginLog loginLog = new LoginLog();
         loginLog.setLoginLogTime(new Date());
         loginLog.setLoginLogUsername(loginParam.getUsername());
         String ip = ShiroUtils.getIp();
-        if ("0:0:0:0:0:0:0:1".equals(ip)){
+        if ("0:0:0:0:0:0:0:1".equals(ip)) {
             ip = "127.0.0.1";
         }
         loginLog.setIpAdress(ip);
@@ -77,23 +78,23 @@ public class LoginController {
                     map.put("msg", "验证码不正确!");
                     // 异步操作，执行修改登录时间以及添加登录日志
                     loginLog.setLoginLogStatus("验证码错误");
-                    AsyncConfig.ac().loginLogTask(ShiroUtils.getSysUser(),loginLog);
+                    AsyncConfig.ac().loginLogTask(ShiroUtils.getSysUser(), loginLog);
                     return "system/login";
                 }
             }
             // 2、执行认证、授权操作
             Subject subject = SecurityUtils.getSubject();
-            UsernamePasswordToken token = new UsernamePasswordToken(loginParam.getUsername(),MD5Utils.GetMD5Code(loginParam.getPassword()),false);
+            UsernamePasswordToken token = new UsernamePasswordToken(loginParam.getUsername(), MD5Utils.GetMD5Code(loginParam.getPassword()), false);
             // 执行登录操作
             subject.login(token);
 
             Boolean status = ShiroUtils.getSysUser().getUserStatus();
-            if (status){
+            if (status) {
                 // 将用户名存到session中
-                session.setAttribute("username",ShiroUtils.getSysUser().getUserName());
+                session.setAttribute("username", ShiroUtils.getSysUser().getUserName());
                 // 异步操作，执行修改登录时间以及添加登录日志
                 loginLog.setLoginLogStatus("登录成功");
-                AsyncConfig.ac().loginLogTask(ShiroUtils.getSysUser(),loginLog);
+                AsyncConfig.ac().loginLogTask(ShiroUtils.getSysUser(), loginLog);
                 return "redirect:/system/index";
             } else {
                 ShiroUtils.getSubject().logout();
@@ -113,15 +114,16 @@ public class LoginController {
             msg = "出现其他异常，请尝试重新登录";
             log.info(e.getMessage());
         }
-        map.put("msg",msg);
+        map.put("msg", msg);
         // 异步操作，执行修改登录时间以及添加登录日志
         loginLog.setLoginLogStatus(msg);
-        AsyncConfig.ac().loginLogTask(ShiroUtils.getSysUser(),loginLog);
+        AsyncConfig.ac().loginLogTask(ShiroUtils.getSysUser(), loginLog);
         return "system/login";
     }
 
     /**
      * 登出操作
+     *
      * @param session
      * @param model
      * @return
@@ -131,65 +133,68 @@ public class LoginController {
         session.removeAttribute("username");
         Subject subject = SecurityUtils.getSubject();
         subject.logout();
-        model.addAttribute("msg","安全退出！");
+        model.addAttribute("msg", "安全退出！");
         return "redirect:/";
     }
+
     /**
      * 跳转到管理端首页
+     *
      * @return
      */
-//    @RequiresRoles("admin")
-//    @GetMapping("/admin/index")
-//    public String toAdminIndexPage(){
-//        return "admin/index";
-//    }
+    @RequiresRoles("admin")
+    @GetMapping("/admin/index")
+    public String toAdminIndexPage() {
+        return "admin/index";
+    }
 
     /**
      * 跳转管理端欢迎页
+     *
      * @return
      */
     @RequiresRoles("admin")
     @GetMapping("/admin/welcome")
-    public String welcome(ModelMap map){
+    public String welcome(ModelMap map) {
         // 数据统计
         // 1、用户（总用户数、正常用户）
         // 总数
         int userCount = userService.getCount(null);
-        map.put("userCount",userCount);
+        map.put("userCount", userCount);
         // 正常
         int userSuccCount = userService.getCount(1);
-        map.put("userSuccCount",userSuccCount);
+        map.put("userSuccCount", userSuccCount);
 
         // 2、号码（总号码数、移动总数/已包月数、电信总数/已包月数、联通总数/已包月数）
         // 总数
-        Integer phoneCount = threeNetsChildOrderService.getPhoneCount(null,null);
-        map.put("phoneCount",phoneCount);
+        Integer phoneCount = threeNetsChildOrderService.getPhoneCount(null, null);
+        map.put("phoneCount", phoneCount);
 
         // 移动
         // 移动总数
-        Integer miguPhoneCount = threeNetsChildOrderService.getPhoneCount(1,null);
+        Integer miguPhoneCount = threeNetsChildOrderService.getPhoneCount(1, null);
         // 移动已包月数
-        Integer miguPhoneSuccCount = threeNetsChildOrderService.getPhoneCount(1,2);
-        map.put("miguPhoneCount",miguPhoneCount+"/"+miguPhoneSuccCount);
+        Integer miguPhoneSuccCount = threeNetsChildOrderService.getPhoneCount(1, 2);
+        map.put("miguPhoneCount", miguPhoneCount + "/" + miguPhoneSuccCount);
 
         // 电信
         // 电信总数
-        Integer mcardPhoneCount = threeNetsChildOrderService.getPhoneCount(2,null);
+        Integer mcardPhoneCount = threeNetsChildOrderService.getPhoneCount(2, null);
         // 电信已包月数
-        Integer mcardPhoneSuccCount = threeNetsChildOrderService.getPhoneCount(2,2);
-        map.put("mcardPhoneCount",mcardPhoneCount+"/"+mcardPhoneSuccCount);
+        Integer mcardPhoneSuccCount = threeNetsChildOrderService.getPhoneCount(2, 2);
+        map.put("mcardPhoneCount", mcardPhoneCount + "/" + mcardPhoneSuccCount);
 
         // 联通
         // 联通总数
-        Integer swxlPhoneCount = threeNetsChildOrderService.getPhoneCount(3,null);
+        Integer swxlPhoneCount = threeNetsChildOrderService.getPhoneCount(3, null);
         // 联通已包月数
-        Integer swxlPhoneSuccCount = threeNetsChildOrderService.getPhoneCount(3,2);
-        map.put("swxlPhoneCount",swxlPhoneCount+"/"+swxlPhoneSuccCount);
+        Integer swxlPhoneSuccCount = threeNetsChildOrderService.getPhoneCount(3, 2);
+        map.put("swxlPhoneCount", swxlPhoneCount + "/" + swxlPhoneSuccCount);
 
         // 3、铃音（总铃音数、移动总数/已包月数、电信总数/已包月数、联通总数/已包月数）
         // 总数
         int ringCount = threeNetsRingService.getCount(null);
-        map.put("ringCount",ringCount);
+        map.put("ringCount", ringCount);
         // 移动总数
         BaseRequest miguBaseRequest = new BaseRequest();
         miguBaseRequest.setOperator(1);
@@ -199,7 +204,7 @@ public class LoginController {
         miguSuccBaseRequest.setIsMonthly(3);
         miguSuccBaseRequest.setOperator(1);
         int miguRingSuccCount = threeNetsRingService.getCount(miguSuccBaseRequest);
-        map.put("miguRingCount",miguRingCount+"/"+miguRingSuccCount);
+        map.put("miguRingCount", miguRingCount + "/" + miguRingSuccCount);
 
         // 电信总数
         BaseRequest mcardBaseRequest = new BaseRequest();
@@ -210,7 +215,7 @@ public class LoginController {
         mcardSuccBaseRequest.setIsMonthly(3);
         mcardSuccBaseRequest.setOperator(2);
         int mcardRingSuccCount = threeNetsRingService.getCount(mcardSuccBaseRequest);
-        map.put("mcardRingCount",mcardRingCount+"/"+mcardRingSuccCount);
+        map.put("mcardRingCount", mcardRingCount + "/" + mcardRingSuccCount);
 
         // 联通总数
         BaseRequest swxlBaseRequest = new BaseRequest();
@@ -221,18 +226,8 @@ public class LoginController {
         swxlSuccBaseRequest.setIsMonthly(3);
         swxlSuccBaseRequest.setOperator(3);
         int swxlRingSuccCount = threeNetsRingService.getCount(swxlSuccBaseRequest);
-        map.put("swxlRingCount",swxlRingCount+"/"+swxlRingSuccCount);
+        map.put("swxlRingCount", swxlRingCount + "/" + swxlRingSuccCount);
 
         return "admin/welcome";
     }
-
-    /**
-     * 客户端首页
-     * @return
-     */
-    @GetMapping("/system/index")
-    public String toClientHome(){
-        return "system/home";
-    }
-
 }

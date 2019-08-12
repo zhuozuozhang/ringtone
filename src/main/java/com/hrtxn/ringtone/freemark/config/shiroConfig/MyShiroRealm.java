@@ -1,6 +1,9 @@
 package com.hrtxn.ringtone.freemark.config.shiroConfig;
 
+import com.hrtxn.ringtone.common.utils.SpringUtils;
+import com.hrtxn.ringtone.project.system.user.domain.RoleRelation;
 import com.hrtxn.ringtone.project.system.user.domain.User;
+import com.hrtxn.ringtone.project.system.user.mapper.RoleRelationMapper;
 import com.hrtxn.ringtone.project.system.user.mapper.UserMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authc.*;
@@ -11,6 +14,7 @@ import org.apache.shiro.subject.PrincipalCollection;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * Author:zcy
@@ -31,6 +35,7 @@ public class MyShiroRealm extends AuthorizingRealm {
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principalCollection) {
         log.info("shiro 开始授权--时间："+new Date());
         SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();
+        // 获取用户角色
         User user = (User)principalCollection.getPrimaryPrincipal();
         if (user != null){
             if (user.getUserRole() == 1){
@@ -38,6 +43,11 @@ public class MyShiroRealm extends AuthorizingRealm {
             }else{
                 info.addRole("agent");
             }
+        }
+        // 获取用户权限
+        List<RoleRelation> roleRelationByUserId = SpringUtils.getBean(RoleRelationMapper.class).findRoleRelationByUserId(user.getId());
+        for(RoleRelation p:roleRelationByUserId){
+            info.addStringPermission(p.getMenuId().toString());
         }
         return info;
     }
@@ -48,7 +58,7 @@ public class MyShiroRealm extends AuthorizingRealm {
         UsernamePasswordToken token = (UsernamePasswordToken)authenticationToken;
         User user = null;
         try {
-            user = userMapper.findUserByUserName(token.getUsername());
+            user = SpringUtils.getBean(UserMapper.class).findUserByUserName(token.getUsername());
         } catch (Exception e) {
             log.error("shiro 登录认证,方法：【{}】,错误信息：【{}】","doGetAuthenticationInfo",e);
         }
