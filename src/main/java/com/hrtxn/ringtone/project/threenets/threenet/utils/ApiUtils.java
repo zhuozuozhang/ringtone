@@ -342,8 +342,25 @@ public class ApiUtils {
     }
 
     //
-    public Boolean normalBusinessInfo(){
+    public Boolean normalBusinessInfo(ThreenetsOrder order){
+        String result = mcardApi.refreshBusinessInfo(order);
+        if (StringUtils.isNotEmpty(result)) {
+            Document doc = Jsoup.parse(result);
+            Elements contents = doc.getElementsByClass("data-table");
+            Elements trs = contents.get(0).getElementsByTag("tr");
+            for (int i = 0; i < trs.size(); i++) {
+                Elements tds = trs.get(i).getElementsByTag("td");
+                if (tds.get(0).text().equals(order.getCompanyName())) {
+                    Element el2 = tds.get(4);
+                    String ringCheckmsg = el2.attr("title");
+                    ringCheckmsg = ringCheckmsg.replace("激活", "下发");
+                    String remark = el2.text();
 
+                    // 修改铃音信息
+                    break;
+                }
+            }
+        }
         return true;
     }
 

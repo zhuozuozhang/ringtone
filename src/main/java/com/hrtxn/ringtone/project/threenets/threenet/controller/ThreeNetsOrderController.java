@@ -81,13 +81,13 @@ public class ThreeNetsOrderController {
     /**
      * 验证商户名称时候重复
      *
-     * @param name
+     * @param companyName
      * @return
      */
     @PostMapping("/threenets/verificationName")
     @ResponseBody
-    public AjaxResult verificationName(String name){
-        return threeNetsOrderService.isRepetitionByName(name);
+    public AjaxResult verificationName(String companyName){
+        return threeNetsOrderService.isRepetitionByName(companyName);
     }
 
     /**

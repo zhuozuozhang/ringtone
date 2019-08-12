@@ -35,4 +35,11 @@ public class ThreeNetsOrderAttached implements Serializable {
     private String subjectProve;
     // 免短协议路径（联通专属）
     private String avoidShortAgreement;
+    //电信订单是否审核（0.待审核、1已审核）
+    private Integer mcardStatus;
+    //联通订单是否审核（0.待审核、1已审核）
+    private Integer swxlStatus;
+    //移动订单是否审核（0.待审核、1已审核）
+    private Integer miguStatus;
+
 }
