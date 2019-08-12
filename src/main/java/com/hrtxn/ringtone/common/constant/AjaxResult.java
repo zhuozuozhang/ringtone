@@ -22,6 +22,10 @@ public class AjaxResult extends HashMap<String, Object> {
         return error(500, msg);
     }
 
+    public static AjaxResult success(String msg){
+        return success(200,msg);
+    }
+
     public static AjaxResult error(int code, String msg) {
         AjaxResult json = new AjaxResult();
         json.put("code", code);

@@ -27,8 +27,16 @@ function showTable() {
         render:function (data, type, row, meta) {
             return "<div style='text-overflow:ellipsis;overflow:hidden;white-space:nowrap;width:150px;' title='"+data+"'>"+data+"</div>";
         }
-    },{
+    }, {
         targets: [9],
+        render:function (data, type, row, meta) {
+            var id = row.id;
+            // return  "<div class='layui-icon' title='查看消息'><a href='/threenets/toFindCricleMsgListPage/"+id+"'>"+id+"<img src='../../client/threenets/images/group_msg.png'></a></div>"
+
+            return "<i class='layui-icon' title='查看消息' onclick='findCricleMsgList("+id+")'><img src='../../client/threenets/images/group_msg.png'></i>"
+        }
+    },{
+        targets:[10],
         render: function (data, type, row, meta) {
             var id = row.id;
             var name = row.companyName;
@@ -83,4 +91,28 @@ function AddUser(a, c, b) {
         area: ['650px', '650px'],
         content: '/threenets/toAddMerchantsPage'
     });
+}
+
+//查看消息
+function findCricleMsgList(id){
+    // alert(id);
+    // var name = $("#enterPriseName").val();
+    // var id = $("#id").val();
+    // AjaxPut("/threenets/findComIdByName"+name,{
+    //     "name":name
+    // },function (res) {
+    //    layer.open({
+    //        type: 1,
+    //        title: '消息处理',
+    //        area: ['700px', '250px'],
+    //        content: '/threenets/toFindCricleMsgListPage'
+    //    })
+    // });
+    layer.open({
+        type: 2,
+        title: '消息处理',
+        area: ['700px','250px'],
+        content: '/threenets/toFindCricleMsgListPage/'+id
+    });
+
 }

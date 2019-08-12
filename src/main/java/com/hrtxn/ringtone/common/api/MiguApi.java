@@ -659,7 +659,7 @@ public class MiguApi implements Serializable {
         // 上传的文件
         builder.addBinaryBody("file", ring.getFile());
         builder.addTextBody("ringName", ringName, ContentType.TEXT_PLAIN.withCharset("UTF-8"));
-        builder.addTextBody("circleID", "2250ec10-307f-4040-bb4a-fe631f75c254", ContentType.TEXT_PLAIN.withCharset("UTF-8"));
+        builder.addTextBody("circleID", ring.getOperateId(), ContentType.TEXT_PLAIN.withCharset("UTF-8"));
         builder.addTextBody("trade", trade, ContentType.TEXT_PLAIN.withCharset("UTF-8"));
         builder.addTextBody("singer", "");
         builder.addTextBody("songName", "");
@@ -813,6 +813,21 @@ public class MiguApi implements Serializable {
         map.put("msisdn",msisdn);
         String result = sendPost(map,delOtherRing_url);
         log.info("移动工具箱-->删除铃音-->删除多余铃音 参数：{} 结果：{}",toneIds,msisdn,result);
+        return result;
+    }
+
+    /**
+     * 商户列表-->信息处理
+     * @param migu_id
+     * @return
+     * @throws IOException
+     * @throws NoLoginException
+     */
+    public String findCricleMsgList(String migu_id) throws IOException, NoLoginException {
+        HashMap map = new HashMap();
+        map.put("circleId",migu_id);
+        String result = sendPost(map,findCircleMsgList_url);
+        log.info("商户列表-->信息处理 参数：{} 结果：{}",migu_id,result);
         return result;
     }
 }

@@ -40,4 +40,7 @@ public class BaseRequest {
     private String mainUrl;
     //免短协议
     private String protocolUrl;
+
+    //id集合  1，2，3，4
+    private Integer[] arrayById;
 }

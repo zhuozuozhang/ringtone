@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head th:include="threenets/threenet/common/head :: linkcss"></head>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>消息处理</title>
+</head>
+
+<body>
+<!-- 头部 -->
+<div class="layui-row contant" style="width:80%;">
+    <!-- 等待设置铃音 -->
+    <div class="layui-col-md12" id="search">
+        <input type="hidden" id="id" th:value="${parentOrderId}">
+        <table class="layui-table" id="set">
+            <thead>
+            <tr>
+                <th>消息类型</th>
+                <th>处理状态</th>
+                <th>备注</th>
+                <th>通知时间</th>
+                <th>操作</th>
+            </tr>
+            </thead>
+        </table>
+    </div>
+</div>
+</body>
+<div th:include="threenets/threenet/common/head :: footer"></div>
+<script th:src="@{/client/threenets/js/cricle_msg_list.js}"></script>
+<script>
+    $(document).ready(function () {
+        showTable();
+    });
+</script>
+</html>
