@@ -17,6 +17,7 @@ import com.hrtxn.ringtone.project.threenets.threenet.domain.PlotBarPhone;
 import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreeNetsOrderAttached;
 import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreenetsChildOrder;
 import com.hrtxn.ringtone.project.threenets.threenet.service.ThreeNetsChildOrderService;
+import com.hrtxn.ringtone.project.threenets.threenet.service.ThreeNetsOrderAttachedService;
 import com.hrtxn.ringtone.project.threenets.threenet.service.ThreeNetsService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +29,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Author:lile
@@ -48,6 +50,8 @@ public class ThreeNetsController {
     private UserService userService;
     @Autowired
     private ThreeNetsChildOrderService threeNetsChildOrderService;// 子订单
+    @Autowired
+    private ThreeNetsOrderAttachedService threeNetsOrderAttachedService; //父订单附表
 
     /**
      * 跳转到代办
@@ -411,5 +415,33 @@ public class ThreeNetsController {
     @GetMapping("/threenets/toLtUserInfoPage")
     public String toLtUserInfoPage() {
         return "threenets/threenet/public/unicomuser";
+    }
+
+    /**
+     * 商户列表-->查看消息
+     * @return
+     */
+    @GetMapping("/threenets/toFindCricleMsgListPage/{com_id}")
+    public String toFindCricleMsgListPage(ModelMap map,@PathVariable String com_id){
+        map.put("parentOrderId",com_id);
+        return "threenets/threenet/merchants/cricle_msg_list";
+    }
+
+    /**
+     * 商户列表-->消息处理
+     * @return
+     */
+    @PostMapping("/threenets/findCricleMsgList/{com_id}")
+    @ResponseBody
+    public AjaxResult findCricleMsgList(String com_id){
+//        String test = "33";
+        System.out.println("con的"+com_id);
+        try {
+            return threeNetsOrderAttachedService.findCricleMsgList(com_id); //这个id是通过showtable获取到的参数
+        } catch (Exception e) {
+            log.error("商户列表-->消息处理 方法：findCricleMsgList 错误信息", e);
+            return AjaxResult.error(e.getMessage());
+        }
+//        return AjaxResult.success(threeNetsOrderAttached,"通过集团id找到了本地订单");
     }
 }

@@ -815,4 +815,19 @@ public class MiguApi implements Serializable {
         log.info("移动工具箱-->删除铃音-->删除多余铃音 参数：{} 结果：{}",toneIds,msisdn,result);
         return result;
     }
+
+    /**
+     * 商户列表-->信息处理
+     * @param migu_id
+     * @return
+     * @throws IOException
+     * @throws NoLoginException
+     */
+    public String findCricleMsgList(String migu_id) throws IOException, NoLoginException {
+        HashMap map = new HashMap();
+        map.put("circleId",migu_id);
+        String result = sendPost(map,findCircleMsgList_url);
+        log.info("商户列表-->信息处理 参数：{} 结果：{}",migu_id,result);
+        return result;
+    }
 }

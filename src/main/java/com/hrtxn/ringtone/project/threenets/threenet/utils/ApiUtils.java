@@ -23,6 +23,7 @@ import com.hrtxn.ringtone.project.threenets.threenet.mapper.ThreenetsChildOrderM
 import com.hrtxn.ringtone.project.threenets.threenet.mapper.ThreenetsRingMapper;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.json.JSONObject;
+import org.aspectj.weaver.loadtime.Aj;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -1126,7 +1127,6 @@ public class ApiUtils {
             Map<String, String> map = new HashMap<String, String>();
             map.put("ringSettingListByMsisdn",miguApi.getRingSettingListByMsisdn(msisdn));
             map.put("ringListByMsisdn",miguApi.getRingListByMsisdn(msisdn));
-            System.out.println(map);
             return AjaxResult.success(map,"查找到了");
         }
         return AjaxResult.success(false,"参数不正确");
@@ -1235,5 +1235,11 @@ public class ApiUtils {
             return AjaxResult.success(map,"删除成功");
         }
         return AjaxResult.success(false,"参数不正确");
+    }
+
+    public AjaxResult findCricleMsgList(String migu_id) throws IOException, NoLoginException {
+        Map<String,String> map = new HashMap<String,String>();
+        map.put("cricle_msg_list",miguApi.findCricleMsgList(migu_id));
+        return AjaxResult.success(map,"通过migu_id找到了处理信息");
     }
 }

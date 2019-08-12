@@ -1,5 +1,6 @@
 package com.hrtxn.ringtone.project.threenets.threenet.mapper;
 
+import com.hrtxn.ringtone.common.constant.AjaxResult;
 import com.hrtxn.ringtone.common.domain.BaseRequest;
 import com.hrtxn.ringtone.common.domain.Page;
 import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreenetsOrder;
@@ -65,4 +66,5 @@ public interface ThreenetsOrderMapper {
      * @return
      */
     List<ThreenetsOrder> isRepetitionByName(String name);
+
 }
