@@ -79,6 +79,18 @@ public class ThreeNetsOrderController {
     }
 
     /**
+     * 验证商户名称时候重复
+     *
+     * @param name
+     * @return
+     */
+    @PostMapping("/threenets/verificationName")
+    @ResponseBody
+    public AjaxResult verificationName(String name){
+        return threeNetsOrderService.isRepetitionByName(name);
+    }
+
+    /**
      * 初始化三网订单
      *
      * @return

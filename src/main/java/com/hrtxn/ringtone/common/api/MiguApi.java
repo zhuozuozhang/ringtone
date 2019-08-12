@@ -659,7 +659,7 @@ public class MiguApi implements Serializable {
         // 上传的文件
         builder.addBinaryBody("file", ring.getFile());
         builder.addTextBody("ringName", ringName, ContentType.TEXT_PLAIN.withCharset("UTF-8"));
-        builder.addTextBody("circleID", "2250ec10-307f-4040-bb4a-fe631f75c254", ContentType.TEXT_PLAIN.withCharset("UTF-8"));
+        builder.addTextBody("circleID", ring.getOperateId(), ContentType.TEXT_PLAIN.withCharset("UTF-8"));
         builder.addTextBody("trade", trade, ContentType.TEXT_PLAIN.withCharset("UTF-8"));
         builder.addTextBody("singer", "");
         builder.addTextBody("songName", "");

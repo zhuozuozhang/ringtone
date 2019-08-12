@@ -341,6 +341,12 @@ public class ApiUtils {
         }
     }
 
+    //
+    public Boolean normalBusinessInfo(){
+
+        return true;
+    }
+
     /**
      * 移动刷新视频彩铃功能
      *
@@ -911,13 +917,13 @@ public class ApiUtils {
     /**
      * 保存电信订单
      *
-     * @param ringOrder
+     * @param order
      * @param attached
      * @return
      * @throws IOException
      * @throws NoLoginException
      */
-    public McardAddGroupRespone addOrderByDx(ThreenetsOrder ringOrder, ThreeNetsOrderAttached attached) throws IOException, NoLoginException {
+    public McardAddGroupRespone addOrderByDx(ThreenetsOrder order, ThreeNetsOrderAttached attached) throws IOException, NoLoginException {
         McardAddGroupRespone mcardAddGroupRespone = null;
         //资费
         boolean flag = Arrays.asList(TENRMB).contains(order.getProvince());
@@ -929,7 +935,7 @@ public class ApiUtils {
         }
         //添加商户，同步三次
         for (int i = 0; i < 3; i++) {
-            mcardAddGroupRespone = mcardApi.addGroup(ringOrder);
+            mcardAddGroupRespone = mcardApi.addGroup(order,attached);
             if (mcardAddGroupRespone != null){
                 break;
             }

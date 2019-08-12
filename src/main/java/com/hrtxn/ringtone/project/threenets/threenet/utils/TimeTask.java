@@ -89,6 +89,11 @@ public class TimeTask {
             ApiUtils apiUtils = new ApiUtils();
             apiUtils.getPhoneInfoTimeTask(threenetsChildOrderList, "中高俊聪");
         }
+
+        //刷新电信订单，获取最近电信订单，未审核的
+
+
+
     }
 
     /**

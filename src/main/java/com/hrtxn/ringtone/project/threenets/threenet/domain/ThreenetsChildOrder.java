@@ -68,4 +68,9 @@ public class ThreenetsChildOrder implements Serializable {
     // 联通支付价格
     private Integer swxlPrice;
 
+    //
+    private String month;
+
+    private String year;
+
 }

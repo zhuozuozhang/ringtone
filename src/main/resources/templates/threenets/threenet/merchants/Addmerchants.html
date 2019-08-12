@@ -42,17 +42,17 @@
     <div id="newBlocPage" style="padding-bottom: 20px;">
         <div class="newBlocPage-con1 clear" style="margin-top:10px;">
             <input class="input_css1" type="text" required lay-verify="required" name="companyName" id="companyName"
-                   maxlength="32" autocomplete="off" onblur="shwoUpload()">
+                   maxlength="32" autocomplete="off" onblur="verificationName()">
             <h6><i style="color: red">*</i>集团名称</h6>
         </div>
         <div class="newBlocPage-con2 clear">
             <input class="input_css1" type="text" required lay-verify="required" name="companyLinkman"
-                   id="companyLinkman" maxlength="32" autocomplete="off" onblur="shwoUpload()">
+                   id="companyLinkman" maxlength="32" autocomplete="off">
             <h6><i style="color: red">*</i>联 系 人</h6>
         </div>
         <div class="newBlocPage-con3 clear">
             <input class="input_css1" type="number" required lay-verify="required" name="linkmanTel" id="linkmanTel"
-                   maxlength="32" autocomplete="off" onblur="shwoUpload()">
+                   maxlength="32" autocomplete="off" onblur="verificationTel()">
             <h6><i style="color: red">*</i>联系电话</h6>
         </div>
         <div class="newBlocPage-con4 clear">
@@ -301,13 +301,27 @@
         });
     });
 
-    //控制新增商户
-    function shwoUpload() {
+    function verificationName() {
+        var name = $("#companyName").val();
+        if (name == '' || name == null){
+            layer.msg("集团名称不能为空！");
+            return
+        }
+        AjaxPost("/threenets/verificationName", {
+            "companyName": name,
+        }, function (result) {
+            if (result.code == 500) {
+                layer.msg(result.msg);
+            }
+        })
+    }
+    
+    function verificationTel() {
         var name = $("#companyName").val();
         var lname = $("#companyLinkman").val();
         var tel = $("#linkmanTel").val();
         var orderId = $("#orderId").val();
-        if (name != '' && lname != '' && tel != '') {
+        if (lname != '' && tel != '') {
             if (!isnull(orderId)) {
                 return;
             }
@@ -326,6 +340,8 @@
             })
         }
     }
+    
+    
 
     //成员号码验证
     function mykeyup() {

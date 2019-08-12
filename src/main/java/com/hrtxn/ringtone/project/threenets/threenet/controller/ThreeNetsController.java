@@ -433,9 +433,7 @@ public class ThreeNetsController {
      */
     @PostMapping("/threenets/findCricleMsgList/{com_id}")
     @ResponseBody
-    public AjaxResult findCricleMsgList(String com_id){
-//        String test = "33";
-        System.out.println("con的"+com_id);
+    public AjaxResult findCricleMsgList(@PathVariable String com_id){
         try {
             return threeNetsOrderAttachedService.findCricleMsgList(com_id); //这个id是通过showtable获取到的参数
         } catch (Exception e) {

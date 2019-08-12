@@ -67,7 +67,6 @@ public class ThreeNetsOrderAttachedService {
 
 
     public AjaxResult findCricleMsgList(String com_id) throws IOException, NoLoginException {
-        System.out.println("service"+com_id);
         if(StringUtils.isNotNull(com_id)){
             Integer id = Integer.parseInt(com_id);
             ThreeNetsOrderAttached threeNetsOrderAttached = threeNetsOrderAttachedMapper.selectByParentOrderId(id);
@@ -75,7 +74,6 @@ public class ThreeNetsOrderAttachedService {
             return apiUtils.findCricleMsgList(threeNetsOrderAttached.getMiguId());
         }
         return AjaxResult.success(false,"参数不正确！");
-
     }
 
 //    public ThreeNetsOrderAttached findCricleMsgListById(String com_id) {

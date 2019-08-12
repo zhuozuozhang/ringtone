@@ -17,6 +17,7 @@ import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreenetsChildOrder;
 import com.hrtxn.ringtone.project.threenets.threenet.mapper.ThreeNetsOrderAttachedMapper;
 import com.hrtxn.ringtone.project.threenets.threenet.mapper.ThreenetsChildOrderMapper;
 import com.hrtxn.ringtone.project.threenets.threenet.mapper.ThreenetsOrderMapper;
+import com.hrtxn.ringtone.project.threenets.threenet.utils.ApiUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.subject.Subject;
@@ -187,6 +188,8 @@ public class ThreeNetsService {
         threenetsChildOrder.setUserId(request.getUserId());
         threenetsChildOrder.setOperator(request.getOperator());
         threenetsChildOrder.setIsMonthly(2);
+        threenetsChildOrder.setMonth(request.getMonth());
+        threenetsChildOrder.setYear(request.getYear());
         Integer count = threenetsChildOrderMapper.getCount(threenetsChildOrder);
         for (PlotBarPhone plotBarPhone : newList) {
             plotBarPhone.setCumulativeUser(count);
