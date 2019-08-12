@@ -59,7 +59,9 @@ public class ThreeNetsChildOrderService {
      * @return
      */
     public ThreenetsOrder getOrderById(Integer id) throws Exception {
-        return threenetsOrderMapper.selectByPrimaryKey(id);
+        ThreenetsOrder order = threenetsOrderMapper.selectByPrimaryKey(id);
+        refreshDxInfo(order);
+        return order;
     }
 
     /**
@@ -70,6 +72,21 @@ public class ThreeNetsChildOrderService {
      */
     public Integer getCount(BaseRequest request) {
         return threenetsChildOrderMapper.getCount(getParameters(request));
+    }
+
+
+    /**
+     * 刷新电信，查询是否审核通过
+     *
+     * @param order
+     */
+    public void refreshDxInfo(ThreenetsOrder order){
+        ApiUtils utils = new ApiUtils();
+        Boolean aBoolean = utils.normalBusinessInfo(order);
+        if (aBoolean){
+            ThreeNetsOrderAttached attached = threeNetsOrderAttachedService.selectByParentOrderId(order.getId());
+            attached.setMcardStatus(1);
+        }
     }
 
     /**
@@ -230,7 +247,10 @@ public class ThreeNetsChildOrderService {
                 return new ArrayList<>();
             }
         }
-        MiguAddPhoneRespone addPhoneRespone = apiUtils.addPhoneByYd(list, attached.getMiguId());
+        MiguAddPhoneRespone addPhoneRespone = new MiguAddPhoneRespone();
+        if (attached.getMiguStatus() == 1){
+            addPhoneRespone = apiUtils.addPhoneByYd(list, attached.getMiguId());
+        }
         for (int i = 0; i < list.size(); i++) {
             ThreenetsChildOrder childOrder = list.get(i);
             childOrder.setOperateId(attached.getMiguId());
@@ -313,13 +333,16 @@ public class ThreeNetsChildOrderService {
             }
         }
         //特殊处理，需要先进入对应商户，然后进行成员添加
-        List<ThreenetsChildOrder> childOrders = apiUtils.addPhoneByDx(list,attached.getMcardId());
-        for (int i = 0; i < childOrders.size(); i++) {
-            ThreenetsChildOrder childOrder = childOrders.get(i);
-            childOrder.setOperateId(attached.getMiguId());
-            childOrders.set(i,childOrder);
+        if (attached.getMcardStatus() == 1){
+            list = apiUtils.addPhoneByDx(list,attached.getMcardId());
         }
-        return childOrders;
+        for (int i = 0; i < list.size(); i++) {
+            ThreenetsChildOrder childOrder = list.get(i);
+            childOrder.setOperateId(attached.getMiguId());
+            childOrder.setStatus("待审核");
+            list.set(i,childOrder);
+        }
+        return list;
     }
 
     /**

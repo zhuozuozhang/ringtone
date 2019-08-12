@@ -1,9 +1,13 @@
 package com.hrtxn.ringtone.common.api;
 
+import com.hrtxn.ringtone.common.constant.AjaxResult;
 import com.hrtxn.ringtone.common.exception.NoLoginException;
 import com.hrtxn.ringtone.common.utils.ChaoJiYing;
 import com.hrtxn.ringtone.common.utils.WebClientDevWrapper;
 import com.hrtxn.ringtone.common.utils.json.JsonUtil;
+import com.hrtxn.ringtone.common.utils.juhe.JuhePhoneUtils;
+import com.hrtxn.ringtone.project.system.json.JuhePhone;
+import com.hrtxn.ringtone.project.system.json.JuhePhoneResult;
 import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreeNetsOrderAttached;
 import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreenetsChildOrder;
 import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreenetsOrder;
@@ -14,6 +18,7 @@ import com.hrtxn.ringtone.project.threenets.threenet.json.mcard.McardPhoneAddres
 import lombok.extern.slf4j.Slf4j;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
+import okhttp3.*;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -26,22 +31,23 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.mime.MultipartEntity;
 import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.entity.mime.content.StringBody;
+import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.apache.http.impl.cookie.BasicClientCookie;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.params.CoreProtocolPNames;
 import org.apache.http.params.HttpParams;
 import org.apache.http.util.EntityUtils;
 
+import javax.servlet.http.Cookie;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * Author:lile
@@ -74,8 +80,10 @@ public class McardApi {
 
 
     public CookieStore getCookieStore() {
-
-        return this.macrdCookie;
+        CookieStore cookiestore = new BasicCookieStore();
+        BasicClientCookie bcookie = new BasicClientCookie("JSESSIONID","1F7E05A72DA7B9BB422E5AB8AA87883D");
+        cookiestore.addCookie(bcookie);
+        return cookiestore;
     }
 
     public void setMacrdCookie(CookieStore swxlCookie) {
@@ -116,6 +124,29 @@ public class McardApi {
         return null;
     }
 
+    /**
+     * 科大通用接口
+     * @param map 参数
+     * @param url 接口
+     * @return
+     * @throws IOException
+     */
+    public static String sendPost(Map<String, String> map, String url) throws IOException{
+    	JSONObject jsonObject = JSONObject.fromObject(map);
+    	OkHttpClient client = new OkHttpClient();
+    	MediaType mediaType = MediaType.parse("application/json");
+    	RequestBody body = RequestBody.create(mediaType, jsonObject.toString());
+    	Request request = new Request.Builder().url(url)
+    	  .post(body)
+    	  .addHeader("content-type", "application/json")
+    	  .addHeader("cache-control", "no-cache")
+    	  .addHeader("cookie", "JSESSIONID=1F7E05A72DA7B9BB422E5AB8AA87883D")
+    	  .build();
+    	Response response = client.newCall(request).execute();
+    	String res = response.body().string();
+    	System.out.println(res);
+		return res;
+    }
     /**
      * 调用远程验证码接口，取得验证码
      *
@@ -167,6 +198,29 @@ public class McardApi {
             httpclientCode.getConnectionManager().shutdown();
         }
         return code;
+    }
+
+    /**
+     * 获取信息
+     *
+     * @param order
+     * @return
+     */
+    public String refreshBusinessInfo(ThreenetsOrder order) {
+        String result = null;
+        Map<String, String> map = new HashMap<>();
+        map.put("pageSize","10");
+        map.put("pageNo", "1");
+        map.put("auserParent", "61203");
+        if (order.getCompanyName() != null){
+            //map.put("auserName", order.getCompanyName());
+        }
+        try {
+            result = sendPost(map, normal_list);
+        }catch (IOException e){
+            e.printStackTrace();
+        }
+        return result;
     }
 
     /**
