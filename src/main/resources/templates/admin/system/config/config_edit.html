@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head th:include="admin/common/include :: header"></head>
+<style type="text/css">
+    .layui-input-inline{
+        width: 490px!important;
+    }
+</style>
+<body>
+    <div class="x-body layui-anim layui-anim-up">
+        <form class="layui-form">
+            <div class="layui-form-item">
+                <label for="type" class="layui-form-label">
+                    <span class="x-red">*</span>类型
+                </label>
+                <div class="layui-input-inline">
+                    <input type="text" id="type" name="type" required lay-verify="required" th:value="${systemConfig.type}" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label for="info" class="layui-form-label">
+                    <span class="x-red">*</span>值
+                </label>
+                <div class="layui-input-inline">
+                    <input type="text" id="info" name="info" required lay-verify="required" th:value="${systemConfig.info}" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label"></label>
+                <button class="layui-btn" lay-filter="add" lay-submit="">修改</button>
+            </div>
+            <input type="hidden" id="configId" th:value="${systemConfig.id}">
+        </form>
+    </div>
+</body>
+<div th:include="admin/common/include :: footer"></div>
+<script type="text/javascript">
+    layui.use(['form','layer'], function(){
+        $ = layui.jquery;
+        var form = layui.form,layer = layui.layer;
+        //监听提交
+        form.on('submit(add)', function(data){
+            var type = $("#type").val();
+            var info = $("#info").val();
+            AjaxPut("/admin/doEditSystemConfig",{
+                type:type,
+                info:info,
+                id:$("#configId").val()
+            },function (res) {
+                if (res.code == 200 && res.data){
+                    //发异步，把数据提交给后台
+                    layer.alert("修改成功", {icon: 6},function () {
+                        // 获得frame索引
+                        var index = parent.layer.getFrameIndex(window.name);
+                        //关闭当前frame
+                        parent.layer.close(index);
+                    });
+                }else{
+                    layer.msg("修改配置出错！", {icon: 5, time: 1000});
+                }
+            });
+            return false;
+        });
+    });
+</script>
+</html>

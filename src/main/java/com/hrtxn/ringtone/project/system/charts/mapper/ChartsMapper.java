@@ -14,16 +14,57 @@ import java.util.List;
 @Repository
 public interface ChartsMapper {
 
+    /**
+     * 按日统计获取数据
+     *
+     * @param start
+     * @param operate
+     * @return
+     */
+    List<PlotBarPhone> getEchartsData(@Param("start") String start, @Param("operate") Integer operate);
 
-    List<PlotBarPhone> getEchartsData(@Param("start") String start,@Param("operate")  Integer operate);
+    /**
+     * 按日统计总数
+     *
+     * @param start
+     * @param operate
+     * @return
+     */
+    int getCount(@Param("start") String start, @Param("operate") Integer operate);
 
-    int getCount(@Param("start") String start,@Param("operate")  Integer operate);
+    /**
+     * 按日统计退訂
+     *
+     * @param start
+     * @param operate
+     * @return
+     */
+    List<PlotBarPhone> getUnsubscribeData(@Param("start") String start, @Param("operate") Integer operate);
 
-    List<PlotBarPhone> getUnsubscribeData(@Param("start") String start,@Param("operate")  Integer operate);
+    /**
+     * 按月统计总数
+     *
+     * @param start
+     * @param operate
+     * @return
+     */
+    int getYearCount(@Param("start") String start, @Param("operate") Integer operate);
 
-    int getYearCount(@Param("start") String start,@Param("operate")  Integer operate);
+    /**
+     * 按月统计数据
+     *
+     * @param start
+     * @param operate
+     * @return
+     */
+    List<PlotBarPhone> getYearEchartsData(@Param("start") String start, @Param("operate") Integer operate);
 
-    List<PlotBarPhone> getYearEchartsData(@Param("start") String start,@Param("operate")  Integer operate);
-
-    List<PlotBarPhone> getYearUnsubscribeData(@Param("start") String start,@Param("operate")  Integer operate);
+    /**
+     * 按月统计退订
+     *
+     * @param start
+     * @param operate
+     * @return
+     */
+    List<PlotBarPhone> getYearUnsubscribeData(@Param("start") String start, @Param("operate") Integer operate);
 }

@@ -3,13 +3,13 @@
 <head th:include="admin/common/include :: header"></head>
 <body class="layui-anim layui-anim-up">
 <div class="x-nav">
-    <span class="layui-breadcrumb">
-        <a href="">首页</a>
-        <a href="">公告管理</a>
-        <a>
-            <cite>公告列表</cite>
-        </a>
-    </span>
+		<span class="layui-breadcrumb">
+			<a href="">首页</a>
+			<a href="">系统管理</a>
+			<a>
+				<cite>系统配置</cite>
+			</a>
+		</span>
     <a class="layui-btn layui-btn-primary layui-btn-small" style="line-height:1.6em;margin-top:3px;float:right"
        href="javascript:location.replace(location.href);" title="刷新">
         <i class="layui-icon" style="line-height:38px">ဂ</i>
@@ -17,20 +17,16 @@
 </div>
 <div class="x-body">
     <xblock>
-        <button class="layui-btn" onclick="changeNotice('添加公告','/admin/toNoticeAddPage',800,670)">
-            <i class="layui-icon"></i>添加
+        <button class="layui-btn" onclick="addConfig('添加配置','/admin/toConfigAdd',800,670)">
+            <i class="layui-icon"></i>添加
         </button>
     </xblock>
-    <table class="layui-table" id="notice_table">
+    <table class="layui-table" id="config_table">
         <thead>
             <tr>
                 <th>ID</th>
-                <th>公告标题</th>
-                <th>创建时间</th>
-                <th>创建者</th>
-                <th>权重</th>
-                <th>模块</th>
-                <th>是否开放</th>
+                <th>类型</th>
+                <th>值</th>
                 <th>操作</th>
             </tr>
         </thead>
@@ -38,11 +34,10 @@
 </div>
 </body>
 <div th:include="admin/common/include :: footer"></div>
-<script th:src="@{/admin/js/my/notice_list.js}"></script>
+<script th:src="@{/admin/js/my/config.js}"></script>
 <script type="text/javascript">
     $(document).ready(function () {
-        //  分页
-        showNoticeTable();
+        showTable();
     });
 </script>
 </html>

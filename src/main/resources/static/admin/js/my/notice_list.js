@@ -1,4 +1,4 @@
-function showRingTable() {
+function showNoticeTable() {
     var columns = [
         {"data": null},
         {"data": "noticeTitle"},

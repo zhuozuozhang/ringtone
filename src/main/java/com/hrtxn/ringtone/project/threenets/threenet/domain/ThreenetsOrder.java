@@ -35,6 +35,9 @@ public class ThreenetsOrder implements Serializable {
     private Integer userId;
 
     /**************************VO**********************************/
+
+    private String userName;
+
     //----子订单数
     private Integer childOrderQuantity;
     //----包月子订单数
