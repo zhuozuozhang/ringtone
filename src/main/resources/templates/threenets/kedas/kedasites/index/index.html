@@ -1,0 +1,192 @@
+<!DOCTYPE html >
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<title>待办任务</title>
+<link rel="stylesheet" th:href="@{/client/threenets/css/index.css}">
+<head th:include="threenets/kedas/kedasites/common/include::head"></head>
+<style>
+    .layui-container {
+        width: 100%;
+    }
+
+    .contant {
+        width: 96%;
+        margin: 0 auto;
+        padding-top: 20px;
+    }
+
+    .layui-card-body {
+        padding: 0 15px;
+    }
+
+    table.dataTable thead th, table.dataTable thead td {
+        padding: 10px 0px;
+    }
+
+    select {
+        font-size: 13px;
+    }
+</style>
+
+<body>
+<!-- 头部 -->
+<div th:include="threenets/kedas/kedasites/common/include::nav"></div>
+<div class="layui-container">
+    <div class="layui-row">
+        <div class="layui-col-md9">
+            <!-- 等待设置铃音 -->
+            <div class="layui-row contant" style="border:1px solid #e6e6e6!important; margin:20px auto!important;padding: 10px;">
+                <div class="layui-col-md12">
+                    <div class="layui-form-item" style='text-align: right;margin-bottom:0;'>
+                        <div class="layui-inline">
+                            <label class="layui-form-label">用户状态</label>
+                            <div class="layui-input-inline">
+                                <select id="memberStatus" lay-verify="required" name="crbtStatus" style="width:107%;">
+                                    <option value="1" selected="selected">已下发短信但未回复AQY</option>
+                                    <option value="2">回复AQY但未开通业务</option>
+                                    <option value="3">开通业务但未设置铃音</option>
+                                    <option value="4">已退订业务</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <label class="layui-form-label">时间段</label>
+                            <div class="layui-input-inline" style='width: auto;'>
+                                <select id="timeType" lay-verify="required" name="timeType" value=""
+                                        style="width:90px;">
+                                    <option value="1" selected="selected">一天</option>
+                                    <option value="2">一周</option>
+                                    <option value="3">半个月</option>
+                                    <option value="4">一个月</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-row per" style="margin-top: 0;background: #EEF5FB;">
+                        <div class="layui-col-md4">
+                            <div class="grid-demo grid-demo-bg1 lt">等待铃音设置</div>
+                        </div>
+                        <div class="layui-col-md4 layui-col-md-offset4">
+                            <a href="../merchants/merchants.html">
+                                <div class="grid-demo rg">更多</div>
+                            </a>
+                        </div>
+                    </div>
+                    <table class="layui-table" id="set">
+                        <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>成员号码</th>
+                            <th>员工姓名</th>
+                            <th>商户名称</th>
+                            <th>省份</th>
+                            <th>加入时间</th>
+                            <th>铃音</th>
+                            <th>
+                                <select name="" class="operator">
+                                    <option value="" selected="">企业彩铃</option>
+                                    <option value="">包月</option>
+                                    <option value="">未包月</option>
+                                </select>
+                            </th>
+                            <th>
+                                <select name="" class="operator">
+                                    <option value="" selected="">视频彩铃</option>
+                                    <option value="">是</option>
+                                    <option value="">否</option>
+                                </select>
+                            </th>
+                            <th>备注</th>
+                            <th>操作</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td>12345678901</td>
+                            <td>12345678901</td>
+                            <td><a href="../merchants/merchants.html">新生活化妆品店</a></td>
+                            <td>黑龙江</td>
+                            <td>2019-02-21 12:12:23</td>
+                            <td>无</td>
+                            <td>未包月</td>
+                            <td>否</td>
+                            <td>123456</td>
+                            <td><a href=""><i class="layui-icon layui-icon-user" title="进入商户"></i></a></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="layui-col-md3">
+            <!-- 公告 -->
+            <div class="layui-row" style="width: 90%;margin: 20px auto;">
+                <div class="layui-col-md12">
+                    <div class="layui-card">
+                        <div class="layui-card-header" style="background: #EEF5FB;">
+                            <span>公告</span>
+                            <a href="../announcement/announcement.html"><span class="moreg">更多公告</span></a>
+                        </div>
+                        <div class="layui-card-body ofo" th:each="notice : ${noticeList}">
+                            <span th:onclick="openDetails([[${notice}]]);" th:text="${notice.noticeTitle}">疑难杂单平台上线通知</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- 近5日信息 -->
+            <div class="layui-row contant" style="width:100%;padding: 0;">
+                <!-- 等待设置铃音 -->
+                <div class="layui-col-md12">
+                    <div class="layui-row per" style="background: #EEF5FB;">
+                        <div class="layui-col-md4">
+                            <div class="grid-demo grid-demo-bg1 lt">近5日信息</div>
+                        </div>
+                        <div class="layui-col-md4 layui-col-md-offset4">
+                            <a href="../business/Dbusiness.html">
+                                <div class="grid-demo rg">更多</div>
+                            </a>
+                        </div>
+                    </div>
+                    <table class="layui-table">
+                        <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>日期</th>
+                            <th>累计用户数</th>
+                            <th>新增用户数</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td>2019-0622</td>
+                            <td>68</td>
+                            <td>4</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+<div th:include="threenets/kedas/kedasites/common/include::footer"></div>
+<script>
+    $(".index1").addClass("active");
+    //分页
+    $(document).ready(function () {
+
+    });
+    //公告详情
+    function openDetails(notice){
+        var date = notice.noticeTime.toString().substring(0, 10);
+        layer.open({
+            type: 1,
+            title: '公告详情',
+            area: ['860px', '500px'],
+            content: '<div class="content clearfix" style="width: 800px; line-height: 25px; margin-left: 20px;"><div class="articleTitle font04">'+notice.noticeTitle+'</div><div class="articleTitle_details">'+date+'</div><div>'+ notice.noticeContent+'</div></div>'
+        });
+    }
+</script>
+</html>

@@ -1,13 +1,9 @@
 package com.hrtxn.ringtone.common.api;
 
-import com.hrtxn.ringtone.common.constant.AjaxResult;
 import com.hrtxn.ringtone.common.exception.NoLoginException;
 import com.hrtxn.ringtone.common.utils.ChaoJiYing;
 import com.hrtxn.ringtone.common.utils.WebClientDevWrapper;
 import com.hrtxn.ringtone.common.utils.json.JsonUtil;
-import com.hrtxn.ringtone.common.utils.juhe.JuhePhoneUtils;
-import com.hrtxn.ringtone.project.system.json.JuhePhone;
-import com.hrtxn.ringtone.project.system.json.JuhePhoneResult;
 import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreeNetsOrderAttached;
 import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreenetsChildOrder;
 import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreenetsOrder;
@@ -41,7 +37,6 @@ import org.apache.http.params.CoreProtocolPNames;
 import org.apache.http.params.HttpParams;
 import org.apache.http.util.EntityUtils;
 
-import javax.servlet.http.Cookie;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;

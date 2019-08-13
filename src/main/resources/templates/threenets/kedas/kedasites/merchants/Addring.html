@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <base href=".">
+    <title>添加铃音</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link rel="stylesheet" href="../../public/layui/css/layui.css">
+    <link rel="stylesheet" href="../../public/layui/css/modules/layer/default/layer.css">
+    <link rel="stylesheet" href="../../client/threenets/css/ThunderBase2.css">
+    <link rel="stylesheet" type="text/css" href="../../client/threenets/css/common.css">
+    <link rel="stylesheet" type="text/css" href="../../client/threenets/css/Addmerchants.css">
+    <link rel="stylesheet" href="../../client/threenets/css/enterpriseBell.css">
+    <link rel="stylesheet" href="../../client/threenets/css/MyPlus.css">
+    <link rel="stylesheet" href="../../client/threenets/css/Add.css">
+    <script src="../../public/js/jquery-2.1.4.min.js"></script>
+    <script src="../../public/layui/layui.js"></script>
+    <script src="../../public/layui/lay/modules/layer.js"></script>
+    <script src="../../public/js/numASMD.js"></script>
+    <style>
+        .bellContent textarea {
+            width: 400px !important;
+            height: 100px;
+            border: 1px solid #e1e1e1;
+            box-sizing: border-box;
+            resize: none;
+            padding: 18px 25px 0 25px;
+            margin-left: 35px!important;
+        }
+    </style>
+</head>
+
+<body>
+    <form action="" name="Form" id="Form" method="post" class="layui-form">
+        <div id="newBlocPage">
+            <div class="addBell" style="width: auto;background: none;">
+                <ul>
+                    <li class="clearfix bellType">
+                        <span class="fl"><i style="color: red">*</i>铃音名称</span>
+                        <div class="fl">
+                            <input style="margin-left: 38px;" required lay-verify="required" type="text" onchange="findbyringname()" name="RINGNAME" id="RINGNAME" autocomplete="off">
+                        </div>
+                    </li>
+                    <div id="ringdiv" style="display:block;padding-bottom: 15px;">
+                        <li class="clearfix upload">
+                            <span class="fl"><i style="color: red">*</i>铃音上传文件</span>
+                            <div class="fl selected">
+                                <input type="file" name="ringfile" id="ringfile" class="" style="width:388px;" required lay-verify="required"  accept=".mp3,.wav,.mp4,.mov">
+                                <div class="clearfix">
+                                    <p class="fr choose" style="width:388px;font-size: 14px;">点击上传铃音文件</p>
+                                    <input type="hidden" id="ringurl" name="ringurl">
+                                    <div style="margin-top:20px;" class="show_input_file" id="showringurl"></div>
+                                </div>
+                            </div>
+                        </li>
+                        铃音文件上传 （<span style="color: red">铃音文件&lt;800K，时长&lt;60秒，格式需为mp3或wav</span>）
+                    </div>
+                    <li class="clearfix bellContent">
+                        <span class="fl" style="margin-right: 5px;"><i style="color: red">*</i>铃音内容</span>
+                        <div class="fl">
+                            <textarea placeholder="请输入铃音内容......" name="RING_CONTENT" id="RING_CONTENT" maxlength="200" required lay-verify="required"></textarea>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            <div id="tijiao" class="newBlocPage-button" lay-submit lay-filter="formDemo">确定提交</div>
+
+        </div>
+    </form>
+    <script>
+        //上传铃音文件
+        $("form").on("change", "#ringfile", function(e) {
+            $(".choose").html(this.value);
+            //上传铃音文件
+            var obj_file = document.getElementById("ringfile");
+            var content = obj_file.files[0];
+            var url = URL.createObjectURL(content);
+            //获取录音时长
+            var audioElement = new Audio(url);
+            var duration;
+            audioElement.addEventListener("loadedmetadata", function (_event) {
+                duration = audioElement.duration;//时长,单位(秒)
+                if(duration>=60){
+                    layer.msg("文件时长不能大于60秒");
+                }
+            });
+            //获取录音大小
+            var size = numDiv(content.size,1024);// 大小,单位(K)
+            //获取文件类型
+            var file=document.getElementById("ringfile").value;   
+            var ext = file.slice(file.lastIndexOf(".")+1).toLowerCase();
+            if(ext!="mp3" && ext!="wav"){
+                layer.msg("铃音文件格式为mp3或wav,视频文件格式为mp4或mov");
+            }else if(ext=="mp3" || ext=="wav"){
+                if(size>=800){
+                    layer.msg("音频文件不能大于800K");
+                }
+            }
+        })
+        //表单提交
+        layui.use('form', function() {
+            var form = layui.form;
+            //监听提交
+            form.on('submit(formDemo)', function(data) {
+                layer.msg(JSON.stringify(data.field));
+                return false;
+            });
+        });
+    </script>
+</body>
+
+</html>

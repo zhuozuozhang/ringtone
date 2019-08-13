@@ -20,7 +20,7 @@ public class Notice implements Serializable {
     private Integer noticeWeight;
     // 是否开放 （0.false/1.true）
     private Boolean noticeStatus;
-    // 发布模块(0.三网/1.号码认证/2.400/3.视频制作/4.号卡/5.铃音录制/6.企业秀/7.来去电名片)
+    // 发布模块(0.企业彩铃/视频彩铃/1.电话认证/挂机短信/彩印/2.400电话/3.企业秀/4.网站建设/万词霸屏/快排优化/5.微信/百度/抖音小程序/6.铃音录制/视频制作/7.流量卡/号卡/8.疑难杂单)
     private Integer noticeModule;
     // 创建时间
     private Date noticeTime;

@@ -5,33 +5,35 @@ function showNoticeTable() {
         {"data": "noticeTime","width":140},
         {"data": "noticeAuthor"},
         {"data": "noticeWeight"},
-        {"data": "noticeModule"},
+        {"data": "noticeModule","width":150},
         {"data": "noticeStatus"}
     ];
     var columnDefs = [{
         targets:[1],
         render:function (data, type, row, meta) {
-            return "<div style='text-overflow:ellipsis;overflow:hidden;white-space:nowrap;width:80px;' title='" + data + "'>" + data + "</div>";
+            return "<div style='text-overflow:ellipsis;overflow:hidden;white-space:nowrap;width:150px;' title='" + data + "'>" + data + "</div>";
         }
     },{
         targets:[5],
         render:function (data, type, row, meta) {
             if (data == 0){
-                return "三网";
+                return "企业彩铃/视频彩铃";
             } else if (data == 1){
-                return "号码认证";
+                return "电话认证/挂机短信/彩印";
             } else if (data == 2){
-                return "400";
+                return "400电话";
             } else if (data == 3){
-                return "视频制作";
-            } else if (data == 4){
-                return "号卡";
-            } else if (data == 5){
-                return "铃音录制";
-            } else if (data == 6){
                 return "企业秀";
+            } else if (data == 4){
+                return "网站建设/万词霸屏/快排优化";
+            } else if (data == 5){
+                return "微信/百度/抖音小程序";
+            } else if (data == 6){
+                return "铃音录制/视频制作";
+            } else if (data == 7){
+                return "流量卡/号卡";
             } else {
-                return "来去电名片";
+                return "疑难杂单";
             }
         }
     },{
@@ -97,7 +99,7 @@ function changeNotice(title, url, w, h) {
         title: title,
         content: url,
         end:function(){
-            location.reload();//弹出层结束后，刷新主页面
+            $('#notice_table').DataTable().ajax.reload(null,false);
         }
     });
 }

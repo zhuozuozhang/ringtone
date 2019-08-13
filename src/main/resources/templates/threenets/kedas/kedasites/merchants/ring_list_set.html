@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>铃音管理-铃音设置</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" href="../../public/layui/css/layui.css">
+    <link rel="stylesheet" href="../../public/layui/css/modules/layer/default/layer.css">
+    <link rel="stylesheet" href="../../public/css/commer.css">
+    <link rel="stylesheet" type="text/css" href="../../public/dataTables/jquery.dataTables.min.css">
+    <link rel="stylesheet" type="text/css" href="../../client/threenets/css/number_list.css">
+    <link rel="stylesheet" href="../../client/threenets/css/head.css">
+    <style>
+        .dataTables_wrapper .dataTables_filter input {
+            height: 30px;
+        }
+
+        #mcontent .mconl {
+            border-right: solid #ddd 1px;
+        }
+        .setting_title{
+            height: 30px;
+            line-height: 30px;
+            border-bottom: 2px solid #ebedef;
+            color: #c0009e;
+            font-weight: 700;
+            margin: 10px 0px;
+            width: 700px;
+            margin: 5px auto;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- 头部 -->
+    <div id="heads">
+        <div id="LAY_app" class="layadmin-tabspage-none" style="width:95%;margin:0 auto;">
+            <div class="layui-row" style="height:70px;">
+                <div class="layui-col-xs6">
+                    <div class="grid-demo grid-demo-bg1">
+                        <img src="../../public/images/index_logo.jpg" alt="" width="580px" height="60px" style='margin: 5px 20px;'>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- 导航栏tab切换 -->
+        <div class="layui-tab layui-tab-brief" lay-filter="docDemoTabBrief" style="margin:0 auto;">
+            <ul class="layui-tab-title" id="tabs">
+                <a href="../index/index.html"><li class='index1'>待办任务</li></a>
+                <a href="../merchants/merchants.html"><li class='index2'>商户列表</li></a>
+                <a href="../business/Dbusiness.html"><li class='index6'>业务发展数据</li></a>
+            </ul>
+        </div>
+    </div>
+    <div class="layui-row" id="mcontent">
+        <div class="layui-col-xs1 mconl">
+            <div class="grid-demo grid-demo-bg1">
+                <div id="page-aside" class="aside">
+                    <ul class="nav">
+                        <li class="management">
+                            <a class="banner" href="javascript:;">商户管理</a>
+                        </li>
+                        <li id="apersonnel">
+                            <a href="number_list.html">号码管理</a>
+                        </li>
+                        <li id="ring"  class="selected">
+                            <a href="ring_list.html">铃音管理</a>
+                        </li>
+                    </ul>
+                    <script type="text/javascript">
+                        function highlight() {
+                            $('#nav-ringOrderList').addClass('selected');
+                        }
+                    </script>
+                </div>
+            </div>
+        </div>
+        <div class="layui-col-xs11 mconr">
+            <div class="grid-demo">
+                <div class="layui-row contant" style="width:95%;">
+                    <!-- 等待设置铃音 -->
+                    <div class="layui-col-md12" id="search">
+                        <div class="title-bar clearfix">
+                            <h1 class="pull-cnter">
+                                您正在以 <span style="color: red;"> 学优律师事务所 </span> 的管理员身份进行操作。
+                            </h1>
+                        </div>
+                        <div style="padding:10px 0 0 10px;font-size:16px;">
+                            操作：
+                            <button type="button" class="layui-btn layui-btn-radius layui-btn-normal" id="sear">确认</button>
+                        </div>
+                        <table class="layui-table" id="set" style="width: 80%;margin-left: 20px;">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th><input type="checkbox" id="allCheck"></th>
+                                    <th>员工姓名</th>
+                                    <th>铃音号码</th>
+                                    <th>省份</th>
+                                    <th>当前铃音</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>1</td>
+                                    <td><input type="checkbox" name="check"></td>
+                                    <td>18315065540</td>
+                                    <td>18315065540</td>
+                                    <td>江苏省</td>
+                                    <td>3d环保墙体</td>
+                                </tr>
+                                <tr>
+                                    <td>2</td>
+                                    <td><input type="checkbox" name="check"></td>
+                                    <td>12345678912</td>
+                                    <td>12345678912</td>
+                                    <td>重庆省</td>
+                                    <td>3d环保墙体</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script src="../../public/js/jquery-2.1.4.min.js"></script>
+<script src="../../public/layui/layui.js"></script>
+<script src="../../public/layui/lay/modules/layer.js"></script>
+<script type="text/javascript" src="../../public/dataTables/jquery.dataTables.min.js"></script>
+<script>
+    $(".index2").addClass("active");
+    //分页
+    $(document).ready(function() {
+        $('#set').DataTable({
+            "ordering": false, //禁止排序
+            "searching": true, //搜索框
+            "bLengthChange": false,
+            "language": {
+                "decimal": ",",
+                "thousands": ".",
+                "lengthMenu": " _MENU_ ",
+                "zeroRecords": "没有找到记录",
+                "info": "",
+                "infoEmpty": "",
+                "infoFiltered": "",
+                "paginate": {
+                    // "first" : "",
+                    "sPrevious": "上一页",
+                    "sNext": "下一页",
+                    // "sLast" : ""
+                }
+            }
+        });
+    });
+    //全选框
+    $("#allCheck").click(function(){
+        $("input[name='check']").prop("checked",this.checked);
+    })
+    //单选框
+    $("input[name='check']").change(function(){
+        if($("input[name='check']").not("input:checked").size() <= 0){
+            $("#allCheck").prop("checked",true);
+        }else{
+            $("#allCheck").prop("checked",false);
+        }
+    })
+</script>
+<!-- 头部 -->
+<script>
+    //移动工具箱
+    $("#Mobile").mouseover(function() {
+        $("#Mobiles").show();
+        $("#unicoms").hide();
+    });
+    //联通工具箱
+    $("#unicom").mouseover(function() {
+        $("#unicoms").show();
+        $("#Mobiles").hide();
+    });
+    //移动  删除铃音
+    function DelRingtone() {
+        layer.open({
+            type: 2,
+            title: '删除铃音设置',
+            content: '../public/delringtone.html',
+            area: ['950px', '600px'],
+            maxmin: true
+        });
+    }
+    //移动  用户信息
+    function MobileUser() {
+        layer.open({
+            type: 2,
+            title: '用户信息',
+            content: '../public/moblieuser.html',
+            area: ['950px', '600px'],
+            maxmin: true
+        });
+    }
+    //联通 用户信息
+    function UnicomUser() {
+        layer.open({
+            type: 2,
+            title: '用户信息',
+            content: '../public/unicomuser.html',
+            area: ['950px', '600px'],
+            maxmin: true
+        });
+    }
+</script>
+
+</html>
