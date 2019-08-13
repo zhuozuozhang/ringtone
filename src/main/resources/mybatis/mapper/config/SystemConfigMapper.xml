@@ -2,16 +2,71 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.hrtxn.ringtone.project.system.config.mapper.SystemConfigMapper">
 
-
+    <!--获取配置列表-->
     <select id="getConfigList" resultType="SystemConfig">
         SELECT
-            id,type,info
+            id,type,info,creaTime
         FROM
             sys_config
         LIMIT #{page.page},#{page.pagesize}
     </select>
-
+    <!--获取总数-->
     <select id="getCount" resultType="int">
         SELECT COUNT(*) FROM sys_config
     </select>
+    <!--添加配置信息-->
+    <insert id="insert" parameterType="SystemConfig">
+        insert into sys_config
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="type != null">
+                type,
+            </if>
+            <if test="info != null">
+                info,
+            </if>
+            <if test="creaTime != null">
+                creaTime
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="type != null">
+                #{type,jdbcType=VARCHAR},
+            </if>
+            <if test="info != null">
+                #{info,jdbcType=INTEGER},
+            </if>
+            <if test="creaTime != null">
+                #{creaTime,jdbcType=INTEGER}
+            </if>
+        </trim>
+    </insert>
+    <!--根据id获取配置信息-->
+    <select id="getConfigById" parameterType="int" resultType="SystemConfig">
+         SELECT
+            id,type,info,creaTime
+        FROM
+            sys_config
+        WHERE
+            id = #{id}
+    </select>
+    <!--修改配置信息-->
+    <update id="doEditSystemConfig" parameterType="SystemConfig">
+        update sys_config
+        <set>
+            <if test="type != null">
+                type = #{type,jdbcType=VARCHAR},
+            </if>
+            <if test="info != null">
+                info = #{info,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+    <!--删除配置信息-->
+    <delete id="deleteConfig" parameterType="int">
+        DELETE FROM
+            sys_config
+        WHERE
+            id = #{id,jdbcType=INTEGER}
+    </delete>
 </mapper>

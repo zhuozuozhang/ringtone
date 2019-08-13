@@ -164,7 +164,12 @@ public class ThreeNetsOrderService {
         return threenetsOrderMapper.getCount(request);
     }
 
-
+    /**
+     * 验证商户名称是否重复
+     *
+     * @param name
+     * @return
+     */
     public AjaxResult isRepetitionByName(String name) {
         List<ThreenetsOrder> orders = threenetsOrderMapper.isRepetitionByName(name);
         if (orders == null || orders.isEmpty()) {
@@ -184,6 +189,10 @@ public class ThreeNetsOrderService {
     public AjaxResult init(ThreenetsOrder order) throws Exception {
         if (order.getCompanyName() == null || order.getCompanyName().isEmpty()) {
             return AjaxResult.error("商户名称不能为空！");
+        }
+        List<ThreenetsOrder> orders = threenetsOrderMapper.isRepetitionByName(order.getCompanyName());
+        if (orders != null || !orders.isEmpty()) {
+            return AjaxResult.error("商户名称不允许重复！");
         }
         JuhePhone phone = JuhePhoneUtils.getPhone(order.getLinkmanTel());
         if (!phone.getResultcode().equals("200")) {
@@ -208,6 +217,9 @@ public class ThreeNetsOrderService {
      */
     @Transactional
     public AjaxResult save(OrderRequest order) throws Exception {
+        if (order.getId() == null){
+            return AjaxResult.error("添加失败！");
+        }
         //验证订单是否修改
         ThreenetsOrder threenetsOrder = threenetsOrderMapper.selectByPrimaryKey(order.getId());
         threenetsOrder.setCompanyName(order.getCompanyName());
@@ -302,8 +314,11 @@ public class ThreeNetsOrderService {
                         childOrder.setOperateId(attached.getMiguId());
                         childOrders.set(i, childOrder);
                     }
-                    if (attached.getMiguPrice()>5){
+                    if (attached.getMiguPrice()<=5){
                         utils.addPhoneByYd(childOrders,attached.getMiguId());
+                        attached.setMiguStatus(1);
+                    }else{
+                        attached.setMiguStatus(0);
                     }
                     threeNetsChildOrderService.batchChindOrder(childOrders);
                 }
@@ -328,6 +343,7 @@ public class ThreeNetsOrderService {
                         childOrders.set(i, childOrder);
                     }
                     utils.addPhoneByLt(childOrders,attached.getSwxlId());
+                    attached.setSwxlStatus(1);
                     threeNetsChildOrderService.batchChindOrder(childOrders);
                     threeNetsRingService.update(ring);
                 } else {
@@ -360,6 +376,7 @@ public class ThreeNetsOrderService {
                     childOrder.setStatus("待审核");
                     childOrders.set(i, childOrder);
                 }
+                attached.setMcardStatus(0);
             }
             //保存订单附表
             threeNetsOrderAttachedService.update(attached);

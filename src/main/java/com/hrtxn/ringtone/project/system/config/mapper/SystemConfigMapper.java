@@ -15,8 +15,50 @@ import java.util.List;
 @Repository
 public interface SystemConfigMapper {
 
-
+    /**
+     * 获取配置列表
+     *
+     * @param page
+     * @return
+     */
     List<SystemConfig> getConfigList(@Param("page") Page page);
 
+    /**
+     * 获取总数
+     *
+     * @return
+     */
     int getCount();
+
+    /**
+     * 添加配置信息
+     *
+     * @param systemConfig
+     * @return
+     */
+    int insert(SystemConfig systemConfig);
+
+    /**
+     * 根据id获取配置信息
+     *
+     * @param id
+     * @return
+     */
+    SystemConfig getConfigById(@Param("id") Integer id);
+
+    /**
+     * 修改配置信息
+     *
+     * @param systemConfig
+     * @return
+     */
+    int doEditSystemConfig(SystemConfig systemConfig);
+
+    /**
+     * 删除配置信息
+     *
+     * @param id
+     * @return
+     */
+    int deleteConfig(@Param("id") Integer id);
 }
