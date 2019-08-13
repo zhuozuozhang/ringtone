@@ -39,10 +39,13 @@ public interface ThreeNetsOrderAttachedMapper {
      */
     int updateByPrimaryKeySelective(ThreeNetsOrderAttached threeNetsOrderAttached);
 
+    ThreeNetsOrderAttached selectByParentOrderId(Integer id);
+
+    void updateMigu_idToWuByOrderId(Integer id);
     /**
      *
      * @param id
      * @return
      */
-    ThreeNetsOrderAttached selectByParentOrderId(Integer id);
+
 }

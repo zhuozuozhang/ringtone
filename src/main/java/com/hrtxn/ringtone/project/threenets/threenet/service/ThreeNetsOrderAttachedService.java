@@ -65,13 +65,28 @@ public class ThreeNetsOrderAttachedService {
     }
 
 
-
+    /**
+     * 商户列表-->信息处理
+     * @param com_id
+     * @return
+     * @throws IOException
+     * @throws NoLoginException
+     */
     public AjaxResult findCricleMsgList(String com_id) throws IOException, NoLoginException {
         if(StringUtils.isNotNull(com_id)){
             Integer id = Integer.parseInt(com_id);
             ThreeNetsOrderAttached threeNetsOrderAttached = threeNetsOrderAttachedMapper.selectByParentOrderId(id);
-            System.out.println(threeNetsOrderAttached);
-            return apiUtils.findCricleMsgList(threeNetsOrderAttached.getMiguId());
+            String migu_id = threeNetsOrderAttached.getMiguId();
+            if(StringUtils.isNull(threeNetsOrderAttached)){
+                return AjaxResult.success(false,"在父表的附属表中，不含有外键父级订单id：\"+com_id+\"所属的订单");
+            }
+            if(StringUtils.isNotNull(migu_id)){
+                return apiUtils.findCricleMsgList(migu_id);
+            }else {
+                threeNetsOrderAttachedMapper.updateMigu_idToWuByOrderId(id);
+                return AjaxResult.success(false,"该商户不是移动用户");
+            }
+
         }
         return AjaxResult.success(false,"参数不正确！");
     }

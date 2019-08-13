@@ -22,11 +22,17 @@
                 <th>操作</th>
             </tr>
             </thead>
+            <tbody class="msg_list">
+
+            </tbody>
         </table>
     </div>
 </div>
 </body>
 <div th:include="threenets/threenet/common/head :: footer"></div>
+<script type="text/javascript" th:src="@{/public/layui/layui.js}"></script>
+<script type="text/javascript" th:src="@{/public/layui/lay/modules/layer.js}"></script>
+<script type="text/javascript" th:src="@{/public/js/ajax.js}"></script>
 <script th:src="@{/client/threenets/js/cricle_msg_list.js}"></script>
 <script>
     $(document).ready(function () {

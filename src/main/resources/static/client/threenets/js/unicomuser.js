@@ -2,6 +2,7 @@
 function getUnicomUserInfoByPhoneNumber() {
     var phoneNumber = $("#phoneNum").val().trim();
     if(isTel(phoneNumber)){
+
         var url = "/threenets/getUnicomUserInfoByPhoneNumber/" + phoneNumber;
         AjaxPut(url,{
             phoneNumber:phoneNumber
@@ -85,8 +86,8 @@ function getUnicomUserInfoByPhoneNumber() {
                 // res.code==200&&res.data
             }
         });
-    }else {
-        layer.msg("请输入联通的手机号码！",{icon: 0, time: 3000});
+    }else{
+        layer.msg("请输入正确的联通手机号码！",{icon: 0, time: 3000});
         return;
     }
 }

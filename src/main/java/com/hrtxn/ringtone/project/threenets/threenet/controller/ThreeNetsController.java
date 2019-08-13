@@ -436,11 +436,10 @@ public class ThreeNetsController {
     @ResponseBody
     public AjaxResult findCricleMsgList(@PathVariable String com_id){
         try {
-            return threeNetsOrderAttachedService.findCricleMsgList(com_id); //这个id是通过showtable获取到的参数
+            return threeNetsOrderAttachedService.findCricleMsgList(com_id);
         } catch (Exception e) {
             log.error("商户列表-->消息处理 方法：findCricleMsgList 错误信息", e);
             return AjaxResult.error(e.getMessage());
         }
-//        return AjaxResult.success(threeNetsOrderAttached,"通过集团id找到了本地订单");
     }
 }

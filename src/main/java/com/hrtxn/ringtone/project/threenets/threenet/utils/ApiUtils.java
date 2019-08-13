@@ -1283,6 +1283,13 @@ public class ApiUtils {
         return mcardApi.uploadFile(file);
     }
 
+    /**
+     * 商户列表-->信息处理
+     * @param migu_id
+     * @return
+     * @throws IOException
+     * @throws NoLoginException
+     */
     public AjaxResult findCricleMsgList(String migu_id) throws IOException, NoLoginException {
         Map<String,String> map = new HashMap<String,String>();
         map.put("cricle_msg_list",miguApi.findCricleMsgList(migu_id));
