@@ -52,6 +52,8 @@ public class ApiUtils {
     private static String child_Distributor_ID_181 = "296577";
     //子渠道商（18888666361）
     private static String child_Distributor_ID_188 = "61204";
+
+    private static String test_id = "1673882";
     /**
      * 获取号码信息
      *
@@ -65,6 +67,7 @@ public class ApiUtils {
         for (ThreenetsChildOrder threenetsChildOrder : threenetsChildOrderList) {
             // 判断运营商
             Integer operate = threenetsChildOrder.getOperator();
+            operate = 2;
             if (operate == 1) {// 移动
                 String result = miguApi.getPhoneInfo(threenetsChildOrder.getLinkmanTel(), threenetsChildOrder.getOperateId());
                 if (StringUtils.isNotEmpty(result)) {
@@ -117,7 +120,34 @@ public class ApiUtils {
                     msg += "[" + threenetsChildOrder.getLinkmanTel() + "：获取信息失败！]";
                 }
             } else if (operate == 2) {// 电信
-
+                mcardApi.toUserList(threenetsChildOrder.getOperateId());
+                String result = mcardApi.getUserInfo();
+                Document doc = Jsoup.parse(result);
+                Elements contents = doc.getElementsByTag("tbody");
+                Elements trs = contents.get(0).getElementsByTag("tr");
+                for (int i = 0; i < trs.size(); i++) {
+                    Elements tds = trs.get(i).getElementsByTag("td");
+                    if (tds.size() <= 0){
+                        continue;
+                    }
+                    if (tds.get(1).text().equals(threenetsChildOrder.getLinkmanTel())) {
+                        Element el2 = tds.get(6);
+                        //是否彩铃用户
+                        if (tds.get(7).equals("已开通")){
+                            threenetsChildOrder.setIsRingtoneUser(true);
+                        }else{
+                            threenetsChildOrder.setIsRingtoneUser(false);
+                        }
+                        //是否包月
+                        if (tds.get(8).equals("未开通")){
+                            threenetsChildOrder.setIsMonthly(1);
+                        }else{
+                            threenetsChildOrder.setIsMonthly(2);
+                        }
+                        threenetsChildOrder.setRemark(tds.get(9).text());
+                        f = true;
+                    }
+                }
             } else {// 联通
                 String phoneInfo = swxlApi.getPhoneInfo(threenetsChildOrder.getLinkmanTel(), threenetsChildOrder.getOperateId());
                 if (StringUtils.isNotEmpty(phoneInfo)) {
@@ -266,7 +296,34 @@ public class ApiUtils {
                     }
                 }
             } else if (operate == 2) {// 电信
-
+                mcardApi.toUserList(threenetsChildOrder.getOperateId());
+                String result = mcardApi.getUserInfo();
+                Document doc = Jsoup.parse(result);
+                Elements contents = doc.getElementsByTag("tbody");
+                Elements trs = contents.get(0).getElementsByTag("tr");
+                for (int i = 0; i < trs.size(); i++) {
+                    Elements tds = trs.get(i).getElementsByTag("td");
+                    if (tds.size() <= 0){
+                        continue;
+                    }
+                    if (tds.get(1).text().equals(threenetsChildOrder.getLinkmanTel())) {
+                        Element el2 = tds.get(6);
+                        //是否彩铃用户
+                        if (tds.get(7).equals("已开通")){
+                            threenetsChildOrder.setIsRingtoneUser(true);
+                        }else{
+                            threenetsChildOrder.setIsRingtoneUser(false);
+                        }
+                        //是否包月
+                        if (tds.get(8).equals("未开通")){
+                            threenetsChildOrder.setIsMonthly(1);
+                        }else{
+                            threenetsChildOrder.setIsMonthly(2);
+                        }
+                        threenetsChildOrder.setRemark(tds.get(9).text());
+                        f = true;
+                    }
+                }
             } else {// 联通
                 String phoneInfo = swxlApi.getPhoneInfo(threenetsChildOrder.getLinkmanTel(), threenetsChildOrder.getOperateId());
                 if (StringUtils.isNotEmpty(phoneInfo)) {
@@ -341,27 +398,35 @@ public class ApiUtils {
         }
     }
 
-    //
+    /**
+     * 验证电信商户是否审核通过
+     *
+     * @param order
+     * @return
+     */
     public Boolean normalBusinessInfo(ThreenetsOrder order){
+        boolean flag = false;
         String result = mcardApi.refreshBusinessInfo(order);
         if (StringUtils.isNotEmpty(result)) {
             Document doc = Jsoup.parse(result);
-            Elements contents = doc.getElementsByClass("data-table");
+            Elements contents = doc.getElementsByTag("tbody");
             Elements trs = contents.get(0).getElementsByTag("tr");
             for (int i = 0; i < trs.size(); i++) {
                 Elements tds = trs.get(i).getElementsByTag("td");
-                if (tds.get(0).text().equals(order.getCompanyName())) {
-                    Element el2 = tds.get(4);
+                if (tds.get(1).text().equals(order.getCompanyName())) {
+                    Element el2 = tds.get(6);
                     String ringCheckmsg = el2.attr("title");
-                    ringCheckmsg = ringCheckmsg.replace("激活", "下发");
                     String remark = el2.text();
-
-                    // 修改铃音信息
+                    if (remark.indexOf("未通过")>=0){
+                        flag = false;
+                    }else {
+                        flag = true;
+                    }
                     break;
                 }
             }
         }
-        return true;
+        return flag;
     }
 
     /**
@@ -512,7 +577,31 @@ public class ApiUtils {
                     }
                 }
             } else if (operator == 2) { // 电信
-
+                mcardApi.toUserList(threenetsRing.getOperateId());
+                String result = mcardApi.getRingInfo();
+                Document doc = Jsoup.parse(result);
+                Elements contents = doc.getElementsByTag("tbody");
+                Elements trs = contents.get(0).getElementsByTag("tr");
+                for (int i = 0; i < trs.size(); i++) {
+                    Elements tds = trs.get(i).getElementsByTag("td");
+                    if (tds.size() <= 0){
+                        continue;
+                    }
+                    if (tds.get(1).text().equals(threenetsRing.getRingName())) {
+                        Element el2 = tds.get(4);
+                        String remark = el2.text();
+                        if (remark.equals("审核通过")){
+                            threenetsRing.setRingStatus(2);
+                        }else{
+                            Elements lable = tds.get(4).getElementsByTag("lable");
+                            String title = lable.attr("title");
+                            threenetsRing.setRingStatus(6);
+                            threenetsRing.setRemark(title);
+                        }
+                        int count = SpringUtils.getBean(ThreenetsRingMapper.class).updateByPrimaryKeySelective(threenetsRing);
+                        log.info("修改铃音信息结果---->" + count);
+                    }
+                }
             } else { // 联通
                 String result = swxlApi.getRingInfo(threenetsRing.getOperateId());
                 if (StringUtils.isNotEmpty(result)) {
@@ -698,7 +787,34 @@ public class ApiUtils {
                     }
                 }
             } else if (operator == 2) { // 电信
-
+                mcardApi.toUserList(threenetsRing.getOperateId());
+                String result = mcardApi.getRingInfo();
+                if (StringUtils.isEmpty(result)) {
+                    return;
+                }
+                Document doc = Jsoup.parse(result);
+                Elements contents = doc.getElementsByTag("tbody");
+                Elements trs = contents.get(0).getElementsByTag("tr");
+                for (int i = 0; i < trs.size(); i++) {
+                    Elements tds = trs.get(i).getElementsByTag("td");
+                    if (tds.size() <= 0){
+                        continue;
+                    }
+                    if (tds.get(1).text().equals(threenetsRing.getRingName())) {
+                        Element el2 = tds.get(4);
+                        String remark = el2.text();
+                        if (remark.equals("审核通过")){
+                            threenetsRing.setRingStatus(2);
+                        }else{
+                            Elements lable = tds.get(4).getElementsByTag("lable");
+                            String title = lable.attr("title");
+                            threenetsRing.setRingStatus(6);
+                            threenetsRing.setRemark(title);
+                        }
+                        int count = SpringUtils.getBean(ThreenetsRingMapper.class).updateByPrimaryKeySelective(threenetsRing);
+                        log.info("修改铃音信息结果---->" + count);
+                    }
+                }
             } else { // 联通
                 String result = swxlApi.getRingInfo(threenetsRing.getOperateId());
                 if (StringUtils.isNotEmpty(result)) {
@@ -851,7 +967,7 @@ public class ApiUtils {
                 errMsg = rsr.getMsg();
             }
         } else if (operate == 2) { // 电信
-
+            //mcardApi.settingRing(threenetsRing.getId(),);
         } else { // 联通
             String[] phoness = phones.split(",");
             for (String phone : phoness) {
@@ -1048,7 +1164,7 @@ public class ApiUtils {
      * @throws IOException
      * @throws NoLoginException
      */
-    public List<ThreenetsChildOrder> addPhoneByDx(List<ThreenetsChildOrder> orders,String circleId)throws IOException,NoLoginException{
+    public List<ThreenetsChildOrder> addPhoneByDx(List<ThreenetsChildOrder> orders,String circleId){
         List<ThreenetsChildOrder> newList = new ArrayList<>();
         mcardApi.toUserList(circleId);
         for (int i = 0; i < orders.size(); i++) {
