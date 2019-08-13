@@ -1,24 +1,24 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.hrtxn.ringtone.project.system.charts.mapper.ChartsMapper">
-
+    <!--按日统计获取数据-->
     <select id="getEchartsData" resultType="com.hrtxn.ringtone.project.threenets.threenet.domain.PlotBarPhone">
         SELECT
-            DATE_FORMAT(create_date, '%Y-%m-%d') AS dateTimes,  COUNT(*) AS addUser
+        DATE_FORMAT(create_date, '%Y-%m-%d') AS dateTimes, COUNT(*) AS addUser
         FROM
-            tb_threenets_child_order
+        tb_threenets_child_order
         WHERE
-            DATE_FORMAT(create_date, '%Y-%m') = #{start}
-            AND is_monthly = 2
-            <if test="operate != null and operate !='' ">
-                AND operator = #{operate}
-            </if>
+        DATE_FORMAT(create_date, '%Y-%m') = #{start}
+        AND is_monthly = 2
+        <if test="operate != null and operate !='' ">
+            AND operator = #{operate}
+        </if>
         GROUP BY DATE_FORMAT(create_date, '%Y-%m-%d')
     </select>
-
+    <!--按日统计退訂-->
     <select id="getUnsubscribeData" resultType="com.hrtxn.ringtone.project.threenets.threenet.domain.PlotBarPhone">
         SELECT
-        DATE_FORMAT(create_date, '%Y-%m-%d') AS dateTimes,  COUNT(*) AS unsubscribeUser
+        DATE_FORMAT(create_date, '%Y-%m-%d') AS dateTimes, COUNT(*) AS unsubscribeUser
         FROM
         tb_threenets_child_order
         WHERE
@@ -29,58 +29,58 @@
         </if>
         GROUP BY DATE_FORMAT(create_date, '%Y-%m-%d')
     </select>
-
+    <!--按日统计总数-->
     <select id="getCount" resultType="int">
         SELECT
-            COUNT(*)
+        COUNT(*)
         FROM
-            tb_threenets_child_order
+        tb_threenets_child_order
         WHERE
-            DATE_FORMAT(create_date, '%Y-%m') &lt;= #{start}
-            AND is_monthly = 2
+        DATE_FORMAT(create_date, '%Y-%m') &lt;= #{start}
+        AND is_monthly = 2
         <if test="operate != null and operate !='' ">
             AND operator = #{operate}
         </if>
     </select>
-
+    <!--按月统计数据-->
     <select id="getYearEchartsData" resultType="com.hrtxn.ringtone.project.threenets.threenet.domain.PlotBarPhone">
         SELECT
-            DATE_FORMAT(create_date, '%Y-%m') AS dateTimes,  COUNT(*) AS addUser
+        DATE_FORMAT(create_date, '%Y-%m') AS dateTimes, COUNT(*) AS addUser
         FROM
-            tb_threenets_child_order
+        tb_threenets_child_order
         WHERE
-            DATE_FORMAT(create_date, '%Y') = #{start}
-            AND is_monthly = 2
-            <if test="operate != null and operate !='' ">
-                AND operator = #{operate}
-            </if>
-            GROUP BY DATE_FORMAT(create_date, '%Y-%m')
+        DATE_FORMAT(create_date, '%Y') = #{start}
+        AND is_monthly = 2
+        <if test="operate != null and operate !='' ">
+            AND operator = #{operate}
+        </if>
+        GROUP BY DATE_FORMAT(create_date, '%Y-%m')
     </select>
-
+    <!--按月统计退订-->
     <select id="getYearUnsubscribeData" resultType="com.hrtxn.ringtone.project.threenets.threenet.domain.PlotBarPhone">
         SELECT
-            DATE_FORMAT(create_date, '%Y-%m') AS dateTimes,  COUNT(*) AS unsubscribeUser
+        DATE_FORMAT(create_date, '%Y-%m') AS dateTimes, COUNT(*) AS unsubscribeUser
         FROM
-            tb_threenets_child_order
+        tb_threenets_child_order
         WHERE
-            DATE_FORMAT(create_date, '%Y') = #{start}
-            AND is_monthly = 3
-            <if test="operate != null and operate !='' ">
-                AND operator = #{operate}
-            </if>
-            GROUP BY DATE_FORMAT(create_date, '%Y-%m')
+        DATE_FORMAT(create_date, '%Y') = #{start}
+        AND is_monthly = 3
+        <if test="operate != null and operate !='' ">
+            AND operator = #{operate}
+        </if>
+        GROUP BY DATE_FORMAT(create_date, '%Y-%m')
     </select>
-
+    <!--按月统计总数-->
     <select id="getYearCount" resultType="int">
         SELECT COUNT(*)
         FROM
-            tb_threenets_child_order
+        tb_threenets_child_order
         WHERE
-            DATE_FORMAT(create_date, '%Y') &lt;= #{start}
-            AND is_monthly = 2
-            <if test="operate != null and operate !='' ">
-                AND operator = #{operate}
-            </if>
+        DATE_FORMAT(create_date, '%Y') &lt;= #{start}
+        AND is_monthly = 2
+        <if test="operate != null and operate !='' ">
+            AND operator = #{operate}
+        </if>
     </select>
 
 </mapper>

@@ -26,6 +26,15 @@ public class ChartsService {
     @Autowired
     private ChartsMapper chartsMapper;
 
+    /**
+     * 获取数据统计数据
+     *
+     * @param start
+     * @param operate
+     * @param type
+     * @return
+     * @throws ParseException
+     */
     public AjaxResult echartsData(String start, Integer operate, Integer type) throws ParseException {
         // 判断时间是否为空，为空则获取当前时间
         if (!StringUtils.isNotEmpty(start)) {
@@ -39,7 +48,7 @@ public class ChartsService {
         }
         List<PlotBarPhone> plotBarPhoneList = new ArrayList<>();
         List<PlotBarPhone> plotBarUnsubscribePhoneList = new ArrayList<>();
-        if (type == 1){
+        if (type == 1) {
             // 根据日期和运营商获取已包月子账号数据
             plotBarPhoneList = chartsMapper.getEchartsData(start, operate);
             // 根据日期和运营商获取退订子账号数据
@@ -83,7 +92,15 @@ public class ChartsService {
         return AjaxResult.success(map, "获取数据成功！");
     }
 
-
+    /**
+     * 数据格式化
+     *
+     * @param plotBarPhoneList
+     * @param plotBarUnsubscribePhoneList
+     * @param type
+     * @return
+     * @throws ParseException
+     */
     private List<PlotBarPhone> dataFormate(List<PlotBarPhone> plotBarPhoneList, List<PlotBarPhone> plotBarUnsubscribePhoneList, Integer type) throws ParseException {
         DateFormat dateFormat;
         if (type == 1) {

@@ -316,7 +316,7 @@ public class UserService {
                 user.setIdGroupReverseFile(new File(RingtoneConfig.getProfile() + user.getUserCardFan()));
             }
             // 执行添加子账号操作
-//            return apiUtils.insertUser(user);
+            return apiUtils.insertUser(user);
         }
         return AjaxResult.error("参数格式不正确！");
     }
