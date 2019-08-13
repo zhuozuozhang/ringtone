@@ -14,7 +14,8 @@ function showTable() {
         {"data": "peopleNum"},
         {"data": "province"},
         {"data": "status"},
-        {"data": "createTime"}
+        {"data": "createTime"},
+        {"data": "message"}
     ];
     var columnDefs = [{
         targets: [1],
@@ -31,7 +32,11 @@ function showTable() {
         targets: [9],
         render:function (data, type, row, meta) {
             var id = row.id;
-            return "<i class='layui-icon' title='查看消息' onclick='findCricleMsgList("+id+")'><img src='../../client/threenets/images/group_msg.png'></i>"
+            if(data == 1){
+                return "<i>无</i>"
+            }else{
+                return "<i class='layui-icon' title='查看消息' onclick='findCricleMsgList("+id+")'><img src='../../client/threenets/images/group_msg.png'></i>"
+            }
         }
     },{
         targets:[10],
@@ -97,6 +102,18 @@ function findCricleMsgList(id){
         type: 2,
         title: '消息处理',
         area: ['700px','300px'],
-        content: '/threenets/toFindCricleMsgListPage/'+id
+        content: '/threenets/toFindCricleMsgListPage/'+id,
+        end: function () {
+            var url = "/threenets/findCricleMsgList/"+id;
+            AjaxPost(url,{
+                id:id
+            },function (res) {
+                if(res.data.wu == "无"){
+                    alert(res.data.wu);
+                    wuMigu_id = 1;
+                }
+            });
+            $("#set").DataTable().ajax.reload(null,false);
+        }
     });
 }

@@ -41,7 +41,6 @@ public interface ThreeNetsOrderAttachedMapper {
 
     ThreeNetsOrderAttached selectByParentOrderId(Integer id);
 
-    void updateMigu_idToWuByOrderId(Integer id);
     /**
      *
      * @param id

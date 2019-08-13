@@ -5,7 +5,9 @@ import com.hrtxn.ringtone.common.constant.AjaxResult;
 import com.hrtxn.ringtone.common.exception.NoLoginException;
 import com.hrtxn.ringtone.common.utils.StringUtils;
 import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreeNetsOrderAttached;
+import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreenetsOrder;
 import com.hrtxn.ringtone.project.threenets.threenet.mapper.ThreeNetsOrderAttachedMapper;
+import com.hrtxn.ringtone.project.threenets.threenet.mapper.ThreenetsOrderMapper;
 import com.hrtxn.ringtone.project.threenets.threenet.utils.ApiUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,6 +25,8 @@ public class ThreeNetsOrderAttachedService {
 
     @Autowired
     private ThreeNetsOrderAttachedMapper threeNetsOrderAttachedMapper;
+    @Autowired
+    private ThreenetsOrderMapper threenetsOrderMapper;
 
     private ApiUtils apiUtils = new ApiUtils();
 
@@ -76,17 +80,18 @@ public class ThreeNetsOrderAttachedService {
         if(StringUtils.isNotNull(com_id)){
             Integer id = Integer.parseInt(com_id);
             ThreeNetsOrderAttached threeNetsOrderAttached = threeNetsOrderAttachedMapper.selectByParentOrderId(id);
-            String migu_id = threeNetsOrderAttached.getMiguId();
-            if(StringUtils.isNull(threeNetsOrderAttached)){
-                return AjaxResult.success(false,"在父表的附属表中，不含有外键父级订单id：\"+com_id+\"所属的订单");
+            int count = 0;
+            if(StringUtils.isNotNull(threeNetsOrderAttached)){
+                String migu_id = threeNetsOrderAttached.getMiguId();
+                if(StringUtils.isNotNull(migu_id)){
+                    count = threenetsOrderMapper.updateMessageIsNotNullById(id); //order表中的message设置为2，意味着有消息
+                    return apiUtils.findCricleMsgList(migu_id);
+                }
+                count = threenetsOrderMapper.updateMessageById(id); //order表中的message设置为1，意味着无消息
+                return AjaxResult.success(count,"没有获取到该商户的migu_id,因为不是移动用户");
             }
-            if(StringUtils.isNotNull(migu_id)){
-                return apiUtils.findCricleMsgList(migu_id);
-            }else {
-                threeNetsOrderAttachedMapper.updateMigu_idToWuByOrderId(id);
-                return AjaxResult.success(false,"该商户不是移动用户");
-            }
-
+            count = threenetsOrderMapper.updateMessageById(id); //order表中的message设置为1
+            return AjaxResult.success(count,"在父表的附属表中，不含有外键父级订单id：\"+com_id+\"所属的订单");
         }
         return AjaxResult.success(false,"参数不正确！");
     }

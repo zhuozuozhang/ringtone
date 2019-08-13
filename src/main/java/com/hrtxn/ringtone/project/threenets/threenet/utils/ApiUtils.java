@@ -1408,6 +1408,10 @@ public class ApiUtils {
      */
     public AjaxResult findCricleMsgList(String migu_id) throws IOException, NoLoginException {
         Map<String,String> map = new HashMap<String,String>();
+        if(migu_id.equals("无")){
+            map.put("wu",migu_id);
+            return AjaxResult.success(map,"migu_id为无");
+        }
         map.put("cricle_msg_list",miguApi.findCricleMsgList(migu_id));
         return AjaxResult.success(map,"通过migu_id找到了处理信息");
     }

@@ -194,12 +194,4 @@
         </set>
         where id = #{id,jdbcType=INTEGER}
     </update>
-
-    <update id="updateMigu_idToWuByOrderId">
-        update tb_threenets_order_attached
-        <set>
-        migu_id = '无',
-        </set>
-        where parent_order_id = #{parentOrderId,jdbcType=INTEGER}
-    </update>
 </mapper>

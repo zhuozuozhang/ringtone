@@ -33,6 +33,8 @@ public class ThreenetsOrder implements Serializable {
     private String status;
     // 用户ID
     private Integer userId;
+    // 消息（1.无/2.有）移动专属
+    private Integer message;
 
     /**************************VO**********************************/
 
