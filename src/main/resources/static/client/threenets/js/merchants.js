@@ -14,7 +14,8 @@ function showTable() {
         {"data": "peopleNum"},
         {"data": "province"},
         {"data": "status"},
-        {"data": "createTime"}
+        {"data": "createTime"},
+        {"data": "message"}
     ];
     var columnDefs = [{
         targets: [1],
@@ -31,9 +32,11 @@ function showTable() {
         targets: [9],
         render:function (data, type, row, meta) {
             var id = row.id;
-            // return  "<div class='layui-icon' title='查看消息'><a href='/threenets/toFindCricleMsgListPage/"+id+"'>"+id+"<img src='../../client/threenets/images/group_msg.png'></a></div>"
-
-            return "<i class='layui-icon' title='查看消息' onclick='findCricleMsgList("+id+")'><img src='../../client/threenets/images/group_msg.png'></i>"
+            if(data == 1){
+                return "<i>无</i>"
+            }else{
+                return "<i class='layui-icon' title='查看消息' onclick='findCricleMsgList("+id+")'><img src='../../client/threenets/images/group_msg.png'></i>"
+            }
         }
     },{
         targets:[10],
@@ -70,7 +73,7 @@ function ChangeName() {
     })
 }
 
-//删除
+//删除0
 function DelMerchants(id) {
     layer.confirm("你确定要删除该行记录吗?", {
         btn: ["确定", "取消"] //按钮
@@ -95,24 +98,22 @@ function AddUser(a, c, b) {
 
 //查看消息
 function findCricleMsgList(id){
-    // alert(id);
-    // var name = $("#enterPriseName").val();
-    // var id = $("#id").val();
-    // AjaxPut("/threenets/findComIdByName"+name,{
-    //     "name":name
-    // },function (res) {
-    //    layer.open({
-    //        type: 1,
-    //        title: '消息处理',
-    //        area: ['700px', '250px'],
-    //        content: '/threenets/toFindCricleMsgListPage'
-    //    })
-    // });
     layer.open({
         type: 2,
         title: '消息处理',
-        area: ['700px','250px'],
-        content: '/threenets/toFindCricleMsgListPage/'+id
+        area: ['700px','300px'],
+        content: '/threenets/toFindCricleMsgListPage/'+id,
+        end: function () {
+            var url = "/threenets/findCricleMsgList/"+id;
+            AjaxPost(url,{
+                id:id
+            },function (res) {
+                if(res.data.wu == "无"){
+                    alert(res.data.wu);
+                    wuMigu_id = 1;
+                }
+            });
+            $("#set").DataTable().ajax.reload(null,false);
+        }
     });
-
 }

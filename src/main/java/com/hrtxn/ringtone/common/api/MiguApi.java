@@ -83,6 +83,7 @@ public class MiguApi implements Serializable {
     public static String delOtherRing_url = "http://211.137.107.18:8888/cm/toolbox!delRing.action"; //删除个人铃音库
     public static String refreshRingOrder_url = "http://211.137.107.18:8888/cm/groupInfo!findList.action";
     public static String toolbox_userInfo_url = "http://211.137.107.18:8888/qycl/platform/platform!getUserInfo.action";
+    public static String findCircleMsgList = "http://211.137.107.18:8888/cm/groupInfo!findCircleMsgList.action";  //查看消息
 
 
     public String USER_NAME = "中高俊聪";// 帐号
@@ -826,8 +827,8 @@ public class MiguApi implements Serializable {
     public String findCricleMsgList(String migu_id) throws IOException, NoLoginException {
         HashMap map = new HashMap();
         map.put("circleId",migu_id);
-        String result = sendPost(map,findCircleMsgList_url);
-        log.info("商户列表-->信息处理 参数：{} 结果：{}",migu_id,result);
+        String result = sendPost(map,findCircleMsgList);
+        log.info("商户列表-->处理信息 参数：{} 结果：{}",migu_id,result);
         return result;
     }
 }

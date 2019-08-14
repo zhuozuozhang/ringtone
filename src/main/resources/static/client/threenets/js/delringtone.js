@@ -2,6 +2,7 @@
 function findRingInfoByMsisdn() {
     var msisdn = $("#ringMsisdn").val().trim();
     if(isTel(msisdn)){
+
         var url = "/threenets/findRingInfoByMsisdn/" + msisdn;
         AjaxPut(url, {
             msisdn:msisdn
@@ -104,10 +105,11 @@ function findRingInfoByMsisdn() {
                 layer.msg(res.msg, {icon: 5, time: 3000});
             }
         });
-    }else {
-        layer.msg("请输入正确的移动手机号码！");
+    }else{
+        layer.msg("请输入正确的移动手机号码！",{icon: 0, time: 3000});
         return;
     }
+
 }
 
 //删除某一行个人铃音设置
@@ -178,7 +180,6 @@ function delRingSettingListByMsisdn(){
     if (confirm("删除选中的铃音设置会将相同设置ID的铃音设置一起删掉，确认删除？")) {
         var msisdn = $("#ringMsisdn").val().trim();
         if(isTel(msisdn)){
-
             var valArr = new Array;
             $(".ringSettingListByMsisdnTbody :checkbox[checked]").each(function (i) {
                 valArr[i] = $(this).val();
@@ -210,11 +211,10 @@ function delRingListByMsisdn(){
     if(confirm("确认删除选中的铃音?")){
         var msisdn = $("#ringMsisdn").val().trim();
         if(isTel(msisdn)){
-
             var valArr = new Array;
             $(".ringListByMsisdnTbody :checkbox[checked]").each(function(i){
-                valArr[i] = $(this).val()
-            });;
+                valArr[i] = $(this).val();
+            });
             var vals = valArr.join(',');
             if(vals == null || vals.length == 0){
                 layer.msg("请选择需要删除的铃音库",{icon: 0, time: 3000});

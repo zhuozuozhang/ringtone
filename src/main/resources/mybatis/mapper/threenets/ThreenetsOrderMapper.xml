@@ -13,10 +13,11 @@
         <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
         <result column="status" property="status" jdbcType="VARCHAR"/>
         <result column="user_id" property="userId" jdbcType="INTEGER"/>
+        <result column="message" property="message" jdbcType="INTEGER"/>
     </resultMap>
 
     <sql id="Base_Column_List">
-        id, operator, company_name, company_linkman, linkman_tel,province, city, create_time, status, user_id,
+        id, operator, company_name, company_linkman, linkman_tel,province, city, create_time, status, user_id, message,
         (SELECT COUNT(*) FROM tb_threenets_child_order WHERE parent_order_id = p.id) as childOrderQuantity,
         (SELECT COUNT(*) FROM tb_threenets_child_order WHERE parent_order_id = p.id AND is_monthly = 2) as childOrderQuantityByMonthly,
         (SELECT user_name FROM tb_user u WHERE u.id = p.user_id ) AS userName
