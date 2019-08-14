@@ -83,7 +83,7 @@ public class MiguApi implements Serializable {
     public static String delOtherRing_url = "http://211.137.107.18:8888/cm/toolbox!delRing.action"; //删除个人铃音库
     public static String refreshRingOrder_url = "http://211.137.107.18:8888/cm/groupInfo!findList.action";
     public static String toolbox_userInfo_url = "http://211.137.107.18:8888/qycl/platform/platform!getUserInfo.action";
-    public static String findCircleMsgList = "http://211.137.107.18:8888/cm/groupInfo!findCircleMsgList.action";
+    public static String findCircleMsgList = "http://211.137.107.18:8888/cm/groupInfo!findCircleMsgList.action";  //查看消息
 
 
     public String USER_NAME = "中高俊聪";// 帐号
