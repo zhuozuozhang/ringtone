@@ -1,45 +1,20 @@
 <!DOCTYPE html >
 <html lang="zh" xmlns:th="http://www.thymeleaf.org">
 <title>公告列表</title>
-<link rel="stylesheet" href="../../client/threenets/css/announcement.css">
+<link rel="stylesheet" th:href="@{client/threenets/css/announcement.css}">
 <head th:include="threenets/kedas/kedasites/common/include::head"></head>
-
 <body>
 <!-- 头部 -->
-<div id="heads">
-    <div id="LAY_app" class="layadmin-tabspage-none" style="width:95%;margin:0 auto;">
-        <div class="layui-row" style="height:70px;">
-            <div class="layui-col-xs6">
-                <div class="grid-demo grid-demo-bg1">
-                    <img src="../../public/images/index_logo.jpg" alt="" width="580px" height="60px"
-                         style='margin: 5px 20px;'>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- 导航栏tab切换 -->
-    <div class="layui-tab layui-tab-brief" lay-filter="docDemoTabBrief" style="margin:0 auto;">
-        <ul class="layui-tab-title" id="tabs">
-            <a href="../index/index.html">
-                <li class='index1'>待办任务</li>
-            </a>
-            <a href="../merchants/merchants.html">
-                <li class='index2'>商户列表</li>
-            </a>
-            <a href="../business/Dbusiness.html">
-                <li class='index6'>业务发展数据</li>
-            </a>
-        </ul>
-    </div>
-</div>
+<div th:include="threenets/kedas/kedasites/common/include::nav"></div>
 <div class="layui-row contant">
     <!-- 等待设置铃音 -->
     <div class="layui-col-md12" id="search">
         <div style="padding:20px 0;padding-left:0px;font-size:16px;">
-            公告标题：<input type="text" name="cgmc" id="cgmc">&nbsp;&nbsp;
-            发布日期：<input type="text" name="date" id="date" style="margin:0 10px">
-            <button type="button" class="layui-btn layui-btn-radius layui-btn-normal" id="sear"
-                    onclick="deleteRingSeting();">搜 索
+            公告标题：<input type="text" name="cgmc" id="noticeTitle">&nbsp;&nbsp;
+            开始日期：<input type="text" name="date" id="start" style="margin:0 10px">
+            结束日期：<input type="text" name="date" id="end" style="margin:0 10px">
+            <button type="button" class="layui-btn layui-btn-radius layui-btn-normal" id="sear" onclick="showTable();">搜
+                索
             </button>
         </div>
         <table class="layui-table" id="set">
@@ -50,74 +25,72 @@
                 <th>发布日期</th>
             </tr>
             </thead>
-            <tbody>
-            <tr>
-                <td>1</td>
-                <td class="ofo" onclick="openDetails();">疑难杂单平台上线通知</td>
-                <td>2019-06-14</td>
-            </tr>
-            <tr>
-                <td>2</td>
-                <td class="ofo" onclick="openDetails();">疑难杂单平台上线通知</td>
-                <td>2019-06-16</td>
-            </tr>
-            </tbody>
         </table>
     </div>
 </div>
 </body>
-<script src="../../public/js/jquery-2.1.4.min.js"></script>
-<script src="../../public/layui/layui.js"></script>
-<script src="../../public/layui/lay/modules/layer.js"></script>
-<script type="text/javascript" src="../../public/dataTables/jquery.dataTables.min.js"></script>
+<div th:include="threenets/kedas/kedasites/common/include::footer"></div>
 <script>
     //分页
     $(document).ready(function () {
         $(".index1").addClass("active");
-        $('#set').DataTable({
-            "ordering": true, //禁止排序
-            "order": [[2, "desc"]],
-            "columnDefs": [{
-                'targets': [0, 1],    //除第二列外，都默认不排序
-                'orderable': false
-            }],
-            "searching": false, //搜索框
-            "bLengthChange": false,
-            "language": {
-                "decimal": ",",
-                "thousands": ".",
-                "lengthMenu": " _MENU_ ",
-                "zeroRecords": "没有找到记录",
-                "info": "",
-                "infoEmpty": "",
-                "infoFiltered": "",
-                "paginate": {
-                    // "first" : "",
-                    "sPrevious": "上一页",
-                    "sNext": "下一页",
-                    // "sLast" : ""
-                }
-            }
+        //发布日期
+        layui.use('laydate', function () {
+            var laydate = layui.laydate;
+            //日期范围
+            laydate.render({
+                elem: '#start'
+            });
+            //日期范围
+            laydate.render({
+                elem: '#end'
+            });
         });
+        showTable();
     });
-    //发布日期
-    layui.use('laydate', function () {
-        var laydate = layui.laydate;
 
-        //日期范围
-        laydate.render({
-            elem: '#date'
-            , range: true
-        });
-    });
+    function showTable() {
+        var params = {
+            noticeTitle: $("#noticeTitle").val(),
+            start: $("#start").val(),
+            end: $("#end").val(),
+            noticeModule: 8,
+            noticeStatus:true
+        };
+        var columns = [
+            {"data": "noticeId"},
+            {"data": "noticeTitle"},
+            {"data": "noticeTime"}];
+
+        var columnDefs = [{
+            targets: [1],
+            render: function (data, type, row, meta) {
+                var param = {
+                    noticeTitle:row.noticeTitle,
+                    noticeTime:row.noticeTime,
+                    noticeContent:row.noticeContent
+                };
+                return "<div onclick='openDetails(" + JSON.stringify(param) + ");' style='cursor: pointer;'>" + data + "</div>";
+            }
+        },{
+            targets:[2],
+            render:function (data, type, row, meta) {
+                var date =data.toString().substring(0, 10);
+                return date;
+            }
+        }];
+        page("#set", 1, params, "/threenets/clcy/getNoticeList", columns, columnDefs);
+    }
+
 
     //公告详情
-    function openDetails() {
+    function openDetails(notice) {
+        var date = notice.noticeTime.toString().substring(0, 10);
         layer.open({
             type: 1,
             title: '公告详情',
             area: ['850px', '400px'],
-            content: '<div class="content clearfix" style="width: 800px; line-height: 25px; margin-left: 20px;"><div class="articleTitle font04">疑难杂单平台上线通知</div><div class="articleTitle_details">2019-06-14</div><div>疑难杂单已经上线，目前包月状态需要设置铃音成功后才会显示，请大家上传号码后上传铃音，客户按照短信提示操作开通包月后平台无法实时显示，客户只要按照要求操作即可，铃音激活大概三、四个小时，三、四个小时后也可以点击铃音设置，<span>铃音激活后也会自动设置，设置铃音后请勿频繁点击刷新按钮。</span>设置成功后平台会显示已经包月及设置成功。不足之处我们也正在改进。敬请谅解！</div></div>'
+            content: '<div class="content clearfix" style="width: 800px; line-height: 25px; margin-left: 20px;"><div class="articleTitle font04">'+notice.noticeTitle+'</div><div class="articleTitle_details">'+date+'</div><div>'+notice.noticeContent+'</div></div>'
         });
     }
 </script>

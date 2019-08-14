@@ -31,7 +31,7 @@ public class BaseRequest {
     // 用户状态
     private Integer userStatus;
 
-
+    private String status;
     //企业资质
     private String companyUrl;
     //客户确认涵

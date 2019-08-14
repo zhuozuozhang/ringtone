@@ -4,7 +4,6 @@ import com.hrtxn.ringtone.common.domain.Page;
 import com.hrtxn.ringtone.project.system.notice.domain.Notice;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
-import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
 
@@ -17,7 +16,8 @@ import java.util.List;
 public interface NoticeMapper {
 
     /**
-     *获取公告列表
+     * 获取公告列表
+     *
      * @return
      * @throws Exception
      */
@@ -25,6 +25,7 @@ public interface NoticeMapper {
 
     /**
      * 添加公告
+     *
      * @param notice
      * @return
      */
@@ -32,6 +33,7 @@ public interface NoticeMapper {
 
     /**
      * 修改公告信息
+     *
      * @param notice
      * @return
      */
@@ -39,6 +41,7 @@ public interface NoticeMapper {
 
     /**
      * 根据ID查询公告信息
+     *
      * @param id
      * @return
      * @throws Exception
@@ -47,6 +50,7 @@ public interface NoticeMapper {
 
     /**
      * 删除公告信息
+     *
      * @param id
      * @return
      */
@@ -54,10 +58,26 @@ public interface NoticeMapper {
 
     /**
      * 根据类型获取公告列表
+     *
      * @param modul
      * @return
      */
     List<Notice> findNoticeListByModul(String modul) throws Exception;
 
-    int getNoticeCount();
+    /**
+     * 获取公告数量
+     *
+     * @param notice
+     * @return
+     */
+    int getNoticeCount(@Param("notice") Notice notice);
+
+    /**
+     * 获取疑难杂单类型公告
+     *
+     * @param page
+     * @param notice
+     * @return
+     */
+    List<Notice> getNoticeList(@Param("page") Page page, @Param("notice") Notice notice);
 }
