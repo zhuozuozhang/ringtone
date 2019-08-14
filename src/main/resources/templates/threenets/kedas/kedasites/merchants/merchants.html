@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<title>商户列表</title>
+<link rel="stylesheet" th:href="@{/client/threenets/css/announcement.css}">
+<head th:include="threenets/kedas/kedasites/common/include::head"></head>
+<body>
+<!-- 头部 -->
+<div th:include="threenets/kedas/kedasites/common/include::nav"></div>
+<div class="layui-row contant" style="width:80%;">
+    <!-- 等待设置铃音 -->
+    <div class="layui-col-md12" id="search">
+        <div style="padding:20px 0;padding-left:0px;font-size:16px;">
+            手机号：<input type="text" name="linkPhone" id="linkPhone" autocomplete="off">&nbsp;&nbsp;
+            用户名称：<input type="text" name="enterPriseName" id="enterPriseName" style="margin:0 10px" autocomplete="off">
+            <button type="button" class="layui-btn layui-btn-radius layui-btn-normal" id="sear" onclick="showTable();">搜 索</button>
+            <button type="button" class="layui-btn layui-btn-radius layui-btn-normal" id="Addr" onclick="AddUser();">添加商户</button>
+        </div>
+        <table class="layui-table" id="set">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>商户名称</th>
+                    <th>渠道商</th>
+                    <th>联系人</th>
+                    <th>联系方式</th>
+                    <th>总数/包月</th>
+                    <th>所属省市</th>
+                    <th>审核状态</th>
+                    <th>创建时间</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+</div>
+</body>
+<div th:include="threenets/kedas/kedasites/common/include::footer"></div>
+<script th:src="@{/client/threenets/js/kedasites/merchants.js}"></script>
+</html>

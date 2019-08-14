@@ -8,14 +8,16 @@
             正文：<span th:utext="${notice.noticeContent}">测试公告测试公告测试公告测试公告测试公告测试公告</span><br><br>
             创建时间：<span th:text="${#dates.format(notice.noticeTime,'yyyy-MM-dd HH:mm:ss')}">2019-06-20 12:13:26</span><br><br>
             创建者：<span th:text="${notice.noticeAuthor}">admin</span><br><br>
-            发布模块：<span th:if="${notice.noticeModule} == 0">三网</span>
-                    <span th:if="${notice.noticeModule} == 1">号码认证</span>
-                    <span th:if="${notice.noticeModule} == 2">400</span>
-                    <span th:if="${notice.noticeModule} == 3">视频制作</span>
-                    <span th:if="${notice.noticeModule} == 4">号卡</span>
-                    <span th:if="${notice.noticeModule} == 5">铃音录制</span>
-                    <span th:if="${notice.noticeModule} == 6">企业秀</span>
-                    <span th:if="${notice.noticeModule} == 7">来去电名片</span><br><br>
+            发布模块：<span th:if="${notice.noticeModule} == 0">企业彩铃/视频彩铃</span>
+                    <span th:if="${notice.noticeModule} == 1">电话认证/挂机短信/彩印</span>
+                    <span th:if="${notice.noticeModule} == 2">400电话</span>
+                    <span th:if="${notice.noticeModule} == 3">企业秀</span>
+                    <span th:if="${notice.noticeModule} == 4">网站建设/万词霸屏/快排优化</span>
+                    <span th:if="${notice.noticeModule} == 5">微信/百度/抖音小程序</span>
+                    <span th:if="${notice.noticeModule} == 6">铃音录制/视频制作</span>
+                    <span th:if="${notice.noticeModule} == 7">流量卡/号卡</span>
+                    <span th:if="${notice.noticeModule} == 8">疑难杂单</span>
+                    <br><br>
             是否开放：<span th:if="${notice.noticeStatus}">是</span>
                     <span th:if="${not notice.noticeStatus}">否</span><br><br>
             权重：<span th:text="${notice.noticeWeight}">1</span><br><br>

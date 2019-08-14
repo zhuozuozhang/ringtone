@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hrtxn.ringtone.project.threenets.kedas.kedasites.mapper.KedaRingMapper">
+    <resultMap id="BaseResultMap" type="com.hrtxn.ringtone.project.threenets.kedas.kedasites.domain.KedaRing">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="ring_name" property="ringName" jdbcType="VARCHAR"/>
+        <result column="ring_status" property="ringStatus" jdbcType="INTEGER"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="opertate_id" property="opertateId" jdbcType="VARCHAR"/>
+        <result column="order_id" property="orderId" jdbcType="INTEGER"/>
+        <result column="ring_num" property="ringNum" jdbcType="VARCHAR"/>
+        <result column="ring_url" property="ringUrl" jdbcType="VARCHAR"/>
+        <result column="ring_path" property="ringPath" jdbcType="VARCHAR"/>
+        <result column="ring_content" property="ringContent" jdbcType="LONGVARCHAR"/>
+        <result column="remark" property="remark" jdbcType="LONGVARCHAR"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    id, ring_name, ring_status, create_time, opertate_id, order_id, ring_num, ring_url, 
+    ring_path,ring_content, remark
+  </sql>
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+        select
+        <include refid="Base_Column_List"/>
+        from tb_keda_ring
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from tb_keda_ring
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+    <insert id="insert" parameterType="com.hrtxn.ringtone.project.threenets.kedas.kedasites.domain.KedaRing">
+    insert into tb_keda_ring (id, ring_name, ring_status, 
+      create_time, opertate_id, order_id, 
+      ring_num, ring_url, ring_path, 
+      ring_content, remark)
+    values (#{id,jdbcType=INTEGER}, #{ringName,jdbcType=VARCHAR}, #{ringStatus,jdbcType=INTEGER}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{opertateId,jdbcType=VARCHAR}, #{orderId,jdbcType=INTEGER}, 
+      #{ringNum,jdbcType=VARCHAR}, #{ringUrl,jdbcType=VARCHAR}, #{ringPath,jdbcType=VARCHAR}, 
+      #{ringContent,jdbcType=LONGVARCHAR}, #{remark,jdbcType=LONGVARCHAR})
+  </insert>
+    <insert id="insertSelective"
+            parameterType="com.hrtxn.ringtone.project.threenets.kedas.kedasites.domain.KedaRing">
+        insert into tb_keda_ring
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="ringName != null">
+                ring_name,
+            </if>
+            <if test="ringStatus != null">
+                ring_status,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+            <if test="opertateId != null">
+                opertate_id,
+            </if>
+            <if test="orderId != null">
+                order_id,
+            </if>
+            <if test="ringNum != null">
+                ring_num,
+            </if>
+            <if test="ringUrl != null">
+                ring_url,
+            </if>
+            <if test="ringPath != null">
+                ring_path,
+            </if>
+            <if test="ringContent != null">
+                ring_content,
+            </if>
+            <if test="remark != null">
+                remark,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=INTEGER},
+            </if>
+            <if test="ringName != null">
+                #{ringName,jdbcType=VARCHAR},
+            </if>
+            <if test="ringStatus != null">
+                #{ringStatus,jdbcType=INTEGER},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="opertateId != null">
+                #{opertateId,jdbcType=VARCHAR},
+            </if>
+            <if test="orderId != null">
+                #{orderId,jdbcType=INTEGER},
+            </if>
+            <if test="ringNum != null">
+                #{ringNum,jdbcType=VARCHAR},
+            </if>
+            <if test="ringUrl != null">
+                #{ringUrl,jdbcType=VARCHAR},
+            </if>
+            <if test="ringPath != null">
+                #{ringPath,jdbcType=VARCHAR},
+            </if>
+            <if test="ringContent != null">
+                #{ringContent,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="remark != null">
+                #{remark,jdbcType=LONGVARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective"
+            parameterType="com.hrtxn.ringtone.project.threenets.kedas.kedasites.domain.KedaRing">
+        update tb_keda_ring
+        <set>
+            <if test="ringName != null">
+                ring_name = #{ringName,jdbcType=VARCHAR},
+            </if>
+            <if test="ringStatus != null">
+                ring_status = #{ringStatus,jdbcType=INTEGER},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="opertateId != null">
+                opertate_id = #{opertateId,jdbcType=VARCHAR},
+            </if>
+            <if test="orderId != null">
+                order_id = #{orderId,jdbcType=INTEGER},
+            </if>
+            <if test="ringNum != null">
+                ring_num = #{ringNum,jdbcType=VARCHAR},
+            </if>
+            <if test="ringUrl != null">
+                ring_url = #{ringUrl,jdbcType=VARCHAR},
+            </if>
+            <if test="ringPath != null">
+                ring_path = #{ringPath,jdbcType=VARCHAR},
+            </if>
+            <if test="ringContent != null">
+                ring_content = #{ringContent,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="remark != null">
+                remark = #{remark,jdbcType=LONGVARCHAR},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+    <update id="updateByPrimaryKeyWithBLOBs"
+            parameterType="com.hrtxn.ringtone.project.threenets.kedas.kedasites.domain.KedaRing">
+    update tb_keda_ring
+    set ring_name = #{ringName,jdbcType=VARCHAR},
+      ring_status = #{ringStatus,jdbcType=INTEGER},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      opertate_id = #{opertateId,jdbcType=VARCHAR},
+      order_id = #{orderId,jdbcType=INTEGER},
+      ring_num = #{ringNum,jdbcType=VARCHAR},
+      ring_url = #{ringUrl,jdbcType=VARCHAR},
+      ring_path = #{ringPath,jdbcType=VARCHAR},
+      ring_content = #{ringContent,jdbcType=LONGVARCHAR},
+      remark = #{remark,jdbcType=LONGVARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+    <update id="updateByPrimaryKey"
+            parameterType="com.hrtxn.ringtone.project.threenets.kedas.kedasites.domain.KedaRing">
+    update tb_keda_ring
+    set ring_name = #{ringName,jdbcType=VARCHAR},
+      ring_status = #{ringStatus,jdbcType=INTEGER},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      opertate_id = #{opertateId,jdbcType=VARCHAR},
+      order_id = #{orderId,jdbcType=INTEGER},
+      ring_num = #{ringNum,jdbcType=VARCHAR},
+      ring_url = #{ringUrl,jdbcType=VARCHAR},
+      ring_path = #{ringPath,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

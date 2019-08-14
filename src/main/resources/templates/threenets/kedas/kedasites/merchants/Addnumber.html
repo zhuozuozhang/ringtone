@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <base href=".">
+    <title>添加号码</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link rel="stylesheet" href="../../public/layui/css/layui.css">
+    <link rel="stylesheet" href="../../public/layui/css/modules/layer/default/layer.css">
+    <link rel="stylesheet" href="../../client/threenets/css/ThunderBase2.css">
+    <link rel="stylesheet" type="text/css" href="../../client/threenets/css/common.css">
+    <link rel="stylesheet" type="text/css" href="../../client/threenets/css/Addmerchants.css">
+    <link rel="stylesheet" href="../../client/threenets/css/enterpriseBell.css">
+    <link rel="stylesheet" href="../../client/threenets/css/MyPlus.css">
+    <link rel="stylesheet" href="../../client/threenets/css/Add.css">
+    <script src="../../public/js/jquery-2.1.4.min.js"></script>
+    <script src="../../public/layui/layui.js"></script>
+    <script src="../../public/layui/lay/modules/layer.js"></script>
+    <script src="../../public/js/numASMD.js"></script>
+    <script src="../../public/js/regular.js"></script>
+    <style>
+        .layui-input-block {
+            text-align: right;
+        }
+        .tishis{
+            text-align: left;
+            width: 71%;
+            margin: 0 auto;
+            font-size: 10px;
+            line-height: 30px;
+        }
+        .ts{
+            position: absolute;
+            right: 0;
+            top: 8px;
+            color: red;
+        }
+        .input_css1 {
+            width: 200px;
+            height: 30px;
+            padding-left: 20px;
+            box-sizing: content-box;
+            float: right;
+            border: 1px solid rgb(229,229,229);
+            font-size: 16px;
+            margin-right: 163px;
+        }
+    </style>
+</head>
+
+<body>
+    <form action="" name="Form" id="Form" method="post" class="layui-form">
+        <div id="newBlocPage">
+            <div class="newBlocPage-con1 clear">
+                <input class="input_css1" type="text" name="apersonnelName" id="apersonnelName" maxlength="32" autocomplete="off">
+                <h6><i style="color: red">*</i>员工姓名</h6>
+            </div>
+            <div class="newBlocPage-con2 clear" style="position: relative;">
+                <input class="input_css1" type="text" name="apersonnelPhone" id="apersonnelPhone" maxlength="32" autocomplete="off">
+                <h6><i style="color: red">*</i>员工号码</h6>
+                <span class="ts"> 固话格式（区号-具体号码）</span>
+            </div>
+            <div id="tijiao" class="newBlocPage-button" onclick="Sub();">确定提交</div>
+        </div>
+        <p class="tishis">
+            温馨提示：</br>
+            1.当您成功添加员工号码后，系统将会为其开通企业彩铃业务，中国移动用户5元/月/人</br>
+            2.如果您的员工还未开通彩铃业务，请先通过运营商营业厅、官网、客服等渠道自行开通彩铃业务</br>
+            3.企业彩铃面向小微企业用户提供服务，最多可添加员工数为200</br>
+            4.固话仅支持电信用户(联通、移动暂不支持)，敬请谅解！
+        </p>
+    </form>
+    <script>
+        //表单提交
+        function Sub(){
+            var apersonnelName = $("#apersonnelName").val();
+            var apersonnelPhone = $("#apersonnelPhone").val();
+            if(!isNotEmpry(apersonnelName)){
+                layer.msg('员工姓名不能为空');
+                return;
+            }
+            if(!isNotEmpry(apersonnelPhone)){
+                layer.msg('员工号码不能为空');
+                return;
+            }else{
+                var phones = apersonnelPhone.split(/[\r\n]/g);
+                var myreg = /^[1][3,4,5,7,8,9][0-9]{9}$/;
+                var areg = /^0\d{2,3}-?\d{7,8}$/;
+                if (!myreg.test(apersonnelPhone)) {
+                    if (!areg.test(apersonnelPhone)) {
+                        layer.msg("号码格式不正确");
+                        return;
+                    }
+                }
+            }  
+        }
+    </script>
+</body>
+
+</html>

@@ -31,8 +31,12 @@ public class MyWebConfig implements WebMvcConfigurer {
         registry.addViewController("/system/index").setViewName("system/home");
         // 跳转到权限设置页面
         registry.addViewController("/admin/toJurisdictionPage").setViewName("admin/system/jurisdiction/jurisdiction");
-        // 跳转到商户列表
+        // 三网 跳转到商户列表
         registry.addViewController("/threenets/threeNetsOrderList").setViewName("threenets/threenet/merchants/merchants");
+        // 疑难杂单 跳转到商户列表
+        registry.addViewController("/threenets/clcy/toMerchants").setViewName("threenets/kedas/kedasites/merchants/merchants");
+
+
     }
 
     /**

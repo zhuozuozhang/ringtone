@@ -1,10 +1,12 @@
 .dataTables_wrapper .dataTables_filter input {
     height: 30px;
 }
-#mcontent .mconl{
+
+#mcontent .mconl {
     border-right: solid #ddd 1px;
 }
-.InternetOperators>div {
+
+.InternetOperators > div {
     width: 80px;
     height: 36px;
     line-height: 36px;
@@ -18,7 +20,8 @@
     font-size: 14px;
     border-radius: 5px 5px 0 0;
 }
-#sears{
+
+#sears {
     margin-bottom: 8px;
     background-repeat: repeat-x;
     border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
@@ -34,15 +37,18 @@
     color: #ffffff !important;
     background: #17a9ff !important;
 }
-/*.dataTables_wrapper .dataTables_length, .dataTables_wrapper .dataTables_filter, .dataTables_wrapper .dataTables_info, .dataTables_wrapper .dataTables_processing, .dataTables_wrapper .dataTables_paginate {*/
-    /*color: #333;*/
-    /*width: 100% !important;*/
-    /*text-align: right;*/
-/*}*/
-.layui-icon{
+
+.dataTables_wrapper .dataTables_length, .dataTables_wrapper .dataTables_filter, .dataTables_wrapper .dataTables_info, .dataTables_wrapper .dataTables_processing, .dataTables_wrapper .dataTables_paginate {
+    color: #333;
+    width: 100% !important;
+    text-align: right;
+}
+
+.layui-icon {
     cursor: pointer;
 }
-.layui-icon img{
+
+.layui-icon img {
     width: 18px;
     margin-top: -4px;
 }

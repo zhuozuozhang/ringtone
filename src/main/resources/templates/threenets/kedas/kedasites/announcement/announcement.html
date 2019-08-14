@@ -1,0 +1,32 @@
+<!DOCTYPE html >
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<title>公告列表</title>
+<link rel="stylesheet" th:href="@{client/threenets/css/announcement.css}">
+<head th:include="threenets/kedas/kedasites/common/include::head"></head>
+<body>
+<!-- 头部 -->
+<div th:include="threenets/kedas/kedasites/common/include::nav"></div>
+<div class="layui-row contant">
+    <!-- 等待设置铃音 -->
+    <div class="layui-col-md12" id="search">
+        <div style="padding:20px 0;padding-left:0px;font-size:16px;">
+            公告标题：<input type="text" name="cgmc" id="noticeTitle">&nbsp;&nbsp;
+            开始日期：<input type="text" name="date" id="start" style="margin:0 10px">
+            结束日期：<input type="text" name="date" id="end" style="margin:0 10px">
+            <button type="button" class="layui-btn layui-btn-radius layui-btn-normal" id="sear" onclick="showTable();">搜索</button>
+        </div>
+        <table class="layui-table" id="set">
+            <thead>
+            <tr>
+                <th>#</th>
+                <th>公告标题</th>
+                <th>发布日期</th>
+            </tr>
+            </thead>
+        </table>
+    </div>
+</div>
+</body>
+<div th:include="threenets/kedas/kedasites/common/include::footer"></div>
+<script th:src="@{/client/threenets/js/kedasites/announcement.js}"></script>
+</html>

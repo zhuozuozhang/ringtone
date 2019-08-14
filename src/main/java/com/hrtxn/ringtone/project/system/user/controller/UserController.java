@@ -93,6 +93,8 @@ public class UserController {
     }
 
     /**
+     * 跳转用户详情
+     *
      * @param id
      * @param map
      * @return
@@ -229,11 +231,11 @@ public class UserController {
      */
     @PostMapping("/admin/getLowUser")
     @ResponseBody
-    public AjaxResult getLowUser(String userTel){
+    public AjaxResult getLowUser(String userTel) {
         try {
             return userService.getLowUser(userTel);
         } catch (Exception e) {
-            log.error("获取下级代理商--->"+e);
+            log.error("获取下级代理商--->" + e);
             return AjaxResult.error(e.getMessage());
         }
     }
@@ -246,11 +248,11 @@ public class UserController {
      */
     @PostMapping("/admin/getUpUser")
     @ResponseBody
-    public AjaxResult getUpUser(String userTel){
+    public AjaxResult getUpUser(String userTel) {
         try {
             return userService.getUpUser(userTel);
         } catch (Exception e) {
-            log.error("获取上级代理商--->"+e);
+            log.error("获取上级代理商--->" + e);
             return AjaxResult.error(e.getMessage());
         }
     }

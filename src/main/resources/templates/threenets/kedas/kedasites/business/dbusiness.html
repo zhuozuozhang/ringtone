@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <title>业务发展数据</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" href="../../public/layui/css/layui.css">
+    <link rel="stylesheet" href="../../public/layui/css/modules/layer/default/layer.css">
+    <link rel="stylesheet" href="../../public/css/commer.css">
+    <link rel="stylesheet" type="text/css" href="../../client/threenets/css/number_list.css">
+    <link rel="stylesheet" type="text/css" href="../../client/threenets/css/style.css">
+    <link rel="stylesheet" href="../../client/threenets/css/head.css">
+    <style>
+        .layui-laydate .layui-this {
+            background-color: #039 !important;
+            color: #fff !important;
+        }
+
+        #loading {
+            border: none;
+            background: #17a9ff !important;
+        }
+    </style>
+</head>
+
+<body>
+<!-- 头部 -->
+<div th:include="threenets/kedas/kedasites/common/include::nav"></div>
+<div class="layui-row" id="mcontent">
+    <div class="layui-col-xs1 mconl">
+        <div class="grid-demo grid-demo-bg1">
+            <div id="page-aside" class="aside">
+                <ul class="nav">
+                    <li class="management">
+                        <a class="banner" href="javascript:;">按时间统计</a>
+                    </li>
+                    <li id="apersonnel" class="selected">
+                        <a href="Dbusiness.html">按日统计</a>
+                    </li>
+                    <li id="ring">
+                        <a href="Mbusiness.html">按月统计</a>
+                    </li>
+                </ul>
+                <script type="text/javascript">
+                    function highlight() {
+                        $('#nav-ringOrderList').addClass('selected');
+                    }
+                </script>
+            </div>
+        </div>
+    </div>
+    <div class="layui-col-xs2 mconl">
+        <div class="grid-demo">
+            <div style="width: 99%; height: 1000px; border: solid #ddd 1px; overflow: auto; float: left;">
+                <div class="title-bar btn-group"></div>
+                <input type="text" name="enterprisename" id="enterprisename" style="width:100px;margin:10px 5px;">
+                <input type="button" value="搜索" onclick="search();">
+                <ul id="treeDemo" class="ztree">
+                    <li id="treeDemo_1" class="level0" tabindex="0" hidefocus="true" treenode="">
+                        <span id="treeDemo_1_switch" title="" class="button level0 switch roots_docu"
+                              treenode_switch=""></span>
+                        <a id="treeDemo_1_a" class="level0" treenode_a="" onclick="" target="_blank" style=""
+                           title="全部汇总">
+                            <span id="treeDemo_1_ico" title="" treenode_ico="" class="button ico_docu" style=""></span>
+                            <span id="treeDemo_1_span">全部汇总</span>
+                        </a>
+                    </li>
+                    <li id="treeDemo_6" class="level0" tabindex="0" hidefocus="true" treenode="">
+                        <span id="treeDemo_6_switch" title="" class="button level0 switch center_docu"
+                              treenode_switch=""></span>
+                        <a id="treeDemo_6_a" class="level0" treenode_a="" onclick="" target="_blank" style=""
+                           title="万通彩铃001">
+                            <span id="treeDemo_6_ico" title="" treenode_ico="" class="button ico_docu" style=""></span>
+                            <span id="treeDemo_6_span">万通彩铃001</span>
+                        </a>
+                    </li>
+                    <li id="treeDemo_24" class="level0" tabindex="0" hidefocus="true" treenode="">
+                        <span id="treeDemo_24_switch" title="" class="button level0 switch bottom_docu"
+                              treenode_switch=""></span>
+                        <a id="treeDemo_24_a" class="level0" treenode_a="" onclick="" target="_blank" style=""
+                           title="猫七001">
+                            <span id="treeDemo_24_ico" title="" treenode_ico="" class="button ico_docu" style=""></span>
+                            <span id="treeDemo_24_span">猫七001</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="layui-col-xs9 mconr">
+        <div class="grid-demo">
+            <div class="title-bar clearfix">
+                <h1 class="pull-left">
+                    <input type="hidden" value="" id="auserid">
+                    号码类型：
+                    <select name="phoneType" id="phoneType" style="width: 150px;height: 28px;">
+                        <option value="">全部</option>
+                        <option value="1">移动</option>
+                        <option value="2">电信</option>
+                        <option value="3">联通</option>
+                    </select>
+                    日发展量分布：
+                    <span class="DatePicker_Icon_Wrapper"
+                          style="display: inline-block; position: relative; float: none; top: auto; right: auto; bottom: auto; left: auto;">
+                            <input type="text" name="month" id="month" value="2019-06" class="datepicker input-small"
+                                   readonly="readonly" style="height: 24px;margin-top: 7px;text-align: center;">
+                        </span>
+                    <button type="button" id="loading" onclick="loading()" class="btn btn-primary">查询</button>
+                </h1>
+            </div>
+            <div class="layui-card">
+                <div class="layui-card-body">
+                    <div id='main' style='width:800px;height:400px;margin-left:50px;'></div>
+                </div>
+            </div>
+            <div id="tlist">
+                <p>详细列表</p>
+                <table class="layui-table" id="set">
+                    <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>日期</th>
+                        <th>新增用户数(已包月)</th>
+                        <th>退订用户数</th>
+                        <th>累计用户数(已包月)</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td>2019-06-27</td>
+                        <td>1</td>
+                        <td>0</td>
+                        <td>80</td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>2019-06-26</td>
+                        <td>4</td>
+                        <td>0</td>
+                        <td>79</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+<script src="../../public/js/jquery-2.1.4.min.js"></script>
+<script src="../../public/layui/layui.js"></script>
+<script src="../../public/layui/lay/modules/layer.js"></script>
+<script type="text/javascript" src="../../public/js/echarts.min.js"></script>
+<script>
+    $(".index6").addClass("active");
+    //年月选择器
+    layui.use('laydate', function () {
+        var laydate = layui.laydate;
+        laydate.render({
+            elem: '#month',
+            type: 'month'
+        });
+    });
+    //基于准备好的DOM，初始化echarts实例
+    var myChart = echarts.init(document.getElementById('main'));
+    //指定图表的配置项和数据
+    var option = {
+        title: {
+            text: '每日发展用户情况'
+        },
+        //提示框组件
+        tooltip: {
+            //坐标轴触发，主要用于柱状图，折线图等
+            trigger: 'axis'
+        },
+        //图例
+        legend: {
+            data: ['每日发展用户情况']
+        },
+        //横轴
+        xAxis: {
+            data: ["2019-06-09", "2019-06-11", "2019-06-13", "2019-06-15", "2019-06-17", "2019-06-19", "2019-06-20", "2019-06-21", "2019-06-22", "2019-06-23"]
+        },
+        //纵轴
+        yAxis: {},
+        //系列列表。每个系列通过type决定自己的图表类型
+        series: [{
+            name: '每日发展用户情况',
+            //折线图
+            type: 'line',
+            data: [1, 3, 5, 2, 6, 8, 1, 5, 9, 45],
+            symbol: 'circle',//折线点设置为实心点
+            symbolSize: 4,   //折线点的大小
+            itemStyle: {
+                normal: {
+                    color: "#17a9ff",//折线点的颜色
+                    lineStyle: {
+                        color: "#17a9ff"//折线的颜色
+                    }
+                }
+            },
+        }]
+    };
+    //使用刚指定的配置项和数据显示图表
+    myChart.setOption(option);
+</script>
+</html>

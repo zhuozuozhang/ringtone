@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<title>商户列表-号码管理</title>
+<link rel="stylesheet" th:href="@{/client/threenets/css/number_list.css}">
+<head th:include="threenets/kedas/kedasites/common/include::head"></head>
+<style>
+    .dataTables_wrapper .dataTables_filter input {
+        height: 30px;
+    }
+
+    #mcontent .mconl {
+        border-right: solid #ddd 1px;
+    }
+</style>
+<body>
+<!-- 头部 -->
+<div th:include="threenets/kedas/kedasites/common/include::nav"></div>
+<div class="layui-row" id="mcontent">
+    <div class="layui-col-xs1 mconl">
+        <div class="grid-demo grid-demo-bg1">
+            <div id="page-aside" class="aside">
+                <ul class="nav">
+                    <li class="management">
+                        <a class="banner" href="javascript:;">商户管理</a>
+                    </li>
+                    <li id="apersonnel" class="selected">
+                        <a th:href="@{'/threenets/clcy/toNumberList/'+${id}+'/'+${name}}">号码管理</a>
+                    </li>
+                    <li id="ring">
+                        <a th:href="@{'/threenets/clcy/toRingList/'+${id}+'/'+${name}}">铃音管理</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="layui-col-xs11 mconr">
+        <div class="grid-demo">
+            <div class="layui-row contant" style="width:95%;">
+                <!-- 等待设置铃音 -->
+                <div class="layui-col-md12" id="search">
+                    <div class="title-bar clearfix">
+                        <h1 class="pull-cnter">
+                            您正在以 <span style="color: red;" th:text="${name}"></span> 的管理员身份进行操作。
+                            <input type="hidden" id="orderId" th:value="${id}">
+                        </h1>
+                    </div>
+                    <div style="padding:10px 0 0 10px;font-size:16px;">
+                        操作：
+                        <button type="button" class="layui-btn layui-btn-radius layui-btn-normal" id="sear"
+                                onclick="AddUser();">添加号码
+                        </button>
+                    </div>
+                    <table class="layui-table" id="set" style="margin-left:10px;">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>员工姓名</th>
+                                <th>成员号码</th>
+                                <th>省份</th>
+                                <th>加入集团时间</th>
+                                <th>审核状态</th>
+                                <th>当前铃音</th>
+                                <th>彩铃功能</th>
+                                <th>
+                                    <select name="" class="operator" id="isMonthly" onchange="showTable();">
+                                        <option value="" selected="">企业彩铃</option>
+                                        <option value="2">已包月</option>
+                                        <option value="1">未包月</option>
+                                    </select>
+                                </th>
+                                <th>备注</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+<div th:include="threenets/kedas/kedasites/common/include::footer"></div>
+<script>
+    $(".index2").addClass("active");
+    //分页
+    $(document).ready(function () {
+        showTable();
+    });
+
+    function showTable() {
+        var params = {
+            "orderId": $('#orderId').val(),
+            "isMonthly":$("#isMonthly").val()
+        }
+        var columns = [
+            {"data": "id"},
+            {"data": "linkMan"},
+            {"data": "linkTel"},
+            {"data": "province"},
+            {"data": "createTime"},
+            {"data": "status"},
+            {"data": "ringName"},
+            {"data": "isRingtoneUser"},
+            {"data": "isMonthly"},
+            {"data": "remark"}
+        ];
+        var columnDefs = [{
+            targets: [1],
+            render: function (data, type, row, meta) {
+                return "<div style='text-overflow:ellipsis;overflow:hidden;white-space:nowrap;width:150px;' title='" + data + "'>" + data + "</div>";
+            }
+        }, {
+            targets: [6],
+            render: function (data, type, row, meta) {
+                data = isNotEmpty(data) ? data : "";
+                return "<div style='text-overflow:ellipsis;overflow:hidden;white-space:nowrap;width:150px;' title='" + data + "'>" + data + "</div>";
+            }
+        }, {
+            targets: [7],
+            render: function (data, type, row, meta) {
+                return data ? '是' : '否';
+            }
+        }, {
+            targets: [8],
+            render: function (data, type, row, meta) {
+                var status = '';
+                if (data == 1) {
+                    status = '未包月';
+                } else if (data == 2) {
+                    status = '已包月';
+                } else {
+                    status = '已退订';
+                }
+                return status;
+            }
+        },  {
+            targets: [9],
+            render: function (data, type, row, meta) {
+                data = isNotEmpty(data) ? data : "";
+                return "<div style='text-overflow:ellipsis;overflow:hidden;white-space:nowrap;width:150px;' title='" + data + "'>" + data + "</div>";
+            }
+        }, {
+            targets: [10],
+            render: function (data, type, row, meta) {
+                var id = row.id;
+                var isMonthly = row.isMonthly;
+                var setRing = "<a href='/threenets/toUserSetingRing/" + id + "/" + $("#companyName").val() + "/" + $("#parentOrderId").val() + "'><i class='layui-icon layui-icon-set' title='设置铃音'></i></a>";
+                var refresh = "<i onclick='getPhoneInfo(2," + id + ")' class='layui-icon layui-icon-refresh-3' title='刷新'></i>";
+                var del = "<i class='layui-icon layui-icon-delete' title='删除' onclick='deleteTel(" + id + ")'></i>";
+                return refresh + (isMonthly == 2 ? setRing : '') + del;
+            }
+        }];
+        page("#set", 1, params, "/threenets/clcy/getKedaChidList", columns, columnDefs);
+    }
+
+    //添加账号
+    function AddUser() {
+        layer.open({
+            type: 2,
+            title: '添加号码',
+            area: ['650px', '650px'],
+            content: 'Addnumber.html'
+        });
+    }
+
+    //设置铃音
+    function RingSet() {
+        var str = '';
+        str += '<div class="layui-col-md12" id="search">';
+        str += '<div class="setting_title">';
+        str += '成员姓名：<span id="settingRing_apersonnelName">18315065540</span> ';
+        str += '| 成员电话：<span id="settingRing_apersonnelPhone">18315065540</span>';
+        str += '</div>';
+        str += '<table class="layui-table" id="set" style="width:700px;margin: 0 auto;">';
+        str += '<thead>';
+        str += '<tr>';
+        str += '<th>#</th>';
+        str += '<th><input type="checkbox" id="allCheck"></th>';
+        str += '<th>铃音名称</th>';
+        str += '<th>创建时间</th>';
+        str += '<th>在线试听</th>';
+        str += '</tr>';
+        str += '</thead>';
+        str += '<tbody>';
+        str += '<tr>';
+        str += '<td>1</td>';
+        str += '<td><input type="checkbox" name="check"></td>';
+        str += '<td>3d环保墙体.mp3</td>';
+        str += '<td>2019-06-26 13:40:10</td>';
+        str += '<td>';
+        str += '<span onclick="openPlayer();">试听</span>';
+        str += '</td>';
+        str += '</tr>';
+        str += '<tr>';
+        str += '<td>2</td>';
+        str += '<td><input type="checkbox" name="check"></td>';
+        str += '<td>3d环保墙体.mp3</td>';
+        str += '<td>2019-06-26 13:40:10</td>';
+        str += '<td>';
+        str += '<span onclick="openPlayer();">试听</span>';
+        str += '</td>';
+        str += '</tr>';
+        str += '</tbody>';
+        str += '</table>';
+        str += '</div>';
+        layer.open({
+            title: '设置铃音',
+            area: ['750px', '500px'],
+            content: str
+        });
+    }
+
+    //在线试听
+    function openPlayer() {
+        layer.open({
+            type: 1,
+            title: '在线试听',
+            area: ['800px', '560px'],
+            content: '<video id="ovideo" autoplay loop src="http://120.27.226.14/upload/1564148210972/4c0f43c9068245d2a93504dfa105e849.mp3" controls="controls " allowfullscreen="true" quality="high" width="800px" height="514px" align="middle" allowscriptaccess="always" flashvars="isAutoPlay=true" type="application/x-shockwave-flash"></video>'
+        });
+    }
+</script>
+</html>
