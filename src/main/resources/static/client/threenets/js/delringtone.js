@@ -9,8 +9,6 @@ function findRingInfoByMsisdn() {
         }, function (res) {
             if (res.code == 200 && res.data) {
                 var data = res.data;
-                // layer.msg('该手机号的铃音信息已查到！', {icon: 6, time: 3000});
-                // $("#set").DataTable().ajax.reload(msisdn, true);
                 if(data != null){
                     var ringSettingListByMsisdn = $.parseJSON(data.ringSettingListByMsisdn);
                     var ringListByMsisdn = $.parseJSON(data.ringListByMsisdn);

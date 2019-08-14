@@ -363,7 +363,7 @@ public class ThreeNetsChildOrderController {
      */
     @PutMapping("/threenets/deleteSilentMemberByMsisdn/{msisdn}")
     @ResponseBody
-    @Log(title = "联通工具箱-->用户信息-->删除某条用户信息",businessType = BusinessType.DELETE,operatorLogType = OperatorLogType.THREENETS)
+    @Log(title = "删除联通某条用户信息",businessType = BusinessType.DELETE,operatorLogType = OperatorLogType.THREENETS)
     public AjaxResult deleteSilentMemberByMsisdn(@PathVariable String msisdn) {
         try {
             return threeNetsChildOrderService.deleteSilentMemberByMsisdn(msisdn);
@@ -372,5 +372,4 @@ public class ThreeNetsChildOrderController {
             return AjaxResult.error(e.getMessage());
         }
     }
-
 }

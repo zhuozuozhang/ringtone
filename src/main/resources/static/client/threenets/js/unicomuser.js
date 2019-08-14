@@ -18,7 +18,7 @@ function getUnicomUserInfoByPhoneNumber() {
                     }
                     var silentMemberByMsisdnData = silentMemberByMsisdn.data.data;
                     var systemLogListByMsisdnData = systemLogListByMsisdn.data.data;
-
+                    //用户操作记录
                     if(silentMemberByMsisdnData != null && silentMemberByMsisdnData.length > 0){
                         for(var i = 0; i < silentMemberByMsisdnData.length; i++ ){
                             var str = "";
@@ -53,7 +53,7 @@ function getUnicomUserInfoByPhoneNumber() {
                             layer.msg("抱歉,系统没有查询到用户当前信息",{icon:5, time:3000})
                         }
                     }
-
+                    //用户当前信息
                     if(systemLogListByMsisdnData != null && systemLogListByMsisdnData.length > 0){
                         var str = "";
                         for(var i = 0; i < systemLogListByMsisdnData.length; i++ ){
