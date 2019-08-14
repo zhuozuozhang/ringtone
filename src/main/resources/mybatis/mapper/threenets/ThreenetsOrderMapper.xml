@@ -189,4 +189,21 @@
         where id = #{id,jdbcType=INTEGER}
     </update>
 
+
+
+    <update id="updateMessageById" parameterType="java.lang.Integer">
+        update tb_threenets_order
+        <set>
+            message = 1
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+
+    <update id="updateMessageIsNotNullById" parameterType="java.lang.Integer">
+        update tb_threenets_order
+        <set>
+            message = 2
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
 </mapper>

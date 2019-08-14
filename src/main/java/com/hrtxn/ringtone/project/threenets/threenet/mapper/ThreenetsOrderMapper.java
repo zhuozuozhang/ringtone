@@ -67,4 +67,12 @@ public interface ThreenetsOrderMapper {
      */
     List<ThreenetsOrder> isRepetitionByName(String name);
 
+    /**
+     * 修改message
+     * @param id
+     * @return
+     */
+    int updateMessageById(Integer id);
+
+    int updateMessageIsNotNullById(Integer id);
 }
