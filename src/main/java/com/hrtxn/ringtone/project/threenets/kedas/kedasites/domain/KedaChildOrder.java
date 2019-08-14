@@ -37,11 +37,13 @@ public class KedaChildOrder implements Serializable {
     // 铃音名称
     private String ringName;
     // 是否包月（1.未包月/2.已包月/3.已退订）
-    private Integer isMonthiy;
+    private Integer isMonthly;
     // 是否开通彩铃（1.未开通/2.已开通/3.开通失败）
     private Integer isRingtoneUser;
     // 用户ID
     private Integer userId;
     // 备注
     private String remark;
+    // 父级订单ID
+    private Integer orderId;
 }

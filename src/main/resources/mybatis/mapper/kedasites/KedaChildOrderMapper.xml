@@ -1,46 +1,98 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.hrtxn.ringtone.project.threenets.kedas.kedasites.mapper.KedaChildOrderMapper" >
-  <resultMap id="BaseResultMap" type="com.hrtxn.ringtone.project.threenets.kedas.kedasites.domain.KedaChildOrder" >
-    <id column="id" property="id" jdbcType="INTEGER" />
-    <result column="company_name" property="companyName" jdbcType="VARCHAR" />
-    <result column="link_man" property="linkMan" jdbcType="VARCHAR" />
-    <result column="link_tel" property="linkTel" jdbcType="VARCHAR" />
-    <result column="operate" property="operate" jdbcType="INTEGER" />
-    <result column="province" property="province" jdbcType="VARCHAR" />
-    <result column="city" property="city" jdbcType="VARCHAR" />
-    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
-    <result column="status" property="status" jdbcType="VARCHAR" />
-    <result column="operate_id" property="operateId" jdbcType="VARCHAR" />
-    <result column="ring_id" property="ringId" jdbcType="INTEGER" />
-    <result column="ring_name" property="ringName" jdbcType="VARCHAR" />
-    <result column="is_monthiy" property="isMonthiy" jdbcType="INTEGER" />
-    <result column="is_ringtone_user" property="isRingtoneUser" jdbcType="INTEGER" />
-    <result column="user_id" property="userId" jdbcType="INTEGER" />
-  </resultMap>
-  <resultMap id="ResultMapWithBLOBs" type="com.hrtxn.ringtone.project.threenets.kedas.kedasites.domain.KedaChildOrder" extends="BaseResultMap" >
-    <result column="remark" property="remark" jdbcType="LONGVARCHAR" />
-  </resultMap>
-  <sql id="Base_Column_List" >
-    id, company_name, link_man, link_tel, operate, province, city, create_time, status, 
-    operate_id, ring_id, ring_name, is_monthiy, is_ringtone_user, user_id,remark
-  </sql>
-  <sql id="Blob_Column_List" >
+<mapper namespace="com.hrtxn.ringtone.project.threenets.kedas.kedasites.mapper.KedaChildOrderMapper">
+    <resultMap id="BaseResultMap" type="com.hrtxn.ringtone.project.threenets.kedas.kedasites.domain.KedaChildOrder">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="company_name" property="companyName" jdbcType="VARCHAR"/>
+        <result column="link_man" property="linkMan" jdbcType="VARCHAR"/>
+        <result column="link_tel" property="linkTel" jdbcType="VARCHAR"/>
+        <result column="operate" property="operate" jdbcType="INTEGER"/>
+        <result column="province" property="province" jdbcType="VARCHAR"/>
+        <result column="city" property="city" jdbcType="VARCHAR"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="status" property="status" jdbcType="VARCHAR"/>
+        <result column="operate_id" property="operateId" jdbcType="VARCHAR"/>
+        <result column="ring_id" property="ringId" jdbcType="INTEGER"/>
+        <result column="ring_name" property="ringName" jdbcType="VARCHAR"/>
+        <result column="is_monthly" property="isMonthly" jdbcType="INTEGER"/>
+        <result column="is_ringtone_user" property="isRingtoneUser" jdbcType="INTEGER"/>
+        <result column="user_id" property="userId" jdbcType="INTEGER"/>
+        <result column="remark" property="remark" jdbcType="LONGVARCHAR"/>
+        <result column="order_id" property="orderId" jdbcType="INTEGER"/>
+    </resultMap>
 
-  </sql>
-  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Integer" >
-    select 
-    <include refid="Base_Column_List" />
-    ,
-    <include refid="Blob_Column_List" />
-    from tb_keda_child_order
-    where id = #{id,jdbcType=INTEGER}
-  </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    <sql id="Base_Column_List">
+        id, company_name, link_man, link_tel, operate, province, city, create_time, status,
+        operate_id, ring_id, ring_name, is_monthly, is_ringtone_user, user_id,remark,order_id
+    </sql>
+
+    <!-- 获取近5日信息-->
+    <select id="getFiveData" resultType="com.hrtxn.ringtone.project.threenets.threenet.domain.PlotBarPhone">
+        SELECT
+            DATE_FORMAT(create_time, '%Y-%m-%d') AS dateTimes,
+            COUNT(*) AS addUser
+        FROM
+            tb_keda_child_order
+        WHERE
+            user_id = #{id}
+            AND is_monthly = 2
+        GROUP BY DATE_FORMAT(create_time, '%Y-%m-%d') DESC
+        LIMIT 0,5;
+    </select>
+
+    <!-- 获取总数 -->
+    <select id="getCount" resultType="java.lang.Integer" parameterType="KedaChildOrder">
+        SELECT COUNT(*) FROM tb_keda_child_order
+        WHERE 1=1
+        <include refid="parameters"/>
+    </select>
+    <!--待办任务 等待铃音设置-->
+    <select id="getKeDaChildOrderBacklogList" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        from tb_keda_child_order
+        where 1 = 1
+        <include refid="parameters"/>
+        order by create_time desc
+        <include refid="page"/>
+    </select>
+
+    <!--条件-->
+    <sql id="parameters">
+        <if test="param != null and param.userId != null">
+            AND user_id = #{param.userId}
+        </if>
+        <if test="param != null and param.orderId != null">
+            AND order_id = #{param.orderId}
+        </if>
+        <if test="param != null and param.isMonthly != null">
+            AND is_monthly = #{param.isMonthly}
+        </if>
+        <if test="param != null and param.timeType != null and param.timeType == 1">
+            AND DATEDIFF(NOW(),create_time) &lt;= 1
+        </if>
+        <if test="param != null and param.timeType != null and param.timeType == 2">
+            AND DATEDIFF(NOW(),create_time) &lt;= 7
+        </if>
+        <if test="param != null and param.timeType != null and param.timeType == 3">
+            AND DATEDIFF(NOW(),create_time) &lt;= 15
+        </if>
+        <if test="param != null and param.timeType != null and param.timeType == 4">
+            AND DATEDIFF(NOW(),create_time) &lt;= 30
+        </if>
+    </sql>
+    <!--分页-->
+    <sql id="page">
+        <if test="page != null and page.page != null and page.pagesize != null">
+            LIMIT #{page.page},#{page.pagesize}
+        </if>
+    </sql>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from tb_keda_child_order
     where id = #{id,jdbcType=INTEGER}
   </delete>
-  <insert id="insert" parameterType="com.hrtxn.ringtone.project.threenets.kedas.kedasites.domain.KedaChildOrder" >
+    <insert id="insert" parameterType="com.hrtxn.ringtone.project.threenets.kedas.kedasites.domain.KedaChildOrder">
     insert into tb_keda_child_order (id, company_name, link_man, 
       link_tel, operate, province, 
       city, create_time, status, 
@@ -54,161 +106,164 @@
       #{isMonthiy,jdbcType=INTEGER}, #{isRingtoneUser,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, 
       #{remark,jdbcType=LONGVARCHAR})
   </insert>
-  <insert id="insertSelective" parameterType="com.hrtxn.ringtone.project.threenets.kedas.kedasites.domain.KedaChildOrder" >
-    insert into tb_keda_child_order
-    <trim prefix="(" suffix=")" suffixOverrides="," >
-      <if test="id != null" >
-        id,
-      </if>
-      <if test="companyName != null" >
-        company_name,
-      </if>
-      <if test="linkMan != null" >
-        link_man,
-      </if>
-      <if test="linkTel != null" >
-        link_tel,
-      </if>
-      <if test="operate != null" >
-        operate,
-      </if>
-      <if test="province != null" >
-        province,
-      </if>
-      <if test="city != null" >
-        city,
-      </if>
-      <if test="createTime != null" >
-        create_time,
-      </if>
-      <if test="status != null" >
-        status,
-      </if>
-      <if test="operateId != null" >
-        operate_id,
-      </if>
-      <if test="ringId != null" >
-        ring_id,
-      </if>
-      <if test="ringName != null" >
-        ring_name,
-      </if>
-      <if test="isMonthiy != null" >
-        is_monthiy,
-      </if>
-      <if test="isRingtoneUser != null" >
-        is_ringtone_user,
-      </if>
-      <if test="userId != null" >
-        user_id,
-      </if>
-      <if test="remark != null" >
-        remark,
-      </if>
-    </trim>
-    <trim prefix="values (" suffix=")" suffixOverrides="," >
-      <if test="id != null" >
-        #{id,jdbcType=INTEGER},
-      </if>
-      <if test="companyName != null" >
-        #{companyName,jdbcType=VARCHAR},
-      </if>
-      <if test="linkMan != null" >
-        #{linkMan,jdbcType=VARCHAR},
-      </if>
-      <if test="linkTel != null" >
-        #{linkTel,jdbcType=VARCHAR},
-      </if>
-      <if test="operate != null" >
-        #{operate,jdbcType=INTEGER},
-      </if>
-      <if test="province != null" >
-        #{province,jdbcType=VARCHAR},
-      </if>
-      <if test="city != null" >
-        #{city,jdbcType=VARCHAR},
-      </if>
-      <if test="createTime != null" >
-        #{createTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="status != null" >
-        #{status,jdbcType=VARCHAR},
-      </if>
-      <if test="operateId != null" >
-        #{operateId,jdbcType=VARCHAR},
-      </if>
-      <if test="ringId != null" >
-        #{ringId,jdbcType=INTEGER},
-      </if>
-      <if test="ringName != null" >
-        #{ringName,jdbcType=VARCHAR},
-      </if>
-      <if test="isMonthiy != null" >
-        #{isMonthiy,jdbcType=INTEGER},
-      </if>
-      <if test="isRingtoneUser != null" >
-        #{isRingtoneUser,jdbcType=INTEGER},
-      </if>
-      <if test="userId != null" >
-        #{userId,jdbcType=INTEGER},
-      </if>
-      <if test="remark != null" >
-        #{remark,jdbcType=LONGVARCHAR},
-      </if>
-    </trim>
-  </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="com.hrtxn.ringtone.project.threenets.kedas.kedasites.domain.KedaChildOrder" >
-    update tb_keda_child_order
-    <set >
-      <if test="companyName != null" >
-        company_name = #{companyName,jdbcType=VARCHAR},
-      </if>
-      <if test="linkMan != null" >
-        link_man = #{linkMan,jdbcType=VARCHAR},
-      </if>
-      <if test="linkTel != null" >
-        link_tel = #{linkTel,jdbcType=VARCHAR},
-      </if>
-      <if test="operate != null" >
-        operate = #{operate,jdbcType=INTEGER},
-      </if>
-      <if test="province != null" >
-        province = #{province,jdbcType=VARCHAR},
-      </if>
-      <if test="city != null" >
-        city = #{city,jdbcType=VARCHAR},
-      </if>
-      <if test="createTime != null" >
-        create_time = #{createTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="status != null" >
-        status = #{status,jdbcType=VARCHAR},
-      </if>
-      <if test="operateId != null" >
-        operate_id = #{operateId,jdbcType=VARCHAR},
-      </if>
-      <if test="ringId != null" >
-        ring_id = #{ringId,jdbcType=INTEGER},
-      </if>
-      <if test="ringName != null" >
-        ring_name = #{ringName,jdbcType=VARCHAR},
-      </if>
-      <if test="isMonthiy != null" >
-        is_monthiy = #{isMonthiy,jdbcType=INTEGER},
-      </if>
-      <if test="isRingtoneUser != null" >
-        is_ringtone_user = #{isRingtoneUser,jdbcType=INTEGER},
-      </if>
-      <if test="userId != null" >
-        user_id = #{userId,jdbcType=INTEGER},
-      </if>
-      <if test="remark != null" >
-        remark = #{remark,jdbcType=LONGVARCHAR},
-      </if>
-    </set>
-    where id = #{id,jdbcType=INTEGER}
-  </update>
-  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.hrtxn.ringtone.project.threenets.kedas.kedasites.domain.KedaChildOrder" >
+    <insert id="insertSelective"
+            parameterType="com.hrtxn.ringtone.project.threenets.kedas.kedasites.domain.KedaChildOrder">
+        insert into tb_keda_child_order
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="companyName != null">
+                company_name,
+            </if>
+            <if test="linkMan != null">
+                link_man,
+            </if>
+            <if test="linkTel != null">
+                link_tel,
+            </if>
+            <if test="operate != null">
+                operate,
+            </if>
+            <if test="province != null">
+                province,
+            </if>
+            <if test="city != null">
+                city,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+            <if test="status != null">
+                status,
+            </if>
+            <if test="operateId != null">
+                operate_id,
+            </if>
+            <if test="ringId != null">
+                ring_id,
+            </if>
+            <if test="ringName != null">
+                ring_name,
+            </if>
+            <if test="isMonthiy != null">
+                is_monthiy,
+            </if>
+            <if test="isRingtoneUser != null">
+                is_ringtone_user,
+            </if>
+            <if test="userId != null">
+                user_id,
+            </if>
+            <if test="remark != null">
+                remark,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=INTEGER},
+            </if>
+            <if test="companyName != null">
+                #{companyName,jdbcType=VARCHAR},
+            </if>
+            <if test="linkMan != null">
+                #{linkMan,jdbcType=VARCHAR},
+            </if>
+            <if test="linkTel != null">
+                #{linkTel,jdbcType=VARCHAR},
+            </if>
+            <if test="operate != null">
+                #{operate,jdbcType=INTEGER},
+            </if>
+            <if test="province != null">
+                #{province,jdbcType=VARCHAR},
+            </if>
+            <if test="city != null">
+                #{city,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="status != null">
+                #{status,jdbcType=VARCHAR},
+            </if>
+            <if test="operateId != null">
+                #{operateId,jdbcType=VARCHAR},
+            </if>
+            <if test="ringId != null">
+                #{ringId,jdbcType=INTEGER},
+            </if>
+            <if test="ringName != null">
+                #{ringName,jdbcType=VARCHAR},
+            </if>
+            <if test="isMonthiy != null">
+                #{isMonthiy,jdbcType=INTEGER},
+            </if>
+            <if test="isRingtoneUser != null">
+                #{isRingtoneUser,jdbcType=INTEGER},
+            </if>
+            <if test="userId != null">
+                #{userId,jdbcType=INTEGER},
+            </if>
+            <if test="remark != null">
+                #{remark,jdbcType=LONGVARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective"
+            parameterType="com.hrtxn.ringtone.project.threenets.kedas.kedasites.domain.KedaChildOrder">
+        update tb_keda_child_order
+        <set>
+            <if test="companyName != null">
+                company_name = #{companyName,jdbcType=VARCHAR},
+            </if>
+            <if test="linkMan != null">
+                link_man = #{linkMan,jdbcType=VARCHAR},
+            </if>
+            <if test="linkTel != null">
+                link_tel = #{linkTel,jdbcType=VARCHAR},
+            </if>
+            <if test="operate != null">
+                operate = #{operate,jdbcType=INTEGER},
+            </if>
+            <if test="province != null">
+                province = #{province,jdbcType=VARCHAR},
+            </if>
+            <if test="city != null">
+                city = #{city,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="status != null">
+                status = #{status,jdbcType=VARCHAR},
+            </if>
+            <if test="operateId != null">
+                operate_id = #{operateId,jdbcType=VARCHAR},
+            </if>
+            <if test="ringId != null">
+                ring_id = #{ringId,jdbcType=INTEGER},
+            </if>
+            <if test="ringName != null">
+                ring_name = #{ringName,jdbcType=VARCHAR},
+            </if>
+            <if test="isMonthiy != null">
+                is_monthiy = #{isMonthiy,jdbcType=INTEGER},
+            </if>
+            <if test="isRingtoneUser != null">
+                is_ringtone_user = #{isRingtoneUser,jdbcType=INTEGER},
+            </if>
+            <if test="userId != null">
+                user_id = #{userId,jdbcType=INTEGER},
+            </if>
+            <if test="remark != null">
+                remark = #{remark,jdbcType=LONGVARCHAR},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+    <update id="updateByPrimaryKeyWithBLOBs"
+            parameterType="com.hrtxn.ringtone.project.threenets.kedas.kedasites.domain.KedaChildOrder">
     update tb_keda_child_order
     set company_name = #{companyName,jdbcType=VARCHAR},
       link_man = #{linkMan,jdbcType=VARCHAR},
@@ -227,7 +282,8 @@
       remark = #{remark,jdbcType=LONGVARCHAR}
     where id = #{id,jdbcType=INTEGER}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.hrtxn.ringtone.project.threenets.kedas.kedasites.domain.KedaChildOrder" >
+    <update id="updateByPrimaryKey"
+            parameterType="com.hrtxn.ringtone.project.threenets.kedas.kedasites.domain.KedaChildOrder">
     update tb_keda_child_order
     set company_name = #{companyName,jdbcType=VARCHAR},
       link_man = #{linkMan,jdbcType=VARCHAR},

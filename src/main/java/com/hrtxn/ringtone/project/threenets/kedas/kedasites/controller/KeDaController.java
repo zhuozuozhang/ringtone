@@ -1,9 +1,12 @@
 package com.hrtxn.ringtone.project.threenets.kedas.kedasites.controller;
 
 import com.hrtxn.ringtone.common.constant.AjaxResult;
+import com.hrtxn.ringtone.common.domain.BaseRequest;
 import com.hrtxn.ringtone.common.domain.Page;
 import com.hrtxn.ringtone.project.system.notice.domain.Notice;
 import com.hrtxn.ringtone.project.system.notice.service.NoticeService;
+import com.hrtxn.ringtone.project.threenets.kedas.kedasites.service.KedaChildOrderService;
+import com.hrtxn.ringtone.project.threenets.threenet.domain.PlotBarPhone;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -27,6 +30,8 @@ public class KeDaController {
 
     @Autowired
     private NoticeService noticeService;
+    @Autowired
+    private KedaChildOrderService kedaChildOrderService;
 
     /**
      * 跳转科大待办任务
@@ -40,12 +45,25 @@ public class KeDaController {
             List<Notice> noticeListByModul = noticeService.findNoticeListByModul("8");
             map.put("noticeList", noticeListByModul);
             // 获取近5日信息
-//            List<PlotBarPhone> plotBarPhoneList = threeNetsChildOrderService.getFiveData();
-//            map.put("plotBarPhoneList", plotBarPhoneList);
+            List<PlotBarPhone> plotBarPhoneList = kedaChildOrderService.getFiveData();
+            map.put("plotBarPhoneList", plotBarPhoneList);
         } catch (Exception e) {
             log.error("疑难杂单获取公告列表--->" + e);
         }
         return "threenets/kedas/kedasites/index/index";
+    }
+
+    /**
+     * 待办任务 等待铃音设置
+     *
+     * @param page
+     * @param baseRequest
+     * @return
+     */
+    @ResponseBody
+    @PostMapping("getKeDaChildOrderBacklogList")
+    public AjaxResult getKeDaChildOrderBacklogList(Page page, BaseRequest baseRequest) {
+        return kedaChildOrderService.getKeDaChildOrderBacklogList(page, baseRequest);
     }
 
     /**
@@ -80,4 +98,6 @@ public class KeDaController {
     public String toBusiness() {
         return "threenets/kedas/kedasites/business/dbusiness";
     }
+
+
 }

@@ -30,4 +30,14 @@ public class KedaOrder implements Serializable {
     private String status;
     // 用户ID
     private Integer userId;
+
+    /*********************************大大的分割线************************************/
+    // 用户名
+    private String userName;
+    //----子订单数
+    private Integer childOrderQuantity;
+    //----包月子订单数
+    private Integer childOrderQuantityByMonthly;
+    // 总数/包月
+    private String peopleNum;
 }
