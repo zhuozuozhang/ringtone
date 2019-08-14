@@ -1,0 +1,70 @@
+<!DOCTYPE>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>企业彩铃-登录</title>
+<link rel="stylesheet" type="text/css" href="../public/css/common.css">
+<link rel="stylesheet" type="text/css" href="../client/telcertification/css/login.css">
+<script type="text/javascript" src="../public/js/jquery-3.4.1.js"></script>
+</head>
+
+<body>
+<div class="head"> <img src="../client/telcertification/images/top.png"> </div>
+<div class="wbk">
+  <div class="wbk_z">
+    <div class="imgbk"><img src="../client/telcertification/images/login_qycl.png"></div>
+    <div class="imgbk"><img src="../client/telcertification/images/login_dhrz.png"></div>
+    <div class="imgbk"><img src="../client/telcertification/images/login_400.png"></div>
+    <div class="imgbk"><img src="../client/telcertification/images/login_qyx.png"></div>
+    <div class="imgbk"><img src="../client/telcertification/images/login_wzjs.png"></div>
+    <div class="imgbk"><img src="../client/telcertification/images/login_xcx.png"></div>
+    <div class="imgbk"><img src="../client/telcertification/images/login_ly.png"></div>
+    <div class="imgbk"><img src="../client/telcertification/images/login_llk.png"></div>
+    <div class="imgbk"><img src="../client/telcertification/images/login_gjx.png"></div>
+  </div>
+  <div class="wbk_y">
+    <h3>企业联盟</h3>
+    <div class="inputbk">
+      <div class="icon"><img src="../client/telcertification/images/zhangh.png"></div>
+      <input type="text" id="phone" placeholder="请输入用户名">
+    </div>
+    <div class="inputbk">
+      <div class="icon"><img src="../client/telcertification/images/Password.png"></div>
+      <input type="password" id="password" placeholder="请输入用户密码">
+    </div>
+    <div class="inputbk yzm">
+      <div class="icon"><img src="../client/telcertification/images/code.png"></div>
+      <input type="text" id="imageCode" class="txtVerification" placeholder="请验证码">
+      <div class="yzy" onClick="captcha();" tampode><img class="yzmImage" src="../client/telcertification/images/400.png" ></div>
+    </div>
+    <div class="dlan" onClick="openhome()">登 录</div>
+  </div>
+  <div class="zsy"></div>
+</div>
+</body>
+<script type="text/javascript" src="../public/js/regular.js"></script>
+<script type="text/javascript">
+function openhome(){
+	var phone = $('#phone').val();
+    var password = $('#password').val();
+	var imageCode = $('#imageCode').val();
+	//判断手机号
+        if (!isNotEmpry(phone)) {
+            alert("请输入账号");
+            return;
+        } 
+		//判断密码
+        if (!isNotEmpry(password)) {
+            alert("请输入密码");
+            return;
+        }
+		//判断验证码
+        if (!isNotEmpry(imageCode)) {
+            alert("请输入验证码");
+            return;
+        }
+		location.href = "home.html";
+}
+
+</script>
+</html>

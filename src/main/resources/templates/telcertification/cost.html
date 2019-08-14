@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>费用支出记录</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="../../public/layui/css/layui.css">
+    <link rel="stylesheet" href="../../client/telcertification/css/webandwxxcx.css">
+    <link rel="stylesheet" type="text/css" href="../../client/telcertification/css/header.css">
+    <style>
+        .dataTables_wrapper .dataTables_paginate .paginate_button.current, .dataTables_wrapper .dataTables_paginate .paginate_button.current:hover {
+            color: #fff!important;
+            border: 1px solid #ff6637 !important;
+            background-color: #ff6637 !important;
+        }
+        td,th{text-align: center!important;}
+    </style>
+</head>
+
+<body>
+<div class="header">
+  <div class="top">
+    <div class="logo"><img src="../../client/telcertification/images/logo.png"></div>
+    <div class="top_r">
+        <a href="notice.html" class="notice">公告</a>
+    </div>
+  </div>
+  <div class="menu">
+    <div class="cdwbk">
+        <a href="index.html" class="home">首页</a>
+        <a href="choose.html">号码认证订购</a>
+        <a href="merchants.html" class="dqxx">订单列表</a>
+        <a href="#">认证查询与取消</a>
+    </div>
+  </div>
+</div>
+    <div id="allOrder" style="margin-top:20px;">
+        <div class="order_middle">
+            <div class="myorder">
+                <div class="number_list ">
+                    <table class="layui-table" id="example" style="width:1200px;">
+                        <colgroup>
+                            <col width="200">
+                            <col width="200">
+                            <col width="200">
+                            <col width="200">
+                            <col width="200">
+                            <col width="200">
+                        </colgroup>
+                        <thead>
+                            <tr>
+                                <th style="text-align: center;">成员号码</th>
+                                <th >类型</th>
+                                <th>状态</th>
+                                <th>资费</th>
+                                <th>提交时间</th>
+                                <th>开通时间</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>0566-3399912</td>
+                                <td>首次</td>
+                                <td>开通成功</td>
+                                <td>90</td>
+                                <td>2019-06-15 14:19:26</td>
+                                <td>2019-06-13 14:19:26</td>
+                            </tr>
+                            <tr>
+                                <td>0566-3399913</td>
+                                <td>首次</td>
+                                <td>开通成功</td>
+                                <td>900</td>
+                                <td>2019-06-13 14:19:26</td>
+                                <td>2019-06-13 14:19:26</td>
+                            </tr>
+                            <tr>
+                                <td>0566-3399914</td>
+                                <td>首次</td>
+                                <td>开通成功</td>
+                                <td>901</td>
+                                <td>2019-06-18 14:19:26</td>
+                                <td>2019-06-13 14:19:26</td>
+                            </tr>
+                            <tr>
+                                <td>0566-3399915</td>
+                                <td>首次</td>
+                                <td>开通成功</td>
+                                <td>90</td>
+                                <td>2019-06-13 14:19:26</td>
+                                <td>2019-06-13 14:19:26</td>
+                            </tr>
+                            <tr>
+                                <td>0566-3399916</td>
+                                <td>首次</td>
+                                <td>开通成功</td>
+                                <td>90</td>
+                                <td>2019-06-13 14:19:26</td>
+                                <td>2019-06-13 14:19:26</td>
+                            </tr>
+                            <tr>
+                                <td>0566-3399912</td>
+                                <td>首次</td>
+                                <td>开通成功</td>
+                                <td>90</td>
+                                <td>2019-06-13 14:19:26</td>
+                                <td>2019-06-13 14:19:26</td>
+                            </tr>
+                            <tr>
+                                <td>0566-3399912</td>
+                                <td>首次</td>
+                                <td>开通成功</td>
+                                <td>90</td>
+                                <td>2019-06-13 14:19:26</td>
+                                <td>2019-06-13 14:19:26</td>
+                            </tr>
+                            <tr>
+                                <td>0566-3399912</td>
+                                <td>首次</td>
+                                <td>开通成功</td>
+                                <td>90</td>
+                                <td>2019-06-13 14:19:26</td>
+                                <td>2019-06-13 14:19:26</td>
+                            </tr>
+                            <tr>
+                                <td>0566-3399912</td>
+                                <td>首次</td>
+                                <td>开通成功</td>
+                                <td>90</td>
+                                <td>2019-06-13 14:19:26</td>
+                                <td>2019-06-13 14:19:26</td>
+                            </tr>
+                            <tr>
+                                <td>0566-3399912</td>
+                                <td>首次</td>
+                                <td>开通成功</td>
+                                <td>90</td>
+                                <td>2019-06-13 14:19:26</td>
+                                <td>2019-06-13 14:19:26</td>
+                            </tr>
+                            <tr>
+                                <td>0566-3399912</td>
+                                <td>首次</td>
+                                <td>开通成功</td>
+                                <td>90</td>
+                                <td>2019-06-13 14:19:26</td>
+                                <td>2019-06-13 14:19:26</td>
+                            </tr>
+                            <tr>
+                                <td>0566-3399912</td>
+                                <td>首次</td>
+                                <td>开通成功</td>
+                                <td>90</td>
+                                <td>2019-06-13 14:19:26</td>
+                                <td>2019-06-13 14:19:26</td>
+                            </tr>
+                            <tr>
+                                <td>0566-3399912</td>
+                                <td>首次</td>
+                                <td>开通成功</td>
+                                <td>90</td>
+                                <td>2019-06-13 14:19:26</td>
+                                <td>2019-06-13 14:19:26</td>
+                            </tr>
+                            <tr>
+                                <td>0566-3399912</td>
+                                <td>首次</td>
+                                <td>开通成功</td>
+                                <td>90</td>
+                                <td>2019-06-13 14:19:26</td>
+                                <td>2019-06-13 14:19:26</td>
+                            </tr><tr>
+                                <td>0566-3399912</td>
+                                <td>首次</td>
+                                <td>开通成功</td>
+                                <td>90</td>
+                                <td>2019-06-13 14:19:26</td>
+                                <td>2019-06-13 14:19:26</td>
+                            </tr>
+
+                            <tr>
+                                <td>0566-3399912</td>
+                                <td>首次</td>
+                                <td>开通成功</td>
+                                <td>90</td>
+                                <td>2019-06-13 14:19:26</td>
+                                <td>2019-06-13 14:19:26</td>
+                            </tr>
+                            <tr>
+                                <td>0566-3399912</td>
+                                <td>首次</td>
+                                <td>开通成功</td>
+                                <td>90</td>
+                                <td>2019-06-13 14:19:26</td>
+                                <td>2019-06-13 14:19:26</td>
+                            </tr>
+                            <tr>
+                                <td>0566-3399912</td>
+                                <td>首次</td>
+                                <td>开通成功</td>
+                                <td>90</td>
+                                <td>2019-06-13 14:19:26</td>
+                                <td>2019-06-13 14:19:26</td>
+                            </tr>
+                            <tr>
+                                <td>0566-3399912</td>
+                                <td>首次</td>
+                                <td>开通成功</td>
+                                <td>90</td>
+                                <td>2019-06-13 14:19:26</td>
+                                <td>2019-06-13 14:19:26</td>
+                            </tr>
+                            <tr>
+                                <td>0566-3399912</td>
+                                <td>首次</td>
+                                <td>开通成功</td>
+                                <td>90</td>
+                                <td>2019-06-13 14:19:26</td>
+                                <td>2019-06-13 14:19:26</td>
+                            </tr>
+                            <tr>
+                                <td>0566-3399912</td>
+                                <td>首次</td>
+                                <td>开通成功</td>
+                                <td>90</td>
+                                <td>2019-06-13 14:19:26</td>
+                                <td>2019-06-13 14:19:26</td>
+                            </tr>
+                            <tr>
+                                <td>0566-3399912</td>
+                                <td>首次</td>
+                                <td>开通成功</td>
+                                <td>90</td>
+                                <td>2019-06-13 14:19:26</td>
+                                <td>2019-06-13 14:19:26</td>
+                            </tr>
+                            <tr>
+                                <td>0566-3399912</td>
+                                <td>首次</td>
+                                <td>开通成功</td>
+                                <td>90</td>
+                                <td>2019-06-13 14:19:26</td>
+                                <td>2019-06-13 14:19:26</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script src="../../public/dataTables/jquery-2.1.4.min.js"></script>
+<script type="text/javascript" src="../../public/dataTables/jquery.dataTables.min.js"></script>
+<link rel="stylesheet" type="text/css" href="../../public/dataTables/jquery.dataTables.min.css">
+<script type="text/javascript">
+    $(document).ready(function() {
+        $('#example').DataTable({
+            // "pagingType":   "simple",
+            // "ordering": true,//禁止排序
+            "order": [[ 3, "desc" ]],//跟数组下标一样，第一列从0开始，这里表格初始化时，第四列默认降序
+            "searching":false, //搜索框
+            "bLengthChange":false,
+            "language": {
+                "decimal":",",
+                "thousands":".",
+                "lengthMenu": " _MENU_ ",
+                "zeroRecords": "没有找到记录",
+                "info": "",
+                "infoEmpty": "",
+                "infoFiltered": "",
+                "paginate" :{
+                    // "first" : "",
+                    "sPrevious" : "上一页",
+                    "sNext" : "下一页",
+                    // "sLast" : ""
+                }
+            }
+        });
+    } );
+</script>
+</html>
+

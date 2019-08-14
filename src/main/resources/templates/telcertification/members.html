@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>用户管理</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="../../public/layui/css/layui.css">
+    <link rel="stylesheet" href="../../public/layui/css/modules/layer/default/layer.css">
+    <link rel="stylesheet" href="../../public/css/commer.css" />
+    <link rel="stylesheet" href="../../client/telcertification/css/boxstyle.css">
+    <link rel="stylesheet" href="../../client/telcertification/css/msgbox.css">
+    <link rel="stylesheet" href="../../client/telcertification/css/webandwxxcx.css">
+    <link rel="stylesheet" href="../../client/telcertification/css/orderform.css">
+    <link rel="stylesheet" href="../../client/telcertification/css/order.css">
+    <link rel="stylesheet" type="text/css" href="../../client/telcertification/css/header.css">
+    <style>
+        .layui-layer-title {
+            font-size: 1.2rem !important;
+            letter-spacing: 4px !important;
+        }
+        .layui-form-label {
+            width: 125px!important;
+        }
+        .number_search{
+            width: 1200px;
+            margin: 20px auto;
+        }
+        .new_busi {
+            border-radius: 5px;
+            width: 100px !important;
+            height: 38px;
+            font: 400 16px/38px 'MicrosoftYaHei [Regular]';
+            color: #fff;
+            background: #ff6637;
+            border: none;
+            text-align: center;
+            float: right;
+            display: block !important;
+        }
+        #example_filter{margin:0 auto;background: white;}
+    </style>
+</head>
+
+<body>
+<div class="header">
+  <div class="top">
+    <div class="logo"><img src="../../client/telcertification/images/logo.png"></div>
+    <div class="top_r">
+        <a href="notice.html" class="notice">公告</a>
+    </div>
+  </div>
+  <div class="menu">
+    <div class="cdwbk">
+        <a href="index.html" class="home">首页</a>
+        <a href="choose.html">号码认证订购</a>
+        <a href="merchants.html" class="dqxx">订单列表</a>
+        <a href="#">认证查询与取消</a>
+    </div>
+  </div>
+</div>
+    <div id="allOrder" style="margin-top: 30px;">
+        <div class="order_middle">
+            <!-- 我的订单 -->
+            <div class="myorder">
+                <div class="number_search">
+                    <div class="new_busi" onclick="Edits();">添加号码</div>
+                </div>
+                <div class="number_list">
+                    <table class="layui-table" id="example" style="width:1200px;">
+                        <thead>
+                            <tr>
+                                <th>成员号码</th>
+                                <th>订购年份</th>
+                                <th>价格(元)</th>
+                                <th>业务状态</th>
+                                <th>业务反馈</th>
+                                <th>提交时间</th>
+                                <th>到期时间</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>123</td>
+                                <td>张三</td>
+                                <td>12345678912</td>
+                                <td>aaaaa</td>
+                                <td>iphone7p</td>
+                                <td>2016-11-29 02:12:36</td>
+                                <td>2016-11-29 02:12:36</td>
+                                <td class="icons">
+                                    <a href="javascript:;"><i class="layui-icon layui-icon-rmb" title="续费" onclick="Renewal()"></i></a>
+                                    <a href="cost.html"><i class="layui-icon layui-icon-form" title="费用支出记录"></i></a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>456</td>
+                                <td>张三</td>
+                                <td>45678912</td>
+                                <td>aaaaa</td>
+                                <td>iphone7p</td>
+                                <td>2016-11-28 02:12:36</td>
+                                <td>2016-11-29 02:12:36</td>
+                                <td class="icons">
+                                    <a href="javascript:;"><i class="layui-icon layui-icon-rmb" title="续费" onclick="Renewal()"></i></a>
+                                    <a href="cost.html"><i class="layui-icon layui-icon-form" title="费用支出记录"></i></a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- 添加号码 -->
+    <div id="cover"></div>
+    <div id="ids" style="width:500px;height:500px;">
+        <div class="ids_price" style="width:500px;background: #e4e2e3;">
+            <i class="layui-icon layui-icon-close" id="guan" onclick="closePanel();"></i>
+            <p>新增号码</p>
+        </div>
+        <div>
+            <div class="layui-form-item"  style="position: relative;margin-top:30px;">
+                <label class="layui-form-label">新增号码</label>
+                <div class="layui-input-block">
+                    <input type="text" name="content" class="layui-input numlists" value="" placeholder="座机号码务必加上区号" autocomplete="off" onblur="checkNum(this)">
+                </div>
+                <img src="../../client/telcertification/images/addphone.png" alt="" class="add_phone" onclick="addLandline();" width="25px">
+            </div>
+            <div id="num"></div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">总费用</label>
+                <div class="layui-input-block" style='color: rgb(180, 0, 1);'>
+                    <span style="font: 400 16px/34px &quot;MicrosoftYaHei [Regular]&quot;; color: rgb(51, 51, 51);"  id="allPrice">0</span>
+                    <span style="font: 400 16px/34px &quot;MicrosoftYaHei [Regular]&quot;; color: rgb(51, 51, 51);">元</span>
+                    (号码新增费用<span>80</span>/个，请确保号码正确)
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">公司名称</label>
+                <div class="layui-input-block" style="line-height: 36px;">池州市贵池区缘份驿站婚恋交友服务中心</div>
+            </div>
+            <div>
+                <button type="button" class="subs">提交</button>
+            </div>
+        </div>
+    </div>
+</body>
+<script src="../../public/js/jquery-2.1.4.min.js"></script>
+<script src="../../public/layui/layui.js"></script>
+<script src="../../public/layui/lay/modules/layer.js"></script>
+<script type="text/javascript" src="../../public/dataTables/jquery.dataTables.min.js"></script>
+<link rel="stylesheet" type="text/css" href="../../public/dataTables/jquery.dataTables.min.css">
+<script>
+    //打开添加号码弹窗
+    function Edits(){
+        var panel = $('#ids');
+        var back = $('#cover');
+        panel.css('display',"block");
+        back.css('display',"block");
+        $("body").css("overflow","hidden");
+        if($(document.body).height() >900){
+            $("#cover").css("height",$(document.body).height());
+        }
+    }
+    //关闭添加号码弹窗
+    function closePanel(){
+        var panel = $('#ids');
+        var back = $('#cover');
+        panel.css('display',"none");
+        back.css('display',"none");
+        $("body").css("overflow","auto");
+    }
+    //续费
+    function Renewal(){
+        layer.open({
+            type: 1,
+            title: '续费',
+            area: ['540px', '320px'],
+            content: '<div><div><h4 class="h4s"><span>小米号码认证-小米（查看下方开通注意事项）</span></h4> <p class="zhifu">共需支付：<span>80</span><span>元</span></p></div> <div class="renew_div"><div><p>订购年份:</p> <div><a class="btnactive">1年</a></div></div><div style="margin-top: 0px;"><button onclick="confirmRenew()" class="btnactive">确认续费</button></div> <p>支付后，制作商会在2小时内主动联系您</p></div></div>'
+            
+        });
+    }
+    // 确认续费
+    function confirmRenew() {
+        
+    }
+    //支付费用
+    function checkNum(obj) {
+        //所输入的号码集合
+        var checkData = [];
+        for (var i = 0; i < document.getElementsByClassName('numlists').length; i++) {
+            if (document.getElementsByClassName('numlists')[i].value.length != 0) {
+                checkData.push(document.getElementsByClassName('numlists')[i].value);
+            }
+        }
+        if(checkData.length == 0){
+            $("#allPrice").html(80);
+        }else{
+            $("#allPrice").html(checkData.length*80);
+        }
+    }
+    //添加号码
+    function addLandline() {
+        //所输入的号码集合
+        var checkData = [];
+        for (var i = 0; i < document.getElementsByClassName('numlists').length; i++) {
+            if (document.getElementsByClassName('numlists')[i].value.length == 0) {
+                layui.use('layer', function () {
+                    layer.msg("新增号码不能为空！");
+                });
+                return;
+            }
+            if (document.getElementsByClassName('numlists')[i].value.length != 0) {
+                checkData.push(document.getElementsByClassName('numlists')[i].value)
+            }
+        }
+        $("#num").append(
+            '<div class="layui-form-item" style="position: relative;"><div class="layui-input-block" style="margin-left: 156px;"><input type="text" style="width:81%;" name="content" class="layui-input numlists" value="" placeholder="座机号码务必加上区号" autocomplete="off" onblur="checkNum(this)"></div><img src="../../client/telcertification/images/del.png" alt="" class="add_phone" onclick="delLandline(this);" width="28px"></div>'
+        );
+    }
+    //删除号码
+    function delLandline(obj) {
+        $(obj).parent().remove();
+        checkNum(obj);
+    }
+    //表格分页
+    $(document).ready(function() {
+        $('#example').DataTable({
+            "order": [[ 5, "desc" ]],//跟数组下标一样，第一列从0开始，这里表格初始化时，第四列默认降序
+            "searching":true, //搜索框
+            "bLengthChange":false,
+            "language": {
+                "decimal":",",
+                "thousands":".",
+                "lengthMenu": " _MENU_ ",
+                "zeroRecords": "没有找到记录",
+                "info": "",
+                "infoEmpty": "",
+                "infoFiltered": "",
+                "paginate" :{
+                    // "first" : "",
+                    "sPrevious" : "上一页",
+                    "sNext" : "下一页",
+                    // "sLast" : ""
+                }
+            }
+        });
+    });
+</script>
+</html>
+

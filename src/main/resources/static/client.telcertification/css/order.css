@@ -1,0 +1,58 @@
+.new_businesses {
+    border-radius: 5px;
+    width: 100px;
+    height: 38px;
+    font: 400 16px/38px 'MicrosoftYaHei [Regular]';
+    color: #fff;
+    margin-top: 30px;
+    background: #0569FD;
+    border: none;
+    margin: 30px;
+    text-align: center;
+}
+
+.layui-table td,
+.layui-table th {
+    text-align: center;
+}
+
+#no_data {
+    font-size: 16px;
+    padding: 15px 0;
+}
+
+#page_1,
+#page_2 {
+    background: none;
+    float: right;
+}
+
+.layui-laypage .layui-laypage-curr .layui-laypage-em {
+    background: #ff6637;
+}
+.icons i{
+    margin: 0 10px;
+}
+.h4s{
+    margin-top: 30px;
+    margin-bottom: 20px;
+    font: 400 20px/20px 'MicrosoftYaHei [Regular]';
+    color: #000;
+    text-align: center;
+}
+.zhifu{
+    font: 400 18px/18px 'MicrosoftYaHei [Regular]';
+    color: #ff0000;
+    text-align: center;
+}
+.subs{
+    width: 114px;
+    border-radius: 5px;
+    height: 40px;
+    font: 400 18px/40px 'MicrosoftYaHei [Regular]';
+    color: #fff;
+    display: block;
+    background: #ff6637;
+    border: 1px solid #ff6637;
+    margin: 50px auto 30px;
+}

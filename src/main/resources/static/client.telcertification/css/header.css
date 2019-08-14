@@ -1,0 +1,89 @@
+.header .top {
+	height: 80px;
+	width: 1300px;
+	margin-right: auto;
+	margin-left: auto;
+}
+.header .top .logo {
+	float: left;
+	height: 60px;
+	padding-top: 10px;
+	padding-bottom: 10px;
+}
+.header .top .logo img {
+	height: 100%;
+}
+.header .top .top_r {
+	float: right;
+	line-height: 40px;
+	height: 50px;
+	width: 500px;
+	padding-top: 20px;
+}
+.header .top .top_r a {
+	display: block;
+	float: right;
+	text-align: center;
+	padding-left: 37px;
+	padding-right: 20px;
+	margin-right: 15px;
+	margin-left: 15px;
+}
+.header .top .top_r .notice {
+	background-image: url(../images/notice.png);
+	background-repeat: no-repeat;
+	background-position: 10px center;
+	background-size:20px;
+}
+.header .top .top_r .exit {
+	background-image: url(../images/tcdl.png);
+	background-repeat: no-repeat;
+	background-position: 10px center;
+	background-size:20px;
+}
+.header .top .top_r .admin {
+	background-image: url(../images/gly.png);
+	background-repeat: no-repeat;
+	background-position: 10px center;
+	background-size:20px;
+}
+.header .top .top_r span {
+	display: block;
+	float: right;
+}
+.header .menu {
+	border-top-width: 1px;
+	border-bottom-width: 1px;
+	border-top-style: solid;
+	border-bottom-style: solid;
+	border-top-color: #CCC;
+	border-bottom-color: #CCC;
+}
+
+.header .menu .cdwbk {
+	width: 1300px;
+	margin-right: auto;
+	margin-left: auto;
+	height: 60px;
+}
+.header .menu .cdwbk a {
+	display: block;
+	float: left;
+	height: 40px;
+	line-height: 40px;
+	text-align: center;
+	margin-top: 10px;
+	padding-right: 5px;
+	padding-left: 5px;
+	margin-right: 15px;
+	margin-left: 15px;
+}
+.header .menu .cdwbk .dqxx {
+	color: #0569FD;
+	border-bottom-width: 2px;
+	border-bottom-style: solid;
+	border-bottom-color: #0569FD;
+}
+.header {
+	font-size: 16px;
+}
