@@ -93,11 +93,7 @@ public class ThreeNetsOrderAttachedService {
             count = threenetsOrderMapper.updateMessageById(id); //order表中的message设置为1
             return AjaxResult.success(count,"在父表的附属表中，不含有外键父级订单id：\"+com_id+\"所属的订单");
         }
-        return AjaxResult.success(false,"参数不正确！");
+        return AjaxResult.success(false,"参数不正确");
     }
 
-//    public ThreeNetsOrderAttached findCricleMsgListById(String com_id) {
-//        Integer id = Integer.parseInt(com_id);
-//        return threeNetsOrderAttachedMapper.selectByParentOrderId(id);
-//    }
 }
