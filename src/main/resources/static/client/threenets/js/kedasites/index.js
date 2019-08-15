@@ -27,9 +27,9 @@ function showTable() {
     }, {
         targets: [3],
         render: function (data, type, row, meta) {
-            var id = row.parentOrderId;
+            var id = row.orderId;
             var name = row.companyName;
-            return "<div style='text-overflow:ellipsis;overflow:hidden;white-space:nowrap;width:150px;' title='" + data + "'><a href='/threenets/toMerchantsPhonePage/" + id + "'>" + name + "</a></div>";
+            return "<div style='text-overflow:ellipsis;overflow:hidden;white-space:nowrap;width:150px;' title='" + data + "'><a href='/threenets/clcy/toNumberList/" + id + "/"+name+"'>" + name + "</a></div>";
         }
     }, {
         targets: [6],

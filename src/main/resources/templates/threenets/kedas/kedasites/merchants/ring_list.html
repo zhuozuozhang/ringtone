@@ -44,31 +44,15 @@
                     </div>
                     <table class="layui-table" id="set" style="margin-left:10px;">
                         <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>铃音名称</th>
-                            <th>审核状态</th>
-                            <th>在线试听</th>
-                            <th>创建时间</th>
-                            <th>操作</th>
-                        </tr>
+                            <tr>
+                                <th>#</th>
+                                <th>铃音名称</th>
+                                <th>审核状态</th>
+                                <th>在线试听</th>
+                                <th>创建时间</th>
+                                <th>操作</th>
+                            </tr>
                         </thead>
-                        <tbody>
-                        <tr>
-                            <td>1</td>
-                            <td>河北协淳鑫鹏装饰工2</td>
-                            <td>2019-06-26 13:40:10</td>
-
-                            <td>
-                                <span onclick="openPlayer();">试听</span>
-                            </td>
-                            <td>激活成功</td>
-                            <td>
-                                <a href="ring_list_set.html"><i class="layui-icon layui-icon-set" title="设置"></i></a>
-                                <i class="layui-icon layui-icon-delete" title="删除"></i>
-                            </td>
-                        </tr>
-                        </tbody>
                     </table>
                 </div>
             </div>
@@ -77,113 +61,5 @@
 </div>
 </body>
 <div th:include="threenets/kedas/kedasites/common/include::footer"></div>
-<script>
-    $(".index2").addClass("active");
-    //分页
-    $(document).ready(function () {
-    });
-
-    //添加商户
-    function AddUser() {
-        layer.open({
-            type: 2,
-            title: '上传铃音',
-            area: ['650px', '550px'],
-            content: 'Addring.html'
-        });
-    }
-
-    //在线试听
-    function openPlayer() {
-        //http://120.27.226.14/upload/1561527610060/ee1478421c7c416894bd2984bed7abf1.mp3
-        //https://qunxianghui-upload.oss-cn-hangzhou.aliyuncs.com/internal%20/gongsixuanchuan20181105.mp4
-        layer.open({
-            type: 1,
-            title: '在线试听',
-            area: ['800px', '560px'],
-            content: '<video id="ovideo" autoplay loop src="http://120.27.226.14/upload/1561527610060/ee1478421c7c416894bd2984bed7abf1.mp3" controls="controls " allowfullscreen="true" quality="high" width="800px" height="514px" align="middle" allowscriptaccess="always" flashvars="isAutoPlay=true" type="application/x-shockwave-flash"></video>'
-        });
-    }
-
-    //查看广告词
-    function Advertising() {
-        layer.open({
-            title: '广告词',
-            content: '您好，欢迎致电艾宾浩斯智能教育淮阳校区，本中心是一家专业从事小学、初中、高中文化课辅导的教育培训机构，智能英语获得国家教育部十三五课题优秀科研成果，全国首家以人工智能、大数据分析及艾宾浩斯记忆原理等尖端科技为基础，解决家长对孩子个性化教育的需求，我们始终坚持科技改变教育，让学习更简单的使命，让孩子在快乐中学习成长。电话正在接通中，请稍后'
-        });
-    }
-
-    //运营商切换
-    function dianxin(obj) {
-        $(".more").removeClass("InternetOperators-clicked");
-        $(obj).addClass("InternetOperators-clicked");
-    }
-</script>
-<!-- 头部 -->
-<script>
-    //移动工具箱
-    $("#Mobile").mouseover(function () {
-        $("#Mobiles").show();
-        $("#unicoms").hide();
-    });
-    //联通工具箱
-    $("#unicom").mouseover(function () {
-        $("#unicoms").show();
-        $("#Mobiles").hide();
-    });
-
-    //移动  删除铃音
-    function DelRingtone() {
-        layer.open({
-            type: 2,
-            title: '删除铃音设置',
-            content: '../public/delringtone.html',
-            area: ['950px', '600px'],
-            maxmin: true
-        });
-    }
-
-    //移动  用户信息
-    function MobileUser() {
-        layer.open({
-            type: 2,
-            title: '用户信息',
-            content: '../public/moblieuser.html',
-            area: ['950px', '600px'],
-            maxmin: true
-        });
-    }
-
-    //联通 用户信息
-    function UnicomUser() {
-        layer.open({
-            type: 2,
-            title: '用户信息',
-            content: '../public/unicomuser.html',
-            area: ['950px', '600px'],
-            maxmin: true
-        });
-    }
-
-    //修改密码
-    function ChangePass() {
-        layer.open({
-            type: 1,
-            title: '修改密码',
-            area: ['400px', '300px'],
-            content: '<form class="layui-form" action="" method="" style="margin-top:20px;"><div class="layui-form-item"><label class="layui-form-label">原密码</label><div class="layui-input-inline"><input type="password" name="oldword" id="oldword" required lay-verify="required" placeholder="请输入原密码" autocomplete="off" class="layui-input"></div></div><div class="layui-form-item"><label class="layui-form-label">新密码</label><div class="layui-input-inline"><input type="password" name="newword" id="newword" required lay-verify="required" placeholder="请输入新密码" autocomplete="off" class="layui-input"></div></div><div class="layui-form-item"><label class="layui-form-label">确认密码</label><div class="layui-input-inline"><input type="password" name="confirmpass" id="confirmpass" required lay-verify="required" placeholder="请确认密码" autocomplete="off" class="layui-input"></div></div><div class="layui-form-item"><div class="layui-input-block"><button class="layui-btn" lay-submit lay-filter="formDemo" onclick="SubChangePass();">立即提交</button></div></div></form>'
-        });
-    }
-
-    //表单提交
-    function SubChangePass() {
-        var oldpass = $("#oldword").val();//原密码
-        var newpass = $("#newword").val();//新密码
-        var confirmpass = $("#confirmpass").val();//确认密码
-        if (newpass != confirmpass) {
-            layer.msg('新密码和确认密码不一致');
-            return;
-        }
-    }
-</script>
+<script th:src="@{/client/threenets/js/kedasites/ring_list.js}"></script>
 </html>

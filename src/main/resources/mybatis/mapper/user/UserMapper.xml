@@ -56,7 +56,9 @@
               AND user_name LIKE '%${baseRequest.name}%'
           </if>
         ORDER BY user_time DESC
-        LIMIT #{page.page},#{page.pagesize}
+        <if test="page != null and page != '' and pagesize != null and pagesize !='' ">
+            LIMIT #{page},#{pagesize}
+        </if>
     </select>
     <!-- 根据ID获取用户信息 -->
     <select id="findUserById" parameterType="java.lang.Integer" resultMap="supResultMap">
