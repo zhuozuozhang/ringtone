@@ -178,4 +178,5 @@
         and notice_module = #{modul,jdbcType=VARCHAR}
         ORDER BY notice_weight DESC
     </select>
+
 </mapper>

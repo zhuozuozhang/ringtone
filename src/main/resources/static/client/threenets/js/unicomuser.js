@@ -13,7 +13,7 @@ function getUnicomUserInfoByPhoneNumber() {
                     var silentMemberByMsisdn = $.parseJSON(data.silentMemberByMsisdn);
                     var systemLogListByMsisdn = $.parseJSON(data.systemLogListByMsisdn);
                     if(!silentMemberByMsisdn.success || !systemLogListByMsisdn.success){
-                        layer.msg("都不成功",{icon: 5,time: 3000});
+                        layer.msg("都不成功！",{icon: 5,time: 3000});
                         return;
                     }
                     var silentMemberByMsisdnData = silentMemberByMsisdn.data.data;

@@ -21,7 +21,7 @@ function findRingInfoByMsisdn() {
                     if(ringSettingListByMsisdnRow.length == 0 && ringListByMsisdnRow.length == 0){
                         $(".ringSettingListByMsisdnTbody").html("");
                         $(".ringListByMsisdnTbody").html("");
-                        layer.msg("没有该用户的数据",{icon: 2,time: 3000});
+                        layer.msg("没有该用户的数据！",{icon: 2,time: 3000});
                         return;
                     }
                     //个人铃音设置列表

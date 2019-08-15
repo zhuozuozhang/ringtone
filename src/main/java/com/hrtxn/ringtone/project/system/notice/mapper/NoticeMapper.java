@@ -80,4 +80,5 @@ public interface NoticeMapper {
      * @return
      */
     List<Notice> getNoticeList(@Param("page") Page page, @Param("notice") Notice notice);
+
 }

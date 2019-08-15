@@ -293,12 +293,12 @@ public class ThreeNetsChildOrderController {
      */
     @PutMapping("/threenets/singleDeleteRing/{msisdn}")
     @ResponseBody
-    @Log(title = "通过移动手机号、铃音ID、铃音类型删除某条个人铃音库",businessType = BusinessType.DELETE,operatorLogType = OperatorLogType.THREENETS)
+    @Log(title = "删除某条个人铃音库",businessType = BusinessType.DELETE,operatorLogType = OperatorLogType.THREENETS)
     public AjaxResult singleDeleteRing(@PathVariable String msisdn,String toneIds,String type){
         try {
             return threeNetsChildOrderService.singleDeleteRing(msisdn,toneIds,type);
         } catch (Exception e) {
-            log.error("删除某条个人铃音库 方法：singleDeleteRing 错误信息",e);
+            log.error("通过移动手机号、铃音ID、铃音类型删除某条个人铃音库 方法：singleDeleteRing 错误信息",e);
             return AjaxResult.error(e.getMessage());
         }
     }

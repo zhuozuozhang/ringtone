@@ -27,7 +27,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Author:lile
@@ -438,6 +437,7 @@ public class ThreeNetsController {
         try {
             return threeNetsOrderAttachedService.findCricleMsgList(com_id);
         } catch (Exception e) {
+
             log.error("商户列表-->消息处理 方法：findCricleMsgList 错误信息", e);
             return AjaxResult.error(e.getMessage());
         }

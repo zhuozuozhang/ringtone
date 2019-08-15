@@ -1,5 +1,7 @@
 package com.hrtxn.ringtone.project.telcertification.controller;
 
+import com.hrtxn.ringtone.project.system.notice.domain.Notice;
+import com.hrtxn.ringtone.project.system.notice.service.NoticeService;
 import com.hrtxn.ringtone.project.telcertification.service.TelCertificationService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,7 +10,7 @@ import org.springframework.ui.ModelMap;
 import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import java.util.List;
 
 /**
  * Author:lile
@@ -20,8 +22,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @RequestMapping("/telcertify")
 public class TelCertificationController {
 
+    private final String MODULE_CERTIFICATION = "1";
+
     @Autowired
     private TelCertificationService telCertificationService;
+    @Autowired
+    private NoticeService noticeService;
 
     /**
      * 进入号码认证页面
@@ -29,16 +35,22 @@ public class TelCertificationController {
      */
     @GetMapping("/toTelIndexPage")
     public String toTelOrderIndexPage(){
-        return "/telcertification/index";
+        return "telcertification/index";
     }
 
     /**
-     * 进入公告页面
+     * 进入号码认证公告页面
      * @return
      */
     @GetMapping("/toTelNoticePage")
-    public String toTelNoticePage(){
-        return "/telcertification/notice";
+    public String toTelNoticePage(ModelMap map){
+        try{
+            List<Notice> noticeList = noticeService.findNoticeListByModul(MODULE_CERTIFICATION);
+            map.put("noticeList", noticeList);
+        }catch (Exception e){
+            log.error("获取公告列表 方法：toTelNoticePage 错误信息",e);
+        }
+        return "telcertification/notice";
     }
 
     /**
@@ -47,7 +59,7 @@ public class TelCertificationController {
      */
     @GetMapping("/toTelAdminPage")
     public String toTelAdminPage(){
-        return "/telcertification/admin";
+        return "telcertification/admin";
     }
 
     /**
@@ -56,7 +68,7 @@ public class TelCertificationController {
      */
     @GetMapping("/toTelChoosePage")
     public String toTelChoosePage(){
-        return "/telcertification/choose";
+        return "telcertification/choose";
     }
 
     /**
@@ -65,7 +77,7 @@ public class TelCertificationController {
      */
     @GetMapping("/toTelMerchantsPage")
     public String toTelMerchantsPage(){
-        return "/telcertification/merchants";
+        return "telcertification/merchants";
     }
 
 
