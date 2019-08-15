@@ -36,6 +36,9 @@
         <if test="param.name != null and param.name !=''">
             AND p.company_name like '%${param.name}%'
         </if>
+        <if test="param.start != null and param.start !='' and param.end != null and param.end !=''">
+            AND p.create_time between #{param.start} and #{param.end}
+        </if>
     </sql>
     <!-- 查询三网商户列表信息 -->
     <select id="getAllorderList" resultMap="BaseResultMap">

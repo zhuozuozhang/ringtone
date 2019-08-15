@@ -2,6 +2,8 @@ package com.hrtxn.ringtone.common.domain;
 
 import lombok.Data;
 
+import java.util.Date;
+
 @Data
 public class BaseRequest {
 
@@ -43,4 +45,8 @@ public class BaseRequest {
 
     //id集合  1，2，3，4
     private Integer[] arrayById;
+
+    private String start;
+
+    private String end;
 }
