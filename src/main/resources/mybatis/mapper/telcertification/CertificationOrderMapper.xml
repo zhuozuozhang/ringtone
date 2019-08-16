@@ -1,0 +1,285 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hrtxn.ringtone.project.telcertification.mapper.CertificationOrderMapper" >
+
+  <resultMap id="BaseResultMap" type="com.hrtxn.ringtone.project.telcertification.domain.CertificationOrder" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="tel_order_num" property="telOrderNum" jdbcType="VARCHAR" />
+    <result column="tel_company_name" property="telCompanyName" jdbcType="VARCHAR" />
+    <result column="tel_link_name" property="telLinkName" jdbcType="VARCHAR" />
+    <result column="tel_link_phone" property="telLinkPhone" jdbcType="VARCHAR" />
+    <result column="tel_content" property="telContent" jdbcType="VARCHAR" />
+    <result column="business_license" property="businessLicense" jdbcType="VARCHAR" />
+    <result column="legal_person_card_zhen" property="legalPersonCardZhen" jdbcType="VARCHAR" />
+    <result column="legal_person_card_fan" property="legalPersonCardFan" jdbcType="VARCHAR" />
+    <result column="logo" property="logo" jdbcType="VARCHAR" />
+    <result column="authorization" property="authorization" jdbcType="VARCHAR" />
+    <result column="number_prove" property="numberProve" jdbcType="VARCHAR" />
+    <result column="remark" property="remark" jdbcType="LONGVARCHAR" />
+    <result column="unit_price" property="unitPrice" jdbcType="REAL" />
+    <result column="user_id" property="userId" jdbcType="INTEGER" />
+    <result column="tel_order_status" property="telOrderStatus" jdbcType="INTEGER" />
+    <result column="tel_order_time" property="telOrderTime" jdbcType="TIMESTAMP" />
+    <result column="product_name" property="productName" jdbcType="VARCHAR" />
+  </resultMap>
+
+  <sql id="Base_Column_List" >
+    id, tel_order_num, tel_company_name, tel_link_name, tel_link_phone, tel_content, 
+    business_license, legal_person_card_zhen, legal_person_card_fan, logo, authorization, 
+    number_prove, remark, unit_price, user_id, tel_order_status, tel_order_time, product_name
+  </sql>
+
+  <select id="findAllTelCertification" resultMap="BaseResultMap">
+    SELECT
+        <include refid="Base_Column_List"/>
+    FROM
+        tb_telcertification_order
+    ORDER BY tel_order_time DESC
+  </select>
+<!--  查询号码认证订单列表总数-->
+  <select id="getCount" resultType="int">
+    select count(*) from tb_telcertification_order
+  </select>
+
+
+  <insert id="insertTelCertifyOrder" parameterType="com.hrtxn.ringtone.project.telcertification.domain.CertificationOrder" >
+
+    insert into tb_telcertification_order (id, tel_order_num, tel_company_name,
+      tel_link_name, tel_link_phone, tel_content,
+      business_license, legal_person_card_zhen, legal_person_card_fan,
+      logo, authorization, number_prove, remark,
+      unit_price, user_id, tel_order_status,
+      tel_order_time, product_name
+      )
+    values (#{id,jdbcType=INTEGER}, #{telOrderNum,jdbcType=VARCHAR}, #{telCompanyName,jdbcType=VARCHAR},
+      #{telLinkName,jdbcType=VARCHAR}, #{telLinkPhone,jdbcType=VARCHAR}, #{telContent,jdbcType=VARCHAR},
+      #{businessLicense,jdbcType=VARCHAR}, #{legalPersonCardZhen,jdbcType=VARCHAR}, #{legalPersonCardFan,jdbcType=VARCHAR},
+      #{logo,jdbcType=VARCHAR}, #{authorization,jdbcType=VARCHAR}, #{numberProve,jdbcType=VARCHAR}, #{remark,jdbcType=LONGVARCHAR},
+      #{unitPrice,jdbcType=REAL}, #{userId,jdbcType=INTEGER}, #{telOrderStatus,jdbcType=INTEGER},
+      #{telOrderTime,jdbcType=TIMESTAMP}, #{productName,jdbcType=VARCHAR}
+      )
+  </insert>
+
+
+  <insert id="insertSelective" parameterType="com.hrtxn.ringtone.project.telcertification.domain.CertificationOrder" >
+
+    insert into tb_telcertification_order
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="telOrderNum != null" >
+        tel_order_num,
+      </if>
+      <if test="telCompanyName != null" >
+        tel_company_name,
+      </if>
+      <if test="telLinkName != null" >
+        tel_link_name,
+      </if>
+      <if test="telLinkPhone != null" >
+        tel_link_phone,
+      </if>
+      <if test="telContent != null" >
+        tel_content,
+      </if>
+      <if test="businessLicense != null" >
+        business_license,
+      </if>
+      <if test="legalPersonCardZhen != null" >
+        legal_person_card_zhen,
+      </if>
+      <if test="legalPersonCardFan != null" >
+        legal_person_card_fan,
+      </if>
+      <if test="logo != null" >
+        logo,
+      </if>
+      <if test="authorization != null" >
+        authorization,
+      </if>
+      <if test="numberProve != null" >
+        number_prove,
+      </if>
+      <if test="unitPrice != null" >
+        unit_price,
+      </if>
+      <if test="userId != null" >
+        user_id,
+      </if>
+      <if test="telOrderStatus != null" >
+        tel_order_status,
+      </if>
+      <if test="telOrderTime != null" >
+        tel_order_time,
+      </if>
+      <if test="productName != null" >
+        product_name,
+      </if>
+      <if test="remark != null" >
+        remark,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="telOrderNum != null" >
+        #{telOrderNum,jdbcType=VARCHAR},
+      </if>
+      <if test="telCompanyName != null" >
+        #{telCompanyName,jdbcType=VARCHAR},
+      </if>
+      <if test="telLinkName != null" >
+        #{telLinkName,jdbcType=VARCHAR},
+      </if>
+      <if test="telLinkPhone != null" >
+        #{telLinkPhone,jdbcType=VARCHAR},
+      </if>
+      <if test="telContent != null" >
+        #{telContent,jdbcType=VARCHAR},
+      </if>
+      <if test="businessLicense != null" >
+        #{businessLicense,jdbcType=VARCHAR},
+      </if>
+      <if test="legalPersonCardZhen != null" >
+        #{legalPersonCardZhen,jdbcType=VARCHAR},
+      </if>
+      <if test="legalPersonCardFan != null" >
+        #{legalPersonCardFan,jdbcType=VARCHAR},
+      </if>
+      <if test="logo != null" >
+        #{logo,jdbcType=VARCHAR},
+      </if>
+      <if test="authorization != null" >
+        #{authorization,jdbcType=VARCHAR},
+      </if>
+      <if test="numberProve != null" >
+        #{numberProve,jdbcType=VARCHAR},
+      </if>
+      <if test="unitPrice != null" >
+        #{unitPrice,jdbcType=REAL},
+      </if>
+      <if test="userId != null" >
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="telOrderStatus != null" >
+        #{telOrderStatus,jdbcType=INTEGER},
+      </if>
+      <if test="telOrderTime != null" >
+        #{telOrderTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="productName != null" >
+        #{productName,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null" >
+        #{remark,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+
+
+  <update id="updateByPrimaryKeySelective" parameterType="com.hrtxn.ringtone.project.telcertification.domain.CertificationOrder" >
+
+    update tb_telcertification_order
+    <set >
+      <if test="telOrderNum != null" >
+        tel_order_num = #{telOrderNum,jdbcType=VARCHAR},
+      </if>
+      <if test="telCompanyName != null" >
+        tel_company_name = #{telCompanyName,jdbcType=VARCHAR},
+      </if>
+      <if test="telLinkName != null" >
+        tel_link_name = #{telLinkName,jdbcType=VARCHAR},
+      </if>
+      <if test="telLinkPhone != null" >
+        tel_link_phone = #{telLinkPhone,jdbcType=VARCHAR},
+      </if>
+      <if test="telContent != null" >
+        tel_content = #{telContent,jdbcType=VARCHAR},
+      </if>
+      <if test="businessLicense != null" >
+        business_license = #{businessLicense,jdbcType=VARCHAR},
+      </if>
+      <if test="legalPersonCardZhen != null" >
+        legal_person_card_zhen = #{legalPersonCardZhen,jdbcType=VARCHAR},
+      </if>
+      <if test="legalPersonCardFan != null" >
+        legal_person_card_fan = #{legalPersonCardFan,jdbcType=VARCHAR},
+      </if>
+      <if test="logo != null" >
+        logo = #{logo,jdbcType=VARCHAR},
+      </if>
+      <if test="authorization != null" >
+        authorization = #{authorization,jdbcType=VARCHAR},
+      </if>
+      <if test="numberProve != null" >
+        number_prove = #{numberProve,jdbcType=VARCHAR},
+      </if>
+      <if test="unitPrice != null" >
+        unit_price = #{unitPrice,jdbcType=REAL},
+      </if>
+      <if test="userId != null" >
+        user_id = #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="telOrderStatus != null" >
+        tel_order_status = #{telOrderStatus,jdbcType=INTEGER},
+      </if>
+      <if test="telOrderTime != null" >
+        tel_order_time = #{telOrderTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="productName != null" >
+        product_name = #{productName,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null" >
+        remark = #{remark,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.hrtxn.ringtone.project.telcertification.domain.CertificationOrder" >
+
+    update tb_telcertification_order
+    set tel_order_num = #{telOrderNum,jdbcType=VARCHAR},
+      tel_company_name = #{telCompanyName,jdbcType=VARCHAR},
+      tel_link_name = #{telLinkName,jdbcType=VARCHAR},
+      tel_link_phone = #{telLinkPhone,jdbcType=VARCHAR},
+      tel_content = #{telContent,jdbcType=VARCHAR},
+      business_license = #{businessLicense,jdbcType=VARCHAR},
+      legal_person_card_zhen = #{legalPersonCardZhen,jdbcType=VARCHAR},
+      legal_person_card_fan = #{legalPersonCardFan,jdbcType=VARCHAR},
+      logo = #{logo,jdbcType=VARCHAR},
+      authorization = #{authorization,jdbcType=VARCHAR},
+      number_prove = #{numberProve,jdbcType=VARCHAR},
+      unit_price = #{unitPrice,jdbcType=REAL},
+      user_id = #{userId,jdbcType=INTEGER},
+      tel_order_status = #{telOrderStatus,jdbcType=INTEGER},
+      tel_order_time = #{telOrderTime,jdbcType=TIMESTAMP},
+      product_name = #{productName,jdbcType=VARCHAR},
+      remark = #{remark,jdbcType=LONGVARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+  <update id="updateByPrimaryKey" parameterType="com.hrtxn.ringtone.project.telcertification.domain.CertificationOrder" >
+
+    update tb_telcertification_order
+    set tel_order_num = #{telOrderNum,jdbcType=VARCHAR},
+      tel_company_name = #{telCompanyName,jdbcType=VARCHAR},
+      tel_link_name = #{telLinkName,jdbcType=VARCHAR},
+      tel_link_phone = #{telLinkPhone,jdbcType=VARCHAR},
+      tel_content = #{telContent,jdbcType=VARCHAR},
+      business_license = #{businessLicense,jdbcType=VARCHAR},
+      legal_person_card_zhen = #{legalPersonCardZhen,jdbcType=VARCHAR},
+      legal_person_card_fan = #{legalPersonCardFan,jdbcType=VARCHAR},
+      logo = #{logo,jdbcType=VARCHAR},
+      authorization = #{authorization,jdbcType=VARCHAR},
+      number_prove = #{numberProve,jdbcType=VARCHAR},
+      unit_price = #{unitPrice,jdbcType=REAL},
+      user_id = #{userId,jdbcType=INTEGER},
+      tel_order_status = #{telOrderStatus,jdbcType=INTEGER},
+      tel_order_time = #{telOrderTime,jdbcType=TIMESTAMP},
+      product_name = #{productName,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

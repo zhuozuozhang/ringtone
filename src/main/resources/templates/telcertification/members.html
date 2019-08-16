@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
 
 <head>
     <meta charset="utf-8" />
@@ -48,14 +48,14 @@
   <div class="top">
     <div class="logo"><img src="../../client/telcertification/images/logo.png"></div>
     <div class="top_r">
-        <a href="notice.html" class="notice">公告</a>
+        <a href="/telcertify/toTelNoticePage" class="notice">公告</a>
     </div>
   </div>
   <div class="menu">
     <div class="cdwbk">
-        <a href="index.html" class="home">首页</a>
-        <a href="choose.html">号码认证订购</a>
-        <a href="merchants.html" class="dqxx">订单列表</a>
+        <a href="/telcertify/toTelIndexPage" class="home">首页</a>
+        <a href="/telcertify/toTelChoosePage">号码认证订购</a>
+        <a href="/telcertify/toTelMerchantsPage" class="dqxx">订单列表</a>
         <a href="#">认证查询与取消</a>
     </div>
   </div>
@@ -77,32 +77,21 @@
                                 <th>业务状态</th>
                                 <th>业务反馈</th>
                                 <th>提交时间</th>
+                                <th>开通时间</th>
                                 <th>到期时间</th>
                                 <th>操作</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td>123</td>
-                                <td>张三</td>
-                                <td>12345678912</td>
-                                <td>aaaaa</td>
-                                <td>iphone7p</td>
-                                <td>2016-11-29 02:12:36</td>
-                                <td>2016-11-29 02:12:36</td>
-                                <td class="icons">
-                                    <a href="javascript:;"><i class="layui-icon layui-icon-rmb" title="续费" onclick="Renewal()"></i></a>
-                                    <a href="cost.html"><i class="layui-icon layui-icon-form" title="费用支出记录"></i></a>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>456</td>
-                                <td>张三</td>
-                                <td>45678912</td>
-                                <td>aaaaa</td>
-                                <td>iphone7p</td>
-                                <td>2016-11-28 02:12:36</td>
-                                <td>2016-11-29 02:12:36</td>
+                            <tr th:each="telcerchild : ${telcerChildOrder}">
+                                <td th:text="${telcerchild.telChildOrderNum}">123</td>
+                                <td th:text="${telcerchild.years}">3年</td>
+                                <td th:text="${telcerchild.price}">200.00</td>
+                                <td th:text="${telcerchild.telChildOrderStatus}">1</td>
+                                <td th:text="${telcerchild.businessFeedback}">反馈</td>
+                                <td th:text="${telcerchild.telChildOrderCtime}">2016-11-29 02:12:36</td>
+                                <td th:text="${telcerchild.telChildOrderOpenTime}">2016-11-29 02:12:36</td>
+                                <td th:text="${telcerchild.telChildOrderExpireTime}">2016-11-29 02:12:36</td>
                                 <td class="icons">
                                     <a href="javascript:;"><i class="layui-icon layui-icon-rmb" title="续费" onclick="Renewal()"></i></a>
                                     <a href="cost.html"><i class="layui-icon layui-icon-form" title="费用支出记录"></i></a>
@@ -125,7 +114,7 @@
             <div class="layui-form-item"  style="position: relative;margin-top:30px;">
                 <label class="layui-form-label">新增号码</label>
                 <div class="layui-input-block">
-                    <input type="text" name="content" class="layui-input numlists" value="" placeholder="座机号码务必加上区号" autocomplete="off" onblur="checkNum(this)">
+                    <input type="text" name="content" class="layui-input numlists" value="" placeholder="如果是座机号码务必加上区号" autocomplete="off" onblur="checkNum(this)">
                 </div>
                 <img src="../../client/telcertification/images/addphone.png" alt="" class="add_phone" onclick="addLandline();" width="25px">
             </div>
@@ -218,7 +207,7 @@
             }
         }
         $("#num").append(
-            '<div class="layui-form-item" style="position: relative;"><div class="layui-input-block" style="margin-left: 156px;"><input type="text" style="width:81%;" name="content" class="layui-input numlists" value="" placeholder="座机号码务必加上区号" autocomplete="off" onblur="checkNum(this)"></div><img src="../../client/telcertification/images/del.png" alt="" class="add_phone" onclick="delLandline(this);" width="28px"></div>'
+            '<div class="layui-form-item" style="position: relative;"><div class="layui-input-block" style="margin-left: 156px;"><input type="text" style="width:81%;" name="content" class="layui-input numlists" value="" placeholder="如果是座机号码务必加上区号" autocomplete="off" onblur="checkNum(this)"></div><img src="../../client/telcertification/images/del.png" alt="" class="add_phone" onclick="delLandline(this);" width="28px"></div>'
         );
     }
     //删除号码
@@ -226,29 +215,7 @@
         $(obj).parent().remove();
         checkNum(obj);
     }
-    //表格分页
-    $(document).ready(function() {
-        $('#example').DataTable({
-            "order": [[ 5, "desc" ]],//跟数组下标一样，第一列从0开始，这里表格初始化时，第四列默认降序
-            "searching":true, //搜索框
-            "bLengthChange":false,
-            "language": {
-                "decimal":",",
-                "thousands":".",
-                "lengthMenu": " _MENU_ ",
-                "zeroRecords": "没有找到记录",
-                "info": "",
-                "infoEmpty": "",
-                "infoFiltered": "",
-                "paginate" :{
-                    // "first" : "",
-                    "sPrevious" : "上一页",
-                    "sNext" : "下一页",
-                    // "sLast" : ""
-                }
-            }
-        });
-    });
+
 </script>
 </html>
 

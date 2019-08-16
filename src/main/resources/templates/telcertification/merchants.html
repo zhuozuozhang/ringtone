@@ -1,559 +1,360 @@
 <!DOCTYPE html>
 <html lang="zh" xmlns:th="http://www.thymeleaf.org">
 <head>
-<meta charset="utf-8" />
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<title>商户管理</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" th:href="@{/public/layui/css/layui.css}">
-  <link rel="stylesheet" th:href="@{/public/layui/css/modules/layer/default/layer.css}">
-  <link rel="stylesheet" th:href="@{/public/layui/css/modules/laydate/default/laydate.css}">
-  <link rel="stylesheet" th:href="@{/public/css/commer.css}">
-  <link rel="stylesheet" th:href="@{/client/telcertification/css/boxstyle.css}">
-  <link rel="stylesheet" th:href="@{/client/telcertification/css/msgbox.css}">
-  <link rel="stylesheet" th:href="@{/client/telcertification/css/webandwxxcx.css}">
-  <link rel="stylesheet" th:href="@{/client/telcertification/css/orderform.css}">
-  <link rel="stylesheet" th:href="@{/client/telcertification/css/order.css}">
-  <link rel="stylesheet" type="text/css" th:href="@{/client/telcertification/css/choose.css}">
-  <link rel="stylesheet" type="text/css" th:href="@{/client/telcertification/css/header.css}">
-<style>
-.rz_y .active {
-	background-color: #0569FD!important;
-	color: #fff!important;
-}
-.scwj {
-	margin-top:5px;
-	line-height:28px!important;
-	height:28px!important;
-	padding-left: 2px!important;
-	}
-.dataTables_wrapper .dataTables_paginate .paginate_button.current, .dataTables_wrapper .dataTables_paginate .paginate_button.current:hover {
-    color: #fff!important;
-    border: 1px solid #17a9ff!important;
-    background-color: #17a9ff!important;
-}
-.new_businesses {
-	width:80px !important;
-	margin-bottom:0px !important;
-	padding-left:20px !important;
-	height:34px!important;
-	line-height:34px!important;
-	background-color:#17a9ff !important;
-	}
-</style>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>商户管理</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" th:href="@{/public/layui/css/layui.css}">
+    <link rel="stylesheet" th:href="@{/public/layui/css/modules/layer/default/layer.css}">
+    <link rel="stylesheet" th:href="@{/public/layui/css/modules/laydate/default/laydate.css}">
+    <link rel="stylesheet" th:href="@{/public/css/commer.css}">
+    <link rel="stylesheet" th:href="@{/client/telcertification/css/boxstyle.css}">
+    <link rel="stylesheet" th:href="@{/client/telcertification/css/msgbox.css}">
+    <link rel="stylesheet" th:href="@{/client/telcertification/css/webandwxxcx.css}">
+    <link rel="stylesheet" th:href="@{/client/telcertification/css/orderform.css}">
+    <link rel="stylesheet" th:href="@{/client/telcertification/css/order.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/client/telcertification/css/choose.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/client/telcertification/css/header.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/public/dataTables/jquery.dataTables.min.css}">
+    <style>
+        .rz_y .active {
+            background-color: #0569FD !important;
+            color: #fff !important;
+        }
+
+        .scwj {
+            margin-top: 5px;
+            line-height: 28px !important;
+            height: 28px !important;
+            padding-left: 2px !important;
+        }
+
+        .dataTables_wrapper .dataTables_paginate .paginate_button.current, .dataTables_wrapper .dataTables_paginate .paginate_button.current:hover {
+            color: #fff !important;
+            border: 1px solid #17a9ff !important;
+            background-color: #17a9ff !important;
+        }
+
+        .new_businesses {
+            width: 80px !important;
+            margin-bottom: 0px !important;
+            padding-left: 20px !important;
+            height: 34px !important;
+            line-height: 34px !important;
+            background-color: #17a9ff !important;
+        }
+    </style>
 </head>
 
 <body>
 <div class="header">
-  <div class="top">
-    <div class="logo"><img th:src="@{/client/telcertification/images/logo.png}"></div>
-    <div class="top_r">
-      <a href="/telcertify/toTelNoticePage" class="notice">公告</a>
+    <div class="top">
+        <div class="logo"><img th:src="@{/client/telcertification/images/logo.png}"></div>
+        <div class="top_r">
+            <span style="float: left">欢迎！</span>
+            <i>[[${session.username}]]</i>
+            <a href="/telcertify/toTelNoticePage" class="notice">公告</a>
+        </div>
     </div>
-  </div>
-  <div class="menu">
-    <div class="cdwbk">
-      <a href="/telcertify/toTelIndexPage" class="home">首页</a>
-      <a href="/telcertify/toTelChoosePage">号码认证订购</a>
-      <a href="/telcertify/toTelMerchantsPage" class="dqxx">订单列表</a>
-      <a href="#">认证查询与取消</a>
+    <div class="menu">
+        <div class="cdwbk">
+            <a href="/telcertify/toTelIndexPage" class="home">首页</a>
+            <a href="/telcertify/toTelChoosePage">号码认证订购</a>
+            <a href="/telcertify/toTelMerchantsPage" class="dqxx">订单列表</a>
+            <a href="#">认证查询与取消</a>
+        </div>
     </div>
-  </div>
 </div>
 <div id="allOrder">
-  <div class="order_middle">
-    <div class="order_div1">
-      <p style="cursor:pointer" class="active" id="myorder" onclick="myorder()">我的订单</p>
-      <p style="cursor:pointer" id="myorder2" onclick="surplusOrder()">即将到期号码</p>
-      <p style="cursor:pointer" id="myorder3" onclick="overOrder()">到期号码</p>
+    <div class="order_middle">
+        <div class="order_div1">
+            <p style="cursor:pointer" class="active" id="myorder" onclick="myorder()">我的订单</p>
+            <p style="cursor:pointer" id="myorder2" onclick="surplusOrder()">即将到期号码</p>
+            <p style="cursor:pointer" id="myorder3" onclick="overOrder()">到期号码</p>
+        </div>
+        <!-- 我的订单 -->
+        <div class="myorder">
+            <div class="number_search">
+                <div>
+                    <p>提交时间:</p>
+                    <input type="text" class="layui-input" id="rangetime" name="rangetime" placeholder="提交时间">
+                </div>
+                <div>
+                    <p>集团名称:</p>
+                    <input type="text" id="companyName" name="companyName">
+                </div>
+                <div>
+                    <p>联系电话:</p>
+                    <input type="text" id="tel" name="tel">
+                </div>
+                <div>
+                    <p>成员号码:</p>
+                    <input type="text" id="membernum" name="membernum">
+                </div>
+                <button onclick="search()">搜索</button>
+                <div class="new_businesses" id="cause">新增商户</div>
+            </div>
+            <!-- <div class="new_businesses" id="cause">新增商户</div> -->
+            <div class="number_list">
+                <input type="hidden" id="id" th:value="${id}">
+                <table class="layui-table" id='merchants' style="width:1200px!important;">
+                    <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>集团名称</th>
+                        <th>展示名称</th>
+                        <th>联系人</th>
+                        <th>联系电话</th>
+                        <th>产品名称</th>
+                        <th>成员数</th>
+                        <th>状态</th>
+                        <th>单价(元)</th>
+                        <th>创建时间</th>
+                        <th>备注</th>
+                        <th>操作</th>
+                    </tr>
+                    </thead>
+                </table>
+            </div>
+        </div>
+        <!-- 即将到期号码 -->
+        <div class="net_middle" style="display:none">
+            <div class="net_bottom">
+                <div class="search">
+                    <div>
+                        <p>号码:</p>
+                        <input type="text" id="number">
+                    </div>
+                    <button onclick="search2()" style="background:#17a9ff;border:none;color:#fff; border-radius:5px;">
+                        搜索
+                    </button>
+                </div>
+                <div class="numberdf_list">
+                    <table class="layui-table" id="ordera" style="width:1200px!important;">
+                        <thead>
+                        <tr>
+                            <th>成员号码</th>
+                            <th>订购年份</th>
+                            <th>价格(元)</th>
+                            <th>业务状态</th>
+                            <th>业务反馈</th>
+                            <th>提交时间</th>
+                            <th>到期时间</th>
+                            <th>备注</th>
+                            <th>操作</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td>12345678912</td>
+                            <td>2018-05-26</td>
+                            <td>260</td>
+                            <td>开通中</td>
+                            <td>aaaaaaa</td>
+                            <td>2018-05-26 03:15:30</td>
+                            <td>2018-06-26 03:15:30</td>
+                            <td>aaaaaaaa</td>
+                            <td><p><i class="layui-icon layui-icon-log" title="查看详情" onclick="ckeckDetails();"></i></p>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div id="page"></div>
     </div>
-    <!-- 我的订单 -->
-    <div class="myorder">
-      <div class="number_search">
-        <div>
-          <p>提交时间:</p>
-          <input type="text" class="layui-input" id="rangetime" name="rangetime" placeholder="提交时间">
-        </div>
-        <div>
-          <p>集团名称:</p>
-          <input type="text" id="companyName" name="companyName">
-        </div>
-        <div>
-          <p>联系电话:</p>
-          <input type="text" id="tel" name="tel">
-        </div>
-        <div>
-          <p>成员号码:</p>
-          <input type="text" id="membernum" name="membernum">
-        </div>
-        <button onclick="search()">搜索</button>
-        <div class="new_businesses" id="cause">新增商户</div>
-      </div>
-     <!-- <div class="new_businesses" id="cause">新增商户</div> -->
-      <div class="number_list">
-        <table class="layui-table" id='example' style="width:1200px!important;">
-          <thead>
-            <tr>
-              <th>集团名称</th>
-              <th>展示名称</th>
-              <th>联系人</th>
-              <th>联系电话</th>
-              <th>产品名称</th>
-              <th>成员数</th>
-              <th>状态</th>
-              <th>单价(元)</th>
-              <th>创建时间</th>
-              <th>备注</th>
-              <th>操作</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>中国移动</td>
-              <td>展示名称</td>
-              <td>张三</td>
-              <td>12345678912</td>
-              <td>iphone7p</td>
-              <td>500</td>
-              <td>待审核</td>
-              <td>250</td>
-              <td>2016-11-29 02:12:36</td>
-              <td>aaaaaaaaa</td>
-              <td><i class="layui-icon layui-icon-edit" title="编辑" onclick="Edit();"></i> <i class="layui-icon layui-icon-log" title="详情" onclick="ckeckDetailsOne();"></i> <a href="members.html"><i class="layui-icon layui-icon-username" title="成员管理"></i></a></td>
-            </tr>
-<!--            <tr>-->
-<!--              <td>中国移动</td>-->
-<!--              <td>展示名称</td>-->
-<!--              <td>张三</td>-->
-<!--              <td>12345678912</td>-->
-<!--              <td>iphone7p</td>-->
-<!--              <td>500</td>-->
-<!--              <td>待审核</td>-->
-<!--              <td>250</td>-->
-<!--              <td>2016-11-29 02:12:36</td>-->
-<!--              <td>aaaaaaaaa</td>-->
-<!--              <td><i class="layui-icon layui-icon-edit" title="编辑" onclick="Edit();"></i> <i class="layui-icon layui-icon-log" title="详情" onclick="ckeckDetailsOne();"></i> <a href="members.html"><i class="layui-icon layui-icon-username" title="成员管理"></i></a></td>-->
-<!--            </tr>-->
-          </tbody>
-        </table>
-      </div>
-    </div>
-    <!-- 即将到期号码 -->
-    <div class="net_middle" style="display:none">
-      <div class="net_bottom">
-        <div class="search">
-          <div>
-            <p>号码:</p>
-            <input type="text" id="number">
-          </div>
-          <button onclick="search2()" style="background:#17a9ff;border:none;color:#fff; border-radius:5px;">搜索</button>
-        </div>
-        <div class="numberdf_list">
-          <table class="layui-table" id="ordera" style="width:1200px!important;">
-            <thead>
-              <tr>
-                <th>成员号码</th>
-                <th>订购年份</th>
-                <th>价格(元)</th>
-                <th>业务状态</th>
-                <th>业务反馈</th>
-                <th>提交时间</th>
-                <th>到期时间</th>
-                <th>备注</th>
-                <th>操作</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>12345678912</td>
-                <td>2018-05-26</td>
-                <td>260</td>
-                <td>开通中</td>
-                <td>aaaaaaa</td>
-                <td>2018-05-26 03:15:30</td>
-                <td>2018-06-26 03:15:30</td>
-                <td>aaaaaaaa</td>
-                <td><p><i class="layui-icon layui-icon-log" title="查看详情" onclick="ckeckDetails();"></i></p></td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-    <div id="page"></div>
-  </div>
-  <div class="zsy"></div>
+    <div class="zsy"></div>
 </div>
 <!--订购弹窗 -->
-<div th:replace="telcertification/common/charge :: charge"></div>
-
+<!--<div th:replace="telcertification/common/charge :: charge"></div>-->
+<div id="pop" class="back display" >
+    <div class="pop_content">
+        <div class="approve_title">
+            <h3>业务订购</h3>
+            <h4>共需支付：<span id="yfje">80</span>元</h4>
+            <div class="gban" id="cancel"><img th:src="@{/client/telcertification/images/close.png}"></div>
+        </div>
+        <div class="rz_y">
+            <div class="title"> <span>泰迪熊号码</span><i>¥ 80元/年</i></div>
+            <div class="title"> <span>电话邦</span><i>¥ 80元/年</i></div>
+            <div class="title"><span>彩印</span><i>免费/年</i></div>
+            <div class="title"><span>挂机短信</span><i>¥ 0.1元/条</i></div>
+            <div class="ywxz">
+                <div class="tswz">选择业务</div>
+                <div class="choosebk">
+                    <button id="taidix" class="btn-calculate active" value="80">泰迪熊</button>
+                    <button id="dhb" class="btn-calculate" value="80">电话邦</button>
+                    <button id="caiyin" class="btn-calculate">彩印</button>
+                    <button id="gjdx" class="btn-calculate">挂机短信</button>
+                </div>
+                <div class="zsy"></div>
+            </div>
+            <div class="ywxz" id="tdxcon">
+                <div class="tswz">泰迪熊有效期</div>
+                <div class="choosebk year">
+                    <button class="btn-calculate active" value="1">1年</button>
+                    <button class="btn-calculate" value="2">2年</button>
+                    <button class="btn-calculate" value="3">3年</button>
+                    <button class="btn-calculate" value="4">4年</button>
+                    <button class="btn-calculate" value="5">5年</button>
+                </div>
+                <div class="zsy"></div>
+            </div>
+            <div class="ywxz bxs" id="dhbcon">
+                <div class="tswz">电话邦有效期</div>
+                <div class="choosebk dhbyear">
+                    <button class="btn-calculate active" value="1">1年</button>
+                    <button class="btn-calculate" value="2">2年</button>
+                    <button class="btn-calculate" value="3">3年</button>
+                    <button class="btn-calculate" value="4">4年</button>
+                    <button class="btn-calculate" value="5">5年</button>
+                </div>
+                <div class="zsy"></div>
+            </div>
+            <div class="ywxz bxs" id="cycon">
+                <div class="tswz">彩印有效期</div>
+                <div class="choosebk permanent">
+                    <button class="btn-allocate btn-normal active">永久有效</button>
+                </div>
+                <div class="zsy"></div>
+            </div>
+            <div class="ywxz bxs" id="gjdxcon">
+                <div class="gmdx">
+                    <label>挂机短信</label>
+                    <input id="dxsrk" value="" type="number" placeholder="请输入整百数,例：100" step="100" min="100">
+                    <span>元<i id="dxnumber"> 0 </i>条</span></div>
+                <div class="dxsx">
+                    <div class="tswz">挂机短信上限</div>
+                    <div class="choosebk note">
+                        <button class="btn-calculate active">100条/月</button>
+                        <button class="btn-calculate">200条/月</button>
+                        <button class="btn-calculate">300条/月</button>
+                        <button class="btn-calculate">500条/月</button>
+                        <button class="btn-calculate">700条/月</button>
+                    </div>
+                    <div class="zsy"></div>
+                </div>
+            </div>
+        </div>
+        <div class="approvecon">
+            <div class="approvebk"><span><i>*</i>集团名称</span>
+                <input type="text" placeholder="需跟营业执照名称一致">
+            </div>
+            <div class="approvebk"><span><i>*</i>联系人姓名</span>
+                <input type="text">
+            </div>
+            <div class="approvebk"><span><i>*</i>联系人电话</span>
+                <input type="tel">
+            </div>
+            <div class="approvebk"><span><i>*</i>认证展示内容</span>
+                <input type="text" placeholder="请跟营业执照主体一致">
+            </div>
+            <!--            <div class="phonenum">-->
+            <!--                <div class="approvebk"><span><i>*</i>开通号码</span>-->
+            <!--                    <input class="opennum" type="tel" placeholder="如果是座机号码务必加上区号">-->
+            <!--                    <em id="moreadd" onClick="addtel(this);"><img th:src="@{/client/telcertification/images/addphone.png}"></em>-->
+            <!--                </div>-->
+            <!--                &lt;!&ndash;<div class="approvebk">-->
+            <!--                  <input type="tel" placeholder="如果是座机号码务必加上区号" style="margin-left:180px;">-->
+            <!--                  <em onClick="remove(this)"><img th:src="@{/client/telcertification/images/del.png}"></em>-->
+            <!--                </div> &ndash;&gt;-->
+            <!--                <div class="zsy" id="before"></div>-->
+            <!--            </div>-->
+            <div class="imgbk"><span><i>*</i>上传营业执照</span>
+                <div class="tpscbk">
+                    <div class="tpimgbka"><img class="tpimga" border="0" th:src="@{/public/images/addimg.png}" test="111" style="margin:0px auto;max-height:140px;"></div>
+                    <input type="file" style="display: none;" name="file" class="tpdza" onclick="javascript:validate_img(this);">
+                </div>
+            </div>
+            <div class="imgbk"><span><i>*</i>上传法人身份证正面</span>
+                <div class="tpscbk">
+                    <div class="tpimgbka"><img class="tpimga" border="0" th:src="@{/public/images/addimg.png}" test="111" style="margin:0px auto;max-height:140px;"></div>
+                    <input type="file" style="display: none;" name="file" class="tpdza" onclick="javascript:validate_img(this);">
+                </div>
+            </div>
+            <div class="imgbk"><span><i>*</i>上传法人身份证反面</span>
+                <div class="tpscbk">
+                    <div class="tpimgbka"><img class="tpimga" border="0" th:src="@{/public/images/addimg.png}" test="111" style="margin:0px auto;max-height:140px;"></div>
+                    <input type="file" style="display: none;" name="file" class="tpdza" onclick="javascript:validate_img(this);">
+                </div>
+            </div>
+            <div class="imgbk"><span><i>*</i>上传LOGO</span>
+                <div class="tpscbk">
+                    <div class="tpimgbka"><img class="tpimga" border="0" th:src="@{/public/images/addimg.png}" test="111" style="margin:0px auto;max-height:140px;"></div>
+                    <input type="file" style="display: none;" name="file" class="tpdza" onclick="javascript:validate_img(this);">
+                </div>
+            </div>
+            <div class="approvebk"><span><i>*</i>上传授权书</span>
+                <input class="scwj" type="file" placeholder="选填">
+            </div>
+            <div class="ckalbk">
+                <div class="ckan opencase">查看案例</div>
+                <div class="mbxz"><a href="http://v.130.xyz/api/auth/uploadModel?type=3">授权书模板下载</a></div>
+            </div>
+            <div class="approvebk"><span><i>*</i>上传号码证明</span>
+                <input class="scwj" type="file" placeholder="选填">
+            </div>
+            <div class="ckalbk">
+                <div class="ckan opencase">查看案例</div>
+                <div class="mbxz"><a href="http://v.130.xyz/api/auth/uploadModel?type=2">号码证明模板下载</a></div>
+            </div>
+            <div class="bzbk"><span>备注</span>
+                <textarea placeholder="添加商户的成员，请在商户的信息显示在订单页面后，进入操作栏中的成员管理界面中添加"></textarea>
+            </div>
+            <div class="approvebk"><span><i>*</i>订购协议</span>
+                <div class="dgxy">
+                    <input type="radio" checked="checked" >
+                    <span>我同意此<i class="openagreement">订购协议</i></span></div>
+            </div>
+            <div class="xgan" onClick="determine()">确认添加</div>
+            <!--            <div class="xgan" lay-submit lay-filter="addform">确认添加</div>-->
+        </div>
+    </div>
+</div>
 <!--修改订单 -->
 <div th:replace="telcertification/common/edit :: edit"></div>
 
 <!--查看示例-->
 <div class="back display" id="case">
-  <div class="pop_content">
-    <div class="approve_title">
-      <h5>查看示例</h5>
-      <div class="gban" id="closecase"><img src="../../client/telcertification/images/close.png"></div>
+    <div class="pop_content">
+        <div class="approve_title">
+            <h5>查看示例</h5>
+            <div class="gban" id="closecase"><img th:src="@{/client/telcertification/images/close.png}"></div>
+        </div>
+        <div class="casecon"><img th:src="@{/client/telcertification/images/sqs.jpg}"></div>
     </div>
-    <div class="casecon"> <img src="../../client/telcertification/images/sqs.jpg"> </div>
-  </div>
 </div>
 <!--订购协议-->
 <div th:replace="telcertification/common/agreement :: agreement"></div>
 <!--展示机型弹窗1 -->
 <div class="tcbk display" id="zsjxa">
-  <div class="zcjx">支持机型</div>
-  <div class="jxbk"><span>泰迪熊</span><span>其他</span></div>
-  <div class="gban" id="cancel">我已了解</div>
+    <div class="zcjx">支持机型</div>
+    <div class="jxbk"><span>泰迪熊</span><span>其他</span></div>
+    <div class="gban" id="cancel">我已了解</div>
 </div>
 <!--展示机型弹窗2 -->
 <div class="tcbk display" id="zsjxb">
-  <div class="zcjx">支持机型</div>
-  <div class="jxbk"><span>全部机型</span></div>
-  <div class="gban" id="close">我已了解</div>
+    <div class="zcjx">支持机型</div>
+    <div class="jxbk"><span>全部机型</span></div>
+    <div class="gban" id="close">我已了解</div>
 </div>
 </body>
-<script src="../../public/js/jquery-2.1.4.min.js"></script>
-<script src="../../public/layui/layui.js"></script>
-<script src="../../public/layui/lay/modules/laydate.js"></script>
-<script src="../../public/layui/lay/modules/layer.js"></script>
-<script src="../../public/js/regular.js"></script>
-<script type="text/javascript" src="../../public/dataTables/jquery.dataTables.min.js"></script>
-<link rel="stylesheet" type="text/css" href="../../public/dataTables/jquery.dataTables.min.css">
-
+<script th:src="@{/public/js/jquery-2.1.4.min.js}"></script>
+<script th:src="@{/public/js/jquery-3.2.0.min.js}"></script>
+<script th:src="@{/public/layui/layui.js}"></script>
+<script th:src="@{/public/layui/lay/modules/laydate.js}"></script>
+<script th:src="@{/public/layui/lay/modules/layer.js}"></script>
+<script type="text/javascript" th:src="@{/public/js/ajax.js}"></script>
+<script th:src="@{/public/js/regular.js}"></script>
+<script type="text/javascript" th:src="@{/public/dataTables/jquery.dataTables.min.js}"></script>
+<script type="text/javascript" th:src="@{/public/js/datatables.js}"></script>
+<script th:src="@{/client/telcertification/js/merchants.js}"></script>
+<script th:src="@{/client/telcertification/js/charge.js}"></script>
 <script>
-    //tab切换
-    //我的订单
-    function myorder() {
-        $('#myorder').addClass('active').siblings().removeClass('active');
-        document.getElementsByClassName('myorder')[0].style.display = "block";
-        document.getElementsByClassName('net_middle')[0].style.display = "none";
-    }
-    //即将到期号码
-    function surplusOrder() {
-        $('#myorder2').addClass('active').siblings().removeClass('active');
-        document.getElementsByClassName('myorder')[0].style.display = "none";
-        document.getElementsByClassName('net_middle')[0].style.display = "block";
-    }
-    //到期号码
-    function overOrder() {
-        $('#myorder3').addClass('active').siblings().removeClass('active');
-        document.getElementsByClassName('myorder')[0].style.display = "none";
-        document.getElementsByClassName('net_middle')[0].style.display = "block";
-    }
-    //日期时间范围
-    layui.use('laydate', function() {
-        var laydate = layui.laydate;
-        laydate.render({
-            elem: '#rangetime',
-            range: true
-        });
-    })
-
-    //我的订单查看详情
-    function ckeckDetails() {
-        layer.open({
-            type: 2,
-            title: '详情',
-            content: './details.html',
-            area: ['500px', '680px']
-        });
-    }
-    //即将到期号码查看详情
-    function ckeckDetailsOne() {
-        layer.open({
-            type: 2,
-            title: '详情',
-            content: './details_one.html',
-            area: ['500px', '680px']
-        });
-    }
-    //支付费用
-    function checkNum(obj) {
-        //所输入的号码集合
-        var checkData = [];
-        for (var i = 0; i < document.getElementsByClassName('numlists').length; i++) {
-            if (document.getElementsByClassName('numlists')[i].value.length != 0) {
-                checkData.push(document.getElementsByClassName('numlists')[i].value);
-            }
-        }
-        if(checkData.length == 0){
-            $("#allPrice").html(80);
-        }else{
-            $("#allPrice").html(checkData.length*80);
-        }
-    }
-    
-    //打开修改订单弹窗
-    function Edit(){
-        $("#editor").removeClass("display")
-    }
-    
-</script>
-<script type="text/javascript">
-var price = 80;
-$(function(){
-	//多选
-	$("	.btn-calculate").click(function(){
-		if ($(this).hasClass("active")){
-			$(this).removeClass("active");	
-		}	
-		else{
-			$(this).addClass("active");
-		}		
-	});
-	//年份单选
-	$(".year	.btn-calculate").click(function(){
-			$(".year .btn-calculate").removeClass("active");
-			$(this).addClass("active");
-	});
-	//电话邦年份单选
-	$(".dhbyear	.btn-calculate").click(function(){
-			$(".dhbyear .btn-calculate").removeClass("active");
-			$(this).addClass("active");
-	});
-	//短信单选
-	$(".note	.btn-calculate").click(function(){
-			$(".note .btn-calculate").removeClass("active");
-			$(this).addClass("active");
-	});
-	//彩印单选
-	$(".permanent	.btn-calculate").click(function(){
-			$(".permanent .btn-calculate").removeClass("active");
-			$(this).addClass("active");
-	});
-	//泰迪熊选项显隐
-	$("#taidix").click(function(){
-		if ($("#taidix").hasClass("active")){
-			$("#tdxcon").removeClass("bxs");	
-		}	
-		else{
-			$("#tdxcon").addClass("bxs");
-		};
-	});
-	//电话邦选项显隐
-	$("#dhb").click(function(){
-		if ($("#dhb").hasClass("active")){
-			$("#dhbcon").removeClass("bxs");	
-		}	
-		else{
-			$("#dhbcon").addClass("bxs");
-		};
-	});
-	//彩印选项显隐
-	$("#caiyin").click(function(){
-	if ($("#caiyin").hasClass("active")){
-			$("#cycon").removeClass("bxs");	
-		}	
-		else{
-			$("#cycon").addClass("bxs");
-		}
-	});
-	//短信选项显隐
-	$("#gjdx").click(function(){	
-	if ($("#gjdx").hasClass("active")){
-			$("#gjdxcon").removeClass("bxs");	
-		}	
-		else{
-			$("#gjdxcon").addClass("bxs");
-		}
-	});
-	//判断输入整百数
-	$("#dxsrk").blur(function(){
-		//判断输入是否为整百数
-		var num=$(this).val();
-		if(!/^\d+$/.test(num/100)){
-            alert("输入金额必须为整百数！");
-			$(this).val('');
-			$("#dxnumber").html(0);
-			return false;
-        }
-		$("#dxnumber").html(num/0.1);
-		setTotal();
-	});
-	//计算应付金额
-	$(".btn-calculate").click(function(){
-		setTotal();
-	});
-	
-	function setTotal(){
-		var total=0;
-		var year=$(".year	.btn-calculate.active").val();
-		var dhbyear=$(".dhbyear	.btn-calculate.active").val();
-		//计算泰迪熊金额
-		if($("#taidix").hasClass("active")){
-			total+=Number(year)*80;
-			
-		}
-		//计算电话邦金额
-		if($("#dhb").hasClass("active")){
-			total+=Number(dhbyear)*80;
-		}
-		//计算挂机短信金额
-		if($("#gjdx").hasClass("active")){
-			total+=Number($("#dxsrk").val());
-		}
-		price = total;
-		$("#yfje").html(total);
-		jiSuan();
-		
-	}
-	
-	
-});
-//号码添加按钮
-	function addtel(obj){
-		var err=0;
-		//判断座机格式的
-		var partten = /^(\d{3,4}\-)?\d{7,8}$/i;   //座机格式是 010-98909899
-		//var partten = /^0(([1-9]\d)|([3-9]\d{2}))\d{8}$/; 没有中间那段 -的 座机格式是 01098909899
-		var zuoji=partten.test($(obj).val());
-		//判断手机格式可以用
-		var re = /^1[35]\d{9}$/i;
-		var shouji=re.test($(obj).val());
-		$(".opennum").each(function() {
-			if($(obj).val()==""){
-				alert("请输入开通号码！");
-				err++;
-				//return false;
-			}
-			if($(obj).val()!=zuoji || shouji){
-				alert("你输入的电话号码有误！")
-				$(obj).focus();
-				return;
-			}
-        });
-		if(err>0){
-			return false;	
-		}
-		//循环添加开通号码
-		var str = '<div class="approvebk"><input class="opennum" type="tel" placeholder="座机号码务必加上区号" style="margin-left:180px;" onblur="jiSuan()"><em onClick="removephone(this)"><img src="../../client/telcertification/images/del.png"></em></div>';
-		$("#before").before(str);
-		}
-//移除号码
-	function removephone(e){
-		$(e).parent().remove();
-		var total=Number($("#yfje").html());
-		var num=0;
-		$(".opennum").each(function() {
-            if($(this).val()!=""){
-				num++;
-			}
-        });
-		$("#yfje").html(price*num);
-	};
-	//计算业务订购中支付金额
-	//$("body").on('blur','.opennum',function(){
-		//var num=0;
-		//$(".opennum").each(function() {
-           // if($(this).val()!=""){
-				//num++;
-			//}
-        //});
-		//console.log(num);
-		//console.log(price);
-		//$("#yfje").html(price*num);
-	//})
-	function jiSuan(){
-		var num=1;
-		$(".opennum").each(function() {
-            if($(this).val()!=""){
-				num++;
-			}
-        });
-		if(num>1){
-			$("#yfje").html(price*(num-1));
-			}
-	}
-	
-<!--上传图片 -->
-	$("body").on('click','.tpimgbka',function() {
-		var ts = $(this);
-        $(this).next().click(); //隐藏了input:file样式后，点击头像就可以本地上传
-        $(this).next().on("change", function() {
-            if (this.files[0] != null && this.files[0] != "" && this.files[0] != undefined) {
-                var objUrl = getObjectURL(this.files[0]); //获取图片的路径，该路径不是图片在本地的路径
-                if (objUrl) {
-					
-                    ts.children().attr("src", objUrl); //将图片路径存入src中，显示出图片
-                }
-            }else {
-                $(this).attr("src", "../image/photo_icon1.png");
-                $(this).next().val("");
-            }
-        });
+    $(document).ready(function () {
+       showTelCerTable();
     });
-	 /*上传图片预览*/
-    //建立一個可存取到該file的url
-    function getObjectURL(file) {
-        if(file != null && file != "" && file != undefined){
-            var url = null;
-            if (window.createObjectURL != undefined) { // basic
-                url = window.createObjectURL(file);
-            } else if (window.URL != undefined) { // mozilla(firefox)
-                url = window.URL.createObjectURL(file);
-            } else if (window.webkitURL != undefined) { // webkit or chrome
-                url = window.webkitURL.createObjectURL(file);
-            }
-            return url;
-        }
-    }
-
-    //限制上传文件的类型和大小
-    function validate_img(ele) {
-        // 返回 KB，保留小数点后两位
-        var file = ele.value;
-        if (file != null && file != '' && file != undefined) {
-          if (!/.(jpg|jpeg|png|JPG|bmp)$/.test(file)) {
-            api.toast({
-              msg: '图片类型必须是jpeg,jpg,png,bmp中的一种!',
-              duration: 3000,
-              location: 'top'
-            });
-            return false;
-          }else if (((ele.files[0].size).toFixed(2)) >= (4 * 1024 * 1024)) {
-            //返回Byte(B),保留小数点后两位
-            api.toast({
-              msg: '请上传小于4M的图片!',
-              duration: 5000,
-              location: 'top'
-            });
-            return false;
-          }
-        }
-    }
-	//填写信息弹窗
-	$('#cause').on('click', function() { //点击按钮显示弹窗
-        $("#pop").removeClass("display")
-		
-		$("#orderamount").html(price);
-    })
-    $("#cancel").on('click', function() { //点击取消隐藏弹窗
-        $("#pop").addClass("display")
-    })
-	//修改信息
-	$('.openeditor').on('click', function() { //点击按钮显示弹窗
-        $("#editor").removeClass("display")
-    })
-    $("#gbxg").on('click', function() { //点击取消隐藏弹窗
-        $("#editor").addClass("display")
-    })
-	//查看实例弹窗
-	$('.opencase').on('click', function() { //点击按钮显示弹窗
-        $("#case").removeClass("display")
-    })
-    $("#closecase").on('click', function() { //点击取消隐藏弹窗
-        $("#case").addClass("display")
-    })
-	//查看订购协议
-	$('.openagreement').on('click', function() { //点击按钮显示弹窗
-        $("#agreement").removeClass("display")
-    })
-    $("#closeagreement").on('click', function() { //点击取消隐藏弹窗
-        $("#agreement").addClass("display")
-    })
-	
 </script>
 </html>
