@@ -53,7 +53,7 @@ public interface SystemConfigMapper {
      * @param type
      * @return
      */
-    SystemConfig getConfigByType(@Param("type") String type);
+    List<SystemConfig> getConfigByType(@Param("type") String type);
     /**
      * 修改配置信息
      *
