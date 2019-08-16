@@ -40,4 +40,10 @@ public interface KedaChildOrderMapper {
      * @return
      */
     List<KedaChildOrder> getKeDaChildOrderBacklogList(@Param("page") Page page, @Param("param") BaseRequest baseRequest);
+
+    List<PlotBarPhone> getIsMonthly(@Param("type") Integer type,@Param("param") BaseRequest baseRequest);
+
+    List<PlotBarPhone> getUnsubscribe(@Param("type") Integer type,@Param("param") BaseRequest baseRequest);
+
+    int getBussinessCount(@Param("type") Integer type,@Param("param") BaseRequest baseRequest);
 }

@@ -46,6 +46,14 @@ public interface SystemConfigMapper {
      */
     SystemConfig getConfigById(@Param("id") Integer id);
 
+
+    /**
+     * 根据类型获取配置信息
+     *
+     * @param type
+     * @return
+     */
+    List<SystemConfig> getConfigByType(@Param("type") String type);
     /**
      * 修改配置信息
      *

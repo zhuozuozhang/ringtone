@@ -190,10 +190,6 @@ public class ThreeNetsOrderService {
         if (order.getCompanyName() == null || order.getCompanyName().isEmpty()) {
             return AjaxResult.error("商户名称不能为空！");
         }
-        List<ThreenetsOrder> orders = threenetsOrderMapper.isRepetitionByName(order.getCompanyName());
-        if (orders != null || !orders.isEmpty()) {
-            return AjaxResult.error("商户名称不允许重复！");
-        }
         JuhePhone phone = JuhePhoneUtils.getPhone(order.getLinkmanTel());
         if (!phone.getResultcode().equals("200")) {
             return AjaxResult.error("获取归属地失败，请填写正确的手机号码！");
@@ -353,22 +349,24 @@ public class ThreeNetsOrderService {
             //电信
             if (collect.get(2) != null) {
                 //文件上传
-                if (orderRequest.getCompanyUrl() != null) {
-                    String path = utils.mcardUploadFile(new File(orderRequest.getCompanyUrl()));
+                if (orderRequest.getCompanyUrl() != null && !orderRequest.getCompanyUrl().isEmpty()) {
+                    String path = utils.mcardUploadFile(new File(RingtoneConfig.getProfile() + orderRequest.getCompanyUrl()));
+//                    String path = "/pic.diy.v1/nets/mcard/DiyFile/image/2019/08/15/fe1185ad-dc80-4ed6-9d08-fc039e4d94c7.jpg";
                     attached.setBusinessLicense(path);
                 }
-                if (orderRequest.getClientUrl() != null) {
-                    String path = utils.mcardUploadFile(new File(orderRequest.getClientUrl()));
+                if (orderRequest.getClientUrl() != null && !orderRequest.getClientUrl().isEmpty() ) {
+                    String path = utils.mcardUploadFile(new File(RingtoneConfig.getProfile() + orderRequest.getClientUrl()));
+//                    String path = "/pic.diy.v1/nets/mcard/DiyFile/image/2019/08/15/93b4d9f6-3980-455f-911d-02039b6709aa.jpg";
                     attached.setConfirmLetter(path);
                 }
-                if (orderRequest.getMainUrl() != null) {
-                    String path = utils.mcardUploadFile(new File(orderRequest.getMainUrl()));
+                if (orderRequest.getMainUrl() != null && !orderRequest.getMainUrl().isEmpty()) {
+                    String path = utils.mcardUploadFile(new File(RingtoneConfig.getProfile() + orderRequest.getMainUrl()));
                     attached.setSubjectProve(path);
                 }
                 List<ThreenetsChildOrder> childOrders = collect.get(2);
                 order.setLinkmanTel(childOrders.get(0).getLinkmanTel());
                 McardAddGroupRespone groupRespone = utils.addOrderByDx(order, attached);
-                attached.setMcardId(groupRespone.getData().getAuserId());
+                attached.setMcardId(groupRespone.getAuserId());
                 //本地保存铃音和子表
                 for (int i = 0; i < childOrders.size(); i++) {
                     ThreenetsChildOrder childOrder = childOrders.get(i);
@@ -376,6 +374,7 @@ public class ThreeNetsOrderService {
                     childOrder.setStatus("待审核");
                     childOrders.set(i, childOrder);
                 }
+                threeNetsChildOrderService.batchChindOrder(childOrders);
                 attached.setMcardStatus(0);
             }
             //保存订单附表

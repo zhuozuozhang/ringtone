@@ -10,5 +10,5 @@ import lombok.Data;
 @Data
 public class McardAddPhoneRespone {
     private String code;
-    private String msg;
+    private String message;
 }

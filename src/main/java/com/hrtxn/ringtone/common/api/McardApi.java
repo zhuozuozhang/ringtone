@@ -2,8 +2,12 @@ package com.hrtxn.ringtone.common.api;
 
 import com.hrtxn.ringtone.common.exception.NoLoginException;
 import com.hrtxn.ringtone.common.utils.ChaoJiYing;
+import com.hrtxn.ringtone.common.utils.ConfigUtil;
 import com.hrtxn.ringtone.common.utils.DateUtils;
+import com.hrtxn.ringtone.common.utils.SpringUtils;
 import com.hrtxn.ringtone.common.utils.json.JsonUtil;
+import com.hrtxn.ringtone.project.system.config.domain.SystemConfig;
+import com.hrtxn.ringtone.project.system.config.mapper.SystemConfigMapper;
 import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreeNetsOrderAttached;
 import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreenetsChildOrder;
 import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreenetsOrder;
@@ -15,14 +19,10 @@ import lombok.extern.slf4j.Slf4j;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import okhttp3.*;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.*;
 
 /**
@@ -46,14 +46,14 @@ public class McardApi {
     private static String load_ring_url = "https://mcard.imusic.cn/ring/loadRingList";//铃音列表
     private static String load_user_url = "https://mcard.imusic.cn/user/loadUserList";//成员列表
 
-    private static String normal_list = "http://mcard.imusic.cn/user/loadNormalBusinessList";//获取客户列表
+    private static String normal_list = "https://mcard.imusic.cn/user/loadNormalBusinessList";//获取客户列表
     private static String refresh_apersonnel = "http://mcard.imusic.cn/user/refreshApersonnel";//刷新用户信息
 
-    private static String code_url = "http://mcard.imusic.cn/code/imageCode?d";
+    private static String code_url = "https://mcard.imusic.cn/code/imageCode";
     //主渠道商id
     private static String parent = "61203";
 
-    private static String cookie = "JSESSIONID=E383BD5DAFB2B6B26718EC09D6DC5A67";
+    private static String cookie = "JSESSIONID=0FB0E6D787A863F8CC2E44B75C35CB38";
 
 
     /**
@@ -63,9 +63,11 @@ public class McardApi {
      * @return
      */
     public static String sendGet(String url) {
+        ConfigUtil util = new ConfigUtil();
+        SystemConfig config = util.getConfigByType("mcard_cookie_other");
         OkHttpClient client = new OkHttpClient();
         String result = null;
-        Request request = new Request.Builder().url(url).addHeader("Cookie", cookie).build();
+        Request request = new Request.Builder().url(url).addHeader("Cookie", config.getInfo()).build();
         try {
             Response response = client.newCall(request).execute();
             result = response.body().string();
@@ -83,6 +85,8 @@ public class McardApi {
      * @return
      */
     public static String sendPost(Map<String, String> map, String url) {
+        ConfigUtil util = new ConfigUtil();
+        SystemConfig config = util.getConfigByType("mcard_cookie_other");
         OkHttpClient client = new OkHttpClient();
         String result = null;
         FormBody.Builder builder = new FormBody.Builder();
@@ -90,7 +94,7 @@ public class McardApi {
             builder.add(key, map.get(key));
         }
         FormBody formBody = builder.build();
-        Request request = new Request.Builder().url(url).post(formBody).addHeader("Cookie", cookie).build();
+        Request request = new Request.Builder().url(url).post(formBody).addHeader("Cookie", config.getInfo()).build();
         try {
             Response response = client.newCall(request).execute();
             result = response.body().string();
@@ -190,20 +194,14 @@ public class McardApi {
         String code = null;
         DefaultHttpClient httpclientCode = new DefaultHttpClient();
         long time = new Date().getTime();
-        HttpGet httpCode = new HttpGet(code_url + "?d=" + time);//
-        HttpResponse codeResponse;
+        OkHttpClient client = new OkHttpClient();
+        Request request = new Request.Builder().url(code_url + "?d=" + time).addHeader("Cookie", cookie).build();
+
         try {
             // 获取验证码
-            codeResponse = httpclientCode.execute(httpCode);
-            InputStream ins1 = codeResponse.getEntity().getContent();
-            ByteArrayOutputStream os = new ByteArrayOutputStream();
-            byte[] buff = new byte[100];
-            int rc = 0;
-            while ((rc = ins1.read(buff, 0, 100)) > 0) {
-                os.write(buff, 0, rc);
-            }
-            byte[] in2b = os.toByteArray();
-            String codestr = ChaoJiYing.PostPic("wwewwe", "wyc19931224", "899622", "4004", "4", in2b);
+            Response response = client.newCall(request).execute();
+            byte[] Picture_bt = response.body().bytes();
+            String codestr = ChaoJiYing.PostPic("wwewwe", "wyc19931224", "899622", "4004", "4", Picture_bt);
             //{"err_no":0,"err_str":"OK","pic_id":"3068410332412700001","pic_str":"0572","md5":"9f847dfdb63ca1ddf9d5beb86a4c8594"}
             System.out.println("验证码识别：" + codestr);
             JSONArray jsonStr = JSONArray.fromObject("[" + codestr + "]");
@@ -225,12 +223,22 @@ public class McardApi {
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            httpCode.abort();
             httpclientCode.getConnectionManager().shutdown();
         }
         return code;
     }
 
+
+    public static void main(String[] args) {
+        String result = "{\"code\":\"0000\",\"message\":\"新增成功\",\"data\":{\"auserId\":1691632,\"handupStartDayCN\":\"\",\"auserType\":2,\"source\":0,\"auserCreateTime\":\"2019-08-15T11:17:43.313+0800\",\"auserPhone\":\"15380170139\",\"auserParent\":296577,\"subChannelId\":296577,\"auserState\":0,\"chargingPhone\":\"15380170139\",\"feeType\":11,\"isNewUnifyPay\":0,\"chargingState\":1,\"unifyPayType\":2,\"auserCity\":\"320300\",\"ringIsSendSms\":1,\"provinceName\":\"江苏\",\"isUnifyPay\":2,\"isMakeFee\":0,\"mainChannelId\":61203,\"auserCardid\":820662,\"auserAccount\":\"15380170139\",\"isAddApersonnel\":1,\"industry\":1,\"handupEndDayCN\":\"\",\"auserEmail\":\"\",\"auserIsSendSms\":1,\"auserName\":\"北京九方愉悦商贸有限公司\",\"childrenCount\":0,\"auserMoney\":\"20\",\"auserAudit\":0,\"isxiafasms\":1,\"auserBlicence\":820660,\"auserLinkName\":\"赵春兰\",\"auserProvince\":\"320000\"}}";
+        McardAddGroupRespone groupRespone = new McardAddGroupRespone();
+        JSONObject jsonObject = JSONObject.fromObject(result);
+        JSONObject data = jsonObject.getJSONObject("data");
+        groupRespone = (McardAddGroupRespone)JSONObject.toBean(data, McardAddGroupRespone.class);
+        groupRespone.setCode(jsonObject.getString("code"));
+        groupRespone.setMessage(jsonObject.getString("message"));
+        groupRespone.getAuserId();
+    }
 
     /**
      * 获取手机号地址
@@ -239,11 +247,25 @@ public class McardApi {
      * @return
      */
     public McardPhoneAddressRespone phoneAdd(String phone) {
+        McardPhoneAddressRespone respone = new McardPhoneAddressRespone();
         Map<String, String> map = new HashMap<>();
         map.put("loginPhone",phone);
         map.put("fee","1");
         String result = sendPost(map, phone_address_url);
-        McardPhoneAddressRespone respone = (McardPhoneAddressRespone) JsonUtil.getObject4JsonString(result, McardPhoneAddressRespone.class);
+        JSONObject jsonObject = JSONObject.fromObject(result);
+        JSONObject jsonData = jsonObject.getJSONObject("data");
+        respone.setMNOs(jsonData.getInt("MNOs"));
+        respone.setCode(jsonData.getString("code"));
+        respone.setProvince(jsonData.getString("province"));
+        respone.setCity(jsonData.getString("city"));
+        respone.setCityCode(jsonData.getString("cityCode"));
+        respone.setProvinceCode(jsonData.getString("provinceCode"));
+        respone.setFeeValue(jsonData.getString("feeValue"));
+        respone.setProvince_code(jsonData.getString("province_code"));
+        respone.setFeeType(jsonData.getInt("feeType"));
+        respone.setAreacode(jsonData.getString("areacode"));
+        respone.setSpid(jsonData.getString("spid"));
+        respone.setIntelligence(jsonData.getInt("intelligence"));
         return respone;
     }
 
@@ -290,7 +312,11 @@ public class McardApi {
         map.put("auserCardidPath", attached.getConfirmLetter());
         map.put("auserFilePath", attached.getSubjectProve());
         String result = sendPost(map, add_user_url);
-        McardAddGroupRespone groupRespone = (McardAddGroupRespone) JsonUtil.getObject4JsonString(result, McardAddGroupRespone.class);
+        JSONObject jsonObject = JSONObject.fromObject(result);
+        JSONObject data = jsonObject.getJSONObject("data");
+        McardAddGroupRespone groupRespone = (McardAddGroupRespone)JSONObject.toBean(data, McardAddGroupRespone.class);
+        groupRespone.setCode(jsonObject.getString("code"));
+        groupRespone.setMessage(jsonObject.getString("message"));
         return groupRespone;
     }
 
@@ -376,6 +402,14 @@ public class McardApi {
         try {
             Response response = client.newCall(request).execute();
             result = response.body().string();
+            //解析数据
+            JSONObject jsonObject = JSONObject.fromObject(result);
+            JSONArray jsonArray = jsonObject.getJSONArray("data");
+            for (int i=0;i<jsonArray.size();i++){
+                JSONObject partDaily = jsonArray.getJSONObject(i);
+                String path = partDaily.getString("path");
+                result = path;
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }

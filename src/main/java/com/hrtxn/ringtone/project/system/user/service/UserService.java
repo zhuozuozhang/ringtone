@@ -248,7 +248,7 @@ public class UserService {
     public List<User> getChildUserList() throws Exception {
         Page page = new Page(0, 9999);
         Integer id = ShiroUtils.getSysUser().getId();
-        List<UserVo> list = userMapper.getUserList(page, new BaseRequest());
+        List<UserVo> list = userMapper.getUserList(null, null);
         Map<Integer, List<UserVo>> map = list.stream().collect(Collectors.groupingBy(User::getParentId));
         List<User> userList = new ArrayList<>();
         User user = userMapper.findUserById(id);

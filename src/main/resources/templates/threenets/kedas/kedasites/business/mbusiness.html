@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="zh" xmlns:th="http://www.thymeleaf.org">
-<title>业务发展数据</title>
 <head th:include="threenets/kedas/kedasites/common/include::head"></head>
 <link rel="stylesheet" type="text/css" th:href="@{/client/threenets/css/number_list.css}">
 <link rel="stylesheet" type="text/css" th:href="@{/client/threenets/css/style.css}">
@@ -40,13 +39,14 @@
         <div class="grid-demo grid-demo-bg1">
             <div id="page-aside" class="aside">
                 <ul class="nav">
-                    <li class="management">
+                    <li class="management">.
+
                         <a class="banner" href="javascript:;">按时间统计</a>
                     </li>
-                    <li id="apersonnel" class="selected">
+                    <li id="apersonnel">
                         <a th:href="@{/threenets/clcy/toBusiness/1}">按日统计</a>
                     </li>
-                    <li id="ring">
+                    <li id="ring" class="selected">
                         <a th:href="@{/threenets/clcy/toBusiness/2}">按月统计</a>
                     </li>
                 </ul>
@@ -55,9 +55,10 @@
     </div>
     <div class="layui-col-xs2 mconl">
         <div class="grid-demo">
-            <div style="width: 99%; height: 1000px; border-left: solid #ddd 1px;border-right:solid #ddd 1px; overflow: auto; float: left;">
+            <div style="width: 99%; height: 1000px; border: solid #ddd 1px; overflow: auto; float: left;">
                 <div class="title-bar btn-group">
-                    <input type="text" name="enterprisename" id="enterprisename" placeholder="请输入代理商的名称" style="width:55%;margin:10px 5px;">
+                    <input type="text" name="enterprisename" id="enterprisename" placeholder="请输入代理商的名称"
+                           style="width:55%;margin:10px 5px;">
                     <input type="button" value="搜索" onclick="searchEnterprise();">
                 </div>
                 <ul class="lists">
@@ -81,7 +82,8 @@
                     日发展量分布：
                     <span class="DatePicker_Icon_Wrapper"
                           style="display: inline-block; position: relative; float: none; top: auto; right: auto; bottom: auto; left: auto;">
-                            <input type="text" name="month" id="month" class="datepicker input-small" readonly="readonly" style="height: 24px;margin-top: 7px;text-align: center;">
+                            <input type="text" name="month" id="month" class="datepicker input-small"
+                                   readonly="readonly" style="height: 24px;margin-top: 7px;text-align: center;">
                         </span>
                     <button type="button" id="loading" onclick="loading()" class="btn btn-primary">查询</button>
                 </h1>
@@ -95,13 +97,13 @@
                 <p>详细列表</p>
                 <table class="layui-table" id="set">
                     <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>日期</th>
-                            <th>新增用户数(已包月)</th>
-                            <th>退订用户数</th>
-                            <th>累计用户数(已包月)</th>
-                        </tr>
+                    <tr>
+                        <th>#</th>
+                        <th>月份</th>
+                        <th>新增用户数(已包月)</th>
+                        <th>退订用户数</th>
+                        <th>累计用户数(已包月)</th>
+                    </tr>
                     </thead>
                     <tbody>
                     </tbody>
@@ -113,5 +115,5 @@
 </body>
 <div th:include="threenets/kedas/kedasites/common/include::footer"></div>
 <script type="text/javascript" th:src="@{/public/js/echarts.min.js}"></script>
-<script th:src="@{/client/threenets/js/kedasites/dbusiness.js}"></script>
+<script th:src="@{/client/threenets/js/kedasites/mbusiness.js}"></script>
 </html>

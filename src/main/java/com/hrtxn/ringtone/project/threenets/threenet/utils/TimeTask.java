@@ -1,6 +1,9 @@
 package com.hrtxn.ringtone.project.threenets.threenet.utils;
 
+import com.hrtxn.ringtone.common.domain.BaseRequest;
+import com.hrtxn.ringtone.common.domain.Page;
 import com.hrtxn.ringtone.common.exception.NoLoginException;
+import com.hrtxn.ringtone.common.utils.DateUtils;
 import com.hrtxn.ringtone.common.utils.FileUtil;
 import com.hrtxn.ringtone.common.utils.SpringUtils;
 import com.hrtxn.ringtone.common.utils.StringUtils;
@@ -8,9 +11,12 @@ import com.hrtxn.ringtone.freemark.config.systemConfig.RingtoneConfig;
 import com.hrtxn.ringtone.project.system.File.domain.Uploadfile;
 import com.hrtxn.ringtone.project.system.File.mapper.UploadfileMapper;
 import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreenetsChildOrder;
+import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreenetsOrder;
 import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreenetsRing;
 import com.hrtxn.ringtone.project.threenets.threenet.mapper.ThreenetsChildOrderMapper;
+import com.hrtxn.ringtone.project.threenets.threenet.mapper.ThreenetsOrderMapper;
 import com.hrtxn.ringtone.project.threenets.threenet.mapper.ThreenetsRingMapper;
+import com.hrtxn.ringtone.project.threenets.threenet.service.ThreeNetsChildOrderService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -89,11 +95,6 @@ public class TimeTask {
             ApiUtils apiUtils = new ApiUtils();
             apiUtils.getPhoneInfoTimeTask(threenetsChildOrderList, "中高俊聪");
         }
-
-        //刷新电信订单，获取最近电信订单，未审核的
-
-
-
     }
 
     /**
@@ -113,6 +114,24 @@ public class TimeTask {
         if (StringUtils.isNotNull(threenetsChildOrderList) && threenetsChildOrderList.size() > 0) {
             ApiUtils apiUtils = new ApiUtils();
             apiUtils.getPhoneInfoTimeTask(threenetsChildOrderList, "中高俊聪");
+        }
+    }
+
+    /**
+     * 刷新电信商户信息,同步人员信息和铃音信息
+     * 每天3:30执行
+     * 获取未包月子账号更新信息
+     */
+    @Scheduled(cron = "0 30 3 ? * *")
+    public void refreshMcardMerchants(){
+        Page page = new Page();
+        BaseRequest request = new BaseRequest();
+        request.setOperator(2);
+        request.setStart(DateUtils.getPastDate(7));
+        request.setEnd(DateUtils.getFetureDate(1));
+        List<ThreenetsOrder> list = SpringUtils.getBean(ThreenetsOrderMapper.class).getAllorderList(page,request);
+        for (int i = 0; i < list.size(); i++) {
+            SpringUtils.getBean(ThreeNetsChildOrderService.class).refreshDxInfo(list.get(i));
         }
     }
 

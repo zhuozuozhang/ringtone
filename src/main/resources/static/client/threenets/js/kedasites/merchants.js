@@ -23,7 +23,7 @@ function showTable() {
         targets: [1],
         render: function (data, type, row, meta) {
             var id = row.id;
-            return "<div style='text-overflow:ellipsis;overflow:hidden;white-space:nowrap;width:150px;' title='"+data+"'><a href='/threenets/toMerchantsPhonePage/" + id + "'>"+data+"</a></div>";
+            return "<div style='text-overflow:ellipsis;overflow:hidden;white-space:nowrap;width:150px;' title='"+data+"'><a href='/threenets/clcy/toNumberList/" + id + "/"+data+"'>"+data+"</a></div>";
         }
     },{
         targets:[3],
@@ -40,7 +40,7 @@ function showTable() {
                 + "<i class='layui-icon layui-icon-delete' title='删除' onclick='DelMerchants(" + id + ");'></i>";
         }
     }];
-    page("#set", 1, param, "/threenets/clcy/getKeDaOrderList", columns, columnDefs);
+    page("#set", 10, param, "/threenets/clcy/getKeDaOrderList", columns, columnDefs);
 }
 //修改商户名称
 function editMerchants(id,name) {

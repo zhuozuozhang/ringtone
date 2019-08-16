@@ -59,8 +59,7 @@ public class ChartsController {
         try {
             return chartsService.echartsData(start, operate, type);
         } catch (ParseException e) {
-            e.printStackTrace();
-            return null;
+            return AjaxResult.error(e.getMessage());
         }
     }
 

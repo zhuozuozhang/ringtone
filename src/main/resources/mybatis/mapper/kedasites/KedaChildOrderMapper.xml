@@ -57,6 +57,98 @@
         <include refid="page"/>
     </select>
 
+    <select id="getIsMonthly" resultType="com.hrtxn.ringtone.project.threenets.threenet.domain.PlotBarPhone">
+        SELECT
+        <if test="type == 1">
+            DATE_FORMAT(create_time, '%Y-%m-%d') AS dateTimes, COUNT(*) AS addUser
+        </if>
+        <if test="type == 2">
+            DATE_FORMAT(create_time, '%Y-%m') AS dateTimes, COUNT(*) AS addUser
+        </if>
+        FROM
+        tb_keda_child_order
+        WHERE 1= 1
+        AND is_monthly = 2
+        <if test="param != null and param.userId != null">
+            AND user_id = #{param.userId}
+        </if>
+        <if test="param != null and param.arrayById != null">
+            AND user_id in
+            <foreach collection="param.arrayById" item="id" index="index" open="(" close=")" separator=",">
+                #{id}
+            </foreach>
+        </if>
+        <if test="param != null and param.month != null and param.month != '' ">
+            <if test="type == 1">
+                AND DATE_FORMAT(create_time, '%Y-%m') = #{param.month}
+                GROUP BY DATE_FORMAT(create_time, '%Y-%m-%d')
+            </if>
+            <if test="type == 2">
+                AND DATE_FORMAT(create_time, '%Y') = #{param.month}
+                GROUP BY DATE_FORMAT(create_time, '%Y-%m')
+            </if>
+        </if>
+    </select>
+
+    <select id="getUnsubscribe" resultType="com.hrtxn.ringtone.project.threenets.threenet.domain.PlotBarPhone">
+        SELECT
+        <if test="type == 1">
+          DATE_FORMAT(create_time, '%Y-%m-%d') AS dateTimes, COUNT(*) AS unsubscribeUser
+        </if>
+        <if test="type == 2">
+            DATE_FORMAT(create_time, '%Y-%m') AS dateTimes, COUNT(*) AS unsubscribeUser
+        </if>
+        FROM
+        tb_keda_child_order
+        WHERE 1= 1
+        AND is_monthly = 3
+        <if test="param != null and param.userId != null">
+            AND user_id = #{param.userId}
+        </if>
+        <if test="param != null and param.arrayById != null">
+            AND user_id in
+            <foreach collection="param.arrayById" item="id" index="index" open="(" close=")" separator=",">
+                #{id}
+            </foreach>
+        </if>
+        <if test="param != null and param.month != null and param.month != '' ">
+            <if test="type == 1">
+                AND DATE_FORMAT(create_time, '%Y-%m') = #{param.month}
+                GROUP BY DATE_FORMAT(create_time, '%Y-%m-%d')
+            </if>
+            <if test="type == 2">
+                AND DATE_FORMAT(create_time, '%Y') = #{param.month}
+                GROUP BY DATE_FORMAT(create_time, '%Y-%m')
+            </if>
+        </if>
+    </select>
+
+    <select id="getBussinessCount" resultType="int">
+        SELECT
+        COUNT(*)
+        FROM
+        tb_keda_child_order
+        WHERE 1=1
+        AND is_monthly = 2
+        <if test="param != null and param.userId != null">
+            AND user_id = #{param.userId}
+        </if>
+        <if test="param != null and param.arrayById != null">
+            AND user_id in
+            <foreach collection="param.arrayById" item="id" index="index" open="(" close=")" separator=",">
+                #{id}
+            </foreach>
+        </if>
+        <if test="param != null and param.month != null and param.month != '' ">
+            <if test="type == 1">
+                AND DATE_FORMAT(create_time, '%Y-%m') = #{param.month}
+            </if>
+            <if test="type == 2">
+                AND DATE_FORMAT(create_time, '%Y') = #{param.month}
+            </if>
+        </if>
+    </select>
+
     <!--条件-->
     <sql id="parameters">
         <if test="param != null and param.userId != null">

@@ -146,8 +146,8 @@ public class ThreeNetsRingService {
                 saveSwxlRing(ring);
             }
             if (operator == 2) {
-                threenetsRingMapper.insertThreeNetsRing(ring);
                 saveMcardRing(ring);
+                threenetsRingMapper.insertThreeNetsRing(ring);
             }
             num++;
         }
@@ -201,7 +201,7 @@ public class ThreeNetsRingService {
     private void saveMcardRing(ThreenetsRing ring)throws IOException,NoLoginException{
         ring.setFile(new File(RingtoneConfig.getProfile() + ring.getRingWay()));
         ThreeNetsOrderAttached attached = threeNetsOrderAttachedService.selectByParentOrderId(ring.getOrderId());
-        ring.setOperateId(attached.getSwxlId());
+        ring.setOperateId(attached.getMcardId());
         boolean flag = apiUtils.addRingByDx(ring);
         if (flag) {
             threenetsRingMapper.updateByPrimaryKeySelective(ring);

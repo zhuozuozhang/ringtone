@@ -2,8 +2,15 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.hrtxn.ringtone.project.system.config.mapper.SystemConfigMapper">
 
+    <resultMap id="BaseResultMap" type="com.hrtxn.ringtone.project.system.config.domain.SystemConfig">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="type" property="type" jdbcType="VARCHAR"/>
+        <result column="info" property="info" jdbcType="VARCHAR"/>
+        <result column="creaTime" property="creaTime" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
     <!--获取配置列表-->
-    <select id="getConfigList" resultType="SystemConfig">
+    <select id="getConfigList" resultType="com.hrtxn.ringtone.project.system.config.domain.SystemConfig">
         SELECT
             id,type,info,creaTime
         FROM
@@ -15,7 +22,7 @@
         SELECT COUNT(*) FROM sys_config
     </select>
     <!--添加配置信息-->
-    <insert id="insert" parameterType="SystemConfig">
+    <insert id="insert" parameterType="com.hrtxn.ringtone.project.system.config.domain.SystemConfig">
         insert into sys_config
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="type != null">
@@ -41,7 +48,7 @@
         </trim>
     </insert>
     <!--根据id获取配置信息-->
-    <select id="getConfigById" parameterType="int" resultType="SystemConfig">
+    <select id="getConfigById" parameterType="int" resultType="com.hrtxn.ringtone.project.system.config.domain.SystemConfig">
          SELECT
             id,type,info,creaTime
         FROM
@@ -49,8 +56,16 @@
         WHERE
             id = #{id}
     </select>
+    <select id="getConfigByType" parameterType="int" resultMap="BaseResultMap">
+         SELECT
+            id,type,info,creaTime
+        FROM
+            sys_config
+        WHERE
+            type = #{type}
+    </select>
     <!--修改配置信息-->
-    <update id="doEditSystemConfig" parameterType="SystemConfig">
+    <update id="doEditSystemConfig" parameterType="com.hrtxn.ringtone.project.system.config.domain.SystemConfig">
         update sys_config
         <set>
             <if test="type != null">

@@ -9,16 +9,16 @@ import lombok.Data;
  */
 @Data
 public class McardPhoneAddressRespone {
-    private String MNOs;
-    private String areacode;
+    private int MNOs;
+    private String code;
+    private String province;
     private String city;
     private String cityCode;
-    private String code;
-    private String feeType;
-    private String feeValue;
-    private String intelligence;
-    private String province;
     private String provinceCode;
+    private String feeValue;
     private String province_code;
+    private int feeType;
+    private String areacode;
     private String spid;
+    private int intelligence;
 }

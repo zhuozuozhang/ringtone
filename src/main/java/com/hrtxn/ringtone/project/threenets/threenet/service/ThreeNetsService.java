@@ -14,11 +14,9 @@ import com.hrtxn.ringtone.project.system.user.mapper.UserMapper;
 import com.hrtxn.ringtone.project.threenets.threenet.domain.PlotBarPhone;
 import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreeNetsOrderAttached;
 import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreenetsChildOrder;
-import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreenetsOrder;
 import com.hrtxn.ringtone.project.threenets.threenet.mapper.ThreeNetsOrderAttachedMapper;
 import com.hrtxn.ringtone.project.threenets.threenet.mapper.ThreenetsChildOrderMapper;
 import com.hrtxn.ringtone.project.threenets.threenet.mapper.ThreenetsOrderMapper;
-import com.hrtxn.ringtone.project.threenets.threenet.utils.ApiUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.subject.Subject;
@@ -135,7 +133,7 @@ public class ThreeNetsService {
     public Integer [] getChildUserList() throws Exception {
         Page page = new Page(0, 9999);
         Integer id = ShiroUtils.getSysUser().getId();
-        List<UserVo> list = userMapper.getUserList(page, new BaseRequest());
+        List<UserVo> list = userMapper.getUserList(null, null);
         Map<Integer, List<UserVo>> map = list.stream().collect(Collectors.groupingBy(User::getParentId));
         List<User> userList = new ArrayList<>();
         recursion(map.get(id), map, userList);

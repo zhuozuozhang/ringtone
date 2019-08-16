@@ -83,9 +83,12 @@ public class ThreeNetsChildOrderService {
     @Synchronized
     public void refreshDxInfo(ThreenetsOrder order){
         ApiUtils utils = new ApiUtils();
+        ThreeNetsOrderAttached attached = threeNetsOrderAttachedService.selectByParentOrderId(order.getId());
+        if (attached.getMcardId().isEmpty() || attached.getMcardStatus() == 1){
+            return;
+        }
         Boolean aBoolean = utils.normalBusinessInfo(order);
         if (aBoolean){
-            ThreeNetsOrderAttached attached = threeNetsOrderAttachedService.selectByParentOrderId(order.getId());
             attached.setMcardStatus(1);
             ThreenetsChildOrder param = new ThreenetsChildOrder();
             param.setParentOrderId(order.getId());
@@ -93,7 +96,7 @@ public class ThreeNetsChildOrderService {
             try {
                 //保存成员
                 List<ThreenetsChildOrder> childOrders = threenetsChildOrderMapper.selectThreeNetsTaskList(new Page(), param);
-                utils.addPhoneByDx(childOrders,attached.getMcardId());
+                childOrders = utils.addPhoneByDx(childOrders, attached.getMcardId());
                 threeNetsOrderAttachedService.update(attached);
                 //保存铃音
                 List<ThreenetsRing> rings = threenetsRingMapper.selectByOrderId(order.getId());
@@ -104,6 +107,9 @@ public class ThreeNetsChildOrderService {
                     ThreenetsRing ring = rings.get(i);
                     ring.setFile(new File(RingtoneConfig.getProfile()+ring.getRingWay()));
                     utils.addRingByDx(rings.get(i));
+                }
+                for (int i = 0; i < childOrders.size(); i++) {
+                    threenetsChildOrderMapper.updateThreeNetsChidOrder(childOrders.get(i));
                 }
             }catch (Exception e){
                 e.printStackTrace();

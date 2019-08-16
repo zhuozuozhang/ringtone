@@ -20,6 +20,7 @@ import com.hrtxn.ringtone.project.threenets.threenet.json.mcard.McardAddPhoneRes
 import com.hrtxn.ringtone.project.threenets.threenet.json.migu.*;
 import com.hrtxn.ringtone.project.threenets.threenet.json.swxl.*;
 import com.hrtxn.ringtone.project.threenets.threenet.mapper.ThreenetsChildOrderMapper;
+import com.hrtxn.ringtone.project.threenets.threenet.mapper.ThreenetsOrderMapper;
 import com.hrtxn.ringtone.project.threenets.threenet.mapper.ThreenetsRingMapper;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.json.JSONObject;
@@ -54,6 +55,46 @@ public class ApiUtils {
     private static String child_Distributor_ID_188 = "61204";
 
     private static String test_id = "1673882";
+
+
+    /**
+     *
+     * @param list
+     */
+    public void refreshMcardMerchants(List<ThreenetsOrder> list){
+        String result = mcardApi.refreshBusinessInfo(new ThreenetsOrder());
+        if (StringUtils.isEmpty(result)) {
+            return;
+        }
+        Document doc = Jsoup.parse(result);
+        Elements contents = doc.getElementsByTag("tbody");
+        Elements trs = contents.get(0).getElementsByTag("tr");
+        for (int i = 0; i < trs.size(); i++) {
+            Elements tds = trs.get(i).getElementsByTag("td");
+            for (int j = 0; j < list.size(); j++) {
+                ThreenetsOrder threenetsOrder = list.get(j);
+                if (threenetsOrder.getCompanyName().equals(tds.get(1).text())){
+                    continue;
+                }
+                Element el2 = tds.get(6);
+                String ringCheckmsg = el2.attr("title");
+                String remark = el2.text();
+                if (remark.equals("审核通过")){
+
+                }
+                SpringUtils.getBean(ThreenetsOrderMapper.class).updateByPrimaryKey(threenetsOrder);
+            }
+
+
+        }
+
+
+
+
+
+    }
+
+
     /**
      * 获取号码信息
      *
@@ -131,15 +172,16 @@ public class ApiUtils {
                         continue;
                     }
                     if (tds.get(1).text().equals(threenetsChildOrder.getLinkmanTel())) {
-                        Element el2 = tds.get(6);
+                        //threenetsChildOrder.setRingName(tds.get(5).text());
+                        threenetsChildOrder.setStatus(tds.get(6).text());
                         //是否彩铃用户
-                        if (tds.get(7).equals("已开通")){
+                        if (tds.get(7).text().equals("已开通")){
                             threenetsChildOrder.setIsRingtoneUser(true);
                         }else{
                             threenetsChildOrder.setIsRingtoneUser(false);
                         }
                         //是否包月
-                        if (tds.get(8).equals("未开通")){
+                        if (tds.get(8).text().equals("未开通")){
                             threenetsChildOrder.setIsMonthly(1);
                         }else{
                             threenetsChildOrder.setIsMonthly(2);
@@ -307,15 +349,16 @@ public class ApiUtils {
                         continue;
                     }
                     if (tds.get(1).text().equals(threenetsChildOrder.getLinkmanTel())) {
-                        Element el2 = tds.get(6);
+                        //threenetsChildOrder.setRingName(tds.get(5).text());
+                        threenetsChildOrder.setStatus(tds.get(6).text());
                         //是否彩铃用户
-                        if (tds.get(7).equals("已开通")){
+                        if (tds.get(7).text().equals("已开通")){
                             threenetsChildOrder.setIsRingtoneUser(true);
                         }else{
                             threenetsChildOrder.setIsRingtoneUser(false);
                         }
                         //是否包月
-                        if (tds.get(8).equals("未开通")){
+                        if (tds.get(8).text().equals("未开通")){
                             threenetsChildOrder.setIsMonthly(1);
                         }else{
                             threenetsChildOrder.setIsMonthly(2);
@@ -587,7 +630,7 @@ public class ApiUtils {
                     if (tds.size() <= 0){
                         continue;
                     }
-                    if (tds.get(1).text().equals(threenetsRing.getRingName())) {
+                    if (tds.get(1).text().equals(ringName)) {
                         Element el2 = tds.get(4);
                         String remark = el2.text();
                         if (remark.equals("审核通过")){
@@ -1056,11 +1099,11 @@ public class ApiUtils {
      * @throws IOException
      * @throws NoLoginException
      */
-    public McardAddGroupRespone addOrderByDx(ThreenetsOrder order, ThreeNetsOrderAttached attached) throws IOException, NoLoginException {
+    public McardAddGroupRespone addOrderByDx(ThreenetsOrder order, ThreeNetsOrderAttached attached){
         McardAddGroupRespone mcardAddGroupRespone = null;
         //资费
         boolean flag = Arrays.asList(TENRMB).contains(order.getProvince());
-        attached.setMcardPrice(flag ? 2 : 11);
+        attached.setMcardPrice(flag ? 11 : 2);
         if (flag){
             mcardApi.toNormalUser(child_Distributor_ID_188);
         }else{
@@ -1069,7 +1112,7 @@ public class ApiUtils {
         //添加商户，同步三次
         for (int i = 0; i < 3; i++) {
             mcardAddGroupRespone = mcardApi.addGroup(order,attached);
-            if (mcardAddGroupRespone != null){
+            if (mcardAddGroupRespone != null && mcardAddGroupRespone.getCode().equals("0000")){
                 break;
             }
         }
@@ -1169,8 +1212,10 @@ public class ApiUtils {
         mcardApi.toUserList(circleId);
         for (int i = 0; i < orders.size(); i++) {
             McardAddPhoneRespone mcardAddPhoneRespone = mcardApi.addApersonnel(orders.get(i));
-            if (mcardAddPhoneRespone.getCode().equals("200")){
-                newList.add(orders.get(i));
+            if (mcardAddPhoneRespone.getCode().equals("0000")){
+                ThreenetsChildOrder childOrder = orders.get(i);
+                childOrder.setStatus("审核成功");
+                newList.add(childOrder);
             }
         }
         return newList;
