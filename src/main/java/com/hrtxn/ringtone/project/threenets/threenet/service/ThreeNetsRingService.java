@@ -4,6 +4,7 @@ import com.hrtxn.ringtone.common.constant.AjaxResult;
 import com.hrtxn.ringtone.common.domain.BaseRequest;
 import com.hrtxn.ringtone.common.domain.Page;
 import com.hrtxn.ringtone.common.exception.NoLoginException;
+import com.hrtxn.ringtone.common.utils.DateUtils;
 import com.hrtxn.ringtone.common.utils.StringUtils;
 import com.hrtxn.ringtone.freemark.config.systemConfig.RingtoneConfig;
 import com.hrtxn.ringtone.project.system.File.service.FileService;
@@ -128,7 +129,7 @@ public class ThreeNetsRingService {
             ring.setRingType(isVideo ? "视频" : "音频");
             ring.setRingStatus(2);
             ring.setCreateTime(new Date());
-            ring.setRingName(ring.getRingName() + extensionsName);
+            ring.setRingName(ring.getRingName() + extensionsName + DateUtils.getTimeRadom());
             ring.setOperate(operator);
             if (ring.getRingType().equals("视频") && operator != 1) {
                 continue;
@@ -188,6 +189,9 @@ public class ThreeNetsRingService {
         if (ringByLt) {
             threenetsRingMapper.updateByPrimaryKeySelective(ring);
             fileService.updateStatus(ring.getRingWay());
+        }else{
+            delete(ring.getId());
+            fileService.deleteFile(ring.getRingWay());
         }
     }
 

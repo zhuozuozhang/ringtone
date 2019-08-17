@@ -485,7 +485,7 @@ public class SwxlApi implements Serializable {
             HttpParams params = httpclient.getParams();
             params.setParameter(CoreProtocolPNames.HTTP_CONTENT_CHARSET, Charset.forName("UTF-8"));
             reqEntity.addPart("groupName", new StringBody(ringOrder.getCompanyName(), Charset.forName("UTF-8")));// 集团名称
-            reqEntity.addPart("tel", new StringBody(ringOrder.getLinkmanTel()));// 集团名称
+            reqEntity.addPart("tel", new StringBody(ringOrder.getLinkmanTel()));//
             reqEntity.addPart("payType", new StringBody("0"));
             reqEntity.addPart("applyForSmsNotification", new StringBody("0"));// 免短信
             reqEntity.addPart("smsFile", new StringBody(""));
@@ -494,7 +494,7 @@ public class SwxlApi implements Serializable {
             } else {
                 reqEntity.addPart("productId", new StringBody("224"));//价格20元
             }
-            reqEntity.addPart("ringName", new StringBody(ringOrder.getCompanyName(), Charset.forName("UTF-8")));// 铃音名称
+            reqEntity.addPart("ringName", new StringBody(ringOrder.getRingName(), Charset.forName("UTF-8")));// 铃音名称
             if (ringOrder.getUpLoadAgreement() != null) {
                 reqEntity.addPart("ringFile", new FileBody(ringOrder.getUpLoadAgreement())); // 铃音文件
             }
@@ -508,6 +508,7 @@ public class SwxlApi implements Serializable {
                 log.debug("服务器正常响应.....");
                 HttpEntity resEntity = response1.getEntity();
                 String res = EntityUtils.toString(resEntity);
+                log.debug(res);
                 //res{"recode":"000000","message":"成功","data":{"groupId":"2e33a3e9c0e1452d83a6fa3e5a8ad2e2"},"success":true}
                 ObjectMapper mapper = new ObjectMapper();
                 if (res.contains("000000")) {
@@ -537,17 +538,20 @@ public class SwxlApi implements Serializable {
                         if (list == null) {
                             list = new ArrayList<SwxlAddPhoneFailInfo>();
                             msg.append("创建集团失败！");
+                            log.debug("创建集团失败.....");
                         }
                         swxlAddGroupRespone.setRemark(msg.toString());
                     } else {
                         swxlAddGroupRespone.setRemark(createGroupInfo.getMessage());
                     }
                 }
+            }else{
+                log.debug("联通服务器相应失败.....");
             }
         } catch (Exception e) {
             swxlAddGroupRespone = new SwxlGroupResponse();
             swxlAddGroupRespone.setStatus(1);
-            swxlAddGroupRespone.setRemark("添加商户异常");
+                swxlAddGroupRespone.setRemark("添加商户异常");
             log.error("添加商户异常[{}]", e.getMessage());
         } finally {
             httppost.abort();

@@ -68,7 +68,7 @@ function ChangeName() {
     var name = $("#EnterPriseName").val();
     AjaxPost("/threenets/updateThreeNetsOrder", {"id": id, "companyName": name}, function (result) {
         layer.closeAll();//关闭弹层
-        layer.msg(result.msg + "!", {icon: result.code == 500 ? 2 : 1, time: 1000});
+        layer.msg(result.msg + "!", {icon: result.code == 500 ? 1 : 2, time: 1000});
         $('#set').DataTable().ajax.reload(null,false);
     })
 }

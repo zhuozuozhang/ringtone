@@ -134,7 +134,12 @@ public class ThreeNetsOrderController {
     @DeleteMapping("/threenets/deleteThreeNetsOrder")
     @Log(title = "删除三网订单", businessType = BusinessType.DELETE, operatorLogType = OperatorLogType.THREENETS)
     public AjaxResult deleteThreeNetsOrder(Integer id) {
-        return threeNetsOrderService.delete(id);
+        try {
+            return threeNetsOrderService.delete(id);
+        }catch (Exception e){
+            log.error("删除订单及子订单 方法：deleteThreeNetsOrder 错误信息", e);
+            return AjaxResult.error("删除失败");
+        }
     }
 
 
