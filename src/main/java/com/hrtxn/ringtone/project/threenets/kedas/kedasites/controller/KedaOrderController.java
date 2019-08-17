@@ -79,17 +79,30 @@ public class KedaOrderController {
         return "threenets/kedas/kedasites/merchants/addmerchants";
     }
 
+    /**
+     * 添加父级订单
+     *
+     * @param kedaOrder
+     * @return
+     * @throws Exception
+     */
     @PostMapping("addKedaOrder")
     @ResponseBody
-    @Log(title = "添加疑难杂单父级订单",businessType = BusinessType.INSERT,operatorLogType = OperatorLogType.KEDASITES)
+    @Log(title = "添加疑难杂单父级订单", businessType = BusinessType.INSERT, operatorLogType = OperatorLogType.KEDASITES)
     public AjaxResult addKedaOrder(KedaOrder kedaOrder) throws Exception {
         return kedaOrderService.addKedaOrder(kedaOrder);
     }
 
+    /**
+     * 疑难杂单父级订单删除
+     *
+     * @param id
+     * @return
+     */
     @DeleteMapping("deleteKedaOrder")
     @ResponseBody
-    @Log(title = "删除疑难杂单父级订单",businessType = BusinessType.DELETE,operatorLogType = OperatorLogType.KEDASITES)
-    public AjaxResult deleteKedaOrder(Integer id){
+    @Log(title = "删除疑难杂单父级订单", businessType = BusinessType.DELETE, operatorLogType = OperatorLogType.KEDASITES)
+    public AjaxResult deleteKedaOrder(Integer id) {
         return kedaOrderService.deleteKedaOrder(id);
     }
 

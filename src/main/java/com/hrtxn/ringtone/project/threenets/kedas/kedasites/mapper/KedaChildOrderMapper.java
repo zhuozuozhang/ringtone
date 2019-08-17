@@ -68,7 +68,27 @@ public interface KedaChildOrderMapper {
      */
     int getBussinessCount(@Param("type") Integer type, @Param("param") BaseRequest baseRequest);
 
+    /**
+     * 添加自己订单
+     *
+     * @param kedaChildOrder
+     * @return
+     */
     int insertKedaChildOrder(KedaChildOrder kedaChildOrder);
 
+    /**
+     * 批量刪除子級訂單
+     *
+     * @param keDaChildOrderIds
+     * @return
+     */
     int deletePlKedaChilOrder(@Param("keDaChildOrderIds") int[] keDaChildOrderIds);
+
+    /**
+     * 修改子级订单信息
+     *
+     * @param kedaChildOrder
+     * @return
+     */
+    int updatKedaChildOrder(KedaChildOrder kedaChildOrder);
 }

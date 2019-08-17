@@ -32,7 +32,6 @@
         ORDER BY cerate_time DESC
         <include refid="page"/>
     </select>
-
     <!-- 获取总数 -->
     <select id="getCount" resultType="java.lang.Integer">
         SELECT COUNT(*) FROM tb_keda_order
@@ -152,14 +151,4 @@
             LIMIT #{page.page},#{page.pagesize}
         </if>
     </sql>
-
-
-    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer">
-        select
-        <include refid="Base_Column_List"/>
-        from tb_keda_order
-        where id = #{id,jdbcType=INTEGER}
-    </select>
-
-
 </mapper>

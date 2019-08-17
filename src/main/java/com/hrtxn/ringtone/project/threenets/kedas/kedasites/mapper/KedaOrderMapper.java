@@ -43,5 +43,11 @@ public interface KedaOrderMapper {
 
     int insertKedaOrder(KedaOrder kedaOrder);
 
+    /**
+     * 疑难杂单父级订单删除
+     *
+     * @param id
+     * @return
+     */
     int deleteKedaOrder(@Param("id") Integer id);
 }

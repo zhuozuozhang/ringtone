@@ -56,7 +56,7 @@
         WHERE
             id = #{id}
     </select>
-    <select id="getConfigByType" parameterType="int" resultMap="BaseResultMap">
+    <select id="getConfigByType" resultMap="BaseResultMap">
          SELECT
             id,type,info,creaTime
         FROM

@@ -148,7 +148,7 @@
         </if>
     </select>
     <!--添加子级订单-->
-    <insert id="insertKedaChildOrder" parameterType="com.hrtxn.ringtone.project.threenets.kedas.kedasites.domain.KedaChildOrder">
+    <insert id="insertKedaChildOrder" parameterType="com.hrtxn.ringtone.project.threenets.kedas.kedasites.domain.KedaChildOrder" useGeneratedKeys="true" keyProperty="id">
         insert into tb_keda_child_order
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="companyName != null">
@@ -259,41 +259,8 @@
             #{keDaChildOrderId}
         </foreach>
     </delete>
-
-    <!--条件-->
-    <sql id="parameters">
-        <if test="param != null and param.userId != null">
-            AND user_id = #{param.userId}
-        </if>
-        <if test="param != null and param.orderId != null">
-            AND order_id = #{param.orderId}
-        </if>
-        <if test="param != null and param.isMonthly != null">
-            AND is_monthly = #{param.isMonthly}
-        </if>
-        <if test="param != null and param.timeType != null and param.timeType == 1">
-            AND DATEDIFF(NOW(),create_time) &lt;= 1
-        </if>
-        <if test="param != null and param.timeType != null and param.timeType == 2">
-            AND DATEDIFF(NOW(),create_time) &lt;= 7
-        </if>
-        <if test="param != null and param.timeType != null and param.timeType == 3">
-            AND DATEDIFF(NOW(),create_time) &lt;= 15
-        </if>
-        <if test="param != null and param.timeType != null and param.timeType == 4">
-            AND DATEDIFF(NOW(),create_time) &lt;= 30
-        </if>
-    </sql>
-    <!--分页-->
-    <sql id="page">
-        <if test="page != null and page.page != null and page.pagesize != null">
-            LIMIT #{page.page},#{page.pagesize}
-        </if>
-    </sql>
-
-
-    <update id="updateByPrimaryKeySelective"
-            parameterType="com.hrtxn.ringtone.project.threenets.kedas.kedasites.domain.KedaChildOrder">
+    <!--修改子级订单信息-->
+    <update id="updatKedaChildOrder" parameterType="com.hrtxn.ringtone.project.threenets.kedas.kedasites.domain.KedaChildOrder">
         update tb_keda_child_order
         <set>
             <if test="companyName != null">
@@ -329,8 +296,8 @@
             <if test="ringName != null">
                 ring_name = #{ringName,jdbcType=VARCHAR},
             </if>
-            <if test="isMonthiy != null">
-                is_monthiy = #{isMonthiy,jdbcType=INTEGER},
+            <if test="isMonthly != null">
+                is_monthly = #{isMonthly,jdbcType=INTEGER},
             </if>
             <if test="isRingtoneUser != null">
                 is_ringtone_user = #{isRingtoneUser,jdbcType=INTEGER},
@@ -344,43 +311,34 @@
         </set>
         where id = #{id,jdbcType=INTEGER}
     </update>
-    <update id="updateByPrimaryKeyWithBLOBs"
-            parameterType="com.hrtxn.ringtone.project.threenets.kedas.kedasites.domain.KedaChildOrder">
-    update tb_keda_child_order
-    set company_name = #{companyName,jdbcType=VARCHAR},
-      link_man = #{linkMan,jdbcType=VARCHAR},
-      link_tel = #{linkTel,jdbcType=VARCHAR},
-      operate = #{operate,jdbcType=INTEGER},
-      province = #{province,jdbcType=VARCHAR},
-      city = #{city,jdbcType=VARCHAR},
-      create_time = #{createTime,jdbcType=TIMESTAMP},
-      status = #{status,jdbcType=VARCHAR},
-      operate_id = #{operateId,jdbcType=VARCHAR},
-      ring_id = #{ringId,jdbcType=INTEGER},
-      ring_name = #{ringName,jdbcType=VARCHAR},
-      is_monthiy = #{isMonthiy,jdbcType=INTEGER},
-      is_ringtone_user = #{isRingtoneUser,jdbcType=INTEGER},
-      user_id = #{userId,jdbcType=INTEGER},
-      remark = #{remark,jdbcType=LONGVARCHAR}
-    where id = #{id,jdbcType=INTEGER}
-  </update>
-    <update id="updateByPrimaryKey"
-            parameterType="com.hrtxn.ringtone.project.threenets.kedas.kedasites.domain.KedaChildOrder">
-    update tb_keda_child_order
-    set company_name = #{companyName,jdbcType=VARCHAR},
-      link_man = #{linkMan,jdbcType=VARCHAR},
-      link_tel = #{linkTel,jdbcType=VARCHAR},
-      operate = #{operate,jdbcType=INTEGER},
-      province = #{province,jdbcType=VARCHAR},
-      city = #{city,jdbcType=VARCHAR},
-      create_time = #{createTime,jdbcType=TIMESTAMP},
-      status = #{status,jdbcType=VARCHAR},
-      operate_id = #{operateId,jdbcType=VARCHAR},
-      ring_id = #{ringId,jdbcType=INTEGER},
-      ring_name = #{ringName,jdbcType=VARCHAR},
-      is_monthiy = #{isMonthiy,jdbcType=INTEGER},
-      is_ringtone_user = #{isRingtoneUser,jdbcType=INTEGER},
-      user_id = #{userId,jdbcType=INTEGER}
-    where id = #{id,jdbcType=INTEGER}
-  </update>
+    <!--条件-->
+    <sql id="parameters">
+        <if test="param != null and param.userId != null">
+            AND user_id = #{param.userId}
+        </if>
+        <if test="param != null and param.orderId != null">
+            AND order_id = #{param.orderId}
+        </if>
+        <if test="param != null and param.isMonthly != null">
+            AND is_monthly = #{param.isMonthly}
+        </if>
+        <if test="param != null and param.timeType != null and param.timeType == 1">
+            AND DATEDIFF(NOW(),create_time) &lt;= 1
+        </if>
+        <if test="param != null and param.timeType != null and param.timeType == 2">
+            AND DATEDIFF(NOW(),create_time) &lt;= 7
+        </if>
+        <if test="param != null and param.timeType != null and param.timeType == 3">
+            AND DATEDIFF(NOW(),create_time) &lt;= 15
+        </if>
+        <if test="param != null and param.timeType != null and param.timeType == 4">
+            AND DATEDIFF(NOW(),create_time) &lt;= 30
+        </if>
+    </sql>
+    <!--分页-->
+    <sql id="page">
+        <if test="page != null and page.page != null and page.pagesize != null">
+            LIMIT #{page.page},#{page.pagesize}
+        </if>
+    </sql>
 </mapper>

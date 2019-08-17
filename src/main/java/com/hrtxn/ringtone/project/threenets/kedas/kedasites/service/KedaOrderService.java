@@ -19,8 +19,11 @@ import com.hrtxn.ringtone.project.threenets.kedas.kedasites.mapper.KedaOrderMapp
 import com.hrtxn.ringtone.project.threenets.kedas.kedasites.mapper.KedaRingMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import reactor.core.Reactor;
+import reactor.event.Event;
 
 import java.util.Date;
 import java.util.List;
@@ -36,12 +39,13 @@ public class KedaOrderService {
 
     @Autowired
     private KedaOrderMapper kedaOrderMapper;
-
     @Autowired
     private KedaChildOrderMapper kedaChildOrderMapper;
-
     @Autowired
     private KedaRingMapper kedaRingMapper;
+    @Autowired
+    @Qualifier("createReactor")//同样指定并注入
+    Reactor r;
 
     /**
      * 获取父级订单列表
@@ -77,8 +81,8 @@ public class KedaOrderService {
             // 根据商户名称查找父级订单信息
             BaseRequest baseRequest = new BaseRequest();
             baseRequest.setCompanyName(kedaOrder.getCompanyName());
-            List<KedaOrder> kedaOrderList = kedaOrderMapper.getKeDaOrderList(null,baseRequest);
-            if (kedaOrderList.size() > 0){
+            List<KedaOrder> kedaOrderList = kedaOrderMapper.getKeDaOrderList(null, baseRequest);
+            if (kedaOrderList.size() > 0) {
                 return AjaxResult.error("商户名称重复！");
             }
             // 执行修改商户名操作
@@ -92,6 +96,13 @@ public class KedaOrderService {
         return AjaxResult.error("参数格式错误！");
     }
 
+    /**
+     * 添加父級訂單
+     *
+     * @param kedaOrder
+     * @return
+     * @throws Exception
+     */
     @Transactional
     public AjaxResult addKedaOrder(KedaOrder kedaOrder) throws Exception {
 
@@ -101,41 +112,41 @@ public class KedaOrderService {
         if (!StringUtils.isNotEmpty(kedaOrder.getLinkTel())) return AjaxResult.error("参数格式不正确!");
 
         // 查重
-        BaseRequest baseRequest = new BaseRequest();
-
-        baseRequest.setCompanyName(kedaOrder.getCompanyName());
-        List<KedaOrder> companyName = kedaOrderMapper.getKeDaOrderList(null, baseRequest);
-        if (companyName.size() > 0) return AjaxResult.error("集团名称已被使用！");
-
-        baseRequest.setCompanyName(null);
-        baseRequest.setTel(kedaOrder.getLinkTel());
-        List<KedaOrder> linkTel = kedaOrderMapper.getKeDaOrderList(null, baseRequest);
-        if (linkTel.size() > 0) return AjaxResult.error("联系电话已被使用！");
-
-        baseRequest.setTel(null);
-        baseRequest.setLinkMan(kedaOrder.getLinkMan());
-        List<KedaOrder> linkMan = kedaOrderMapper.getKeDaOrderList(null, baseRequest);
-        if (linkMan.size() > 0) return AjaxResult.error("联系人已被使用！");
+//        BaseRequest baseRequest = new BaseRequest();
+//
+//        baseRequest.setCompanyName(kedaOrder.getCompanyName());
+//        List<KedaOrder> companyName = kedaOrderMapper.getKeDaOrderList(null, baseRequest);
+//        if (companyName.size() > 0) return AjaxResult.error("集团名称已被使用！");
+//
+//        baseRequest.setCompanyName(null);
+//        baseRequest.setTel(kedaOrder.getLinkTel());
+//        List<KedaOrder> linkTel = kedaOrderMapper.getKeDaOrderList(null, baseRequest);
+//        if (linkTel.size() > 0) return AjaxResult.error("联系电话已被使用！");
+//
+//        baseRequest.setTel(null);
+//        baseRequest.setLinkMan(kedaOrder.getLinkMan());
+//        List<KedaOrder> linkMan = kedaOrderMapper.getKeDaOrderList(null, baseRequest);
+//        if (linkMan.size() > 0) return AjaxResult.error("联系人已被使用！");
         // 添加父级订单
         kedaOrder.setCerateTime(new Date());
         kedaOrder.setUserId(ShiroUtils.getSysUser().getId());
         // 根据电话号码获取省市
         JuhePhone<JuhePhoneResult> phone = JuhePhoneUtils.getPhone(kedaOrder.getLinkTel());
         KedaChildOrder kedaChildOrder = new KedaChildOrder();
-        if ("200".equals(phone.getResultcode())){
+        if ("200".equals(phone.getResultcode())) {
             JuhePhoneResult result = phone.getResult();
             kedaOrder.setProvince(result.getProvince());
             kedaOrder.setCity(result.getCity());
-             if ("移动".equals(result.getCompany())){
-                 kedaChildOrder.setOperate(1);
-             } else if ("电信".equals(result.getCompany())){
-                 kedaChildOrder.setOperate(2);
-             } else {
+            if ("移动".equals(result.getCompany())) {
+                kedaChildOrder.setOperate(1);
+            } else if ("电信".equals(result.getCompany())) {
+                kedaChildOrder.setOperate(2);
+            } else {
                 kedaChildOrder.setOperate(3);
             }
         }
         int count = kedaOrderMapper.insertKedaOrder(kedaOrder);
-        log.info("疑难杂单创建父级订单---->"+count);
+        log.info("疑难杂单创建父级订单---->" + count);
         // 添加子级订单
         kedaChildOrder.setProvince(kedaOrder.getProvince());
         kedaChildOrder.setCity(kedaOrder.getCity());
@@ -149,12 +160,18 @@ public class KedaOrderService {
         kedaChildOrder.setUserId(ShiroUtils.getSysUser().getId());
         kedaChildOrder.setOperateId(Constant.OPERATEID);
         int insert = kedaChildOrderMapper.insertKedaChildOrder(kedaChildOrder);
-        log.info("添加疑难杂单子级订单---->"+insert);
+        log.info("添加疑难杂单子级订单---->" + insert);
         // 同步数据到科大
-
+        r.notify("insertKedaorder", Event.wrap(kedaChildOrder));
         return AjaxResult.success("添加成功！");
     }
 
+    /**
+     * 疑难杂单父级订单删除
+     *
+     * @param id
+     * @return
+     */
     @Transactional
     public AjaxResult deleteKedaOrder(Integer id) {
         if (!StringUtils.isNotNull(id) || id <= 0) return AjaxResult.error("参数格式不正确！");
@@ -165,27 +182,27 @@ public class KedaOrderService {
         baseRequest.setOrderId(id);
         List<KedaRing> kedaRingList = kedaRingMapper.getKedaRingList(null, baseRequest);
         int[] ringIds = new int[kedaRingList.size()];
-        for (int i = 0; i < kedaRingList.size(); i++){
+        for (int i = 0; i < kedaRingList.size(); i++) {
             // 删除铃音文件
-            FileUtil.deleteFile(RingtoneConfig.getProfile()+ kedaRingList.get(i).getRingPath());
+            FileUtil.deleteFile(RingtoneConfig.getProfile() + kedaRingList.get(i).getRingPath());
             // 获取需要删除的铃音ID
-            ringIds[i] =  kedaRingList.get(i).getId();
+            ringIds[i] = kedaRingList.get(i).getId();
         }
         // 执行批量删除铃音操作
         int kedaRing = kedaRingMapper.deletePlKedaRing(ringIds);
-        log.info("刪除疑难杂单铃音---->"+kedaRing);
+        log.info("刪除疑难杂单铃音---->" + kedaRing);
         // 批量删除子级订单
         List<KedaChildOrder> keDaChildOrderBacklogList = kedaChildOrderMapper.getKeDaChildOrderBacklogList(null, baseRequest);
         int[] keDaChildOrderIds = new int[kedaRingList.size()];
-        for (int i = 0; i < keDaChildOrderBacklogList.size(); i++){
+        for (int i = 0; i < keDaChildOrderBacklogList.size(); i++) {
             keDaChildOrderIds[i] = keDaChildOrderBacklogList.get(i).getId();
         }
         // 执行批量删除子级订单操作
         int kedaChilOrder = kedaChildOrderMapper.deletePlKedaChilOrder(keDaChildOrderIds);
-        log.info("刪除疑难杂单子级订单---->"+kedaChilOrder);
+        log.info("刪除疑难杂单子级订单---->" + kedaChilOrder);
         // 删除父级订单
         int count = kedaOrderMapper.deleteKedaOrder(id);
-        log.info("删除疑难杂单父级订单---->"+count);
-        return AjaxResult.success(true,"删除成功！");
+        log.info("删除疑难杂单父级订单---->" + count);
+        return AjaxResult.success(true, "删除成功！");
     }
 }

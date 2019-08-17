@@ -33,5 +33,11 @@ public interface KedaRingMapper {
      */
     int getCount(@Param("param") BaseRequest baseRequest);
 
+    /**
+     * 批量删除铃音
+     *
+     * @param ids
+     * @return
+     */
     int deletePlKedaRing(@Param("ids") int[] ids);
 }

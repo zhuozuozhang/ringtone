@@ -24,7 +24,7 @@ public class ConfigUtil {
     }
 
 
-    public SystemConfig getConfigByType(String type) {
+    public static SystemConfig getConfigByType(String type) {
         List<SystemConfig> list = SpringUtils.getBean(SystemConfigMapper.class).getConfigByType(type);
         if (list.size() > 0) {
             return list.get(0);
