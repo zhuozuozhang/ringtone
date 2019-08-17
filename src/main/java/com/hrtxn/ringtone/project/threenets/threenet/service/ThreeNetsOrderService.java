@@ -4,6 +4,7 @@ import com.hrtxn.ringtone.common.constant.AjaxResult;
 import com.hrtxn.ringtone.common.domain.BaseRequest;
 import com.hrtxn.ringtone.common.domain.OrderRequest;
 import com.hrtxn.ringtone.common.domain.Page;
+import com.hrtxn.ringtone.common.utils.DateUtils;
 import com.hrtxn.ringtone.common.utils.ShiroUtils;
 import com.hrtxn.ringtone.common.utils.juhe.JuhePhoneUtils;
 import com.hrtxn.ringtone.freemark.config.systemConfig.RingtoneConfig;
@@ -90,32 +91,30 @@ public class ThreeNetsOrderService {
      * @return
      */
     @Transactional
-    public AjaxResult delete(Integer id) {
-        try {
-            //删除铃音
-            String ringRul = "";
-            List<ThreenetsRing> list = threeNetsRingService.listByOrderId(id);
-            for (int i = 0; i < list.size(); i++) {
-                threeNetsRingService.delete(list.get(i).getId());
-                ringRul = list.get(i).getRingWay();
-            }
-            fileService.deleteFile(ringRul);
-            //删除子订单
-            BaseRequest request = new BaseRequest();
-            request.setId(id);
-            List<ThreenetsChildOrder> childOrder = threeNetsChildOrderService.getChildOrder(request);
-            for (int i = 0; i < childOrder.size(); i++) {
-                threeNetsChildOrderService.delete(childOrder.get(i).getId());
-            }
-            //删除订单
-            threenetsOrderMapper.deleteByPrimaryKey(id);
-            //删除附表
-            ThreeNetsOrderAttached attached = threeNetsOrderAttachedService.selectByParentOrderId(id);
-            threeNetsOrderAttachedService.delete(attached.getId());
-            return AjaxResult.success(true, "删除成功");
-        } catch (Exception e) {
-            return AjaxResult.error("删除失败");
+    public AjaxResult delete(Integer id) throws Exception {
+        //删除铃音
+        String ringRul = "";
+        List<ThreenetsRing> list = threeNetsRingService.listByOrderId(id);
+        for (int i = 0; i < list.size(); i++) {
+            threeNetsRingService.delete(list.get(i).getId());
+            ringRul = list.get(i).getRingWay();
         }
+        fileService.deleteFile(ringRul);
+        //删除子订单
+        BaseRequest request = new BaseRequest();
+        request.setId(id);
+        List<ThreenetsChildOrder> childOrder = threeNetsChildOrderService.getChildOrder(request);
+        for (int i = 0; i < childOrder.size(); i++) {
+            threeNetsChildOrderService.delete(childOrder.get(i).getId());
+        }
+        //删除订单
+        threenetsOrderMapper.deleteByPrimaryKey(id);
+        //删除附表
+        ThreeNetsOrderAttached attached = threeNetsOrderAttachedService.selectByParentOrderId(id);
+        if (attached != null && attached.getId() != null){
+            threeNetsOrderAttachedService.delete(attached.getId());
+        }
+        return AjaxResult.success("删除成功");
     }
 
     /**
@@ -253,7 +252,7 @@ public class ThreeNetsOrderService {
             ring.setOperate(order.getOperate());
             ring.setOrderId(order.getId());
             ring.setRingContent(order.getRingContent());
-            ring.setRingName(order.getRingName());
+            ring.setRingName(order.getRingName()+ DateUtils.getTimeRadom());
             ring.setOperate(operator);
             ring.setRingStatus(1);
             if (num > 1) {
@@ -323,16 +322,16 @@ public class ThreeNetsOrderService {
             if (collect.get(3) != null) {
                 List<ThreenetsChildOrder> childOrders = collect.get(3);
                 ThreenetsRing ring = threeNetsRingService.getRing(childOrders.get(0).getRingId());
+                order.setLinkmanTel(childOrders.get(0).getLinkmanTel());
+                order.setRingName(ring.getRingName().substring(0, ring.getRingName().indexOf(".")));
                 order.setUpLoadAgreement(new File(RingtoneConfig.getProfile() + ring.getRingWay()));
                 SwxlGroupResponse swxlGroupResponse = utils.addOrderByLt(order, attached);
                 if (swxlGroupResponse.getStatus() == 0) {
                     attached.setSwxlId(swxlGroupResponse.getId());
                     ring.setOperateId(swxlGroupResponse.getId());
-                    boolean addRingByLt = utils.addRingByLt(ring, attached.getSwxlId());
-                    if (!addRingByLt) {
-                        threeNetsRingService.delete(ring.getId());
-                        fileService.deleteFile(ring.getRingWay());
-                    }
+                    //保存铃音，联通在建立商户时进行了铃音上传，无需单独上传铃音
+                    //ring.setFile(new File(RingtoneConfig.getProfile() + ring.getRingWay()));
+                    //utils.addRingByLt(ring, attached.getSwxlId());
                     for (int i = 0; i < childOrders.size(); i++) {
                         ThreenetsChildOrder childOrder = childOrders.get(i);
                         childOrder.setOperateId(attached.getSwxlId());

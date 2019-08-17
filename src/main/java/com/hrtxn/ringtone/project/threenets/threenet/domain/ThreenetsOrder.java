@@ -49,5 +49,6 @@ public class ThreenetsOrder implements Serializable {
 
     //----联通保存订单文件
     private File upLoadAgreement;
-    //----归属地
+    //----铃音名称
+    private String ringName;
 }
