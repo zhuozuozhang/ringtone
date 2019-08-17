@@ -2,6 +2,7 @@ package com.hrtxn.ringtone.common.api;
 
 import com.hrtxn.ringtone.common.exception.NoLoginException;
 import com.hrtxn.ringtone.common.utils.ChaoJiYing;
+import com.hrtxn.ringtone.common.utils.ConfigUtil;
 import com.hrtxn.ringtone.common.utils.DateUtils;
 import com.hrtxn.ringtone.common.utils.SpringUtils;
 import com.hrtxn.ringtone.common.utils.json.JsonUtil;
@@ -62,10 +63,11 @@ public class McardApi {
      * @return
      */
     public static String sendGet(String url) {
-        SystemConfig configById = SpringUtils.getBean(SystemConfigMapper.class).getConfigById(2);
+        ConfigUtil util = new ConfigUtil();
+        SystemConfig config = util.getConfigByType("mcard_cookie_other");
         OkHttpClient client = new OkHttpClient();
         String result = null;
-        Request request = new Request.Builder().url(url).addHeader("Cookie", configById.getInfo()).build();
+        Request request = new Request.Builder().url(url).addHeader("Cookie", config.getInfo()).build();
         try {
             Response response = client.newCall(request).execute();
             result = response.body().string();
@@ -83,7 +85,8 @@ public class McardApi {
      * @return
      */
     public static String sendPost(Map<String, String> map, String url) {
-        SystemConfig configById = SpringUtils.getBean(SystemConfigMapper.class).getConfigById(2);
+        ConfigUtil util = new ConfigUtil();
+        SystemConfig config = util.getConfigByType("mcard_cookie_other");
         OkHttpClient client = new OkHttpClient();
         String result = null;
         FormBody.Builder builder = new FormBody.Builder();
@@ -91,7 +94,7 @@ public class McardApi {
             builder.add(key, map.get(key));
         }
         FormBody formBody = builder.build();
-        Request request = new Request.Builder().url(url).post(formBody).addHeader("Cookie", configById.getInfo()).build();
+        Request request = new Request.Builder().url(url).post(formBody).addHeader("Cookie", config.getInfo()).build();
         try {
             Response response = client.newCall(request).execute();
             result = response.body().string();
@@ -188,11 +191,13 @@ public class McardApi {
      * @throws IOException
      */
     public String getCodeString() {
+        ConfigUtil util = new ConfigUtil();
+        SystemConfig config = util.getConfigByType("mcard_cookie_other");
         String code = null;
         DefaultHttpClient httpclientCode = new DefaultHttpClient();
         long time = new Date().getTime();
         OkHttpClient client = new OkHttpClient();
-        Request request = new Request.Builder().url(code_url + "?d=" + time).addHeader("Cookie", cookie).build();
+        Request request = new Request.Builder().url(code_url + "?d=" + time).addHeader("Cookie", config.getInfo()).build();
 
         try {
             // 获取验证码
@@ -356,6 +361,8 @@ public class McardApi {
      * @return
      */
     public boolean uploadRing(ThreenetsRing ring) {
+        ConfigUtil util = new ConfigUtil();
+        SystemConfig config = util.getConfigByType("mcard_cookie_other");
         boolean flag = false;
         String result = null;
         String ringName = ring.getRingName().substring(0, ring.getRingName().indexOf("."));
@@ -370,7 +377,7 @@ public class McardApi {
                 .addFormDataPart("fileName",ring.getRingName())
                 .addFormDataPart("ringFile",ringName,fileBody)
                 .build();
-        Request request = new Request.Builder().url(saveRing_url).post(requestBody).addHeader("Cookie", cookie).build();
+        Request request = new Request.Builder().url(saveRing_url).post(requestBody).addHeader("Cookie", config.getInfo()).build();
         try {
             Response response = client.newCall(request).execute();
             result = response.body().string();
@@ -390,12 +397,14 @@ public class McardApi {
      * @return
      */
     public String uploadFile(File file) {
+        ConfigUtil util = new ConfigUtil();
+        SystemConfig config = util.getConfigByType("mcard_cookie_other");
         OkHttpClient client = new OkHttpClient();
         String result = null;
         RequestBody requestBody = new MultipartBody.Builder()
                 .addFormDataPart("file", file.getName(), RequestBody.create(MediaType.parse("multipart/form-data"), file))
                 .build();
-        Request request = new Request.Builder().url(upload_file_url).post(requestBody).addHeader("Cookie", cookie).build();
+        Request request = new Request.Builder().url(upload_file_url).post(requestBody).addHeader("Cookie", config.getInfo()).build();
         try {
             Response response = client.newCall(request).execute();
             result = response.body().string();

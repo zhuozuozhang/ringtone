@@ -326,8 +326,8 @@ public class ThreeNetsOrderService {
                 order.setUpLoadAgreement(new File(RingtoneConfig.getProfile() + ring.getRingWay()));
                 SwxlGroupResponse swxlGroupResponse = utils.addOrderByLt(order, attached);
                 if (swxlGroupResponse.getStatus() == 0) {
-                    attached.setSwxlId(swxlGroupResponse.getGroupId());
-                    ring.setOperateId(swxlGroupResponse.getGroupId());
+                    attached.setSwxlId(swxlGroupResponse.getId());
+                    ring.setOperateId(swxlGroupResponse.getId());
                     boolean addRingByLt = utils.addRingByLt(ring, attached.getSwxlId());
                     if (!addRingByLt) {
                         threeNetsRingService.delete(ring.getId());
