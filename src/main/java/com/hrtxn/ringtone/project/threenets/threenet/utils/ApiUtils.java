@@ -1059,6 +1059,8 @@ public class ApiUtils {
      */
     public MiguAddGroupRespone addOrderByYd(ThreenetsOrder order, ThreeNetsOrderAttached attached) throws IOException, NoLoginException {
         MiguAddGroupRespone addGroupResponse = null;
+        //登录
+        miguApi.loginAuto();
         //进行同步到服务器，同步3次。
         for (int i = 0; i < 3; i++) {// 重试添加3次
             addGroupResponse = miguApi.add(order, attached);

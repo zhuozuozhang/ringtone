@@ -6,6 +6,7 @@ import com.hrtxn.ringtone.common.domain.OrderRequest;
 import com.hrtxn.ringtone.common.domain.Page;
 import com.hrtxn.ringtone.common.utils.DateUtils;
 import com.hrtxn.ringtone.common.utils.ShiroUtils;
+import com.hrtxn.ringtone.common.utils.StringUtils;
 import com.hrtxn.ringtone.common.utils.juhe.JuhePhoneUtils;
 import com.hrtxn.ringtone.freemark.config.systemConfig.RingtoneConfig;
 import com.hrtxn.ringtone.project.system.File.domain.Uploadfile;
@@ -234,10 +235,18 @@ public class ThreeNetsOrderService {
             attached.setSwxlPrice(Integer.parseInt(order.getUmicomPay()));
         }
         attached.setParentOrderId(order.getId());
-        attached.setBusinessLicense(order.getCompanyUrl());//企业资质
-        attached.setConfirmLetter(order.getClientUrl());//客户确认函
-        attached.setSubjectProve(order.getMainUrl());//主体证明
-        attached.setAvoidShortAgreement(order.getProtocolUrl());//免短协议
+        if (StringUtils.isNotEmpty(order.getCompanyUrl())){
+            attached.setBusinessLicense(order.getCompanyUrl());//企业资质
+        }
+        if (StringUtils.isNotEmpty(order.getClientUrl())){
+            attached.setBusinessLicense(order.getClientUrl());//客户确认函
+        }
+        if (StringUtils.isNotEmpty(order.getMainUrl())){
+            attached.setBusinessLicense(order.getMainUrl());//主体证明
+        }
+        if (StringUtils.isNotEmpty(order.getProtocolUrl())){
+            attached.setBusinessLicense(order.getProtocolUrl());//免短协议
+        }
         //保存订单附表
         threeNetsOrderAttachedService.save(attached);
         //子订单手机号验证,以及子订单数据初始化
@@ -291,7 +300,7 @@ public class ThreeNetsOrderService {
             if (collect.get(1) != null) {
                 order.setLinkmanTel(collect.get(1).get(0).getLinkmanTel());
                 MiguAddGroupRespone miguAddGroupRespone = utils.addOrderByYd(order, attached);
-                if (miguAddGroupRespone.isSuccess()) {
+                if (miguAddGroupRespone != null && miguAddGroupRespone.isSuccess()) {
                     List<ThreenetsChildOrder> childOrders = collect.get(1);
                     ThreenetsRing ring = threeNetsRingService.getRing(childOrders.get(0).getRingId());
                     attached.setMiguId(miguAddGroupRespone.getCircleId());

@@ -408,15 +408,19 @@ public class ThreeNetsChildOrderService {
      */
     public List<ThreenetsChildOrder> formattedPhone(String phones, Integer orderId) throws Exception {
         //换行符----
-        String regR = "\n\r";
+        String regNR = "\n\r";
         String regN = "\n";
+        String regR = "\r";
         //将手机号转为数组
-        phones = phones.replace(regR, "br").replace(regN, "br");
+        phones = phones.replace(regNR,"br").replace(regR, "br").replace(regN, "br");
         String[] phoneArray = phones.split("br");
 
         List<ThreenetsChildOrder> list = new ArrayList<>();
         for (String tel : phoneArray) {
             ThreenetsChildOrder childOrder = new ThreenetsChildOrder();
+            if (tel.isEmpty()){
+                continue;
+            }
             childOrder.setLinkmanTel(tel);
             if (orderId != null) {
                 childOrder.setParentOrderId(orderId);
