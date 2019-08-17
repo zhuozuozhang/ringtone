@@ -20,7 +20,7 @@
         id, ring_name, ring_status, create_time, opertate_id, order_id, ring_num, ring_url,
         ring_path,ring_content, remark
     </sql>
-
+    <!--获取铃音列表-->
     <select id="getKedaRingList" resultMap="BaseResultMap">
         SELECT
         <include refid="Base_Column_List"/>
@@ -30,13 +30,20 @@
         order by create_time desc
         <include refid="page"/>
     </select>
-
     <!-- 获取总数 -->
     <select id="getCount" resultType="java.lang.Integer" parameterType="KedaChildOrder">
         SELECT COUNT(*) FROM tb_keda_ring
         WHERE 1=1
         <include refid="parameters"/>
     </select>
+    <!--批量删除铃音-->
+    <delete id="deletePlKedaRing" parameterType="int[]">
+        delete from tb_keda_ring
+        where id in
+        <foreach collection="ids" item="id" index="no" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
 
     <!--条件-->
     <sql id="parameters">
@@ -52,18 +59,13 @@
     </sql>
 
 
-
-
     <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer">
         select
         <include refid="Base_Column_List"/>
         from tb_keda_ring
         where id = #{id,jdbcType=INTEGER}
     </select>
-    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
-    delete from tb_keda_ring
-    where id = #{id,jdbcType=INTEGER}
-  </delete>
+
     <insert id="insert" parameterType="com.hrtxn.ringtone.project.threenets.kedas.kedasites.domain.KedaRing">
     insert into tb_keda_ring (id, ring_name, ring_status, 
       create_time, opertate_id, order_id, 

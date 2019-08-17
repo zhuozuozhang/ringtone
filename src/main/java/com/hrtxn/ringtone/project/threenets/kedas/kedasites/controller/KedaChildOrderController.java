@@ -6,6 +6,7 @@ import com.hrtxn.ringtone.common.domain.Page;
 import com.hrtxn.ringtone.project.threenets.kedas.kedasites.service.KedaChildOrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -33,6 +34,16 @@ public class KedaChildOrderController {
     @ResponseBody
     public AjaxResult getKedaChidList(Page page, BaseRequest baseRequest) {
         return kedaChildOrderService.getKedaChidList(page, baseRequest);
+    }
+
+    /**
+     * 跳转到添加子账号页面
+     *
+     * @return
+     */
+    @GetMapping("addnumber")
+    public String toAddnumber() {
+        return "threenets/kedas/kedasites/merchants/addnumber";
     }
 
 }

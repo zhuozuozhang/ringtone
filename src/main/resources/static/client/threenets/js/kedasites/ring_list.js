@@ -46,7 +46,7 @@ function showTable() {
             var ringStatus = row.ringStatus;
             var setRing = "";
             if(ringStatus == 3 ){
-                setRing = "<a href='/threenets/toSetingRing/'><i class='layui-icon layui-icon-set' title='设置铃音'></i></a>";
+                setRing = "<a href='/threenets/clcy/toRingListSet/'><i class='layui-icon layui-icon-set' title='设置铃音'></i></a>";
             }
             return "<i class='layui-icon' title='查看广告词' onclick='advertising(\"" + row.ringContent + "\");'><img src='/client/threenets/images/see.png'></i>"
                 + setRing + '<i class="layui-icon layui-icon-delete" title="删除" onclick="deleteRing(' + id + ')"></i>';
@@ -61,7 +61,7 @@ function AddUser() {
         type: 2,
         title: '上传铃音',
         area: ['650px', '550px'],
-        content: 'Addring.html'
+        content: '/threenets/clcy/toAddring'
     });
 }
 

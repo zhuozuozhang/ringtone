@@ -36,10 +36,38 @@ public class KedaRingController {
         return "threenets/kedas/kedasites/merchants/ring_list";
     }
 
+    /**
+     * 获取铃音列表
+     *
+     * @param page
+     * @param baseRequest
+     * @return
+     */
     @PostMapping("getKedaRingList")
     @ResponseBody
-    public AjaxResult getKedaRingList(Page page , BaseRequest baseRequest){
-        return kedaRingService.getKedaRingList(page,baseRequest);
+    public AjaxResult getKedaRingList(Page page, BaseRequest baseRequest) {
+        return kedaRingService.getKedaRingList(page, baseRequest);
+    }
+
+    /**
+     * 跳转到添加铃音页面
+     *
+     * @return
+     */
+    @GetMapping("toAddring")
+    public String toAddring() {
+        return "threenets/kedas/kedasites/merchants/addring";
+    }
+
+    /**
+     * 跳转到铃音设置页面
+     *
+     * @return
+     */
+
+    @GetMapping("toRingListSet")
+    public String toRingListSet() {
+        return "threenets/kedas/kedasites/merchants/ring_list_set";
     }
 
 }

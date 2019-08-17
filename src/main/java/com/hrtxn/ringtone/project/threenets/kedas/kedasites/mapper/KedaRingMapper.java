@@ -16,7 +16,28 @@ import java.util.List;
 @Repository
 public interface KedaRingMapper {
 
+    /**
+     * 获取铃音列表
+     *
+     * @param page
+     * @param baseRequest
+     * @return
+     */
     List<KedaRing> getKedaRingList(@Param("page") Page page, @Param("param") BaseRequest baseRequest);
 
+    /**
+     * 获取铃音数量
+     *
+     * @param baseRequest
+     * @return
+     */
     int getCount(@Param("param") BaseRequest baseRequest);
+
+    /**
+     * 批量删除铃音
+     *
+     * @param ids
+     * @return
+     */
+    int deletePlKedaRing(@Param("ids") int[] ids);
 }

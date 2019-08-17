@@ -94,8 +94,15 @@ public class KedaChildOrderService {
         return AjaxResult.error("无数据！");
     }
 
+    /**
+     * 获取业务发展数据
+     *
+     * @param type
+     * @param baseRequest
+     * @return
+     * @throws Exception
+     */
     public AjaxResult getBusinessData(Integer type, BaseRequest baseRequest) throws Exception {
-
         // 判断是否是当前用户
         if (!StringUtils.isNotNull(baseRequest.getUserId())) {
             baseRequest.setUserId(ShiroUtils.getSysUser().getId());
@@ -124,12 +131,12 @@ public class KedaChildOrderService {
             }
         }
         // 根据条件查询子订单已包月数据
-        List<PlotBarPhone> plotBarPhoneList = kedaChildOrderMapper.getIsMonthly(type,baseRequest);
+        List<PlotBarPhone> plotBarPhoneList = kedaChildOrderMapper.getIsMonthly(type, baseRequest);
         // 根据条件查询子订单已退订数据
-        List<PlotBarPhone> unsubscribeList = kedaChildOrderMapper.getUnsubscribe(type,baseRequest);
+        List<PlotBarPhone> unsubscribeList = kedaChildOrderMapper.getUnsubscribe(type, baseRequest);
         plotBarPhoneList = dataFormate(plotBarPhoneList, unsubscribeList, 1);
         // 根据条件获取总数
-        int count = kedaChildOrderMapper.getBussinessCount(type,baseRequest);
+        int count = kedaChildOrderMapper.getBussinessCount(type, baseRequest);
         for (int i = 0; i < plotBarPhoneList.size(); i++) {
             plotBarPhoneList.get(i).setCumulativeUser(count);
             count = count - plotBarPhoneList.get(i).getAddUser();
@@ -137,6 +144,13 @@ public class KedaChildOrderService {
         return AjaxResult.success(plotBarPhoneList, "获取数据成功！");
     }
 
+    /**
+     * 递归获取子账号
+     *
+     * @param users
+     * @return
+     * @throws Exception
+     */
     public List<UserVo> getNode(List<UserVo> users) throws Exception {
         if (users != null && users.size() != 0) {
             for (int i = 0; i < users.size(); i++) {

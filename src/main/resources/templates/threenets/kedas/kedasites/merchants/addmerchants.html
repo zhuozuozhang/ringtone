@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <base href=".">
+    <title>添加商户</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link rel="stylesheet" th:href="@{/public/layui/css/layui.css}">
+    <link rel="stylesheet" th:href="@{/public/layui/css/modules/layer/default/layer.css}">
+    <link rel="stylesheet" th:href="@{/client/threenets/css/ThunderBase2.css}">
+    <link rel="stylesheet" th:href="@{/client/threenets/css/common.css}">
+    <link rel="stylesheet" th:href="@{/client/threenets/css/Addmerchants.css}">
+    <link rel="stylesheet" th:href="@{/client/threenets/css/enterpriseBell.css}">
+    <link rel="stylesheet" th:href="@{/client/threenets/css/MyPlus.css}">
+    <link rel="stylesheet" th:href="@{/client/threenets/css/Add.css}">
+    <script type="text/javascript" th:src="@{/public/js/jquery.min.js}"></script>
+    <style>
+        .layui-input-block {
+            text-align: right;
+        }
+    </style>
+</head>
+
+<body>
+<form action="" name="Form" id="Form" method="post" class="layui-form">
+    <div id="newBlocPage">
+        <div class="newBlocPage-con1 clear">
+            <input class="input_css1" type="text" required lay-verify="required" name="companyName" id="companyName" maxlength="32" autocomplete="off">
+            <h6><i style="color: red">*</i>集团名称</h6>
+        </div>
+        <div class="newBlocPage-con2 clear">
+            <input class="input_css1" type="text" required lay-verify="required" name="linkMan" id="linkMan" maxlength="32" autocomplete="off">
+            <h6><i style="color: red">*</i>联 系 人</h6>
+        </div>
+        <div class="newBlocPage-con3 clear">
+            <input class="input_css1" type="number" required lay-verify="required" name="linkTel" id="linkTel" maxlength="11" autocomplete="off">
+            <h6><i style="color: red">*</i>联系电话</h6>
+        </div>
+        <div id="tijiao" class="newBlocPage-button" lay-submit lay-filter="formDemo">确定提交</div>
+    </div>
+</form>
+
+</body>
+<div th:include="threenets/kedas/kedasites/common/include::footer"></div>
+<script>
+    //表单提交
+    layui.use('form', function () {
+        var form = layui.form;
+        //监听提交
+        form.on('submit(formDemo)', function (data) {
+            layer.msg(JSON.stringify(data.field));
+            AjaxPost("/threenets/clcy/addKedaOrder",{
+                companyName:data.field.companyName,
+                linkMan:data.field.linkMan,
+                linkTel:data.field.linkTel
+            },function (res) {
+                if (res.code == 200){
+                    layer.msg(res.msg, {icon: 6, time: 3000});
+                    setTimeout(function () {
+                        // 获得frame索引
+                        var index = parent.layer.getFrameIndex(window.name);
+                        //关闭当前frame
+                        parent.layer.close(index);
+                    },2000);
+                }
+                layer.msg(res.msg, {icon: 5, time: 3000});
+            });
+            return false;
+        });
+    });
+</script>
+</html>

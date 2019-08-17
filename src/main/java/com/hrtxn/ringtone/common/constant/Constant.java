@@ -15,4 +15,7 @@ public class Constant {
     public final static String MESSAGEKEY = "4042473f4eb59a3de4e4c9c3eb3b1eb6";
 
     public final static String UPDATEPASSWORDID = "172876";
+
+    // 疑难杂单集团ID
+    public final static String OPERATEID = "441104513194111";
 }

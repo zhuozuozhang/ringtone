@@ -100,21 +100,28 @@ public class KeDaController {
         List<User> userList = null;
         try {
             userList = userService.getChildUserList();
-            map.put("userList",userList);
+            map.put("userList", userList);
         } catch (Exception e) {
             log.error("跳转到业务发展数据 方法：toBusiness 错误信息", e);
         }
-        if (type == 1){
+        if (type == 1) {
             return "threenets/kedas/kedasites/business/dbusiness";
         }
         return "threenets/kedas/kedasites/business/mbusiness";
     }
 
+    /**
+     * 获取业务发展数据
+     *
+     * @param type
+     * @param baseRequest
+     * @return
+     */
     @PostMapping("getBusinessData/{type}")
     @ResponseBody
-    public AjaxResult getBusinessData(@PathVariable Integer type, BaseRequest baseRequest){
+    public AjaxResult getBusinessData(@PathVariable Integer type, BaseRequest baseRequest) {
         try {
-            return kedaChildOrderService.getBusinessData(type,baseRequest);
+            return kedaChildOrderService.getBusinessData(type, baseRequest);
         } catch (Exception e) {
             return AjaxResult.error(e.getMessage());
         }
