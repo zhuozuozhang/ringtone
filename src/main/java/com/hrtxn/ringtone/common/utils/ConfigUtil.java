@@ -2,7 +2,6 @@ package com.hrtxn.ringtone.common.utils;
 
 import com.hrtxn.ringtone.project.system.config.domain.SystemConfig;
 import com.hrtxn.ringtone.project.system.config.mapper.SystemConfigMapper;
-import com.hrtxn.ringtone.project.threenets.threenet.mapper.ThreenetsOrderMapper;
 
 import java.util.List;
 
