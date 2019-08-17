@@ -40,4 +40,8 @@ public interface KedaOrderMapper {
      * @return
      */
     int updateKedaOrder(KedaOrder kedaOrder);
+
+    int insertKedaOrder(KedaOrder kedaOrder);
+
+    int deleteKedaOrder(@Param("id") Integer id);
 }

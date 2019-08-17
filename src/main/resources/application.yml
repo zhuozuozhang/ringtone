@@ -14,7 +14,7 @@ ringtone:
 # tomcate 基本配置
 server:
   # tomcate 端口号
-  port: 80
+  port: 8081
   servlet:
     # tomcate 访问跟路径
     context-path: /

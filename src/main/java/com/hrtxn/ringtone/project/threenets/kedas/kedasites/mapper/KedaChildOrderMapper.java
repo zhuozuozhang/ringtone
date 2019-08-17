@@ -41,9 +41,34 @@ public interface KedaChildOrderMapper {
      */
     List<KedaChildOrder> getKeDaChildOrderBacklogList(@Param("page") Page page, @Param("param") BaseRequest baseRequest);
 
-    List<PlotBarPhone> getIsMonthly(@Param("type") Integer type,@Param("param") BaseRequest baseRequest);
+    /**
+     * 根据条件查询子订单已包月数据
+     *
+     * @param type
+     * @param baseRequest
+     * @return
+     */
+    List<PlotBarPhone> getIsMonthly(@Param("type") Integer type, @Param("param") BaseRequest baseRequest);
 
-    List<PlotBarPhone> getUnsubscribe(@Param("type") Integer type,@Param("param") BaseRequest baseRequest);
+    /**
+     * 根据条件查询子订单已退订数据
+     *
+     * @param type
+     * @param baseRequest
+     * @return
+     */
+    List<PlotBarPhone> getUnsubscribe(@Param("type") Integer type, @Param("param") BaseRequest baseRequest);
 
-    int getBussinessCount(@Param("type") Integer type,@Param("param") BaseRequest baseRequest);
+    /**
+     * 根据条件获取业务发展总数
+     *
+     * @param type
+     * @param baseRequest
+     * @return
+     */
+    int getBussinessCount(@Param("type") Integer type, @Param("param") BaseRequest baseRequest);
+
+    int insertKedaChildOrder(KedaChildOrder kedaChildOrder);
+
+    int deletePlKedaChilOrder(@Param("keDaChildOrderIds") int[] keDaChildOrderIds);
 }

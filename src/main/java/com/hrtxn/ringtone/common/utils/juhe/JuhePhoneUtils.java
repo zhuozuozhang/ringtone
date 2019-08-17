@@ -2,11 +2,9 @@ package com.hrtxn.ringtone.common.utils.juhe;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.hrtxn.ringtone.common.constant.AjaxResult;
 import com.hrtxn.ringtone.project.system.json.JuhePhone;
 import com.hrtxn.ringtone.project.system.json.JuhePhoneResult;
 import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreenetsOrder;
-import org.apache.commons.collections.map.HashedMap;
 
 import java.io.*;
 import java.net.HttpURLConnection;
@@ -160,7 +158,7 @@ public class JuhePhoneUtils {
 
 
     public static void main(String[] args) throws Exception {
-        JuhePhone phone = getPhone("100000000000");
+        JuhePhone phone = getPhone("15050840350");
         System.out.println(phone);
     }
 }

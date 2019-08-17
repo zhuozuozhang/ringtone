@@ -34,8 +34,8 @@
     </select>
 
     <!-- 获取总数 -->
-    <select id="getCount" resultType="java.lang.Integer" parameterType="KedaChildOrder">
-        SELECT COUNT(*) FROM tb_keda_child_order
+    <select id="getCount" resultType="java.lang.Integer">
+        SELECT COUNT(*) FROM tb_keda_order
         WHERE 1=1
         <include refid="parameters"/>
     </select>
@@ -67,56 +67,10 @@
         </set>
         where id = #{id,jdbcType=INTEGER}
     </update>
-
-    <!--条件-->
-    <sql id="parameters">
-        <if test="param != null and param.userId != null">
-            AND user_id = #{param.userId}
-        </if>
-        <if test="param != null and param.tel != null and param.tel != ''">
-            AND link_tel = #{param.tel}
-        </if>
-        <if test="param != null and param.name != null and param.name != ''">
-            AND company_name like CONCAT('%',#{param.name},'%')
-        </if>
-        <if test="param != null and param.companyName != null and param.companyName != ''">
-            AND company_name = #{param.companyName}
-        </if>
-    </sql>
-    <!--分页-->
-    <sql id="page">
-        <if test="page != null and page.page != null and page.pagesize != null">
-            LIMIT #{page.page},#{page.pagesize}
-        </if>
-    </sql>
-
-
-    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer">
-        select
-        <include refid="Base_Column_List"/>
-        from tb_keda_order
-        where id = #{id,jdbcType=INTEGER}
-    </select>
-    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
-    delete from tb_keda_order
-    where id = #{id,jdbcType=INTEGER}
-  </delete>
-    <insert id="insert" parameterType="com.hrtxn.ringtone.project.threenets.kedas.kedasites.domain.KedaOrder">
-    insert into tb_keda_order (id, company_name, link_man, 
-      link_tel, province, city, 
-      cerate_time, status, user_id
-      )
-    values (#{id,jdbcType=INTEGER}, #{companyName,jdbcType=VARCHAR}, #{linkMan,jdbcType=VARCHAR}, 
-      #{linkTel,jdbcType=VARCHAR}, #{province,jdbcType=VARCHAR}, #{city,jdbcType=VARCHAR}, 
-      #{cerateTime,jdbcType=TIMESTAMP}, #{status,jdbcType=VARCHAR}, #{userId,jdbcType=INTEGER}
-      )
-  </insert>
-    <insert id="insertSelective" parameterType="com.hrtxn.ringtone.project.threenets.kedas.kedasites.domain.KedaOrder">
+    <!--添加父级订单-->
+    <insert id="insertKedaOrder" parameterType="com.hrtxn.ringtone.project.threenets.kedas.kedasites.domain.KedaOrder" useGeneratedKeys="true" keyProperty="id" >
         insert into tb_keda_order
         <trim prefix="(" suffix=")" suffixOverrides=",">
-            <if test="id != null">
-                id,
-            </if>
             <if test="companyName != null">
                 company_name,
             </if>
@@ -143,9 +97,6 @@
             </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
-            <if test="id != null">
-                #{id,jdbcType=INTEGER},
-            </if>
             <if test="companyName != null">
                 #{companyName,jdbcType=VARCHAR},
             </if>
@@ -172,5 +123,43 @@
             </if>
         </trim>
     </insert>
+    <!--删除父级订单-->
+    <delete id="deleteKedaOrder" parameterType="java.lang.Integer">
+        delete from tb_keda_order
+        where id = #{id,jdbcType=INTEGER}
+    </delete>
+    <!--条件-->
+    <sql id="parameters">
+        <if test="param != null and param.userId != null">
+            AND user_id = #{param.userId}
+        </if>
+        <if test="param != null and param.tel != null and param.tel != ''">
+            AND link_tel = #{param.tel}
+        </if>
+        <if test="param != null and param.name != null and param.name != ''">
+            AND company_name like CONCAT('%',#{param.name},'%')
+        </if>
+        <if test="param != null and param.companyName != null and param.companyName != ''">
+            AND company_name = #{param.companyName}
+        </if>
+        <if test="param != null and param.linkMan != null and param.linkMan != ''">
+            AND link_man = #{param.linkMan}
+        </if>
+    </sql>
+    <!--分页-->
+    <sql id="page">
+        <if test="page != null and page.page != null and page.pagesize != null">
+            LIMIT #{page.page},#{page.pagesize}
+        </if>
+    </sql>
+
+
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+        select
+        <include refid="Base_Column_List"/>
+        from tb_keda_order
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+
 
 </mapper>

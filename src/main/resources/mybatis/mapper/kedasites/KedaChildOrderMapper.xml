@@ -39,7 +39,6 @@
         GROUP BY DATE_FORMAT(create_time, '%Y-%m-%d') DESC
         LIMIT 0,5;
     </select>
-
     <!-- 获取总数 -->
     <select id="getCount" resultType="java.lang.Integer" parameterType="KedaChildOrder">
         SELECT COUNT(*) FROM tb_keda_child_order
@@ -56,7 +55,7 @@
         order by create_time desc
         <include refid="page"/>
     </select>
-
+    <!--根据条件查询子订单已包月数据-->
     <select id="getIsMonthly" resultType="com.hrtxn.ringtone.project.threenets.threenet.domain.PlotBarPhone">
         SELECT
         <if test="type == 1">
@@ -89,11 +88,11 @@
             </if>
         </if>
     </select>
-
+    <!--根据条件查询子订单已退订数据-->
     <select id="getUnsubscribe" resultType="com.hrtxn.ringtone.project.threenets.threenet.domain.PlotBarPhone">
         SELECT
         <if test="type == 1">
-          DATE_FORMAT(create_time, '%Y-%m-%d') AS dateTimes, COUNT(*) AS unsubscribeUser
+            DATE_FORMAT(create_time, '%Y-%m-%d') AS dateTimes, COUNT(*) AS unsubscribeUser
         </if>
         <if test="type == 2">
             DATE_FORMAT(create_time, '%Y-%m') AS dateTimes, COUNT(*) AS unsubscribeUser
@@ -122,7 +121,7 @@
             </if>
         </if>
     </select>
-
+    <!--根据条件获取业务发展总数-->
     <select id="getBussinessCount" resultType="int">
         SELECT
         COUNT(*)
@@ -148,63 +147,10 @@
             </if>
         </if>
     </select>
-
-    <!--条件-->
-    <sql id="parameters">
-        <if test="param != null and param.userId != null">
-            AND user_id = #{param.userId}
-        </if>
-        <if test="param != null and param.orderId != null">
-            AND order_id = #{param.orderId}
-        </if>
-        <if test="param != null and param.isMonthly != null">
-            AND is_monthly = #{param.isMonthly}
-        </if>
-        <if test="param != null and param.timeType != null and param.timeType == 1">
-            AND DATEDIFF(NOW(),create_time) &lt;= 1
-        </if>
-        <if test="param != null and param.timeType != null and param.timeType == 2">
-            AND DATEDIFF(NOW(),create_time) &lt;= 7
-        </if>
-        <if test="param != null and param.timeType != null and param.timeType == 3">
-            AND DATEDIFF(NOW(),create_time) &lt;= 15
-        </if>
-        <if test="param != null and param.timeType != null and param.timeType == 4">
-            AND DATEDIFF(NOW(),create_time) &lt;= 30
-        </if>
-    </sql>
-    <!--分页-->
-    <sql id="page">
-        <if test="page != null and page.page != null and page.pagesize != null">
-            LIMIT #{page.page},#{page.pagesize}
-        </if>
-    </sql>
-
-    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
-    delete from tb_keda_child_order
-    where id = #{id,jdbcType=INTEGER}
-  </delete>
-    <insert id="insert" parameterType="com.hrtxn.ringtone.project.threenets.kedas.kedasites.domain.KedaChildOrder">
-    insert into tb_keda_child_order (id, company_name, link_man, 
-      link_tel, operate, province, 
-      city, create_time, status, 
-      operate_id, ring_id, ring_name, 
-      is_monthiy, is_ringtone_user, user_id, 
-      remark)
-    values (#{id,jdbcType=INTEGER}, #{companyName,jdbcType=VARCHAR}, #{linkMan,jdbcType=VARCHAR}, 
-      #{linkTel,jdbcType=VARCHAR}, #{operate,jdbcType=INTEGER}, #{province,jdbcType=VARCHAR}, 
-      #{city,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{status,jdbcType=VARCHAR}, 
-      #{operateId,jdbcType=VARCHAR}, #{ringId,jdbcType=INTEGER}, #{ringName,jdbcType=VARCHAR}, 
-      #{isMonthiy,jdbcType=INTEGER}, #{isRingtoneUser,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, 
-      #{remark,jdbcType=LONGVARCHAR})
-  </insert>
-    <insert id="insertSelective"
-            parameterType="com.hrtxn.ringtone.project.threenets.kedas.kedasites.domain.KedaChildOrder">
+    <!--添加子级订单-->
+    <insert id="insertKedaChildOrder" parameterType="com.hrtxn.ringtone.project.threenets.kedas.kedasites.domain.KedaChildOrder">
         insert into tb_keda_child_order
         <trim prefix="(" suffix=")" suffixOverrides=",">
-            <if test="id != null">
-                id,
-            </if>
             <if test="companyName != null">
                 company_name,
             </if>
@@ -238,8 +184,8 @@
             <if test="ringName != null">
                 ring_name,
             </if>
-            <if test="isMonthiy != null">
-                is_monthiy,
+            <if test="isMonthly != null">
+                is_monthly,
             </if>
             <if test="isRingtoneUser != null">
                 is_ringtone_user,
@@ -247,14 +193,14 @@
             <if test="userId != null">
                 user_id,
             </if>
+            <if test="orderId != null">
+                order_id,
+            </if>
             <if test="remark != null">
                 remark,
             </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
-            <if test="id != null">
-                #{id,jdbcType=INTEGER},
-            </if>
             <if test="companyName != null">
                 #{companyName,jdbcType=VARCHAR},
             </if>
@@ -288,8 +234,8 @@
             <if test="ringName != null">
                 #{ringName,jdbcType=VARCHAR},
             </if>
-            <if test="isMonthiy != null">
-                #{isMonthiy,jdbcType=INTEGER},
+            <if test="isMonthly != null">
+                #{isMonthly,jdbcType=INTEGER},
             </if>
             <if test="isRingtoneUser != null">
                 #{isRingtoneUser,jdbcType=INTEGER},
@@ -297,11 +243,55 @@
             <if test="userId != null">
                 #{userId,jdbcType=INTEGER},
             </if>
+            <if test="orderId != null">
+                #{orderId,jdbcType=INTEGER},
+            </if>
             <if test="remark != null">
                 #{remark,jdbcType=LONGVARCHAR},
             </if>
         </trim>
     </insert>
+    <!--批量删除子级订单-->
+    <delete id="deletePlKedaChilOrder" parameterType="int[]">
+        delete from tb_keda_child_order
+        where id in
+        <foreach collection="keDaChildOrderIds" item="keDaChildOrderId" index="no" open="(" separator="," close=")">
+            #{keDaChildOrderId}
+        </foreach>
+    </delete>
+
+    <!--条件-->
+    <sql id="parameters">
+        <if test="param != null and param.userId != null">
+            AND user_id = #{param.userId}
+        </if>
+        <if test="param != null and param.orderId != null">
+            AND order_id = #{param.orderId}
+        </if>
+        <if test="param != null and param.isMonthly != null">
+            AND is_monthly = #{param.isMonthly}
+        </if>
+        <if test="param != null and param.timeType != null and param.timeType == 1">
+            AND DATEDIFF(NOW(),create_time) &lt;= 1
+        </if>
+        <if test="param != null and param.timeType != null and param.timeType == 2">
+            AND DATEDIFF(NOW(),create_time) &lt;= 7
+        </if>
+        <if test="param != null and param.timeType != null and param.timeType == 3">
+            AND DATEDIFF(NOW(),create_time) &lt;= 15
+        </if>
+        <if test="param != null and param.timeType != null and param.timeType == 4">
+            AND DATEDIFF(NOW(),create_time) &lt;= 30
+        </if>
+    </sql>
+    <!--分页-->
+    <sql id="page">
+        <if test="page != null and page.page != null and page.pagesize != null">
+            LIMIT #{page.page},#{page.pagesize}
+        </if>
+    </sql>
+
+
     <update id="updateByPrimaryKeySelective"
             parameterType="com.hrtxn.ringtone.project.threenets.kedas.kedasites.domain.KedaChildOrder">
         update tb_keda_child_order
