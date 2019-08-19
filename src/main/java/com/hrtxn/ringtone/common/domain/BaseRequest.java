@@ -2,8 +2,6 @@ package com.hrtxn.ringtone.common.domain;
 
 import lombok.Data;
 
-import java.util.Date;
-
 @Data
 public class BaseRequest {
 
@@ -49,4 +47,6 @@ public class BaseRequest {
     private String start;
 
     private String end;
+
+    private String linkMan;
 }

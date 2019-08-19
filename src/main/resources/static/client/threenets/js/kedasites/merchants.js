@@ -37,7 +37,7 @@ function showTable() {
             var name = row.companyName;
             return "<a href='/threenets/clcy/toNumberList/" + id + "/"+name+"'><i class='layui-icon layui-icon-user' title='进入商户'></i></a>"
                 + "<i class='layui-icon layui-icon-edit' title='编辑' onclick='editMerchants(" + id + ",\"" + name + "\")'></i>"
-                + "<i class='layui-icon layui-icon-delete' title='删除' onclick='DelMerchants(" + id + ");'></i>";
+                + "<i class='layui-icon layui-icon-delete' title='删除' onclick='delMerchants(" + id + ");'></i>";
         }
     }];
     page("#set", 10, param, "/threenets/clcy/getKeDaOrderList", columns, columnDefs);
@@ -76,14 +76,22 @@ function ChangeName(id) {
 }
 
 //删除
-function DelMerchants() {
+function delMerchants(id) {
     layer.confirm("你确定要删除该行记录吗?", {
         btn: ["确定", "取消"] //按钮
     }, function () {
-        alert(123);//确定
+        AjaxDelete("/threenets/clcy/deleteKedaOrder",{
+            id:id
+        },function (res) {
+            if (res.code == 200){
+                layer.msg(res.msg, {icon: 6, time: 3000});
+                $('#set').DataTable().ajax.reload(null,false);
+            } else {
+                layer.msg("删除失败！", {icon: 5, time: 3000});
+            }
+        });
         layer.closeAll('dialog');//关闭弹层
     }, function () {
-        alert(456);//取消
     });
 }
 
@@ -93,6 +101,9 @@ function AddUser(a, c, b) {
         type: 2,
         title: '添加商户',
         area: ['650px', '350px'],
-        content: 'Addmerchants.html'
+        content: '/threenets/clcy/toAddmerchants',
+        end: function () {
+            $('#set').DataTable().ajax.reload(null,false);//弹出层结束后，刷新主页面
+        }
     });
 }

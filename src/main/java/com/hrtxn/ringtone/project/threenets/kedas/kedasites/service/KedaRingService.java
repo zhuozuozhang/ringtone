@@ -21,15 +21,22 @@ public class KedaRingService {
     @Autowired
     private KedaRingMapper kedaRingMapper;
 
+    /**
+     * 获取铃音列表
+     *
+     * @param page
+     * @param baseRequest
+     * @return
+     */
     public AjaxResult getKedaRingList(Page page, BaseRequest baseRequest) {
 
         page.setPage((page.getPage() - 1) * page.getPagesize());
         // 获取铃音列表
-        List<KedaRing> kedaRingList = kedaRingMapper.getKedaRingList(page,baseRequest);
+        List<KedaRing> kedaRingList = kedaRingMapper.getKedaRingList(page, baseRequest);
         // 获取铃音数量
         int count = kedaRingMapper.getCount(baseRequest);
-        if (kedaRingList.size() > 0){
-            return AjaxResult.success(kedaRingList,"",count);
+        if (kedaRingList.size() > 0) {
+            return AjaxResult.success(kedaRingList, "", count);
         }
         return AjaxResult.error("无数据！");
     }

@@ -118,7 +118,13 @@
         }, {
             targets: [7],
             render: function (data, type, row, meta) {
-                return data ? '是' : '否';
+                if (data == 1){
+                    return "否";
+                } else if(data == 2){
+                    return "是";
+                } else {
+                    return "开通失败"
+                }
             }
         }, {
             targets: [8],
@@ -144,7 +150,7 @@
             render: function (data, type, row, meta) {
                 var id = row.id;
                 var isMonthly = row.isMonthly;
-                var setRing = "<a href='/threenets/toUserSetingRing/" + id + "/" + $("#companyName").val() + "/" + $("#parentOrderId").val() + "'><i class='layui-icon layui-icon-set' title='设置铃音'></i></a>";
+                var setRing = "<a href=''><i class='layui-icon layui-icon-set' title='设置铃音'></i></a>";
                 var refresh = "<i onclick='getPhoneInfo(2," + id + ")' class='layui-icon layui-icon-refresh-3' title='刷新'></i>";
                 var del = "<i class='layui-icon layui-icon-delete' title='删除' onclick='deleteTel(" + id + ")'></i>";
                 return refresh + (isMonthly == 2 ? setRing : '') + del;
@@ -159,7 +165,7 @@
             type: 2,
             title: '添加号码',
             area: ['650px', '650px'],
-            content: 'Addnumber.html'
+            content: '/threenets/clcy/toAddmerchants'
         });
     }
 

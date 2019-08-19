@@ -21,7 +21,7 @@
         <encoder>
             <pattern>${CONSOLE_LOG_PATTERN}</pattern>
             <!--<pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level -&#45;&#45; [%thread] %logger Line:%-3L - %msg%n</pattern>-->
-            <charset>utf-8</charset>
+            <!-- <charset>utf-8</charset>-->
         </encoder>
         <!--此日志appender是为开发使用，只配置最底级别，控制台输出的日志级别是大于或等于此级别的日志信息-->
         <filter class="ch.qos.logback.classic.filter.ThresholdFilter">

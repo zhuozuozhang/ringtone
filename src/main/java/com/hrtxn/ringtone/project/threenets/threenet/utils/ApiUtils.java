@@ -6,9 +6,11 @@ import com.hrtxn.ringtone.common.api.MiguApi;
 import com.hrtxn.ringtone.common.api.SwxlApi;
 import com.hrtxn.ringtone.common.constant.AjaxResult;
 import com.hrtxn.ringtone.common.exception.NoLoginException;
+import com.hrtxn.ringtone.common.utils.ConfigUtil;
 import com.hrtxn.ringtone.common.utils.SpringUtils;
 import com.hrtxn.ringtone.common.utils.StringUtils;
 import com.hrtxn.ringtone.common.utils.json.JsonUtil;
+import com.hrtxn.ringtone.project.system.config.domain.SystemConfig;
 import com.hrtxn.ringtone.project.system.user.domain.User;
 import com.hrtxn.ringtone.project.system.user.mapper.UserMapper;
 import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreeNetsOrderAttached;
@@ -44,10 +46,9 @@ public class ApiUtils {
     private static MiguApi miguApi = new MiguApi();
     private static SwxlApi swxlApi = new SwxlApi();
     private static McardApi mcardApi = new McardApi();
+    private static ConfigUtil configUtil = new ConfigUtil();
 
-    private static String[] TENRMB = {"北京", "天津", "河北", "山西", "辽宁", "吉林", "黑龙江", "上海", "江苏", "浙江", "福建", "河南", "湖南", "广东", "河南", "广西", "重庆", "四川", "陕西", "青海", "宁夏", "西藏"};
-    private static String[] TWENTYRMB = {"湖北", "山东", "江西", "贵州", "内蒙古", "新疆", "甘肃", "云南", "安徽"};
-    //子渠道商（17712033392）(四川)
+   //子渠道商（17712033392）(四川)
     private static String child_Distributor_ID_177 = "594095";
     //子渠道商（18159093112）
     private static String child_Distributor_ID_181 = "296577";
@@ -108,7 +109,6 @@ public class ApiUtils {
         for (ThreenetsChildOrder threenetsChildOrder : threenetsChildOrderList) {
             // 判断运营商
             Integer operate = threenetsChildOrder.getOperator();
-            operate = 2;
             if (operate == 1) {// 移动
                 String result = miguApi.getPhoneInfo(threenetsChildOrder.getLinkmanTel(), threenetsChildOrder.getOperateId());
                 if (StringUtils.isNotEmpty(result)) {
@@ -1059,6 +1059,8 @@ public class ApiUtils {
      */
     public MiguAddGroupRespone addOrderByYd(ThreenetsOrder order, ThreeNetsOrderAttached attached) throws IOException, NoLoginException {
         MiguAddGroupRespone addGroupResponse = null;
+        //登录
+        miguApi.loginAuto();
         //进行同步到服务器，同步3次。
         for (int i = 0; i < 3; i++) {// 重试添加3次
             addGroupResponse = miguApi.add(order, attached);
@@ -1102,7 +1104,9 @@ public class ApiUtils {
     public McardAddGroupRespone addOrderByDx(ThreenetsOrder order, ThreeNetsOrderAttached attached){
         McardAddGroupRespone mcardAddGroupRespone = null;
         //资费
-        boolean flag = Arrays.asList(TENRMB).contains(order.getProvince());
+        SystemConfig config = configUtil.getConfigByType("ten_yuan_tariff_area");
+        String[] ten_yuan = config.getInfo().split(",");
+        boolean flag = Arrays.asList(ten_yuan).contains(order.getProvince());
         attached.setMcardPrice(flag ? 11 : 2);
         if (flag){
             mcardApi.toNormalUser(child_Distributor_ID_188);

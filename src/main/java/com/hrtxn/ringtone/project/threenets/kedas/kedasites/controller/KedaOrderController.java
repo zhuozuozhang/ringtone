@@ -60,13 +60,50 @@ public class KedaOrderController {
      * @return
      */
     @GetMapping("toNumberList/{id}/{name}")
-    public String toNumberList(@PathVariable Integer id,@PathVariable String name, ModelMap map) {
+    public String toNumberList(@PathVariable Integer id, @PathVariable String name, ModelMap map) {
         if (StringUtils.isNotNull(id) && id != 0) {
             map.put("id", id);
             map.put("name", name);
             return "threenets/kedas/kedasites/merchants/number_list";
         }
         return null;
+    }
+
+    /**
+     * 跳转到添加渠道商页面
+     *
+     * @return
+     */
+    @GetMapping("toAddmerchants")
+    public String toAddmerchants() {
+        return "threenets/kedas/kedasites/merchants/addmerchants";
+    }
+
+    /**
+     * 添加父级订单
+     *
+     * @param kedaOrder
+     * @return
+     * @throws Exception
+     */
+    @PostMapping("addKedaOrder")
+    @ResponseBody
+    @Log(title = "添加疑难杂单父级订单", businessType = BusinessType.INSERT, operatorLogType = OperatorLogType.KEDASITES)
+    public AjaxResult addKedaOrder(KedaOrder kedaOrder) throws Exception {
+        return kedaOrderService.addKedaOrder(kedaOrder);
+    }
+
+    /**
+     * 疑难杂单父级订单删除
+     *
+     * @param id
+     * @return
+     */
+    @DeleteMapping("deleteKedaOrder")
+    @ResponseBody
+    @Log(title = "删除疑难杂单父级订单", businessType = BusinessType.DELETE, operatorLogType = OperatorLogType.KEDASITES)
+    public AjaxResult deleteKedaOrder(Integer id) {
+        return kedaOrderService.deleteKedaOrder(id);
     }
 
 }
