@@ -18,6 +18,9 @@ public class FileUtil {
      */
     public static String uploadFile(MultipartFile file, Integer orderId, String fileName) throws Exception {
         String extensionName = getExtensionName(file.getOriginalFilename());
+        if (StringUtils.isEmpty(extensionName)){
+            extensionName = getExtensionName(file.getName());
+        }
         String filePath = RingtoneConfig.getProfile() + File.separator + orderId;
         String returnPath = File.separator + orderId + File.separator + fileName + "." + extensionName;
         String path = RingtoneConfig.getProfile() + File.separator + orderId + File.separator + fileName + "." + extensionName;

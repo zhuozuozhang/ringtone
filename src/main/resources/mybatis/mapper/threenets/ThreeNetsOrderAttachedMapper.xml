@@ -48,7 +48,7 @@
         where id = #{id,jdbcType=INTEGER}
     </delete>
 
-    <insert id="insertSelective" parameterType="com.hrtxn.ringtone.project.threenets.threenet.domain.ThreeNetsOrderAttached">
+    <insert id="insertSelective" parameterType="com.hrtxn.ringtone.project.threenets.threenet.domain.ThreeNetsOrderAttached" useGeneratedKeys="true" keyProperty="id">
         insert into tb_threenets_order_attached
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="id != null">

@@ -3,6 +3,7 @@ package com.hrtxn.ringtone.project.system.File.service;
 import com.hrtxn.ringtone.common.constant.AjaxResult;
 import com.hrtxn.ringtone.common.utils.DateUtils;
 import com.hrtxn.ringtone.common.utils.FileUtil;
+import com.hrtxn.ringtone.common.utils.StringUtils;
 import com.hrtxn.ringtone.freemark.config.systemConfig.RingtoneConfig;
 import com.hrtxn.ringtone.project.system.File.domain.Uploadfile;
 import com.hrtxn.ringtone.project.system.File.mapper.UploadfileMapper;
@@ -94,7 +95,12 @@ public class FileService {
             File file = new File(RingtoneConfig.getProfile() + ring.getRingWay());
             FileInputStream inputStream = new FileInputStream(file);
             MultipartFile multipartFile = new MockMultipartFile(file.getName(), inputStream);
-            String fileName = ring.getRingName().substring(0, ring.getRingName().length() - 10) + DateUtils.getTimeRadom();
+            String fileName = "";
+            if (ring.getRingName().indexOf(".")>0){
+                fileName = ring.getRingName().substring(0, ring.getRingName().length() - 10) + DateUtils.getTimeRadom();
+            }else {
+                fileName = ring.getRingName();
+            }
             return FileUtil.uploadFile(multipartFile, ring.getOrderId(), fileName);
         } catch (Exception e) {
             return null;

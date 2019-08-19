@@ -263,8 +263,7 @@ public class SwxlApi implements Serializable {
      * 获取铃音信息
      *
      * @param operateId
-     * @return
-     * {"recode":"000000","message":"成功",
+     * @return {"recode":"000000","message":"成功",
      * "data":{
      * "data":[
      * {"id":"9178900020190716121088","ringFilePath":"/v1/ring/2019/07/16/bc439a5facdb44809d11b9e7ca920a22.mp3",
@@ -277,7 +276,7 @@ public class SwxlApi implements Serializable {
     public String getRingInfo(String operateId) throws NoLoginException, IOException {
         String url = getGroupRingInfo_URL + "?groupId=" + operateId;
         String result = sendGet(url);
-        log.info("获取铃音信息 参数：{} 结果：{}",operateId,result);
+        log.info("获取铃音信息 参数：{} 结果：{}", operateId, result);
         return result;
     }
 
@@ -285,6 +284,7 @@ public class SwxlApi implements Serializable {
     /**
      * 根据号码查询彩铃功能
      * (废弃 已使用getRingInfo代替)
+     *
      * @param msisdn
      * @param typeFlag
      * @return
@@ -313,7 +313,7 @@ public class SwxlApi implements Serializable {
     public String getSwxlRingFenFaAreaInfo(String ringid) throws NoLoginException, IOException {
         String getUrl = getSwxlRingFenFa_URL + "/" + ringid;
         String result = sendGet(getUrl);
-        log.info("联通获取铃音分发详细 参数：{} 结果：{} " ,ringid, result);
+        log.info("联通获取铃音分发详细 参数：{} 结果：{} ", ringid, result);
         return result;
     }
 
@@ -395,7 +395,7 @@ public class SwxlApi implements Serializable {
         map.put("ringId", ringId);
         map.put("msisdn", members);
         String result = sendPost(map, PhoneSetRing_URL);
-        log.info("联通 设置铃音 参数：{},{} 结果：{}",members,ringId,result);
+        log.info("联通 设置铃音 参数：{},{} 结果：{}", members, ringId, result);
         return result;
     }
 
@@ -492,7 +492,7 @@ public class SwxlApi implements Serializable {
             if (attached.getSwxlPrice() == 10) {
                 reqEntity.addPart("productId", new StringBody("225"));//价格10元
             } else {
-                reqEntity.addPart("productId", new StringBody("224"));//价格20元
+                reqEntity.addPart("productId", new StringBody("224"));//价格20元99
             }
             reqEntity.addPart("ringName", new StringBody(ringOrder.getRingName(), Charset.forName("UTF-8")));// 铃音名称
             if (ringOrder.getUpLoadAgreement() != null) {
@@ -521,7 +521,16 @@ public class SwxlApi implements Serializable {
                         }
                     }
                     this.setSwxlCookie(httpclient.getCookieStore());
-                } else {
+                }
+//                else if (res.contains("企业联系号码已存在,请更换其他号码") && res.contains("100027")) {
+//                    for (int i = 0; i < 3; i++) {
+//                        swxlAddGroupRespone = getGRoupInfo(ringOrder);
+//                        if (swxlAddGroupRespone != null) {
+//                            break;
+//                        }
+//                    }
+//                }
+                else {
                     SwxlBaseBackMessage<SwxlAddPhoneNewResult> createGroupInfo = mapper.readValue(res, new TypeReference<SwxlBaseBackMessage<SwxlAddPhoneNewResult>>() {
                     });
                     swxlAddGroupRespone = new SwxlGroupResponse();
@@ -545,13 +554,13 @@ public class SwxlApi implements Serializable {
                         swxlAddGroupRespone.setRemark(createGroupInfo.getMessage());
                     }
                 }
-            }else{
+            } else {
                 log.debug("联通服务器相应失败.....");
             }
         } catch (Exception e) {
             swxlAddGroupRespone = new SwxlGroupResponse();
             swxlAddGroupRespone.setStatus(1);
-                swxlAddGroupRespone.setRemark("添加商户异常");
+            swxlAddGroupRespone.setRemark("添加商户异常");
             log.error("添加商户异常[{}]", e.getMessage());
         } finally {
             httppost.abort();
@@ -572,7 +581,8 @@ public class SwxlApi implements Serializable {
         SwxlGroupResponse content = null;
         DefaultHttpClient httpclient = WebClientDevWrapper.wrapClient(new DefaultHttpClient());
         long longTime = new Date().getTime();
-        String getUrl = "https://swxl.10155.com/swxlapi/web/group?order=asc&maxresult=15&offset=0&currentpage=1&draw=1&start=0&groupName=" + order.getCompanyName() + "&msisdn=" + order.getLinkmanTel() + "&status=&noSMS=&_=" + longTime;
+        String getUrl = "https://swxl.10155.com/swxlapi/web/group?order=asc&maxresult=15&offset=0&currentpage=1&draw=1&start=0&groupName=" + order.getCompanyName() + "&msisdn=" + order.getLinkmanTel() + "&status=&noSMS=&payType=&payWay=&_=" + longTime;
+        getUrl= getUrl.replaceAll(" ", "%20");
         HttpGet httpGet = new HttpGet(getUrl);
         httpclient.setCookieStore(this.getCookieStore());
         try {
@@ -593,7 +603,7 @@ public class SwxlApi implements Serializable {
                         List<SwxlGroupResponse> groupList = dataList.getData();
                         if (groupList.size() > 0) {
                             for (SwxlGroupResponse groupInfo : groupList) {
-                                if (groupInfo.getGroupName().equals(order.getCompanyName().trim())) {
+                                if (groupInfo.getGroupName().trim().equals(order.getCompanyName().trim())) {
                                     content = groupInfo;
                                     content.setStatus(0);
                                 }
@@ -685,7 +695,7 @@ public class SwxlApi implements Serializable {
      * @param ring
      * return flag:true 返回 ring.ringId 为 商务炫铃铃音ID
      */
-    public boolean addRing(ThreenetsRing ring,String circleID) throws IOException,NoLoginException{
+    public boolean addRing(ThreenetsRing ring, String circleID) throws IOException, NoLoginException {
         boolean flag = false;
         DefaultHttpClient httpclient = WebClientDevWrapper.wrapClient(new DefaultHttpClient());
         HttpPost httppost = new HttpPost(importSwxlRing_URL);
@@ -734,30 +744,30 @@ public class SwxlApi implements Serializable {
             MultipartEntity reqEntity = new MultipartEntity();
             HttpParams params = httpclient.getParams();
             params.setParameter(CoreProtocolPNames.HTTP_CONTENT_CHARSET, Charset.forName("UTF-8"));
-            reqEntity.addPart("realname",new StringBody(user.getUserName(), Charset.forName("UTF-8")));
-            reqEntity.addPart("name",new StringBody(user.getUserName(), Charset.forName("UTF-8")));
-            reqEntity.addPart("msisdn",new StringBody(PhoneUtils.getTel(), Charset.forName("UTF-8")));
-            reqEntity.addPart("customerPhone",new StringBody(user.getUserTel(), Charset.forName("UTF-8")));
-            reqEntity.addPart("province",new StringBody(user.getProvince(), Charset.forName("UTF-8")));
-            reqEntity.addPart("password",new StringBody(PASSWORD2, Charset.forName("UTF-8")));
-            reqEntity.addPart("qqNum",new StringBody(user.getUserQq(), Charset.forName("UTF-8")));
+            reqEntity.addPart("realname", new StringBody(user.getUserName(), Charset.forName("UTF-8")));
+            reqEntity.addPart("name", new StringBody(user.getUserName(), Charset.forName("UTF-8")));
+            reqEntity.addPart("msisdn", new StringBody(PhoneUtils.getTel(), Charset.forName("UTF-8")));
+            reqEntity.addPart("customerPhone", new StringBody(user.getUserTel(), Charset.forName("UTF-8")));
+            reqEntity.addPart("province", new StringBody(user.getProvince(), Charset.forName("UTF-8")));
+            reqEntity.addPart("password", new StringBody(PASSWORD2, Charset.forName("UTF-8")));
+            reqEntity.addPart("qqNum", new StringBody(user.getUserQq(), Charset.forName("UTF-8")));
             if (user.getIdGroupFrontFile() != null) {
-                reqEntity.addPart("idGroupFrontFile",new FileBody(user.getIdGroupFrontFile()));
+                reqEntity.addPart("idGroupFrontFile", new FileBody(user.getIdGroupFrontFile()));
             }
             if (user.getIdGroupReverseFile() != null) {
-                reqEntity.addPart("idGroupReverseFile",new FileBody(user.getIdGroupReverseFile()));
+                reqEntity.addPart("idGroupReverseFile", new FileBody(user.getIdGroupReverseFile()));
             }
-            reqEntity.addPart("parentId",new StringBody("7940f534-138d-43d3-88f1-352d4232b9fa", Charset.forName("UTF-8")));
+            reqEntity.addPart("parentId", new StringBody("7940f534-138d-43d3-88f1-352d4232b9fa", Charset.forName("UTF-8")));
             httppost.setEntity(reqEntity);
             HttpResponse response1 = httpclient.execute(httppost);
             int statusCode = response1.getStatusLine().getStatusCode();
             if (statusCode == HttpStatus.SC_OK) {
                 HttpEntity resEntity = response1.getEntity();
                 result = EntityUtils.toString(resEntity);
-                log.debug("创建子账号 参数：{} 结果：{}",user.toString(),result);
+                log.debug("创建子账号 参数：{} 结果：{}", user.toString(), result);
             }
         } catch (Exception e) {
-            log.error("创建子账号 错误信息",e);
+            log.error("创建子账号 错误信息", e);
         } finally {
             httppost.abort();
             httpclient.getConnectionManager().shutdown();
@@ -767,6 +777,7 @@ public class SwxlApi implements Serializable {
 
     /**
      * 工具箱-->联通 获取沉默用户信息
+     *
      * @param msisdn
      * @return
      * @throws NoLoginException
@@ -782,7 +793,7 @@ public class SwxlApi implements Serializable {
 
         String content = null;
         DefaultHttpClient httpclient = WebClientDevWrapper.wrapClient(new DefaultHttpClient());
-        HttpGet httpGet = new HttpGet(silentMember_url+"?msisdn="+msisdn);
+        HttpGet httpGet = new HttpGet(silentMember_url + "?msisdn=" + msisdn);
         httpclient.setCookieStore(this.getCookieStore());
         try {
             HttpResponse response = httpclient.execute(httpGet);// 进入
@@ -804,6 +815,7 @@ public class SwxlApi implements Serializable {
 
     /**
      * 工具箱-->联通 获取用户操作记录
+     *
      * @param msisdn
      * @return
      * @throws NoLoginException
@@ -819,7 +831,7 @@ public class SwxlApi implements Serializable {
 
         String content = null;
         DefaultHttpClient httpclient = WebClientDevWrapper.wrapClient(new DefaultHttpClient());
-        HttpGet httpGet = new HttpGet(systemLogList_url+"?msisdn="+msisdn+"&pageSize=100");
+        HttpGet httpGet = new HttpGet(systemLogList_url + "?msisdn=" + msisdn + "&pageSize=100");
         httpclient.setCookieStore(this.getCookieStore());
         try {
             HttpResponse response = httpclient.execute(httpGet);// 进入
@@ -842,6 +854,7 @@ public class SwxlApi implements Serializable {
 
     /**
      * 工具箱-》联通删除用户信息
+     *
      * @param msisdn
      * @return
      * @throws NoLoginException
@@ -850,7 +863,7 @@ public class SwxlApi implements Serializable {
     public String deleteSilentMemberByMsisdn(String msisdn) throws NoLoginException, IOException {
         String content = null;
         DefaultHttpClient httpclient = WebClientDevWrapper.wrapClient(new DefaultHttpClient());
-        HttpDelete httpDel = new HttpDelete(delete_url+msisdn);
+        HttpDelete httpDel = new HttpDelete(delete_url + msisdn);
         httpclient.setCookieStore(this.getCookieStore());
         try {
             HttpResponse response = httpclient.execute(httpDel);// 进入

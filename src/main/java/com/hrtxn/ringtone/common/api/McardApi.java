@@ -110,7 +110,7 @@ public class McardApi {
      * @param subuserid
      * @return
      */
-    public String toNormalUser(String subuserid){
+    public String toNormalUser(String subuserid) {
         String getUrl = to_normal_user + "?subuserid=" + subuserid + "&parent=61204";
         String result = sendGet(getUrl);
         return result;
@@ -122,7 +122,7 @@ public class McardApi {
      * @param userId
      * @return
      */
-    public String toUserList(String userId){
+    public String toUserList(String userId) {
         String getUrl = to_user_list + "?userId=" + userId;
         String result = sendGet(getUrl);
         return result;
@@ -141,7 +141,7 @@ public class McardApi {
         map.put("auserParent", "61203");
         map.put("startTime", DateUtils.getPastDate(7));
         map.put("endTime", DateUtils.getFetureDate(1));
-        if (order.getCompanyName() != null){
+        if (order.getCompanyName() != null) {
             map.put("auserName", order.getCompanyName());
         }
         return sendPost(map, normal_list);
@@ -236,7 +236,7 @@ public class McardApi {
         McardAddGroupRespone groupRespone = new McardAddGroupRespone();
         JSONObject jsonObject = JSONObject.fromObject(result);
         JSONObject data = jsonObject.getJSONObject("data");
-        groupRespone = (McardAddGroupRespone)JSONObject.toBean(data, McardAddGroupRespone.class);
+        groupRespone = (McardAddGroupRespone) JSONObject.toBean(data, McardAddGroupRespone.class);
         groupRespone.setCode(jsonObject.getString("code"));
         groupRespone.setMessage(jsonObject.getString("message"));
         groupRespone.getAuserId();
@@ -251,8 +251,8 @@ public class McardApi {
     public McardPhoneAddressRespone phoneAdd(String phone) {
         McardPhoneAddressRespone respone = new McardPhoneAddressRespone();
         Map<String, String> map = new HashMap<>();
-        map.put("loginPhone",phone);
-        map.put("fee","1");
+        map.put("loginPhone", phone);
+        map.put("fee", "1");
         String result = sendPost(map, phone_address_url);
         JSONObject jsonObject = JSONObject.fromObject(result);
         JSONObject jsonData = jsonObject.getJSONObject("data");
@@ -279,7 +279,7 @@ public class McardApi {
      * @param attached
      * @return
      */
-    public McardAddGroupRespone addGroup(ThreenetsOrder order, ThreeNetsOrderAttached attached){
+    public McardAddGroupRespone addGroup(ThreenetsOrder order, ThreeNetsOrderAttached attached) {
         McardPhoneAddressRespone respone = phoneAdd(order.getLinkmanTel());
         Map<String, String> map = new HashMap<>();
         map.put("ausertype", "");
@@ -312,16 +312,15 @@ public class McardApi {
         map.put("imageCode", getCodeString());
         map.put("auserBlicencePath", attached.getBusinessLicense());
         map.put("auserCardidPath", attached.getConfirmLetter());
-        map.put("auserFilePath", attached.getSubjectProve());
+        map.put("auserFilePath", attached.getSubjectProve() == null ? "" : attached.getSubjectProve());
         String result = sendPost(map, add_user_url);
         JSONObject jsonObject = JSONObject.fromObject(result);
         JSONObject data = jsonObject.getJSONObject("data");
-        McardAddGroupRespone groupRespone = (McardAddGroupRespone)JSONObject.toBean(data, McardAddGroupRespone.class);
+        McardAddGroupRespone groupRespone = (McardAddGroupRespone) JSONObject.toBean(data, McardAddGroupRespone.class);
         groupRespone.setCode(jsonObject.getString("code"));
         groupRespone.setMessage(jsonObject.getString("message"));
         return groupRespone;
     }
-
 
 
     /**
@@ -368,14 +367,14 @@ public class McardApi {
         String ringName = ring.getRingName().substring(0, ring.getRingName().indexOf("."));
         OkHttpClient client = new OkHttpClient();
         RequestBody fileBody = RequestBody.create(MediaType.parse("audio/mp3"), ring.getFile());//将file转换成RequestBody文件
-        RequestBody requestBody=new MultipartBody.Builder()
-                .addFormDataPart("song",ringName)
-                .addFormDataPart("ringName",ringName)
-                .addFormDataPart("ringText",ring.getRingContent())
-                .addFormDataPart("singer","无")
-                .addFormDataPart("ext","mp3")
-                .addFormDataPart("fileName",ring.getRingName())
-                .addFormDataPart("ringFile",ringName,fileBody)
+        RequestBody requestBody = new MultipartBody.Builder()
+                .addFormDataPart("song", ringName)
+                .addFormDataPart("ringName", ringName)
+                .addFormDataPart("ringText", ring.getRingContent())
+                .addFormDataPart("singer", "无")
+                .addFormDataPart("ext", "mp3")
+                .addFormDataPart("fileName", ring.getRingName())
+                .addFormDataPart("ringFile", ringName, fileBody)
                 .build();
         Request request = new Request.Builder().url(saveRing_url).post(requestBody).addHeader("Cookie", config.getInfo()).build();
         try {
@@ -387,7 +386,6 @@ public class McardApi {
         }
         return flag;
     }
-
 
 
     /**
@@ -411,7 +409,7 @@ public class McardApi {
             //解析数据
             JSONObject jsonObject = JSONObject.fromObject(result);
             JSONArray jsonArray = jsonObject.getJSONArray("data");
-            for (int i=0;i<jsonArray.size();i++){
+            for (int i = 0; i < jsonArray.size(); i++) {
                 JSONObject partDaily = jsonArray.getJSONObject(i);
                 String path = partDaily.getString("path");
                 result = path;

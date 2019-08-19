@@ -152,7 +152,7 @@
         </trim>
     </insert>
     <!-- 修改三网订单信息-->
-    <update id="updateByPrimaryKey" parameterType="ThreenetsOrder">
+    <update id="updateByPrimaryKey" parameterType="com.hrtxn.ringtone.project.threenets.threenet.domain.ThreenetsOrder">
         update tb_threenets_order
         <set>
             <if test="operator != null">
@@ -166,12 +166,6 @@
             </if>
             <if test="linkmanTel != null">
                 linkman_tel = #{linkmanTel,jdbcType=VARCHAR},
-            </if>
-            <if test="paymentType != null">
-                payment_type = #{paymentType,jdbcType=INTEGER},
-            </if>
-            <if test="paymentPrice != null">
-                payment_price = #{paymentPrice,jdbcType=INTEGER},
             </if>
             <if test="province != null">
                 province = #{province,jdbcType=VARCHAR},
@@ -191,8 +185,6 @@
         </set>
         where id = #{id,jdbcType=INTEGER}
     </update>
-
-
 
     <update id="updateMessageById" parameterType="java.lang.Integer">
         update tb_threenets_order

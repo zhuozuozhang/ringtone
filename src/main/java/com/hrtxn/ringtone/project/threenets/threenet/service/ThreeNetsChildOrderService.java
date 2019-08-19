@@ -9,6 +9,7 @@ import com.hrtxn.ringtone.common.utils.ShiroUtils;
 import com.hrtxn.ringtone.common.utils.StringUtils;
 import com.hrtxn.ringtone.common.utils.juhe.JuhePhoneUtils;
 import com.hrtxn.ringtone.freemark.config.systemConfig.RingtoneConfig;
+import com.hrtxn.ringtone.project.system.File.service.FileService;
 import com.hrtxn.ringtone.project.system.json.JuhePhone;
 import com.hrtxn.ringtone.project.system.json.JuhePhoneResult;
 import com.hrtxn.ringtone.project.threenets.threenet.domain.*;
@@ -50,6 +51,9 @@ public class ThreeNetsChildOrderService {
 
     @Autowired
     private ThreeNetsOrderAttachedService threeNetsOrderAttachedService;
+
+    @Autowired
+    private FileService fileService;
     private ApiUtils apiUtils = new ApiUtils();
 
     /**
@@ -81,14 +85,14 @@ public class ThreeNetsChildOrderService {
      * @param order
      */
     @Synchronized
-    public void refreshDxInfo(ThreenetsOrder order){
+    public void refreshDxInfo(ThreenetsOrder order) {
         ApiUtils utils = new ApiUtils();
         ThreeNetsOrderAttached attached = threeNetsOrderAttachedService.selectByParentOrderId(order.getId());
-        if (attached.getMcardId().isEmpty() || attached.getMcardStatus() == 1){
+        if (StringUtils.isEmpty(attached.getMcardId()) || attached.getMcardStatus() == 1) {
             return;
         }
         Boolean aBoolean = utils.normalBusinessInfo(order);
-        if (aBoolean){
+        if (aBoolean) {
             attached.setMcardStatus(1);
             ThreenetsChildOrder param = new ThreenetsChildOrder();
             param.setParentOrderId(order.getId());
@@ -101,17 +105,17 @@ public class ThreeNetsChildOrderService {
                 //保存铃音
                 List<ThreenetsRing> rings = threenetsRingMapper.selectByOrderId(order.getId());
                 for (int i = 0; i < rings.size(); i++) {
-                    if (rings.get(i).getOperate() != 2){
+                    if (rings.get(i).getOperate() != 2) {
                         continue;
                     }
                     ThreenetsRing ring = rings.get(i);
-                    ring.setFile(new File(RingtoneConfig.getProfile()+ring.getRingWay()));
+                    ring.setFile(new File(RingtoneConfig.getProfile() + ring.getRingWay()));
                     utils.addRingByDx(rings.get(i));
                 }
                 for (int i = 0; i < childOrders.size(); i++) {
                     threenetsChildOrderMapper.updateThreeNetsChidOrder(childOrders.get(i));
                 }
-            }catch (Exception e){
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
@@ -149,7 +153,7 @@ public class ThreeNetsChildOrderService {
      */
     private ThreenetsChildOrder getParameters(BaseRequest request) {
         ThreenetsChildOrder order = new ThreenetsChildOrder();
-        if (StringUtils.isNotNull(request)){
+        if (StringUtils.isNotNull(request)) {
             order.setParentOrderId(request.getId());
             Integer userRole = ShiroUtils.getSysUser().getUserRole();
             if (userRole != 1) {
@@ -188,7 +192,7 @@ public class ThreeNetsChildOrderService {
      * @return
      */
     @Transactional
-    public AjaxResult insterThreeNetsChildOrder(ThreenetsChildOrder threenetsChildOrder,BaseRequest request) throws Exception {
+    public AjaxResult insterThreeNetsChildOrder(ThreenetsChildOrder threenetsChildOrder, BaseRequest request) throws Exception {
         if (!StringUtils.isNotNull(threenetsChildOrder)) {
             return AjaxResult.error("参数格式不正确");
         }
@@ -202,7 +206,7 @@ public class ThreeNetsChildOrderService {
         if (attached.getSwxlPrice() == null) {
             attached.setSwxlPrice(threenetsChildOrder.getSwxlPrice());
         }
-        saveThreenetsPhone(attached, list,request);
+        saveThreenetsPhone(attached, list, request);
         return AjaxResult.success(true, "保存成功");
     }
 
@@ -212,7 +216,7 @@ public class ThreeNetsChildOrderService {
      * @param childOrders
      */
     @Synchronized
-    public void saveThreenetsPhone(ThreeNetsOrderAttached attached, List<ThreenetsChildOrder> childOrders,BaseRequest request) {
+    public void saveThreenetsPhone(ThreeNetsOrderAttached attached, List<ThreenetsChildOrder> childOrders, BaseRequest request) {
         try {
             List<ThreenetsRing> rings = threenetsRingMapper.selectByOrderId(attached.getParentOrderId());
             Map<Integer, List<ThreenetsRing>> ringMap = rings.stream().collect(Collectors.groupingBy(ThreenetsRing::getOperate));
@@ -221,34 +225,41 @@ public class ThreeNetsChildOrderService {
             for (Integer operator : map.keySet()) {
                 List<ThreenetsChildOrder> list = map.get(operator);
                 if (operator == 1) {
-                    list = addMembersByYd(order, attached, list);
-                    batchChindOrder(list,rings.get(0));
-                    if (ringMap.get(1) == null){
-                        ThreenetsRing threenetsRing = rings.get(0);
+                    ThreenetsRing threenetsRing = rings.get(0);
+                    if (ringMap.get(1) == null) {
+                        String path = fileService.cloneFile(threenetsRing);
+                        threenetsRing.setRingWay(path);
                         threenetsRing.setOperate(1);
                         threenetsRing.setRingStatus(2);
                         threenetsRingMapper.insertThreeNetsRing(threenetsRing);
                     }
+                    order.setUpLoadAgreement(new File(RingtoneConfig.getProfile() + threenetsRing.getRingWay()));
+                    list = addMembersByYd(order, attached, list);
+                    batchChindOrder(list,threenetsRing);
                 }
                 if (operator == 2) {
-                    List<ThreenetsChildOrder> orders = addMcardByDx(order, attached, list,request);
-                    batchChindOrder(orders,rings.get(0));
-                    if (ringMap.get(2) == null){
-                        ThreenetsRing threenetsRing = rings.get(0);
+                    ThreenetsRing threenetsRing = rings.get(0);
+                    if (ringMap.get(2) == null) {
+                        String path = fileService.cloneFile(threenetsRing);
+                        threenetsRing.setRingWay(path);
                         threenetsRing.setOperate(2);
                         threenetsRing.setRingStatus(2);
                         threenetsRingMapper.insertThreeNetsRing(threenetsRing);
                     }
+                    List<ThreenetsChildOrder> orders = addMcardByDx(order, attached, list, request);
+                    batchChindOrder(orders, threenetsRing);
                 }
                 if (operator == 3) {
-                    list = addMemberByLt(order, attached, list);
-                    batchChindOrder(list,rings.get(0));
-                    if (ringMap.get(3) == null){
-                        ThreenetsRing threenetsRing = rings.get(0);
+                    ThreenetsRing threenetsRing = rings.get(0);
+                    if (ringMap.get(3) == null) {
+                        String path = fileService.cloneFile(threenetsRing);
+                        threenetsRing.setRingWay(path);
                         threenetsRing.setOperate(3);
                         threenetsRing.setRingStatus(2);
                         threenetsRingMapper.insertThreeNetsRing(threenetsRing);
                     }
+                    list = addMemberByLt(order, attached, list);
+                    batchChindOrder(list,threenetsRing);
                 }
             }
         } catch (Exception e) {
@@ -276,14 +287,17 @@ public class ThreeNetsChildOrderService {
             }
         }
         MiguAddPhoneRespone addPhoneRespone = new MiguAddPhoneRespone();
-        if (attached.getMiguStatus() == 1){
+        if (attached.getMiguStatus() == 1) {
             addPhoneRespone = apiUtils.addPhoneByYd(list, attached.getMiguId());
+        }
+        if (addPhoneRespone.getSuccessCount().equals("0")){
+            return new ArrayList<>();
         }
         for (int i = 0; i < list.size(); i++) {
             ThreenetsChildOrder childOrder = list.get(i);
             childOrder.setOperateId(attached.getMiguId());
             childOrder.setOperateOrderId(addPhoneRespone.getLeftMemberAddNum());
-            list.set(i,childOrder);
+            list.set(i, childOrder);
         }
         return list;
     }
@@ -309,6 +323,12 @@ public class ThreeNetsChildOrderService {
                 order.setUpLoadAgreement(new File(RingtoneConfig.getProfile() + threenetsRing.getRingWay()));
             }
             order.setLinkmanTel(list.get(0).getLinkmanTel());
+            for (int i = 0; i < rings.size(); i++) {
+                if (rings.get(i).getOperate() == 3) {
+                    String ringName = rings.get(i).getRingName();
+                    order.setRingName(ringName.substring(0, ringName.indexOf(".")));
+                }
+            }
             SwxlGroupResponse swxlGroupResponse = apiUtils.addOrderByLt(order, attached);
             if (swxlGroupResponse.getStatus() == 0) {
                 attached.setSwxlId(swxlGroupResponse.getId());
@@ -321,7 +341,7 @@ public class ThreeNetsChildOrderService {
         for (int i = 0; i < list.size(); i++) {
             ThreenetsChildOrder childOrder = list.get(i);
             childOrder.setOperateId(attached.getMiguId());
-            list.set(i,childOrder);
+            list.set(i, childOrder);
         }
         return list;
     }
@@ -336,39 +356,39 @@ public class ThreeNetsChildOrderService {
      * @throws IOException
      * @throws NoLoginException
      */
-    public List<ThreenetsChildOrder> addMcardByDx(ThreenetsOrder order,ThreeNetsOrderAttached attached,List<ThreenetsChildOrder> list,BaseRequest request)throws IOException,NoLoginException{
+    public List<ThreenetsChildOrder> addMcardByDx(ThreenetsOrder order, ThreeNetsOrderAttached attached, List<ThreenetsChildOrder> list, BaseRequest request) throws IOException, NoLoginException {
         if (attached.getMcardId() == null) {
             //新增电信商户需要先上传审核文件
-            if (request.getCompanyUrl()!=null){
+            if (request.getCompanyUrl() != null) {
                 String path = apiUtils.mcardUploadFile(new File(request.getCompanyUrl()));
                 attached.setBusinessLicense(path);
             }
-            if (request.getClientUrl()!=null){
+            if (request.getClientUrl() != null) {
                 String path = apiUtils.mcardUploadFile(new File(request.getClientUrl()));
                 attached.setConfirmLetter(path);
             }
-            if (request.getMainUrl()!=null){
+            if (request.getMainUrl() != null) {
                 String path = apiUtils.mcardUploadFile(new File(request.getMainUrl()));
                 attached.setSubjectProve(path);
             }
             //没有电信商户，先新增商户
             McardAddGroupRespone respone = apiUtils.addOrderByDx(order, attached);
-            if (respone.getCode().equals("200")) {
-                attached.setMcardId(null);
+            if (respone.getCode().equals("0000")) {
+                attached.setMcardId(respone.getAuserId());
                 threeNetsOrderAttachedService.update(attached);
             } else {
                 return new ArrayList<>();
             }
         }
         //特殊处理，需要先进入对应商户，然后进行成员添加
-        if (attached.getMcardStatus() == 1){
-            list = apiUtils.addPhoneByDx(list,attached.getMcardId());
+        if (attached.getMcardStatus() == 1) {
+            list = apiUtils.addPhoneByDx(list, attached.getMcardId());
         }
         for (int i = 0; i < list.size(); i++) {
             ThreenetsChildOrder childOrder = list.get(i);
             childOrder.setOperateId(attached.getMiguId());
             childOrder.setStatus("待审核");
-            list.set(i,childOrder);
+            list.set(i, childOrder);
         }
         return list;
     }
@@ -389,14 +409,15 @@ public class ThreeNetsChildOrderService {
      * @param orders
      * @return
      */
-    public Integer batchChindOrder(List<ThreenetsChildOrder> orders,ThreenetsRing ring) {
+    public Integer batchChindOrder(List<ThreenetsChildOrder> orders, ThreenetsRing ring) {
         for (int i = 0; i < orders.size(); i++) {
             ThreenetsChildOrder childOrder = orders.get(i);
             childOrder.setRingName(ring.getRingName());
             childOrder.setRingId(ring.getId());
             childOrder.setIsVideoUser(ring.getRingType().equals("视频") ? true : false);
             childOrder.setIsRingtoneUser(ring.getRingType().equals("视频") ? false : true);
-            orders.set(i,childOrder);
+            childOrder.setParentOrderId(ring.getOrderId());
+            orders.set(i, childOrder);
         }
         return threenetsChildOrderMapper.batchChindOrder(orders);
     }
@@ -412,13 +433,13 @@ public class ThreeNetsChildOrderService {
         String regN = "\n";
         String regR = "\r";
         //将手机号转为数组
-        phones = phones.replace(regNR,"br").replace(regR, "br").replace(regN, "br");
+        phones = phones.replace(regNR, "br").replace(regR, "br").replace(regN, "br");
         String[] phoneArray = phones.split("br");
 
         List<ThreenetsChildOrder> list = new ArrayList<>();
         for (String tel : phoneArray) {
             ThreenetsChildOrder childOrder = new ThreenetsChildOrder();
-            if (tel.isEmpty()){
+            if (tel.isEmpty()) {
                 continue;
             }
             childOrder.setLinkmanTel(tel);
@@ -617,7 +638,7 @@ public class ThreeNetsChildOrderService {
     }
 
     /**
-     *号码管理设置铃音
+     * 号码管理设置铃音
      *
      * @param orderId
      * @param operate
@@ -626,13 +647,13 @@ public class ThreeNetsChildOrderService {
      * @return
      * @throws Exception
      */
-    public AjaxResult chidSetRing(Integer orderId,Integer operate,Integer ringId, Integer childOrderId) throws Exception {
-        if (StringUtils.isNotNull(orderId) && StringUtils.isNotNull(ringId) && StringUtils.isNotNull(childOrderId)){
+    public AjaxResult chidSetRing(Integer orderId, Integer operate, Integer ringId, Integer childOrderId) throws Exception {
+        if (StringUtils.isNotNull(orderId) && StringUtils.isNotNull(ringId) && StringUtils.isNotNull(childOrderId)) {
             // 根据子订单ID获取子订单信息
             ThreenetsChildOrder threenetsChildOrder = threenetsChildOrderMapper.selectByPrimaryKey(childOrderId);
             // 根据铃音ID获取铃音信息
             ThreenetsRing threenetsRing = threenetsRingMapper.selectByPrimaryKey(ringId);
-            if (StringUtils.isNotNull(threenetsChildOrder) && StringUtils.isNotNull(threenetsRing)){
+            if (StringUtils.isNotNull(threenetsChildOrder) && StringUtils.isNotNull(threenetsRing)) {
                 return apiUtils.setRing(threenetsChildOrder.getLinkmanTel(), threenetsRing, operate, orderId);
             }
             return AjaxResult.error("获取数据出错！");
@@ -642,6 +663,7 @@ public class ThreeNetsChildOrderService {
 
     /**
      * 移动工具箱-->用户信息
+     *
      * @param ringMsisdn
      * @return
      */
@@ -649,25 +671,27 @@ public class ThreeNetsChildOrderService {
         if (StringUtils.isNotNull(ringMsisdn)) {
             return apiUtils.getUserInfoByRingMsisdn(ringMsisdn);
         }
-        return AjaxResult.success(false,"参数不正确！");
+        return AjaxResult.success(false, "参数不正确！");
     }
 
     /**
      * 移动工具箱-->删除铃音-->搜索
+     *
      * @param msisdn
      * @return
      * @throws NoLoginException
      * @throws IOException
      */
     public AjaxResult findRingInfoByMsisdn(String msisdn) throws NoLoginException, IOException {
-        if(StringUtils.isNotNull(msisdn)){
+        if (StringUtils.isNotNull(msisdn)) {
             return apiUtils.findRingInfoByMsisdn(msisdn);
         }
-        return AjaxResult.success(false,"参数不正确");
+        return AjaxResult.success(false, "参数不正确");
     }
 
     /**
      * 移动工具箱-->删除铃音-->删除个人铃音设置
+     *
      * @param msisdn
      * @param settingID
      * @param toneID
@@ -677,29 +701,31 @@ public class ThreeNetsChildOrderService {
      * @throws IOException
      */
     public AjaxResult singleDeleteRingSet(String msisdn, String settingID, String toneID, String type) throws NoLoginException, IOException {
-        if(StringUtils.isNotNull(msisdn) && StringUtils.isNotNull(settingID) &&
-                StringUtils.isNotNull(toneID) && StringUtils.isNotNull(type)){
-            return apiUtils.singleDeleteRingSet(msisdn,settingID,toneID,type);
+        if (StringUtils.isNotNull(msisdn) && StringUtils.isNotNull(settingID) &&
+                StringUtils.isNotNull(toneID) && StringUtils.isNotNull(type)) {
+            return apiUtils.singleDeleteRingSet(msisdn, settingID, toneID, type);
         }
-        return AjaxResult.success(false,"参数不正确");
+        return AjaxResult.success(false, "参数不正确");
     }
 
     /**
      * 移动工具箱-->删除铃音-->删除个人铃音库
+     *
      * @param msisdn
      * @param toneIds
      * @param type
      * @return
      */
     public AjaxResult singleDeleteRing(String msisdn, String toneIds, String type) throws NoLoginException, IOException {
-        if(StringUtils.isNotNull(msisdn) && StringUtils.isNotNull(toneIds) && StringUtils.isNotNull(type)){
-            return apiUtils.singleDeleteRing(msisdn,toneIds,type);
+        if (StringUtils.isNotNull(msisdn) && StringUtils.isNotNull(toneIds) && StringUtils.isNotNull(type)) {
+            return apiUtils.singleDeleteRing(msisdn, toneIds, type);
         }
-        return AjaxResult.success(false,"参数不正确！");
+        return AjaxResult.success(false, "参数不正确！");
     }
 
     /**
      * 批量删除个人铃音设置
+     *
      * @param msisdn
      * @param vals
      * @return
@@ -707,14 +733,15 @@ public class ThreeNetsChildOrderService {
      * @throws IOException
      */
     public AjaxResult batchDeleteRingSet(String msisdn, String vals) throws NoLoginException, IOException {
-        if (StringUtils.isNotNull(msisdn) && StringUtils.isNotNull(vals)){
-            return apiUtils.batchDeleteRingSet(msisdn,vals);
+        if (StringUtils.isNotNull(msisdn) && StringUtils.isNotNull(vals)) {
+            return apiUtils.batchDeleteRingSet(msisdn, vals);
         }
-        return AjaxResult.success(false,"参数不正确");
+        return AjaxResult.success(false, "参数不正确");
     }
 
     /**
      * 批量删除个人铃音库
+     *
      * @param msisdn
      * @param vals
      * @return
@@ -722,41 +749,43 @@ public class ThreeNetsChildOrderService {
      * @throws IOException
      */
     public AjaxResult batchDeleteRing(String msisdn, String vals) throws NoLoginException, IOException {
-        if (StringUtils.isNotNull(msisdn) && StringUtils.isNotNull(vals)){
-            return apiUtils.batchDeleteRing(msisdn,vals);
+        if (StringUtils.isNotNull(msisdn) && StringUtils.isNotNull(vals)) {
+            return apiUtils.batchDeleteRing(msisdn, vals);
         }
-        return AjaxResult.success(false,"参数不正确");
+        return AjaxResult.success(false, "参数不正确");
     }
 
     /**
      * 联通工具箱-->用户信息
+     *
      * @param phoneNumber
      * @return
      * @throws NoLoginException
      * @throws IOException
      */
     public AjaxResult getUnicomUserInfoByPhoneNumber(String phoneNumber) throws NoLoginException, IOException {
-        if(StringUtils.isNotNull(phoneNumber)){
+        if (StringUtils.isNotNull(phoneNumber)) {
             Map<String, String> map = new HashMap<String, String>();
             map.put("silentMemberByMsisdn", apiUtils.getSilentMemberByMsisdn(phoneNumber));
             map.put("systemLogListByMsisdn", apiUtils.getSystemLogListByMsisdn(phoneNumber));
-            return AjaxResult.success(map,"查找到了");
+            return AjaxResult.success(map, "查找到了");
         }
-        return AjaxResult.success(false,"参数不正确");
+        return AjaxResult.success(false, "参数不正确");
     }
 
     /**
      * 联通工具箱-->用户信息-->删除某条用户信息
+     *
      * @param msisdn
      * @return
      * @throws NoLoginException
      * @throws IOException
      */
     public AjaxResult deleteSilentMemberByMsisdn(String msisdn) throws NoLoginException, IOException {
-        if(StringUtils.isNotNull(msisdn)){
+        if (StringUtils.isNotNull(msisdn)) {
             return apiUtils.deleteSilentMemberByMsisdn(msisdn);
         }
-        return AjaxResult.success(false,"参数不正确");
+        return AjaxResult.success(false, "参数不正确");
     }
 
     /**
@@ -767,6 +796,6 @@ public class ThreeNetsChildOrderService {
      * @return
      */
     public Integer getPhoneCount(Integer operate, Integer isMonthly) {
-        return threenetsChildOrderMapper.getPhoneCount(operate,isMonthly);
+        return threenetsChildOrderMapper.getPhoneCount(operate, isMonthly);
     }
 }
