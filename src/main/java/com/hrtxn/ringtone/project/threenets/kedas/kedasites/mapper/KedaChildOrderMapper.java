@@ -91,4 +91,12 @@ public interface KedaChildOrderMapper {
      * @return
      */
     int updatKedaChildOrder(KedaChildOrder kedaChildOrder);
+
+    /**
+     * 疑难杂单子订单删除
+     *
+     * @param id
+     * @return
+     */
+    int deleteKedaChilOrder(@Param("id") Integer id);
 }

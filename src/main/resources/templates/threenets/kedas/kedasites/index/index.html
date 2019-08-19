@@ -40,8 +40,14 @@
                             <label class="layui-form-label">用户状态</label>
                             <div class="layui-input-inline">
                                 <select id="isMonthly" style="width:107%;" onchange="showTable();">
-                                    <option value="2" selected="selected">已包月</option>
-                                    <option value="1">未包月</option>
+                                    // 0.未开通/1.开通成功/2.开通失败/3.已退订/4.开通中/5.删除中/6.删除失败
+                                    <option value="1" selected="selected">已包月</option>
+                                    <option value="0">未包月</option>
+                                    <option value="2">包月失败</option>
+                                    <option value="3">已退订</option>
+                                    <option value="4">包月中</option>
+                                    <option value="5">删除中</option>
+                                    <option value="6">删除失败</option>
                                 </select>
                             </div>
                         </div>

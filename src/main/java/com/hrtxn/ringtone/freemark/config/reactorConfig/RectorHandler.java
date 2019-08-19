@@ -25,25 +25,32 @@ public class RectorHandler {
 
     @Autowired
     @Qualifier("createReactor")//通过name指定刚定义的库，并注入进来
-    Reactor r;
+            Reactor r;
 
     @Autowired
     private KedaChildOrderMapper kedaChildOrderMapper;
 
     private KedaApi kedaApi = new KedaApi();
 
+    /**
+     * 创建疑难杂单父级订单
+     *
+     * @param data
+     * @throws IOException
+     */
     @Selector(value = "insertKedaorder", reactor = "@createReactor")
     public void insertKedaorder(Event<KedaChildOrder> data) throws IOException {
         KedaChildOrder kedaChildOrder = data.getData();
+        // 对接数据，创建父级订单
         AjaxResult add = kedaApi.add(kedaChildOrder);
-        if ((int)add.get("code") == 200){
+        if ((int) add.get("code") == 200) {
             kedaChildOrder.setRemark("添加成功！");
         } else {
             kedaChildOrder.setRemark(add.get("msg").toString());
         }
         // 执行修改子级订单操作
         int count = kedaChildOrderMapper.updatKedaChildOrder(kedaChildOrder);
-        log.info("异步任务--添加疑难杂单订单--->"+count);
+        log.info("异步任务--添加疑难杂单订单--->" + count);
     }
 
 }

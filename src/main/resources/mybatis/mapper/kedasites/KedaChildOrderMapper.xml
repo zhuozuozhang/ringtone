@@ -148,7 +148,9 @@
         </if>
     </select>
     <!--添加子级订单-->
-    <insert id="insertKedaChildOrder" parameterType="com.hrtxn.ringtone.project.threenets.kedas.kedasites.domain.KedaChildOrder" useGeneratedKeys="true" keyProperty="id">
+    <insert id="insertKedaChildOrder"
+            parameterType="com.hrtxn.ringtone.project.threenets.kedas.kedasites.domain.KedaChildOrder"
+            useGeneratedKeys="true" keyProperty="id">
         insert into tb_keda_child_order
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="companyName != null">
@@ -259,6 +261,10 @@
             #{keDaChildOrderId}
         </foreach>
     </delete>
+    <!--单个删除子级订单-->
+    <delete id="deleteKedaChilOrder" parameterType="int">
+        DELETE FROM tb_keda_child_order WHERE id = #{id}
+    </delete>
     <!--修改子级订单信息-->
     <update id="updatKedaChildOrder" parameterType="com.hrtxn.ringtone.project.threenets.kedas.kedasites.domain.KedaChildOrder">
         update tb_keda_child_order
@@ -313,6 +319,9 @@
     </update>
     <!--条件-->
     <sql id="parameters">
+        <if test="param != null and param.id != null">
+            AND id = #{param.id}
+        </if>
         <if test="param != null and param.userId != null">
             AND user_id = #{param.userId}
         </if>
@@ -333,6 +342,15 @@
         </if>
         <if test="param != null and param.timeType != null and param.timeType == 4">
             AND DATEDIFF(NOW(),create_time) &lt;= 30
+        </if>
+        <if test="param != null and param.tel != null and param.tel != ''">
+            AND link_tel = #{param.tel}
+        </if>
+        <if test="param != null and param.companyName != null and param.companyName != ''">
+            AND company_name = #{param.companyName}
+        </if>
+        <if test="param != null and param.linkMan != null and param.linkMan != ''">
+            AND link_man = #{param.linkMan}
         </if>
     </sql>
     <!--分页-->

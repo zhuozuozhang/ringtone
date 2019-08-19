@@ -3,24 +3,18 @@ package com.hrtxn.ringtone.project.threenets.kedas.kedasites.json;
 import lombok.Data;
 
 import java.io.Serializable;
-import java.util.List;
 import java.util.Map;
 
 /**
  * Author:zcy
- * Date:2019-08-17 14:04
- * Description:疑难杂单添加返回信息基础类
- * {"retCode":"020109","retMsg":"当前操作正在进行中","exDesc":null,"data":null,"data2":null}
+ * Date:2019-08-19 12:10
+ * Description:疑难杂单刷新是否是彩铃用户
  */
-
 @Data
-public class KedaBaseResult<T> implements Serializable {
-
+public class KedaIsRingUser implements Serializable {
     private String retCode;
     private String retMsg;
     private String exDesc;
-    private List<T> data;
+    private String data;
     private Map<String, String> data2;
-
-
 }

@@ -40,13 +40,24 @@ function showTable() {
     }, {
         targets: [7],
         render: function (data, type, row, meta) {
-            if (data == 1) {
-                return '未包月'
+            // 0.未开通/1.开通成功/2.开通失败/3.已退订/4.开通中/5.删除中/6.删除失败
+            var status = '';
+            if (data == 0) {
+                status = '未包月';
+            } else if (data == 1) {
+                status = '已包月';
             } else if (data == 2) {
-                return '已包月'
+                status = '包月失败';
+            } else if (data == 3) {
+                status = '已退订';
+            } else if (data == 4) {
+                status = '包月中';
+            } else if (data == 5) {
+                status = '删除中';
             } else {
-                return '已退订'
+                status = '删除失败';
             }
+            return status;
         }
     },  {
         targets: [8],
@@ -65,7 +76,7 @@ function showTable() {
             return "<a href='/threenets/clcy/toNumberList/" + id + "/"+name+"'><i class='layui-icon layui-icon-user' title='进入商户'></i></a>"
         }
     }]
-    page("#set", 1, params, "/threenets/clcy/getKeDaChildOrderBacklogList", columns, columnDefs);
+    page("#set", 10, params, "/threenets/clcy/getKeDaChildOrderBacklogList", columns, columnDefs);
 }
 //公告详情
 function openDetails(notice) {

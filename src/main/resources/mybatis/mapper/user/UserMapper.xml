@@ -56,8 +56,8 @@
               AND user_name LIKE '%${baseRequest.name}%'
           </if>
         ORDER BY user_time DESC
-        <if test="page != null and page != '' and pagesize != null and pagesize !='' ">
-            LIMIT #{page},#{pagesize}
+        <if test="page != null and page.pagesize != null and page.pagesize !='' ">
+            LIMIT #{page.page},#{page.pagesize}
         </if>
     </select>
     <!-- 根据ID获取用户信息 -->

@@ -1,5 +1,6 @@
 package com.hrtxn.ringtone.project.threenets.kedas.kedasites.domain;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -27,6 +28,7 @@ public class KedaChildOrder implements Serializable {
     // 市
     private String city;
     // 创建时间
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
     private Date createTime;
     // 子订单状态
     private String status;
@@ -36,7 +38,7 @@ public class KedaChildOrder implements Serializable {
     private Integer ringId;
     // 铃音名称
     private String ringName;
-    // 是否包月（1.未包月/2.已包月/3.已退订）
+    // 是否包月（0.未开通/1.开通成功/2.开通失败/3.已退订/4.开通中/5.删除中/6.删除失败）
     private Integer isMonthly;
     // 是否开通彩铃（1.未开通/2.已开通/3.开通失败）
     private Integer isRingtoneUser;

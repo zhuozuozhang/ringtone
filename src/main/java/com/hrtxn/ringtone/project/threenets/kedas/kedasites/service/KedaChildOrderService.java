@@ -1,18 +1,26 @@
 package com.hrtxn.ringtone.project.threenets.kedas.kedasites.service;
 
+import com.hrtxn.ringtone.common.api.KedaApi;
 import com.hrtxn.ringtone.common.constant.AjaxResult;
 import com.hrtxn.ringtone.common.domain.BaseRequest;
 import com.hrtxn.ringtone.common.domain.Page;
 import com.hrtxn.ringtone.common.utils.ShiroUtils;
 import com.hrtxn.ringtone.common.utils.StringUtils;
+import com.hrtxn.ringtone.common.utils.juhe.JuhePhoneUtils;
+import com.hrtxn.ringtone.project.system.json.JuhePhone;
+import com.hrtxn.ringtone.project.system.json.JuhePhoneResult;
 import com.hrtxn.ringtone.project.system.user.domain.UserVo;
 import com.hrtxn.ringtone.project.system.user.mapper.UserMapper;
 import com.hrtxn.ringtone.project.threenets.kedas.kedasites.domain.KedaChildOrder;
 import com.hrtxn.ringtone.project.threenets.kedas.kedasites.mapper.KedaChildOrderMapper;
 import com.hrtxn.ringtone.project.threenets.threenet.domain.PlotBarPhone;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import reactor.core.Reactor;
+import reactor.event.Event;
 
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -31,6 +39,10 @@ public class KedaChildOrderService {
     private KedaChildOrderMapper kedaChildOrderMapper;
     @Autowired
     private UserMapper userMapper;
+    @Autowired
+    @Qualifier("createReactor")//同样指定并注入
+            Reactor r;
+    private KedaApi kedaApi = new KedaApi();
 
     /**
      * 获取近5日信息
@@ -69,10 +81,7 @@ public class KedaChildOrderService {
         List<KedaChildOrder> kedaChildOrders = kedaChildOrderMapper.getKeDaChildOrderBacklogList(page, baseRequest);
         // 获取数量
         Integer count = kedaChildOrderMapper.getCount(baseRequest);
-        if (kedaChildOrders.size() > 0) {
-            return AjaxResult.success(kedaChildOrders, "获取子订单数据成功！", count);
-        }
-        return AjaxResult.error("无数据!");
+        return AjaxResult.success(kedaChildOrders, "获取子订单数据成功！", count);
     }
 
     /**
@@ -91,7 +100,7 @@ public class KedaChildOrderService {
         if (keDaChildOrderBacklogList.size() > 0) {
             return AjaxResult.success(keDaChildOrderBacklogList, "获取数据成功！", count);
         }
-        return AjaxResult.error("无数据！");
+        return AjaxResult.success(false, "无数据！");
     }
 
     /**
@@ -142,6 +151,74 @@ public class KedaChildOrderService {
             count = count - plotBarPhoneList.get(i).getAddUser();
         }
         return AjaxResult.success(plotBarPhoneList, "获取数据成功！");
+    }
+
+    /**
+     * 刷新用戶信息
+     *
+     * @param id
+     * @return
+     * @throws IOException
+     */
+    public AjaxResult getPhoneInfo(Integer id) throws IOException {
+        if (!StringUtils.isNotNull(id) || id <= 0) return AjaxResult.error("参数格式不正确！");
+        BaseRequest baseRequest = new BaseRequest();
+        baseRequest.setId(id);
+        List<KedaChildOrder> keDaChildOrderBacklogList = kedaChildOrderMapper.getKeDaChildOrderBacklogList(null, baseRequest);
+        if (keDaChildOrderBacklogList.size() <= 0) return AjaxResult.error("无数据！");
+        return kedaApi.getMsg(keDaChildOrderBacklogList.get(0).getLinkTel(), id);
+    }
+
+    /**
+     * 疑难杂单创建子级订单
+     *
+     * @param kedaChildOrder
+     * @return
+     * @throws Exception
+     */
+    public AjaxResult insertKedaChildOrder(KedaChildOrder kedaChildOrder) throws Exception {
+        if (!StringUtils.isNotNull(kedaChildOrder)) return AjaxResult.error("参数格式不正确!");
+        if (!StringUtils.isNotEmpty(kedaChildOrder.getLinkMan())) return AjaxResult.error("参数格式不正确!");
+        if (!StringUtils.isNotEmpty(kedaChildOrder.getLinkTel())) return AjaxResult.error("参数格式不正确!");
+
+        // 查重
+        BaseRequest b = new BaseRequest();
+        // 集团名称
+        b.setCompanyName(kedaChildOrder.getCompanyName());
+        List<KedaChildOrder> companyName = kedaChildOrderMapper.getKeDaChildOrderBacklogList(null, b);
+        if (companyName.size() > 0) return AjaxResult.error("集团名称重复！");
+        // 联系人
+        b.setCompanyName(null);
+        b.setLinkMan(kedaChildOrder.getLinkMan());
+        List<KedaChildOrder> linkMan = kedaChildOrderMapper.getKeDaChildOrderBacklogList(null, b);
+        if (linkMan.size() > 0) return AjaxResult.error("联系人重复！");
+        // 联系电话
+        b.setLinkMan(null);
+        b.setTel(kedaChildOrder.getLinkTel());
+        List<KedaChildOrder> linkTel = kedaChildOrderMapper.getKeDaChildOrderBacklogList(null, b);
+        if (linkTel.size() > 0) return AjaxResult.error("联系电话重复！");
+        // 根据电话号码获取省市
+        JuhePhone<JuhePhoneResult> phone = JuhePhoneUtils.getPhone(kedaChildOrder.getLinkTel());
+        if ("200".equals(phone.getResultcode())) {
+            JuhePhoneResult result = phone.getResult();
+            kedaChildOrder.setProvince(result.getProvince());
+            kedaChildOrder.setCity(result.getCity());
+            if ("移动".equals(result.getCompany())) {
+                kedaChildOrder.setOperate(1);
+            } else if ("电信".equals(result.getCompany())) {
+                kedaChildOrder.setOperate(2);
+            } else {
+                kedaChildOrder.setOperate(3);
+            }
+        }
+        // 执行添加子订单操作
+        int i = kedaChildOrderMapper.insertKedaChildOrder(kedaChildOrder);
+        if (i > 0) {
+            r.notify("insertKedaorder", Event.wrap(kedaChildOrder));
+            return AjaxResult.success(true, "创建子订单成功！");
+        } else {
+            return AjaxResult.error("创建子订单失败！");
+        }
     }
 
     /**
@@ -239,5 +316,22 @@ public class KedaChildOrderService {
             plotBarPhoneList = plotBarUnsubscribePhoneList;
         }
         return plotBarPhoneList;
+    }
+
+    /**
+     * 疑难杂单子订单删除
+     *
+     * @param id
+     * @return
+     */
+    public AjaxResult deleteKedaChildOrder(Integer id) {
+        if (StringUtils.isNull(id) || id <= 0) return AjaxResult.error("参数格式不正确！");
+
+        // 执行删除子订单操作
+        int kedaChilOrder = kedaChildOrderMapper.deleteKedaChilOrder(id);
+        if (kedaChilOrder > 0) {
+            return AjaxResult.success("删除成功！");
+        }
+        return AjaxResult.error("删除失败！");
     }
 }
