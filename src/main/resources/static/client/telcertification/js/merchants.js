@@ -1,8 +1,11 @@
+// 获得订单列表-->我的订单
 function showTelCerTable() {
     var param = {
         "id": $("#id").val(),
-        "companyName": $("#companyName").val()
-        // "name": $("#enterPriseName").val()
+        "rangetime" : $("#rangetime").val(),
+        "companyName": $("#companyName").val(),
+        "tel" : $("#tel").val(),
+        "membernum" : $("#membernum").val()
     }
     var columns = [
         {"data": null},
@@ -10,32 +13,120 @@ function showTelCerTable() {
         {"data": "telContent"},
         {"data": "telLinkName"},
         {"data": "telLinkPhone"},
-        {"data": "productName"},
-        {"data": null},
+        {"data": "memberNum"},
         {"data": "telOrderStatus"},
         {"data": "unitPrice"},
         {"data": "telOrderTime"},
+        {"data": "productName"},
         {"data": "remark"}
     ];
     var columnDefs = [{
+        targets:[6],
+        render: function(data, type, row, meta){
+            var status = row.telOrderStatus;
+            //号码认证子订单状态（1.开通中/2.开通成功/3.开通失败/4.续费中/5.续费成功/6.续费失败）
+            if(status == 1){
+                return "<span>开通中</span>";
+            }else if(status == 2){
+                return "<span>开通成功</span>";
+            }else if(status == 3){
+                return "<span>开通失败</span>";
+            } else if(status == 4){
+                return "<span>续费中</span>";
+            }else if(status == 5){
+                return "<span>续费成功</span>";
+            }else if(status == 6){
+                return "<span>续费失败</span>";
+            }else{
+                return "<span>未知</span>";
+            }
+        }
+    },{
+        targets:[9],
+        render: function (data, type, row, meta) {
+            var productName = row.productName;
+            var product = $.parseJSON(productName);
+            var service = product.service;
+            var obj = JSON.stringify(service);
+            var serviceJson = $.parseJSON(obj);
+
+            var totalCost = product.totalCost;
+            var str = "";
+            for (var i = 0; i < service.length; i++) {
+                str += "<tr>";
+                str += "<td>" + service[i].name + "</td>";
+                str += "<td>," + service[i].period0fValidity + "</td>";
+                str += "<td>," + service[i].cost + "元</td></br>";
+                str += "</tr>";
+            }
+            return str;
+        }
+    },{
         targets:[11],
         render: function (data, type, row, meta) {
             var id = row.id;
             var name = row.telCompanyName;
             return "<i class='layui-icon layui-icon-edit' title='编辑' onclick='edit();'></i>"
-                + "<i class='layui-icon layui-icon-log' title='详情' onclick='ckeckDetailsOne();'></i>"
+                + "<i class='layui-icon layui-icon-log' title='详情' onclick='ckeckDetails();'></i>"
                 + "<a href='/telcertify/toTelMembersPage'><i class='layui-icon layui-icon-username' title='成员管理'></i></a>";
-            // return "<a href='/threenets/toMerchantsPhonePage/" + id + "'><i class='layui-icon layui-icon-user' title='进入商户'></i></a>"
-            //     + "<i class='layui-icon layui-icon-edit' title='编辑' onclick='EditMerchants(" + id + ",\"" + name + "\")'></i>"
-            //     + "<i class='layui-icon layui-icon-delete' title='删除' onclick='DelMerchants(" + id + ");'></i>";
-            //
-            //     <i class="layui-icon layui-icon-edit" title="编辑" onclick="Edit();"></i>
-            //     <i class="layui-icon layui-icon-log" title="详情" onclick="ckeckDetailsOne();"></i>
-            //     <a href="/telcertify/toTelMembersPage"><i class="layui-icon layui-icon-username" title="成员管理"></i></a>
         }
     }];
     page("#merchants", 15, param, "/telcertify/getTelCerOrderList", columns, columnDefs);
 }
+
+// 获取订单列表-->即将到期列表
+function showFallDueTable() {
+    var param = {
+        "phoneNum": $("#number").val()
+    }
+    var columns = [
+        {"data": null},
+        {"data": "telChildOrderPhone"},
+        {"data": "years"},
+        {"data": "price"},
+        {"data": "telChildOrderStatus"},
+        {"data": "businessFeedback"},
+        {"data": "telChildOrderCtime"},
+        {"data": "telChildOrderExpireTime"}
+        // {"data": "remark"}
+    ];
+    var columnDefs = [{
+        targets:[8],
+        render: function (data, type, row, meta) {
+            var phoneNumber = row.telChildOrderPhone;
+            return "<p><i class='layui-icon layui-icon-log' title='查看详情' onclick='ckeckDetailsOne();'></i></p>";
+        }
+    }];
+    var url = "/telcertify/getFallDueList";
+    page("#fall_due_table", 15, param, url, columns, columnDefs);
+}
+
+function showDueTable() {
+    var param = {
+        "phoneNum": $("#number").val()
+    }
+    var columns = [
+        {"data": null},
+        {"data": "telChildOrderPhone"},
+        {"data": "years"},
+        {"data": "price"},
+        {"data": "telChildOrderStatus"},
+        {"data": "businessFeedback"},
+        {"data": "telChildOrderCtime"},
+        {"data": "telChildOrderExpireTime"}
+        // {"data": "remark"}
+    ];
+    var columnDefs = [{
+        targets:[8],
+        render: function (data, type, row, meta) {
+            var phoneNumber = row.telChildOrderPhone;
+            return "<p><i class='layui-icon layui-icon-log' title='查看详情' onclick='ckeckDetailsOne();'></i></p>";
+        }
+    }];
+    var url = "/telcertify/getDueList";
+    page("#due_table", 15, param, url, columns, columnDefs);
+}
+
 function determine() {
     var url = "/telcertify/insertTelCertifyOrder";
     alert("提交");
@@ -56,6 +147,7 @@ function myorder() {
     $('#myorder').addClass('active').siblings().removeClass('active');
     document.getElementsByClassName('myorder')[0].style.display = "block";
     document.getElementsByClassName('net_middle')[0].style.display = "none";
+    document.getElementsByClassName('net_middle2')[0].style.display = "none";
 }
 
 //即将到期号码
@@ -63,13 +155,15 @@ function surplusOrder() {
     $('#myorder2').addClass('active').siblings().removeClass('active');
     document.getElementsByClassName('myorder')[0].style.display = "none";
     document.getElementsByClassName('net_middle')[0].style.display = "block";
+    document.getElementsByClassName('net_middle2')[0].style.display = "none";
 }
 
 //到期号码
 function overOrder() {
     $('#myorder3').addClass('active').siblings().removeClass('active');
     document.getElementsByClassName('myorder')[0].style.display = "none";
-    document.getElementsByClassName('net_middle')[0].style.display = "block";
+    document.getElementsByClassName('net_middle')[0].style.display = "none";
+    document.getElementsByClassName('net_middle2')[0].style.display = "block";
 }
 
 //日期时间范围
@@ -86,7 +180,7 @@ function ckeckDetails() {
     layer.open({
         type: 2,
         title: '详情',
-        content: '/telcertify/toTeldetails_onePage',
+        content: '/telcertify/toTeldetailsPage',
         area: ['500px', '680px']
     });
 }
@@ -119,6 +213,12 @@ function checkNum(obj) {
 
 //打开修改订单弹窗
 function edit() {
+    // layer.open({
+    //     type : 2,
+    //     title : "更改业务",
+    //     content : "/telcertify/toTelEditPage",
+    //     area : ['680px','680']
+    // });
     $("#editor").removeClass("display")
 }
 

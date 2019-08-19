@@ -1,6 +1,9 @@
 package com.hrtxn.ringtone.project.telcertification.mapper;
 
+import com.hrtxn.ringtone.common.domain.BaseRequest;
+import com.hrtxn.ringtone.common.domain.Page;
 import com.hrtxn.ringtone.project.telcertification.domain.CertificationOrder;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -15,7 +18,7 @@ public interface CertificationOrderMapper {
 
     int insertTelCertifyOrder(CertificationOrder certificationOrder);
 
-    List<CertificationOrder> findAllTelCertification();
+    List<CertificationOrder> findAllTelCertification(@Param("page") Page page, @Param("param") BaseRequest request);
 
     int getCount();
 }

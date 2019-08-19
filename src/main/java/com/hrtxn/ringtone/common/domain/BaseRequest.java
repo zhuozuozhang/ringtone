@@ -2,6 +2,8 @@ package com.hrtxn.ringtone.common.domain;
 
 import lombok.Data;
 
+import java.util.Date;
+
 @Data
 public class BaseRequest {
 
@@ -49,4 +51,17 @@ public class BaseRequest {
     private String end;
 
     private String linkMan;
+
+
+    //号码认证订单编号
+    private String telOrderNum;
+    //商户名称/集团名称
+    private String telCompanyName;
+    //联系电话
+    private String telLinkPhone;
+    //提交时间/创建时间
+    private Date telOrderTime;
+
+
+
 }

@@ -1,6 +1,9 @@
 package com.hrtxn.ringtone.project.telcertification.mapper;
 
+import com.hrtxn.ringtone.common.domain.BaseRequest;
+import com.hrtxn.ringtone.common.domain.Page;
 import com.hrtxn.ringtone.project.telcertification.domain.CertificationChildOrder;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -13,5 +16,10 @@ import java.util.List;
 @Repository
 public interface CertificationChildOrderMapper {
 
-    List<CertificationChildOrder> findAllChildOrder();
+    int getCount();
+
+    List<CertificationChildOrder> findAllChildOrder(@Param("page") Page page, @Param("param") BaseRequest request);
+
+
+    int getMemberCountByParentId(int i);
 }

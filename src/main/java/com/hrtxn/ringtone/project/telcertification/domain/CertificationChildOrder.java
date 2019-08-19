@@ -15,6 +15,8 @@ public class CertificationChildOrder implements Serializable {
     private Integer id;
     //号码认证子订单编号
     private String telChildOrderNum;
+    //成员号码
+    private String telChildOrderPhone;
     //年份
     private Integer years;
     //总价格
@@ -33,5 +35,11 @@ public class CertificationChildOrder implements Serializable {
     private Integer parentOrderId;
     //号码认证消费记录ID
     private Integer consumeLogId;
+
+    /**************************VO**********************************/
+    //子订单的备注
+    private String remark;
+    //1是过期，2是即将过期
+    private int due;
 
 }

@@ -1,6 +1,7 @@
 package com.hrtxn.ringtone.project.telcertification.controller;
 
 import com.hrtxn.ringtone.common.constant.AjaxResult;
+import com.hrtxn.ringtone.common.domain.BaseRequest;
 import com.hrtxn.ringtone.common.domain.Page;
 import com.hrtxn.ringtone.freemark.config.logConfig.Log;
 import com.hrtxn.ringtone.freemark.enums.BusinessType;
@@ -92,18 +93,20 @@ public class TelCertificationController {
         return "telcertification/merchants";
     }
 
+
     @PostMapping("/getTelCerOrderList")
     @ResponseBody
-    public AjaxResult getTelCerOrderList(Page page){
+    @Log(title = "获取号码认证订单",operatorLogType = OperatorLogType.TELCERTIFICATION)
+    public AjaxResult getTelCerOrderList(Page page, BaseRequest request){
         List<CertificationOrder> list = null;
         try{
             int totalCount = telCertificationService.getCount();
-            list = telCertificationService.findAllTelCertification();
+            list = telCertificationService.findAllTelCertification(page,request);
             return AjaxResult.success(list,"查询成功",totalCount);
         }catch (Exception e){
             log.error("获取号码认证订单列表数据 方法：getTelCerOrderList 错误信息",e);
         }
-        return null;
+        return AjaxResult.error("获取失败");
     }
 
     /**
@@ -142,6 +145,8 @@ public class TelCertificationController {
            return AjaxResult.error("保存失败");
         }
     }
+
+
 
 
     /**

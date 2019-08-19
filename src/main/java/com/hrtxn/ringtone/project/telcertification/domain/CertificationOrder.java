@@ -50,4 +50,8 @@ public class CertificationOrder implements Serializable {
     //产品业务名称
     private String productName;
 
+    /**************************VO**********************************/
+    //成员数
+    private int memberNum;
+
 }

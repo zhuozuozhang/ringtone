@@ -68,9 +68,11 @@
                     <div class="new_busi" onclick="Edits();">添加号码</div>
                 </div>
                 <div class="number_list">
-                    <table class="layui-table" id="example" style="width:1200px;">
+                    <input type="hidden" id="id" th:value="${id}">
+                    <table class="layui-table" id="members" style="width:1200px;">
                         <thead>
                             <tr>
+                                <th>#</th>
                                 <th>成员号码</th>
                                 <th>订购年份</th>
                                 <th>价格(元)</th>
@@ -82,22 +84,22 @@
                                 <th>操作</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            <tr th:each="telcerchild : ${telcerChildOrder}">
-                                <td th:text="${telcerchild.telChildOrderNum}">123</td>
-                                <td th:text="${telcerchild.years}">3年</td>
-                                <td th:text="${telcerchild.price}">200.00</td>
-                                <td th:text="${telcerchild.telChildOrderStatus}">1</td>
-                                <td th:text="${telcerchild.businessFeedback}">反馈</td>
-                                <td th:text="${telcerchild.telChildOrderCtime}">2016-11-29 02:12:36</td>
-                                <td th:text="${telcerchild.telChildOrderOpenTime}">2016-11-29 02:12:36</td>
-                                <td th:text="${telcerchild.telChildOrderExpireTime}">2016-11-29 02:12:36</td>
-                                <td class="icons">
-                                    <a href="javascript:;"><i class="layui-icon layui-icon-rmb" title="续费" onclick="Renewal()"></i></a>
-                                    <a href="cost.html"><i class="layui-icon layui-icon-form" title="费用支出记录"></i></a>
-                                </td>
-                            </tr>
-                        </tbody>
+<!--                        <tbody>-->
+<!--                            <tr th:each="telcerchild : ${telcerChildOrder}">-->
+<!--                                <td th:text="${telcerchild.telChildOrderNum}">123</td>-->
+<!--                                <td th:text="${telcerchild.years}">3年</td>-->
+<!--                                <td th:text="${telcerchild.price}">200.00</td>-->
+<!--                                <td th:text="${telcerchild.telChildOrderStatus}">1</td>-->
+<!--                                <td th:text="${telcerchild.businessFeedback}">反馈</td>-->
+<!--                                <td th:text="${telcerchild.telChildOrderCtime}">2016-11-29 02:12:36</td>-->
+<!--                                <td th:text="${telcerchild.telChildOrderOpenTime}">2016-11-29 02:12:36</td>-->
+<!--                                <td th:text="${telcerchild.telChildOrderExpireTime}">2016-11-29 02:12:36</td>-->
+<!--                                <td class="icons">-->
+<!--                                    <a href="javascript:;"><i class="layui-icon layui-icon-rmb" title="续费" onclick="Renewal()"></i></a>-->
+<!--                                    <a href="cost.html"><i class="layui-icon layui-icon-form" title="费用支出记录"></i></a>-->
+<!--                                </td>-->
+<!--                            </tr>-->
+<!--                        </tbody>-->
                     </table>
                 </div>
             </div>
@@ -142,80 +144,12 @@
 <script src="../../public/layui/lay/modules/layer.js"></script>
 <script type="text/javascript" src="../../public/dataTables/jquery.dataTables.min.js"></script>
 <link rel="stylesheet" type="text/css" href="../../public/dataTables/jquery.dataTables.min.css">
+<script type="text/javascript" th:src="@{/public/js/datatables.js}"></script>
+<script th:src="@{/client/telcertification/js/members.js}"></script>
 <script>
-    //打开添加号码弹窗
-    function Edits(){
-        var panel = $('#ids');
-        var back = $('#cover');
-        panel.css('display',"block");
-        back.css('display',"block");
-        $("body").css("overflow","hidden");
-        if($(document.body).height() >900){
-            $("#cover").css("height",$(document.body).height());
-        }
-    }
-    //关闭添加号码弹窗
-    function closePanel(){
-        var panel = $('#ids');
-        var back = $('#cover');
-        panel.css('display',"none");
-        back.css('display',"none");
-        $("body").css("overflow","auto");
-    }
-    //续费
-    function Renewal(){
-        layer.open({
-            type: 1,
-            title: '续费',
-            area: ['540px', '320px'],
-            content: '<div><div><h4 class="h4s"><span>小米号码认证-小米（查看下方开通注意事项）</span></h4> <p class="zhifu">共需支付：<span>80</span><span>元</span></p></div> <div class="renew_div"><div><p>订购年份:</p> <div><a class="btnactive">1年</a></div></div><div style="margin-top: 0px;"><button onclick="confirmRenew()" class="btnactive">确认续费</button></div> <p>支付后，制作商会在2小时内主动联系您</p></div></div>'
-            
-        });
-    }
-    // 确认续费
-    function confirmRenew() {
-        
-    }
-    //支付费用
-    function checkNum(obj) {
-        //所输入的号码集合
-        var checkData = [];
-        for (var i = 0; i < document.getElementsByClassName('numlists').length; i++) {
-            if (document.getElementsByClassName('numlists')[i].value.length != 0) {
-                checkData.push(document.getElementsByClassName('numlists')[i].value);
-            }
-        }
-        if(checkData.length == 0){
-            $("#allPrice").html(80);
-        }else{
-            $("#allPrice").html(checkData.length*80);
-        }
-    }
-    //添加号码
-    function addLandline() {
-        //所输入的号码集合
-        var checkData = [];
-        for (var i = 0; i < document.getElementsByClassName('numlists').length; i++) {
-            if (document.getElementsByClassName('numlists')[i].value.length == 0) {
-                layui.use('layer', function () {
-                    layer.msg("新增号码不能为空！");
-                });
-                return;
-            }
-            if (document.getElementsByClassName('numlists')[i].value.length != 0) {
-                checkData.push(document.getElementsByClassName('numlists')[i].value)
-            }
-        }
-        $("#num").append(
-            '<div class="layui-form-item" style="position: relative;"><div class="layui-input-block" style="margin-left: 156px;"><input type="text" style="width:81%;" name="content" class="layui-input numlists" value="" placeholder="如果是座机号码务必加上区号" autocomplete="off" onblur="checkNum(this)"></div><img src="../../client/telcertification/images/del.png" alt="" class="add_phone" onclick="delLandline(this);" width="28px"></div>'
-        );
-    }
-    //删除号码
-    function delLandline(obj) {
-        $(obj).parent().remove();
-        checkNum(obj);
-    }
-
+    $(document).ready(function(){
+        showTelCerMemberTable();
+    });
 </script>
 </html>
 

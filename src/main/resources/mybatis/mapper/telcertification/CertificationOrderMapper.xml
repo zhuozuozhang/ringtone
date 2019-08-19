@@ -20,7 +20,7 @@
     <result column="user_id" property="userId" jdbcType="INTEGER" />
     <result column="tel_order_status" property="telOrderStatus" jdbcType="INTEGER" />
     <result column="tel_order_time" property="telOrderTime" jdbcType="TIMESTAMP" />
-    <result column="product_name" property="productName" jdbcType="VARCHAR" />
+    <result column="product_name" property="productName" jdbcType="LONGVARCHAR" />
   </resultMap>
 
   <sql id="Base_Column_List" >
@@ -29,12 +29,35 @@
     number_prove, remark, unit_price, user_id, tel_order_status, tel_order_time, product_name
   </sql>
 
+  <sql id="parameters">
+    <if test="param.id != null and param.id != ''">
+      AND p.id = #{param.id}
+    </if>
+    <if test="param.telOrderNum != null and param.telOrderNum != ''">
+      AND p.tel_order_num = #{param.telOrderNum}
+    </if>
+    <if test="param.telCompanyName != null and param.telCompanyName !=''">
+      AND p.tel_company_name like '%${param.telCompanyName}%'
+    </if>
+    <if test="param.telLinkPhone != null and param.telLinkPhone != ''">
+      AND p.tel_link_phone = #{param.telLinkPhone}
+    </if>
+    <if test="param.start != null and param.start !='' and param.end != null and param.end !=''">
+      AND p.tel_order_time between #{param.start} and #{param.end}
+    </if>
+  </sql>
+
   <select id="findAllTelCertification" resultMap="BaseResultMap">
     SELECT
         <include refid="Base_Column_List"/>
     FROM
         tb_telcertification_order
+    WHERE 1 = 1
+    <include refid="parameters"></include>
     ORDER BY tel_order_time DESC
+    <if test="page.page != null and page.pagesize != null and page.pagesize !=''">
+      LIMIT #{page.page},#{page.pagesize}
+    </if>
   </select>
 <!--  查询号码认证订单列表总数-->
   <select id="getCount" resultType="int">

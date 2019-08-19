@@ -5,6 +5,7 @@
   <resultMap id="BaseResultMap" type="com.hrtxn.ringtone.project.telcertification.domain.CertificationChildOrder">
     <id column="id" property="id" jdbcType="INTEGER" />
     <result column="tel_child_order_num" property="telChildOrderNum" jdbcType="VARCHAR" />
+    <result column="tel_child_order_phone" property="telChildOrderPhone" jdbcType="VARCHAR"/>
     <result column="years" property="years" jdbcType="INTEGER" />
     <result column="price" property="price" jdbcType="REAL" />
     <result column="tel_child_order_status" property="telChildOrderStatus" jdbcType="INTEGER"/>
@@ -17,17 +18,28 @@
   </resultMap>
 
   <sql id="Base_Column_List">
-    id, tel_child_order_num, years, price, tel_child_order_status, business_feedback, 
+    id, tel_child_order_num, tel_child_order_phone, years, price, tel_child_order_status, business_feedback,
     tel_child_order_ctime, tel_child_order_open_time, tel_child_order_expire_time, parent_order_id, 
     consume_log_id
   </sql>
+
+  <select id="getCount" resultType="int">
+        select count(*) from tb_telcertification_child_order
+    </select>
+
   <select id="findAllChildOrder" resultMap="BaseResultMap">
     select
     <include refid="Base_Column_List" />
     from tb_telcertification_child_order
   </select>
+
+  <select id="getMemberCountByParentId" parameterType="int" resultType="int">
+    select count(*) from tb_telcertification_child_order
+    where parent_order_id = #{parent_order_id,jdbcType=INTEGER}
+  </select>
+
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
-    select 
+    select
     <include refid="Base_Column_List" />
     from tb_telcertification_child_order
     where id = #{id,jdbcType=INTEGER}
