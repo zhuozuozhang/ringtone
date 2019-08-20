@@ -2,6 +2,7 @@ package com.hrtxn.ringtone.project.system.File.controller;
 
 import com.hrtxn.ringtone.common.constant.AjaxResult;
 import com.hrtxn.ringtone.common.utils.DateUtils;
+import com.hrtxn.ringtone.common.utils.FileUtil;
 import com.hrtxn.ringtone.common.utils.StringUtils;
 import com.hrtxn.ringtone.freemark.config.logConfig.Log;
 import com.hrtxn.ringtone.freemark.enums.BusinessType;
@@ -40,6 +41,19 @@ public class FileController {
     @Log(title = "上传文件", businessType = BusinessType.INSERT, operatorLogType = OperatorLogType.ADMIN)
     public AjaxResult uploadRingFile(@RequestParam("ringFile") MultipartFile ringFile, String ringName, Integer parentOrderId) {
         ringName = ringName + DateUtils.getTimeRadom();
+        String extensionName = FileUtil.getExtensionName(ringFile.getOriginalFilename());
+        if (extensionName.equals("mp3") || extensionName.equals("wav")) {
+            boolean m = FileUtil.checkFileSize(ringFile.getSize(), 1, "M");
+            if (!m){
+                return AjaxResult.error("文件大小超限");
+            }
+        }
+        if (extensionName.equals("mp4") || extensionName.equals("mov")) {
+            boolean m = FileUtil.checkFileSize(ringFile.getSize(), 48, "M");
+            if (!m){
+                return AjaxResult.error("文件大小超限");
+            }
+        }
         return fileService.upload(ringFile, ringName, parentOrderId);
     }
 
@@ -113,9 +127,9 @@ public class FileController {
     @PostMapping("/system/upload/cardImage")
     @ResponseBody
     @Log(title = "身份证上传", businessType = BusinessType.INSERT, operatorLogType = OperatorLogType.THREENETS)
-    public AjaxResult cardImage(@RequestParam("file") MultipartFile protocolFile,Integer flag,Integer radom) {
-        if (StringUtils.isNotNull(protocolFile) && StringUtils.isNotNull(flag) && StringUtils.isNotNull(radom)){
-            if (flag == 1){ // 身份证正面照
+    public AjaxResult cardImage(@RequestParam("file") MultipartFile protocolFile, Integer flag, Integer radom) {
+        if (StringUtils.isNotNull(protocolFile) && StringUtils.isNotNull(flag) && StringUtils.isNotNull(radom)) {
+            if (flag == 1) { // 身份证正面照
                 return fileService.upload(protocolFile, "正面照", radom);
             } else { // 身份证反面照
                 return fileService.upload(protocolFile, "反面照", radom);
