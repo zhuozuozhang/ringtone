@@ -574,63 +574,60 @@ public class MiguApi implements Serializable {
         return result;
     }
 
+
     /**
-     * 增加商户(短信回复类型)，带管理员手机。（不含铃音，和手机号码）
+     * 增加商户
      *
      * @param ringOrder
+     * @param attached
      * @return
      * @throws IOException
      * @throws NoLoginException
      */
-    public MiguAddGroupRespone add(ThreenetsOrder ringOrder, ThreeNetsOrderAttached attached) throws IOException, NoLoginException {
-        User user = ShiroUtils.getSysUser();
+    public MiguAddGroupRespone add1(ThreenetsOrder ringOrder,ThreeNetsOrderAttached attached)throws IOException, NoLoginException {
         MiguAddGroupRespone addGroupRespone = null;
-        String vcode = getCodeString();
-        DefaultHttpClient httpclient = new DefaultHttpClient();
+        User user = ShiroUtils.getSysUser();
+        CloseableHttpClient httpclient = HttpClients.custom().setDefaultCookieStore(this.getCookieStore()).build();
         HttpPost httppost = new HttpPost(addGroup_url);
-        httpclient.setCookieStore(this.getCookieStore());
+        MultipartEntityBuilder builder = MultipartEntityBuilder.create();
+        builder.addTextBody("vcode", getCreateSHCodeString(), ContentType.TEXT_PLAIN.withCharset("UTF-8"));
+        builder.addTextBody("circle.ID","");
+        builder.addTextBody("circle.name", ringOrder.getCompanyName(), ContentType.TEXT_PLAIN.withCharset("UTF-8"));
+        builder.addTextBody("circle.cmName", user.getUserName(), ContentType.TEXT_PLAIN.withCharset("UTF-8"));
+        builder.addTextBody("circle.cmMsisdn", user.getUserTel());
+        builder.addTextBody("groupManagerName", ringOrder.getCompanyLinkman(), ContentType.TEXT_PLAIN.withCharset("UTF-8"));
+        builder.addTextBody("circle.owner.msisdn", ringOrder.getLinkmanTel(), ContentType.TEXT_PLAIN.withCharset("UTF-8"));
+        builder.addTextBody("manager.password", ringOrder.getLinkmanTel(), ContentType.TEXT_PLAIN.withCharset("UTF-8"));
+        builder.addTextBody("manager.status", "1");
+        builder.addTextBody("province","福建省", ContentType.TEXT_PLAIN.withCharset("UTF-8"));
+        builder.addTextBody("city", "福州市", ContentType.TEXT_PLAIN.withCharset("UTF-8"));
+        builder.addTextBody("county", "鼓楼区", ContentType.TEXT_PLAIN.withCharset("UTF-8"));
+        builder.addTextBody("groupStreet", "六一北路92号", ContentType.TEXT_PLAIN.withCharset("UTF-8"));
+        builder.addTextBody("circle.payType", "0");
+        if (attached.getMiguPrice() <= 5) {
+            builder.addTextBody("circle.price", attached.getMiguPrice().toString());
+            builder.addTextBody("circle.specialPrice", "");
+        } else {
+            builder.addTextBody("circle.specialPrice", attached.getMiguPrice().toString());
+        }
+        builder.addTextBody("circle.applyForSmsNotification", "0");
+        if (ringOrder.getUpLoadAgreement() != null) {
+            builder.addBinaryBody("file", ringOrder.getUpLoadAgreement());
+        }
+        builder.addTextBody("circle.isNormal", "0");
+        builder.addTextBody("circle.memo", "");
+        HttpEntity httpEntity = builder.build();
+        httppost.setEntity(httpEntity);
+        HttpResponse response = httpclient.execute(httppost);
         try {
-            MultipartEntity reqEntity = new MultipartEntity();
-            HttpParams params = httpclient.getParams();
-            params.setParameter(CoreProtocolPNames.HTTP_CONTENT_CHARSET, Charset.forName("UTF-8"));
-            reqEntity.addPart("vcode", new StringBody(vcode));// 集团简介
-            reqEntity.addPart("circle.ID", new StringBody(""));
-            reqEntity.addPart("circle.name", new StringBody(ringOrder.getCompanyName(), Charset.forName("UTF-8")));// 集团名称
-            reqEntity.addPart("circle.cmName", new StringBody(user.getUserName(), Charset.forName("UTF-8")));// 客户经理姓名
-            reqEntity.addPart("circle.cmMsisdn", new StringBody(user.getUserTel()));// 客服号码
-            reqEntity.addPart("groupManagerName", new StringBody(user.getUserName(), Charset.forName("UTF-8")));// 管理员姓名
-            reqEntity.addPart("circle.owner.msisdn", new StringBody(ringOrder.getLinkmanTel(), Charset.forName("UTF-8")));// 集团管理员手机号
-            reqEntity.addPart("manager.password", new StringBody(ringOrder.getLinkmanTel(), Charset.forName("UTF-8")));// 集团管理员登陆密码
-            reqEntity.addPart("manager.status", new StringBody("1"));// 0启用集团管理员账户1禁止集团管理员账户
-            reqEntity.addPart("province", new StringBody("福建省", Charset.forName("UTF-8")));// 省
-            reqEntity.addPart("city", new StringBody("福州市", Charset.forName("UTF-8")));// 市
-            reqEntity.addPart("county", new StringBody("鼓楼区", Charset.forName("UTF-8")));// 区
-            reqEntity.addPart("groupStreet", new StringBody("六一北路92号", Charset.forName("UTF-8")));// 集团所在街道
-            reqEntity.addPart("circle.payType", new StringBody("0"));// 集团统付
-            if (attached.getMiguPrice() <= 5) {
-                reqEntity.addPart("circle.price", new StringBody(attached.getMiguPrice() + ""));// 资费，默认值为0
-                reqEntity.addPart("circle.specialPrice", new StringBody(""));// 资费，默认值为0
-            } else {
-                reqEntity.addPart("circle.specialPrice", new StringBody(attached.getMiguPrice() + ""));// 资费，默认值为0
-            }
-            //reqEntity.addPart("circle.specialDiscount", new StringBody(""));// 折扣
-            reqEntity.addPart("circle.applyForSmsNotification", new StringBody("0"));// 申请免短信
-            reqEntity.addPart("circle.isNormal", new StringBody("0"));// 集团类型、正式
-            //reqEntity.addPart("circle.trialTimeType", new StringBody(""));// 试用时间
-            reqEntity.addPart("circle.memo", new StringBody(""));// 集团简介
-            if (ringOrder.getUpLoadAgreement() != null) {
-                reqEntity.addPart("myfile", new FileBody(ringOrder.getUpLoadAgreement()));
-            }
-            httppost.setEntity(reqEntity);
-            HttpResponse response1 = httpclient.execute(httppost);
-            int statusCode = response1.getStatusLine().getStatusCode();
+            HttpEntity resEntity = response.getEntity();
+            String result = EntityUtils.toString(resEntity);
+            this.setMiguCookie(this.getCookieStore());
+            int statusCode = response.getStatusLine().getStatusCode();
             if (statusCode == HttpStatus.SC_OK) {
                 log.debug("服务器正常响应.....");
-                HttpEntity resEntity = response1.getEntity();
-                String res = EntityUtils.toString(resEntity);
-                System.out.println("res" + res);
-                addGroupRespone = (MiguAddGroupRespone) JsonUtil.getObject4JsonString(res, MiguAddGroupRespone.class);
-                this.setMiguCookie(httpclient.getCookieStore());
+                System.out.println("res" + result);
+                addGroupRespone = (MiguAddGroupRespone) JsonUtil.getObject4JsonString(result, MiguAddGroupRespone.class);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -640,7 +637,6 @@ public class MiguApi implements Serializable {
         }
         return addGroupRespone;
     }
-
     /**
      * 上传铃音，还要添加商户登录
      * @param ring
