@@ -12,8 +12,6 @@ function getUserInfoByRingMsisdn() {
             if(res.code == 200 && res.data){
                 var data = res.data;
                 if(data.total == 0){
-                    // $(".userInfoTable").html("<td colspan='8' style='color:#F00;'>抱歉,系统没有查询到数据</td>");
-                    // $(".tbody").html("<tr><td colspan='3' style='color:#F00;'>抱歉,系统没有查询到数据</td></tr>");
                     layer.msg("抱歉,系统没有查询到数据",{icon:5,time:3000});
                     return;
                 }

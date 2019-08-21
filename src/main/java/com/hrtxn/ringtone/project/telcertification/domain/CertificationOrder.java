@@ -53,5 +53,9 @@ public class CertificationOrder implements Serializable {
     /**************************VO**********************************/
     //成员数
     private int memberNum;
+    //状态名(回显用)
+    private String statusName;
+    //成员电话号
+    private String phoneNum;
 
 }

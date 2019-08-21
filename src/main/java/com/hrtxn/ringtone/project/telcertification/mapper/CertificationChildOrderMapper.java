@@ -1,5 +1,6 @@
 package com.hrtxn.ringtone.project.telcertification.mapper;
 
+import com.hrtxn.ringtone.common.constant.AjaxResult;
 import com.hrtxn.ringtone.common.domain.BaseRequest;
 import com.hrtxn.ringtone.common.domain.Page;
 import com.hrtxn.ringtone.project.telcertification.domain.CertificationChildOrder;
@@ -22,4 +23,8 @@ public interface CertificationChildOrderMapper {
 
 
     int getMemberCountByParentId(int i);
+
+    CertificationChildOrder getTelCerChildById(Integer id);
+
+    List<CertificationChildOrder> getTelCerChildByPhoneNum(String phoneNum);
 }

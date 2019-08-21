@@ -78,7 +78,7 @@
             <div class="number_search">
                 <div>
                     <p>提交时间:</p>
-                    <input type="text" class="layui-input" id="rangetime" name="rangetime" placeholder="提交时间">
+                    <input type="text" class="layui-input" id="rangetime" name="rangetime" placeholder="提交时间范围">
                 </div>
                 <div>
                     <p>集团名称:</p>
@@ -92,7 +92,7 @@
                     <p>成员号码:</p>
                     <input type="text" id="membernum" name="membernum" placeholder="可通过成员号码找到商户订单">
                 </div>
-                <button onclick="search()">搜索</button>
+                <button onclick="showTelCerTable()">搜索</button>
                 <div class="new_businesses" id="cause">新增商户</div>
 <!--                <div class="new_businesses" onclick="addTelMerchant()">新增商户</div>-->
             </div>
@@ -127,7 +127,7 @@
                         <p>号码:</p>
                         <input type="text" id="number">
                     </div>
-                    <button onclick="search2()" style="background:#17a9ff;border:none;color:#fff; border-radius:5px;">
+                    <button onclick="showFallDueTable()" style="background:#17a9ff;border:none;color:#fff; border-radius:5px;">
                         搜索
                     </button>
                 </div>
@@ -173,7 +173,7 @@
                         <p>号码:</p>
                         <input type="text" id="number2">
                     </div>
-                    <button onclick="search2()" style="background:#17a9ff;border:none;color:#fff; border-radius:5px;">
+                    <button onclick="showDueTable()" style="background:#17a9ff;border:none;color:#fff; border-radius:5px;">
                         搜索
                     </button>
                 </div>

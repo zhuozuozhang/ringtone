@@ -31,19 +31,19 @@
 
   <sql id="parameters">
     <if test="param.id != null and param.id != ''">
-      AND p.id = #{param.id}
+      AND tco.id = #{param.id}
     </if>
     <if test="param.telOrderNum != null and param.telOrderNum != ''">
-      AND p.tel_order_num = #{param.telOrderNum}
+      AND tco.tel_order_num = #{param.telOrderNum}
     </if>
     <if test="param.telCompanyName != null and param.telCompanyName !=''">
-      AND p.tel_company_name like '%${param.telCompanyName}%'
+      AND tco.tel_company_name like '%${param.telCompanyName}%'
     </if>
     <if test="param.telLinkPhone != null and param.telLinkPhone != ''">
-      AND p.tel_link_phone = #{param.telLinkPhone}
+      AND tco.tel_link_phone = #{param.telLinkPhone}
     </if>
     <if test="param.start != null and param.start !='' and param.end != null and param.end !=''">
-      AND p.tel_order_time between #{param.start} and #{param.end}
+      AND tco.tel_order_time between #{param.start} and #{param.end}
     </if>
   </sql>
 
@@ -51,7 +51,7 @@
     SELECT
         <include refid="Base_Column_List"/>
     FROM
-        tb_telcertification_order
+        tb_telcertification_order tco
     WHERE 1 = 1
     <include refid="parameters"></include>
     ORDER BY tel_order_time DESC
@@ -62,6 +62,10 @@
 <!--  查询号码认证订单列表总数-->
   <select id="getCount" resultType="int">
     select count(*) from tb_telcertification_order
+  </select>
+
+  <select id="getTelCerOrderById" parameterType="int" resultMap="BaseResultMap">
+    SELECT * FROM tb_telcertification_order WHERE id = #{id}
   </select>
 
 

@@ -5,7 +5,7 @@ function showTelCerTable() {
         "rangetime" : $("#rangetime").val(),
         "companyName": $("#companyName").val(),
         "tel" : $("#tel").val(),
-        "membernum" : $("#membernum").val()
+        "phoneNum" : $("#membernum").val()
     }
     var columns = [
         {"data": null},
@@ -14,34 +14,13 @@ function showTelCerTable() {
         {"data": "telLinkName"},
         {"data": "telLinkPhone"},
         {"data": "memberNum"},
-        {"data": "telOrderStatus"},
+        {"data": "statusName"},
         {"data": "unitPrice"},
         {"data": "telOrderTime"},
         {"data": "productName"},
         {"data": "remark"}
     ];
     var columnDefs = [{
-        targets:[6],
-        render: function(data, type, row, meta){
-            var status = row.telOrderStatus;
-            //号码认证子订单状态（1.开通中/2.开通成功/3.开通失败/4.续费中/5.续费成功/6.续费失败）
-            if(status == 1){
-                return "<span>开通中</span>";
-            }else if(status == 2){
-                return "<span>开通成功</span>";
-            }else if(status == 3){
-                return "<span>开通失败</span>";
-            } else if(status == 4){
-                return "<span>续费中</span>";
-            }else if(status == 5){
-                return "<span>续费成功</span>";
-            }else if(status == 6){
-                return "<span>续费失败</span>";
-            }else{
-                return "<span>未知</span>";
-            }
-        }
-    },{
         targets:[9],
         render: function (data, type, row, meta) {
             var productName = row.productName;
@@ -54,20 +33,20 @@ function showTelCerTable() {
             var str = "";
             for (var i = 0; i < service.length; i++) {
                 str += "<tr>";
-                str += "<td>" + service[i].name + "</td>";
-                str += "<td>," + service[i].period0fValidity + "</td>";
-                str += "<td>," + service[i].cost + "元</td></br>";
+                str += "<td>" + service[i].name + ",</td>";
+                str += "<td>" + service[i].period0fValidity + ",</td>";
+                str += "<td>" + service[i].cost + "元</td></br>";
                 str += "</tr>";
             }
             return str;
         }
-    },{
+    }, {
         targets:[11],
         render: function (data, type, row, meta) {
             var id = row.id;
             var name = row.telCompanyName;
-            return "<i class='layui-icon layui-icon-edit' title='编辑' onclick='edit();'></i>"
-                + "<i class='layui-icon layui-icon-log' title='详情' onclick='ckeckDetails();'></i>"
+            return "<i class='layui-icon layui-icon-edit' title='编辑' onclick='editTelCerOrder();'></i>"
+                + "<i class='layui-icon layui-icon-log' title='详情' onclick='ckeckDetails("+id+");'></i>"
                 + "<a href='/telcertify/toTelMembersPage'><i class='layui-icon layui-icon-username' title='成员管理'></i></a>";
         }
     }];
@@ -77,40 +56,39 @@ function showTelCerTable() {
 // 获取订单列表-->即将到期列表
 function showFallDueTable() {
     var param = {
-        "phoneNum": $("#number").val()
+        "phoneNum": $("#number").val().trim()
     }
     var columns = [
         {"data": null},
         {"data": "telChildOrderPhone"},
         {"data": "years"},
         {"data": "price"},
-        {"data": "telChildOrderStatus"},
+        {"data": "statusName"},
         {"data": "businessFeedback"},
         {"data": "telChildOrderCtime"},
         {"data": "telChildOrderExpireTime"}
-        // {"data": "remark"}
     ];
     var columnDefs = [{
         targets:[8],
         render: function (data, type, row, meta) {
             var phoneNumber = row.telChildOrderPhone;
-            return "<p><i class='layui-icon layui-icon-log' title='查看详情' onclick='ckeckDetailsOne();'></i></p>";
+            var id = row.id;
+            return "<p><i class='layui-icon layui-icon-log' title='查看详情' onclick='ckeckDetailsOne("+id+");'></i></p>";
         }
     }];
-    var url = "/telcertify/getFallDueList";
-    page("#fall_due_table", 15, param, url, columns, columnDefs);
+    page("#fall_due_table", 15, param, "/telcertify/getFallDueList", columns, columnDefs);
 }
-
+//获取订单列表-->已经到期列表
 function showDueTable() {
     var param = {
-        "phoneNum": $("#number").val()
+        "phoneNum": $("#number2").val()
     }
     var columns = [
         {"data": null},
         {"data": "telChildOrderPhone"},
         {"data": "years"},
         {"data": "price"},
-        {"data": "telChildOrderStatus"},
+        {"data": "statusName"},
         {"data": "businessFeedback"},
         {"data": "telChildOrderCtime"},
         {"data": "telChildOrderExpireTime"}
@@ -120,11 +98,11 @@ function showDueTable() {
         targets:[8],
         render: function (data, type, row, meta) {
             var phoneNumber = row.telChildOrderPhone;
-            return "<p><i class='layui-icon layui-icon-log' title='查看详情' onclick='ckeckDetailsOne();'></i></p>";
+            var id = row.id;
+            return "<p><i class='layui-icon layui-icon-log' title='查看详情' onclick='ckeckDetailsOne("+id+");'></i></p>";
         }
     }];
-    var url = "/telcertify/getDueList";
-    page("#due_table", 15, param, url, columns, columnDefs);
+    page("#due_table", 15, param, "/telcertify/getDueList", columns, columnDefs);
 }
 
 function determine() {
@@ -176,21 +154,21 @@ layui.use('laydate', function () {
 })
 
 //我的订单查看详情
-function ckeckDetails() {
+function ckeckDetails(id) {
     layer.open({
         type: 2,
         title: '详情',
-        content: '/telcertify/toTeldetailsPage',
+        content: '/telcertify/toTeldetailsPage/'+id,
         area: ['500px', '680px']
     });
 }
 
-//即将到期号码查看详情
-function ckeckDetailsOne() {
+//即将到期和到期号码查看详情
+function ckeckDetailsOne(id) {
     layer.open({
         type: 2,
         title: '详情',
-        content: '/telcertify/toTeldetails_onePage',
+        content: '/telcertify/toTeldetails_onePage/'+id,
         area: ['500px', '680px']
     });
 }
@@ -212,7 +190,7 @@ function checkNum(obj) {
 }
 
 //打开修改订单弹窗
-function edit() {
+function editTelCerOrder() {
     // layer.open({
     //     type : 2,
     //     title : "更改业务",

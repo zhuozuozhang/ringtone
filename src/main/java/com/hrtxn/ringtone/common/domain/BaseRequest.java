@@ -61,6 +61,9 @@ public class BaseRequest {
     private String telLinkPhone;
     //提交时间/创建时间
     private Date telOrderTime;
+    //成员电话号码
+    private String phoneNum;
+
 
 
 

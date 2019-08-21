@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
 
 <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>详情</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="../../public/layui/css/layui.css">
+    <link rel="stylesheet" th:href="@{/public/layui/css/layui.css}">
     <style>
         .ids{
             width: 500px;
@@ -34,25 +34,19 @@
         <div class="layui-form-item">
             <label class="layui-form-label">集团名称</label>
             <div class="layui-input-block">
-                <input type="text" name="title" required lay-verify="required" readonly='' autocomplete="off" class="layui-input" value="集团名称">
+                <input type="text" name="title" required lay-verify="required" readonly='' autocomplete="off" class="layui-input" th:value="${telCerOrder.telCompanyName}" style="width: 95%;">
             </div>
         </div>
         <div class="layui-form-item">
             <label class="layui-form-label">联系人</label>
             <div class="layui-input-block">
-                <input type="text" name="title" readonly value="联系人" required lay-verify="required" autocomplete="off" class="layui-input">
+                <input type="text" name="title" readonly th:value="${telCerOrder.telLinkName}" required lay-verify="required" autocomplete="off" class="layui-input" style="width: 95%;">
             </div>
         </div>
         <div class="layui-form-item">
             <label class="layui-form-label">联系电话</label>
             <div class="layui-input-block">
-                <input type="text" name="title" readonly value="联系电话" required lay-verify="required" autocomplete="off" class="layui-input">
-            </div>
-        </div>
-        <div class="layui-form-item">
-            <label class="layui-form-label">产品名称</label>
-            <div class="layui-input-block">
-                <input type="text" name="title" readonly value="产品名称" required lay-verify="required" autocomplete="off" class="layui-input">
+                <input type="text" name="title" readonly th:value="${telCerOrder.telLinkPhone}" required lay-verify="required" autocomplete="off" class="layui-input" style="width: 95%;">
             </div>
         </div>
 <!--        <div class="layui-form-item">-->
@@ -64,33 +58,46 @@
         <div class="layui-form-item">
             <label class="layui-form-label">成员数</label>
             <div class="layui-input-block">
-                <input type="text" name="title" readonly value="产品名称" required lay-verify="required" autocomplete="off" class="layui-input">
+                <input type="text" name="title" readonly th:value="${telCerOrder.memberNum}" required lay-verify="required" autocomplete="off" class="layui-input" style="width: 95%;">
             </div>
         </div>
         <div class="layui-form-item">
             <label class="layui-form-label">状态</label>
             <div class="layui-input-block">
-                <input type="text" name="title" readonly value="产品名称" required lay-verify="required" autocomplete="off" class="layui-input">
+                <input type="text" name="title" readonly th:value="${telCerOrder.statusName}" required lay-verify="required" autocomplete="off" class="layui-input" style="width: 95%;">
             </div>
         </div>
         <div class="layui-form-item">
-            <label class="layui-form-label">价格(元)</label>
+            <label class="layui-form-label">总价(元)</label>
             <div class="layui-input-block">
-                <input type="text" name="title" readonly value="产品名称" required lay-verify="required" autocomplete="off" class="layui-input">
+                <input type="text" name="title" readonly th:value="${telCerOrder.unitPrice}" required lay-verify="required" autocomplete="off" class="layui-input" style="width: 95%;">
             </div>
         </div>
         <div class="layui-form-item">
             <label class="layui-form-label">创建时间</label>
             <div class="layui-input-block">
-                <input type="text" name="title" readonly value="产品名称" required lay-verify="required" autocomplete="off" class="layui-input">
+                <input type="text" name="title" readonly th:value="${#dates.format(telCerOrder.telOrderTime,'yyyy-MM-dd HH:mm:ss')}" required lay-verify="required" autocomplete="off" class="layui-input" style="width: 95%;">
             </div>
         </div>
         <div class="layui-form-item">
             <label class="layui-form-label">备注</label>
             <div class="layui-input-block">
-                <input type="text" name="title" readonly value="产品名称" required lay-verify="required" autocomplete="off" class="layui-input">
+                <input type="text" name="title" readonly th:value="${telCerOrder.remark}" required lay-verify="required" autocomplete="off" class="layui-input" style="width: 95%;">
             </div>
         </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">购买的产品</label>
+            <div class="layui-input-block">
+
+<!--                <input type="text" name="title" readonly th:value="${service}" required lay-verify="required" autocomplete="off" class="layui-input" style="width: 95%;">-->
+                <tr th:each="s:${service}">
+                    <td th:text="'[' + ${s.name} + ','"></td>
+                    <td th:text="${s.period0fValidity} + ','"></td>
+                    <td th:text="${s.cost} + '元]'"></td>
+                </tr>
+            </div>
+        </div>
+
         <div class="contents">
             <p>aaaaaaaaaaaa</p>
             <p>aaaaaaaaaaaa</p>
@@ -101,6 +108,9 @@
     </div>
 </body>
 <script>
+    $(document).ready(function () {
+       showDetails();
+    });
 
 </script>
 </html>

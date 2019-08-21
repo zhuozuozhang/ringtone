@@ -41,5 +41,7 @@ public class CertificationChildOrder implements Serializable {
     private String remark;
     //1是过期，2是即将过期
     private int due;
+    //状态名称
+    private String statusName;
 
 }

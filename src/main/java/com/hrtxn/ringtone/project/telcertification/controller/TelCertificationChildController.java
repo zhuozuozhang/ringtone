@@ -14,10 +14,7 @@ import org.aspectj.weaver.loadtime.Aj;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -73,7 +70,6 @@ public class TelCertificationChildController {
         return AjaxResult.error("获取失败");
     }
 
-
     @PostMapping("/getDueList")
     @ResponseBody
     @Log(title = "获取到期号码",operatorLogType = OperatorLogType.TELCERTIFICATION)
@@ -88,6 +84,13 @@ public class TelCertificationChildController {
             log.error("获取到期号码 方法：getDueList 错误信息",e);
         }
         return AjaxResult.error("获取失败");
+    }
+
+    @PostMapping("/getTelCerChildByPhoneNum/{phoneNum}")
+    @ResponseBody
+    @Log(title = "订单列表->搜索成员手机号")
+    public AjaxResult getTelCerChildByPhoneNum(String phoneNum){
+        return telCertificationChildService.getTelCerChildByPhoneNum(phoneNum);
     }
 
 

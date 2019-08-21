@@ -21,4 +21,6 @@ public interface CertificationOrderMapper {
     List<CertificationOrder> findAllTelCertification(@Param("page") Page page, @Param("param") BaseRequest request);
 
     int getCount();
+
+    CertificationOrder getTelCerOrderById(Integer id);
 }

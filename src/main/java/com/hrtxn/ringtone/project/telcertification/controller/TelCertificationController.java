@@ -10,6 +10,7 @@ import com.hrtxn.ringtone.project.system.notice.domain.Notice;
 import com.hrtxn.ringtone.project.system.notice.service.NoticeService;
 import com.hrtxn.ringtone.project.telcertification.domain.CertificationChildOrder;
 import com.hrtxn.ringtone.project.telcertification.domain.CertificationOrder;
+import com.hrtxn.ringtone.project.telcertification.service.TelCertificationChildService;
 import com.hrtxn.ringtone.project.telcertification.service.TelCertificationService;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.weaver.loadtime.Aj;
@@ -17,11 +18,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.apache.shiro.authz.annotation.RequiresRoles;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -38,6 +37,8 @@ public class TelCertificationController {
 
     @Autowired
     private TelCertificationService telCertificationService;
+    @Autowired
+    private TelCertificationChildService telCertificationChildService;
     @Autowired
     private NoticeService noticeService;
 
@@ -98,11 +99,12 @@ public class TelCertificationController {
     @ResponseBody
     @Log(title = "获取号码认证订单",operatorLogType = OperatorLogType.TELCERTIFICATION)
     public AjaxResult getTelCerOrderList(Page page, BaseRequest request){
-        List<CertificationOrder> list = null;
+        List<CertificationOrder> list = new ArrayList<CertificationOrder>();
         try{
             int totalCount = telCertificationService.getCount();
+            //查找成员号码，需要把返回值改为ajaxresult
             list = telCertificationService.findAllTelCertification(page,request);
-            return AjaxResult.success(list,"查询成功",totalCount);
+            return AjaxResult.success(list,"Controller查询成功",totalCount);
         }catch (Exception e){
             log.error("获取号码认证订单列表数据 方法：getTelCerOrderList 错误信息",e);
         }
@@ -113,8 +115,9 @@ public class TelCertificationController {
      * 进入我的订单查看详情页面
      * @return
      */
-    @GetMapping("/toTeldetailsPage")
-    public String toTeldetailsPage(){
+    @GetMapping("/toTeldetailsPage/{id}")
+    public String toTeldetailsPage(@PathVariable Integer id, ModelMap map){
+        CertificationOrder telcerOrder = telCertificationService.getTelCerOrderById(id,map);
         return "telcertification/details";
     }
 
@@ -123,8 +126,9 @@ public class TelCertificationController {
      * 进入即将到期号码查看详情页面
      * @return
      */
-    @GetMapping("/toTeldetails_onePage")
-    public String toTeldetails_onePage(){
+    @GetMapping("/toTeldetails_onePage/{id}")
+    public String toTeldetails_onePage(@PathVariable Integer id, ModelMap map){
+        CertificationChildOrder telcerChild = telCertificationChildService.getTelCerChildById(id,map);
         return "telcertification/details_one";
     }
 

@@ -2,53 +2,83 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.hrtxn.ringtone.project.telcertification.mapper.CertificationChildOrderMapper">
 
-  <resultMap id="BaseResultMap" type="com.hrtxn.ringtone.project.telcertification.domain.CertificationChildOrder">
-    <id column="id" property="id" jdbcType="INTEGER" />
-    <result column="tel_child_order_num" property="telChildOrderNum" jdbcType="VARCHAR" />
-    <result column="tel_child_order_phone" property="telChildOrderPhone" jdbcType="VARCHAR"/>
-    <result column="years" property="years" jdbcType="INTEGER" />
-    <result column="price" property="price" jdbcType="REAL" />
-    <result column="tel_child_order_status" property="telChildOrderStatus" jdbcType="INTEGER"/>
-    <result column="business_feedback" property="businessFeedback" jdbcType="VARCHAR" />
-    <result column="tel_child_order_ctime" property="telChildOrderCtime" jdbcType="TIMESTAMP" />
-    <result column="tel_child_order_open_time" property="telChildOrderOpenTime" jdbcType="TIMESTAMP" />
-    <result column="tel_child_order_expire_time" property="telChildOrderExpireTime" jdbcType="TIMESTAMP" />
-    <result column="parent_order_id" property="parentOrderId" jdbcType="INTEGER" />
-    <result column="consume_log_id" property="consumeLogId" jdbcType="INTEGER" />
-  </resultMap>
+    <resultMap id="BaseResultMap" type="com.hrtxn.ringtone.project.telcertification.domain.CertificationChildOrder">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="tel_child_order_num" property="telChildOrderNum" jdbcType="VARCHAR"/>
+        <result column="tel_child_order_phone" property="telChildOrderPhone" jdbcType="VARCHAR"/>
+        <result column="years" property="years" jdbcType="INTEGER"/>
+        <result column="price" property="price" jdbcType="REAL"/>
+        <result column="tel_child_order_status" property="telChildOrderStatus" jdbcType="INTEGER"/>
+        <result column="business_feedback" property="businessFeedback" jdbcType="VARCHAR"/>
+        <result column="tel_child_order_ctime" property="telChildOrderCtime" jdbcType="TIMESTAMP"/>
+        <result column="tel_child_order_open_time" property="telChildOrderOpenTime" jdbcType="TIMESTAMP"/>
+        <result column="tel_child_order_expire_time" property="telChildOrderExpireTime" jdbcType="TIMESTAMP"/>
+        <result column="parent_order_id" property="parentOrderId" jdbcType="INTEGER"/>
+        <result column="consume_log_id" property="consumeLogId" jdbcType="INTEGER"/>
+    </resultMap>
 
-  <sql id="Base_Column_List">
+    <sql id="Base_Column_List">
     id, tel_child_order_num, tel_child_order_phone, years, price, tel_child_order_status, business_feedback,
     tel_child_order_ctime, tel_child_order_open_time, tel_child_order_expire_time, parent_order_id, 
     consume_log_id
   </sql>
 
-  <select id="getCount" resultType="int">
+    <sql id="parameters">
+        <if test="param != null and param.phoneNum != null and param.phoneNum != ''">
+            AND tcc.tel_child_order_phone = ${param.phoneNum}
+        </if>
+    </sql>
+
+    <sql id="page">
+        <if test="page.page != null and page.page != '' and page.pagesize != '' and page.pagesize != null">
+            LIMIT #{page.page},#{page.pagesize}
+        </if>
+    </sql>
+
+    <select id="getCount" resultType="int">
         select count(*) from tb_telcertification_child_order
     </select>
 
-  <select id="findAllChildOrder" resultMap="BaseResultMap">
-    select
-    <include refid="Base_Column_List" />
-    from tb_telcertification_child_order
-  </select>
+    <!--  根据条件获取子订单-->
+    <select id="findAllChildOrder" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from tb_telcertification_child_order tcc
+        WHERE 1=1
+        <include refid="parameters"/>
+        ORDER BY tel_child_order_ctime DESC
+        <include refid="page"/>
+    </select>
 
-  <select id="getMemberCountByParentId" parameterType="int" resultType="int">
+    <select id="getMemberCountByParentId" parameterType="int" resultType="int">
     select count(*) from tb_telcertification_child_order
     where parent_order_id = #{parent_order_id,jdbcType=INTEGER}
   </select>
 
-  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
-    select
-    <include refid="Base_Column_List" />
-    from tb_telcertification_child_order
-    where id = #{id,jdbcType=INTEGER}
+    <select id="getTelCerChildById" parameterType="int" resultMap="BaseResultMap">
+    SELECT * FROM tb_telcertification_child_order WHERE id = #{id}
   </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+
+    <select id="getTelCerChildByPhoneNum" parameterType="java.lang.String" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM
+        tb_telcertification_child_order
+        WHERE
+        tel_child_order_phone = #{telChildOrderPhone,jdbcType=VARCHAR}
+    </select>
+
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from tb_telcertification_child_order
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from tb_telcertification_child_order
     where id = #{id,jdbcType=INTEGER}
   </delete>
-  <insert id="insert" parameterType="com.hrtxn.ringtone.project.telcertification.domain.CertificationChildOrder">
+    <insert id="insert" parameterType="com.hrtxn.ringtone.project.telcertification.domain.CertificationChildOrder">
     insert into tb_telcertification_child_order (id, tel_child_order_num, years, 
       price, tel_child_order_status, business_feedback, 
       tel_child_order_ctime, tel_child_order_open_time, 
@@ -60,116 +90,119 @@
       #{telChildOrderExpireTime,jdbcType=TIMESTAMP}, #{parentOrderId,jdbcType=INTEGER}, 
       #{consumeLogId,jdbcType=INTEGER})
   </insert>
-  <insert id="insertSelective" parameterType="com.hrtxn.ringtone.project.telcertification.domain.CertificationChildOrder">
-    insert into tb_telcertification_child_order
-    <trim prefix="(" suffix=")" suffixOverrides=",">
-      <if test="id != null">
-        id,
-      </if>
-      <if test="telChildOrderNum != null">
-        tel_child_order_num,
-      </if>
-      <if test="years != null">
-        years,
-      </if>
-      <if test="price != null">
-        price,
-      </if>
-      <if test="telChildOrderStatus != null">
-        tel_child_order_status,
-      </if>
-      <if test="businessFeedback != null">
-        business_feedback,
-      </if>
-      <if test="telChildOrderCtime != null">
-        tel_child_order_ctime,
-      </if>
-      <if test="telChildOrderOpenTime != null">
-        tel_child_order_open_time,
-      </if>
-      <if test="telChildOrderExpireTime != null">
-        tel_child_order_expire_time,
-      </if>
-      <if test="parentOrderId != null">
-        parent_order_id,
-      </if>
-      <if test="consumeLogId != null">
-        consume_log_id,
-      </if>
-    </trim>
-    <trim prefix="values (" suffix=")" suffixOverrides=",">
-      <if test="id != null">
-        #{id,jdbcType=INTEGER},
-      </if>
-      <if test="telChildOrderNum != null">
-        #{telChildOrderNum,jdbcType=VARCHAR},
-      </if>
-      <if test="years != null">
-        #{years,jdbcType=INTEGER},
-      </if>
-      <if test="price != null">
-        #{price,jdbcType=REAL},
-      </if>
-      <if test="telChildOrderStatus != null">
-        #{telChildOrderStatus,jdbcType=INTEGER},
-      </if>
-      <if test="businessFeedback != null">
-        #{businessFeedback,jdbcType=VARCHAR},
-      </if>
-      <if test="telChildOrderCtime != null">
-        #{telChildOrderCtime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="telChildOrderOpenTime != null">
-        #{telChildOrderOpenTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="telChildOrderExpireTime != null">
-        #{telChildOrderExpireTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="parentOrderId != null">
-        #{parentOrderId,jdbcType=INTEGER},
-      </if>
-      <if test="consumeLogId != null">
-        #{consumeLogId,jdbcType=INTEGER},
-      </if>
-    </trim>
-  </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="com.hrtxn.ringtone.project.telcertification.domain.CertificationChildOrder">
-    update tb_telcertification_child_order
-    <set>
-      <if test="telChildOrderNum != null">
-        tel_child_order_num = #{telChildOrderNum,jdbcType=VARCHAR},
-      </if>
-      <if test="years != null">
-        years = #{years,jdbcType=INTEGER},
-      </if>
-      <if test="price != null">
-        price = #{price,jdbcType=REAL},
-      </if>
-      <if test="telChildOrderStatus != null">
-        tel_child_order_status = #{telChildOrderStatus,jdbcType=INTEGER},
-      </if>
-      <if test="businessFeedback != null">
-        business_feedback = #{businessFeedback,jdbcType=VARCHAR},
-      </if>
-      <if test="telChildOrderCtime != null">
-        tel_child_order_ctime = #{telChildOrderCtime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="telChildOrderOpenTime != null">
-        tel_child_order_open_time = #{telChildOrderOpenTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="telChildOrderExpireTime != null">
-        tel_child_order_expire_time = #{telChildOrderExpireTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="parentOrderId != null">
-        parent_order_id = #{parentOrderId,jdbcType=INTEGER},
-      </if>
-      <if test="consumeLogId != null">
-        consume_log_id = #{consumeLogId,jdbcType=INTEGER},
-      </if>
-    </set>
-    where id = #{id,jdbcType=INTEGER}
-  </update>
-  <update id="updateByPrimaryKey" parameterType="com.hrtxn.ringtone.project.telcertification.domain.CertificationChildOrder">
+    <insert id="insertSelective"
+            parameterType="com.hrtxn.ringtone.project.telcertification.domain.CertificationChildOrder">
+        insert into tb_telcertification_child_order
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="telChildOrderNum != null">
+                tel_child_order_num,
+            </if>
+            <if test="years != null">
+                years,
+            </if>
+            <if test="price != null">
+                price,
+            </if>
+            <if test="telChildOrderStatus != null">
+                tel_child_order_status,
+            </if>
+            <if test="businessFeedback != null">
+                business_feedback,
+            </if>
+            <if test="telChildOrderCtime != null">
+                tel_child_order_ctime,
+            </if>
+            <if test="telChildOrderOpenTime != null">
+                tel_child_order_open_time,
+            </if>
+            <if test="telChildOrderExpireTime != null">
+                tel_child_order_expire_time,
+            </if>
+            <if test="parentOrderId != null">
+                parent_order_id,
+            </if>
+            <if test="consumeLogId != null">
+                consume_log_id,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=INTEGER},
+            </if>
+            <if test="telChildOrderNum != null">
+                #{telChildOrderNum,jdbcType=VARCHAR},
+            </if>
+            <if test="years != null">
+                #{years,jdbcType=INTEGER},
+            </if>
+            <if test="price != null">
+                #{price,jdbcType=REAL},
+            </if>
+            <if test="telChildOrderStatus != null">
+                #{telChildOrderStatus,jdbcType=INTEGER},
+            </if>
+            <if test="businessFeedback != null">
+                #{businessFeedback,jdbcType=VARCHAR},
+            </if>
+            <if test="telChildOrderCtime != null">
+                #{telChildOrderCtime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="telChildOrderOpenTime != null">
+                #{telChildOrderOpenTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="telChildOrderExpireTime != null">
+                #{telChildOrderExpireTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="parentOrderId != null">
+                #{parentOrderId,jdbcType=INTEGER},
+            </if>
+            <if test="consumeLogId != null">
+                #{consumeLogId,jdbcType=INTEGER},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective"
+            parameterType="com.hrtxn.ringtone.project.telcertification.domain.CertificationChildOrder">
+        update tb_telcertification_child_order
+        <set>
+            <if test="telChildOrderNum != null">
+                tel_child_order_num = #{telChildOrderNum,jdbcType=VARCHAR},
+            </if>
+            <if test="years != null">
+                years = #{years,jdbcType=INTEGER},
+            </if>
+            <if test="price != null">
+                price = #{price,jdbcType=REAL},
+            </if>
+            <if test="telChildOrderStatus != null">
+                tel_child_order_status = #{telChildOrderStatus,jdbcType=INTEGER},
+            </if>
+            <if test="businessFeedback != null">
+                business_feedback = #{businessFeedback,jdbcType=VARCHAR},
+            </if>
+            <if test="telChildOrderCtime != null">
+                tel_child_order_ctime = #{telChildOrderCtime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="telChildOrderOpenTime != null">
+                tel_child_order_open_time = #{telChildOrderOpenTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="telChildOrderExpireTime != null">
+                tel_child_order_expire_time = #{telChildOrderExpireTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="parentOrderId != null">
+                parent_order_id = #{parentOrderId,jdbcType=INTEGER},
+            </if>
+            <if test="consumeLogId != null">
+                consume_log_id = #{consumeLogId,jdbcType=INTEGER},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+    <update id="updateByPrimaryKey"
+            parameterType="com.hrtxn.ringtone.project.telcertification.domain.CertificationChildOrder">
     update tb_telcertification_child_order
     set tel_child_order_num = #{telChildOrderNum,jdbcType=VARCHAR},
       years = #{years,jdbcType=INTEGER},
