@@ -1,8 +1,6 @@
 function showTelCerMemberTable() {
     var param = {
         "id": $("#id").val(),
-        // "companyName": $("#companyName").val()
-        // "name": $("#enterPriseName").val()
     }
     var columns = [
         {"data": null},
@@ -44,7 +42,8 @@ function showTelCerMemberTable() {
                 + "<a href='/telcertify/toTelCostPage'><i class='layui-icon layui-icon-form' title='费用支出记录'></i></a>"
         }
     }];
-    page("#members", 15, param, "/telcertify/getTelCerMembersList", columns, columnDefs);
+    var url = "/telcertify/getTelCerMembersList";
+    page("#members", 15, param, url, columns, columnDefs);
 }
 
 

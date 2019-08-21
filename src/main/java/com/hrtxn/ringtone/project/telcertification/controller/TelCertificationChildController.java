@@ -16,6 +16,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -35,15 +36,22 @@ public class TelCertificationChildController {
      * 进入成员管理页面
      * @return
      */
-    @GetMapping("/toTelMembersPage")
-    public String toTelMembersPage(){
+    @GetMapping("/toTelMembersPage/{id}")
+    public String toTelMembersPage(@PathVariable String id,ModelMap map){
+        map.put("memberId",id);
         return "telcertification/members";
     }
 
+    /**
+     * 获取所有成员 或者 获取商户的所有成员
+     * @param page
+     * @param request
+     * @return
+     */
     @PostMapping("/getTelCerMembersList")
     @ResponseBody
     public AjaxResult getTelCerMembersList(Page page,BaseRequest request){
-        List<CertificationChildOrder> list = null;
+        List<CertificationChildOrder> list = new ArrayList<CertificationChildOrder>();
         try{
             int totalCount = telCertificationChildService.getCount();
             list = telCertificationChildService.findAllChildOrder(page,request);
@@ -54,6 +62,12 @@ public class TelCertificationChildController {
         return null;
     }
 
+    /**
+     * 获取即将到期号码 以及 根据成员号码查询
+     * @param page
+     * @param request
+     * @return
+     */
     @PostMapping("/getFallDueList")
     @ResponseBody
     @Log(title = "获取即将到期号码",operatorLogType = OperatorLogType.TELCERTIFICATION)
@@ -70,6 +84,12 @@ public class TelCertificationChildController {
         return AjaxResult.error("获取失败");
     }
 
+    /**
+     * 获取到期号码 以及 根据成员号码查询
+     * @param page
+     * @param request
+     * @return
+     */
     @PostMapping("/getDueList")
     @ResponseBody
     @Log(title = "获取到期号码",operatorLogType = OperatorLogType.TELCERTIFICATION)
@@ -85,21 +105,6 @@ public class TelCertificationChildController {
         }
         return AjaxResult.error("获取失败");
     }
-
-    @PostMapping("/getTelCerChildByPhoneNum/{phoneNum}")
-    @ResponseBody
-    @Log(title = "订单列表->搜索成员手机号")
-    public AjaxResult getTelCerChildByPhoneNum(String phoneNum){
-        return telCertificationChildService.getTelCerChildByPhoneNum(phoneNum);
-    }
-
-
-
-
-
-
-
-
 
     /**
      * 进入费用支出记录页面

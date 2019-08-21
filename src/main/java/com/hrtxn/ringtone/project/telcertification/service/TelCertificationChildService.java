@@ -35,15 +35,33 @@ public class TelCertificationChildService {
         return certificationChildOrderMapper.getCount();
     }
 
+    /**
+     * 获取所有成员信息或者根据条件获取
+     * @param page
+     * @param request
+     * @return
+     */
     public List<CertificationChildOrder> findAllChildOrder(Page page,BaseRequest request) {
         page.setPage((page.getPage() - 1) * page.getPagesize());
         List<CertificationChildOrder> allChildOrderList = certificationChildOrderMapper.findAllChildOrder(page,request);
-
-        List<CertificationChildOrder> dueList = new ArrayList<CertificationChildOrder>();
-        if(allChildOrderList.size() > 0){
+        for (CertificationChildOrder cc : allChildOrderList) {
+            if(cc.getBusinessFeedback() == null || cc.getBusinessFeedback() == ""){
+                cc.setBusinessFeedback("无");
+            }
+        }
+        List<CertificationChildOrder> theChildList = new ArrayList<CertificationChildOrder>();
+        if(request.getId() != null){
+            for (CertificationChildOrder cc : allChildOrderList) {
+                if(cc.getParentOrderId() == request.getId()){
+                    theChildList.add(cc);
+                }
+            }
+            return theChildList;
+        }
+        if(allChildOrderList.size() > 0 && allChildOrderList != null){
             return allChildOrderList;
         }
-        return null;
+        return allChildOrderList;
     }
 
     public int getConsumeLogCount() {
@@ -167,12 +185,4 @@ public class TelCertificationChildService {
         return null;
     }
 
-    public AjaxResult getTelCerChildByPhoneNum(String phoneNum) {
-        if(StringUtils.isNotNull(phoneNum)){
-//            page.setPage((page.getPage() - 1) * page.getPagesize());
-            List<CertificationChildOrder> list = certificationChildOrderMapper.getTelCerChildByPhoneNum(phoneNum);
-            return AjaxResult.success(list,"查询成功");
-        }
-        return AjaxResult.success(false,"参数不正确");
-    }
 }

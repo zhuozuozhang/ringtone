@@ -47,9 +47,23 @@ function showTelCerTable() {
             var name = row.telCompanyName;
             return "<i class='layui-icon layui-icon-edit' title='编辑' onclick='editTelCerOrder();'></i>"
                 + "<i class='layui-icon layui-icon-log' title='详情' onclick='ckeckDetails("+id+");'></i>"
-                + "<a href='/telcertify/toTelMembersPage'><i class='layui-icon layui-icon-username' title='成员管理'></i></a>";
+                + "<a href='/telcertify/toTelMembersPage/"+id+"'><i class='layui-icon layui-icon-username' title='成员管理'></i></a>";
         }
     }];
+
+    if(param.phoneNum != "" && param.phoneNum != null){
+        if(!isTel(param.phoneNum.trim())){
+            layer.msg("请输入正确的成员手机号码！",{icon: 0, time: 3000});
+            return;
+        }
+    }
+    if(param.tel != "" && param.tel != null){
+        if(!isTel(param.tel.trim())){
+            layer.msg("请输入正确的商户联系电话！",{icon: 0, time: 3000});
+            return;
+        }
+    }
+    // alert("id  "+jsonParam.id);
     page("#merchants", 15, param, "/telcertify/getTelCerOrderList", columns, columnDefs);
 }
 

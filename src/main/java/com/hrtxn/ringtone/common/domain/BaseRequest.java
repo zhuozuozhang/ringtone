@@ -63,6 +63,9 @@ public class BaseRequest {
     private Date telOrderTime;
     //成员电话号码
     private String phoneNum;
+    //从前端获得这样的时间段
+    //2019-08-14 - 2019-09-24
+    private String rangetime;
 
 
 

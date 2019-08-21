@@ -24,6 +24,12 @@
   </sql>
 
     <sql id="parameters">
+<!--        <if test="param.id != null and param.id != ''">-->
+<!--            AND tcc.id = #{param.id}-->
+<!--        </if>-->
+        <if test="param.id != null and param.id != ''">
+            AND tcc.parent_order_id = #{param.id}
+        </if>
         <if test="param != null and param.phoneNum != null and param.phoneNum != ''">
             AND tcc.tel_child_order_phone = ${param.phoneNum}
         </if>
@@ -58,15 +64,6 @@
     <select id="getTelCerChildById" parameterType="int" resultMap="BaseResultMap">
     SELECT * FROM tb_telcertification_child_order WHERE id = #{id}
   </select>
-
-    <select id="getTelCerChildByPhoneNum" parameterType="java.lang.String" resultMap="BaseResultMap">
-        SELECT
-        <include refid="Base_Column_List"/>
-        FROM
-        tb_telcertification_child_order
-        WHERE
-        tel_child_order_phone = #{telChildOrderPhone,jdbcType=VARCHAR}
-    </select>
 
     <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
         select

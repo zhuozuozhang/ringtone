@@ -25,6 +25,4 @@ public interface CertificationChildOrderMapper {
     int getMemberCountByParentId(int i);
 
     CertificationChildOrder getTelCerChildById(Integer id);
-
-    List<CertificationChildOrder> getTelCerChildByPhoneNum(String phoneNum);
 }
