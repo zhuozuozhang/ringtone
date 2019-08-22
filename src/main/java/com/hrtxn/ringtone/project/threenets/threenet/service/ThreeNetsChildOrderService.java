@@ -100,7 +100,7 @@ public class ThreeNetsChildOrderService {
             try {
                 //保存成员
                 List<ThreenetsChildOrder> childOrders = threenetsChildOrderMapper.selectThreeNetsTaskList(new Page(), param);
-                childOrders = utils.addPhoneByDx(childOrders, attached.getMcardId());
+                childOrders = utils.addPhoneByDx(childOrders, attached.getMcardId(),attached.getMcardDistributorId());
                 threeNetsOrderAttachedService.update(attached);
                 //保存铃音
                 List<ThreenetsRing> rings = threenetsRingMapper.selectByOrderId(order.getId());
@@ -382,7 +382,7 @@ public class ThreeNetsChildOrderService {
         }
         //特殊处理，需要先进入对应商户，然后进行成员添加
         if (attached.getMcardStatus() == 1) {
-            list = apiUtils.addPhoneByDx(list, attached.getMcardId());
+            list = apiUtils.addPhoneByDx(list, attached.getMcardId(),attached.getMcardDistributorId());
         }
         for (int i = 0; i < list.size(); i++) {
             ThreenetsChildOrder childOrder = list.get(i);

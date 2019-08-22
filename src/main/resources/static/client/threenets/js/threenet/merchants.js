@@ -80,7 +80,7 @@ function DelMerchants(id) {
     }, function () {
         AjaxDelete("/threenets/deleteThreeNetsOrder", {"id": id}, function (result) {
             layer.closeAll('dialog');//关闭弹层
-            layer.msg(result.msg + "!", {icon: result.code == 500 ? 1 : 2, time: 1000});
+            layer.msg(result.msg + "!", {icon: result.code == 500 ? 2 : 1, time: 1000});
             $('#set').DataTable().ajax.reload(null,false);
         })
     }, function () {});
