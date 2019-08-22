@@ -110,25 +110,26 @@ public class TelCertificationChildController {
      * 进入费用支出记录页面
      * @return
      */
-    @GetMapping("/toTelCostPage")
-    public String toTelCostPage(){
+    @GetMapping("/toTelCostPage/{phoneNum}")
+    public String toTelCostPage(@PathVariable String phoneNum,ModelMap map){
+        map.put("phoneNum",phoneNum);
         return "telcertification/cost";
     }
 
+    /**
+     * 显示费用支出列表
+     * @return
+     */
     @PostMapping("/getTelCerCostLogList")
     @ResponseBody
-    public AjaxResult getTelCerCostLogList(){
-        List<CertificationConsumeLog> list = null;
+    public AjaxResult getTheTelCerCostLogList(Page page,BaseRequest request){
         try{
-            int totalCount = telCertificationChildService.getConsumeLogCount();
-            list = telCertificationChildService.findAllConsumeLog();
-            return AjaxResult.success(list,"查询成功",totalCount);
+            int theCostLogCount = telCertificationChildService.getTheConsumeLogCount();
+            List<CertificationConsumeLog> list = telCertificationChildService.getTheTelCerCostLogList(page,request);
+            return AjaxResult.success(list,"查询成功",theCostLogCount);
         }catch (Exception e){
             log.error("获取号码认证子订单消费记录列表数据 方法：getTelCerCostLogList 错误信息",e);
         }
-        return null;
+        return AjaxResult.error("获取数据失败");
     }
-
-
-
 }

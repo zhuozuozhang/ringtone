@@ -1,6 +1,6 @@
 function showTelCerCostTable() {
     var param = {
-        "telConsumeLogId": $("#telConsumeLogId").val()
+        "phoneNum": $("#phoneNum").val()
     }
     var columns = [
         {"data": null},
@@ -8,7 +8,7 @@ function showTelCerCostTable() {
         {"data": "telConsumeLogType"},
         {"data": "telConsumeLogStatus"},
         {"data": "telconsumeLogPrice"},
-        {"data": "telConsumeLogTime"},
+        {"data": "telConsumeLogCtime"},
         {"data": "telConsumeLogOpenTime"}
     ];
     var columnDefs = [{
@@ -24,7 +24,6 @@ function showTelCerCostTable() {
                 return "<span>未知</span>";
             }
         }
-
     },{
         targets:[3],
         render: function(data, type, row, meta){

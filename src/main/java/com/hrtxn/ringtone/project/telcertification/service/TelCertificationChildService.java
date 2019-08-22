@@ -45,36 +45,41 @@ public class TelCertificationChildService {
         page.setPage((page.getPage() - 1) * page.getPagesize());
         List<CertificationChildOrder> allChildOrderList = certificationChildOrderMapper.findAllChildOrder(page,request);
         for (CertificationChildOrder cc : allChildOrderList) {
-            if(cc.getBusinessFeedback() == null || cc.getBusinessFeedback() == ""){
-                cc.setBusinessFeedback("无");
-            }
+            formatTelCerChildFromDatabase(cc);
         }
+        //通过id查找对应的成员信息
         List<CertificationChildOrder> theChildList = new ArrayList<CertificationChildOrder>();
         if(request.getId() != null){
             for (CertificationChildOrder cc : allChildOrderList) {
+                formatTelCerChildFromDatabase(cc);
                 if(cc.getParentOrderId() == request.getId()){
                     theChildList.add(cc);
                 }
             }
-            return theChildList;
+            return theChildList; //没有对应id的成员信息
         }
-        if(allChildOrderList.size() > 0 && allChildOrderList != null){
-            return allChildOrderList;
+        return theChildList;
+    }
+
+    public int getTheConsumeLogCount() {
+        return certificationConsumeLogMapper.getTheConsumeLogCount();
+    }
+
+    /**
+     * 显示费用支出列表
+     * @param page
+     * @param request
+     * @return
+     */
+    public List<CertificationConsumeLog> getTheTelCerCostLogList(Page page,BaseRequest request) {
+        page.setPage((page.getPage() - 1) * page.getPagesize());
+        List<CertificationConsumeLog> theCostLogList = new ArrayList<CertificationConsumeLog>();
+        if(request.getPhoneNum() != null && request.getPhoneNum() != ""){
+            theCostLogList = certificationConsumeLogMapper.getTheTelCerCostLogList(page,request);
+            return theCostLogList;
         }
-        return allChildOrderList;
+        return theCostLogList;
     }
-
-    public int getConsumeLogCount() {
-        return certificationConsumeLogMapper.getConsumeLogCount();
-    }
-
-    public List<CertificationConsumeLog> findAllConsumeLog() {
-        return certificationConsumeLogMapper.findAllConsumeLog();
-    }
-
-//    public int getFallDueCount() {
-//        return certificationChildOrderMapper.getFallDueCount();
-//    }
 
     /**
      * 获取即将到期的号码
@@ -97,22 +102,9 @@ public class TelCertificationChildService {
                     c.setDue(2);
                 }
 
-                //号码认证子订单状态（1.开通中/2.开通成功/3.开通失败/4.续费中/5.续费成功/6.续费失败）
-                if(c.getTelChildOrderStatus() == 1){
-                    c.setStatusName("开通中");
-                }else if(c.getTelChildOrderStatus() == 2){
-                    c.setStatusName("开通成功");
-                }else if(c.getTelChildOrderStatus() == 3){
-                    c.setStatusName("开通失败");
-                } else if(c.getTelChildOrderStatus() == 4){
-                    c.setStatusName("续费中");
-                }else if(c.getTelChildOrderStatus() == 5){
-                    c.setStatusName("续费成功");
-                }else if(c.getTelChildOrderStatus() == 6){
-                    c.setStatusName("续费失败");
-                }else{
-                    c.setStatusName("未知");
-                }
+                formatTelCerChildFromDatabase(c);
+
+
             }
             return fallDueList;
         }
@@ -121,6 +113,12 @@ public class TelCertificationChildService {
     }
 
 
+    /**
+     * 获取到期的号码
+     * @param page
+     * @param request
+     * @return
+     */
     public List<CertificationChildOrder> getDueList(Page page, BaseRequest request) {
         page.setPage((page.getPage() - 1) * page.getPagesize());
         List<CertificationChildOrder> allChildOrderList = certificationChildOrderMapper.findAllChildOrder(page,request);
@@ -136,53 +134,53 @@ public class TelCertificationChildService {
                     c.setDue(1);
                 }
 
-                //号码认证子订单状态（1.开通中/2.开通成功/3.开通失败/4.续费中/5.续费成功/6.续费失败）
-                if(c.getTelChildOrderStatus() == 1){
-                    c.setStatusName("开通中");
-                }else if(c.getTelChildOrderStatus() == 2){
-                    c.setStatusName("开通成功");
-                }else if(c.getTelChildOrderStatus() == 3){
-                    c.setStatusName("开通失败");
-                } else if(c.getTelChildOrderStatus() == 4){
-                    c.setStatusName("续费中");
-                }else if(c.getTelChildOrderStatus() == 5){
-                    c.setStatusName("续费成功");
-                }else if(c.getTelChildOrderStatus() == 6){
-                    c.setStatusName("续费失败");
-                }else{
-                    c.setStatusName("未知");
-                }
+                formatTelCerChildFromDatabase(c);
             }
             return dueList;
         }
         return null;
     }
 
+
     public CertificationChildOrder getTelCerChildById(Integer id, ModelMap map) {
         if(StringUtils.isNotNull(id)){
             CertificationChildOrder c = certificationChildOrderMapper.getTelCerChildById(id);
 
-            //号码认证子订单状态（1.开通中/2.开通成功/3.开通失败/4.续费中/5.续费成功/6.续费失败）
-            if(c.getTelChildOrderStatus() == 1){
-                c.setStatusName("开通中");
-            }else if(c.getTelChildOrderStatus() == 2){
-                c.setStatusName("开通成功");
-            }else if(c.getTelChildOrderStatus() == 3){
-                c.setStatusName("开通失败");
-            } else if(c.getTelChildOrderStatus() == 4){
-                c.setStatusName("续费中");
-            }else if(c.getTelChildOrderStatus() == 5){
-                c.setStatusName("续费成功");
-            }else if(c.getTelChildOrderStatus() == 6){
-                c.setStatusName("续费失败");
-            }else{
-                c.setStatusName("未知");
-            }
+            formatTelCerChildFromDatabase(c);
 
             map.put("telCerChild",c);
             return c;
         }
         return null;
+    }
+
+
+    /**
+     * 格式化tb_telcertification_child_order 数据库中的数据
+     * @param c
+     */
+    private void formatTelCerChildFromDatabase(CertificationChildOrder c) {
+        //号码认证子订单状态（1.开通中/2.开通成功/3.开通失败/4.续费中/5.续费成功/6.续费失败）
+        if(c.getTelChildOrderStatus() == 1){
+            c.setStatusName("开通中");
+        }else if(c.getTelChildOrderStatus() == 2){
+            c.setStatusName("开通成功");
+        }else if(c.getTelChildOrderStatus() == 3){
+            c.setStatusName("开通失败");
+        } else if(c.getTelChildOrderStatus() == 4){
+            c.setStatusName("续费中");
+        }else if(c.getTelChildOrderStatus() == 5){
+            c.setStatusName("续费成功");
+        }else if(c.getTelChildOrderStatus() == 6){
+            c.setStatusName("续费失败");
+        }else{
+            c.setStatusName("未知");
+        }
+
+        if(c.getBusinessFeedback() == null || c.getBusinessFeedback() == ""){
+            c.setBusinessFeedback("无");
+        }
+
     }
 
 }

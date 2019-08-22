@@ -47,6 +47,12 @@
     </if>
   </sql>
 
+  <sql id="page">
+    <if test="page.page != null and page.pagesize != null and page.pagesize !=''">
+      LIMIT #{page.page},#{page.pagesize}
+    </if>
+  </sql>
+
   <select id="findAllTelCertification" resultMap="BaseResultMap">
     SELECT
         <include refid="Base_Column_List"/>
@@ -55,9 +61,7 @@
     WHERE 1 = 1
     <include refid="parameters"></include>
     ORDER BY tel_order_time DESC
-    <if test="page.page != null and page.pagesize != null and page.pagesize !=''">
-      LIMIT #{page.page},#{page.pagesize}
-    </if>
+    <include refid="page"/>
   </select>
 <!--  查询号码认证订单列表总数-->
   <select id="getCount" resultType="int">

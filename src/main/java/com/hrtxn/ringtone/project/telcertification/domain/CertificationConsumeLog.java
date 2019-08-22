@@ -8,7 +8,7 @@ import java.util.Date;
 @Data
 public class CertificationConsumeLog implements Serializable {
     //号码认证消费记录ID
-    private Integer telConsumeLogId;
+    private Integer id;
     //用户名
     private String userName;
     //用户号码
@@ -20,7 +20,7 @@ public class CertificationConsumeLog implements Serializable {
     //号码认证消费记录资费
     private Float telconsumeLogPrice;
     //提交时间
-    private Date telConsumeLogTime;
+    private Date telConsumeLogCtime;
     //开通时间
     private Date telConsumeLogOpenTime;
     //到期时间

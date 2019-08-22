@@ -17,7 +17,7 @@ function showTelCerMemberTable() {
         targets:[4],
         render: function(data, type, row, meta){
             var status = row.telChildOrderStatus;
-            //号码认证订单状态（1.开通中/2.开通成功/3.开通失败/4.续费中/5.续费成功/6.续费失败）
+            //号码认证子订单状态（1.开通中/2.开通成功/3.开通失败/4.续费中/5.续费成功/6.续费失败）
             if(status == 1){
                 return "<span>开通中</span>";
             }else if(status == 2){
@@ -34,12 +34,13 @@ function showTelCerMemberTable() {
                 return "<span>未知</span>";
             }
         }
-    },{
+    }, {
         targets:[9],
         render: function (data, type, row, meta) {
             var id = row.id;
+            var phoneNum = row.telChildOrderPhone;
             return "<a href='javascript:;'><i class='layui-icon layui-icon-rmb' title='续费' onclick='Renewal();'></i></a>"
-                + "<a href='/telcertify/toTelCostPage'><i class='layui-icon layui-icon-form' title='费用支出记录'></i></a>"
+                + "<a href='/telcertify/toTelCostPage/"+phoneNum+"'><i class='layui-icon layui-icon-form' title='费用支出记录'></i></a>"
         }
     }];
     var url = "/telcertify/getTelCerMembersList";
