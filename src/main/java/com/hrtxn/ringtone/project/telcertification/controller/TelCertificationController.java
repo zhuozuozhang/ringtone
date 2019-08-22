@@ -13,11 +13,9 @@ import com.hrtxn.ringtone.project.telcertification.domain.CertificationOrder;
 import com.hrtxn.ringtone.project.telcertification.service.TelCertificationChildService;
 import com.hrtxn.ringtone.project.telcertification.service.TelCertificationService;
 import lombok.extern.slf4j.Slf4j;
-import org.aspectj.weaver.loadtime.Aj;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -154,24 +152,5 @@ public class TelCertificationController {
            log.error("保存商户（号码认证订单） 方法：insertTelCertifyOrder 错误信息", e);
            return AjaxResult.error("保存失败");
         }
-    }
-
-
-
-
-    /**
-     * 获取手机认证列表
-     * @param map
-     * @return
-     */
-    @RequiresRoles("admin")
-    @GetMapping("/admin/telCertificationList")
-    public String getTelCertificationList(ModelMap map){
-        try {
-            map.put("telCertifications",null);
-        } catch (Exception e) {
-            log.error("获取手机认证列表,方法：getTelCertificationList,错误信息",e);
-        }
-        return "admin/telcertification/telcertification_list";
     }
 }
