@@ -24,11 +24,8 @@
   </sql>
 
     <sql id="parameters">
-<!--        <if test="param.id != null and param.id != ''">-->
-<!--            AND tcc.id = #{param.id}-->
-<!--        </if>-->
-        <if test="param.id != null and param.id != ''">
-            AND tcc.parent_order_id = #{param.id}
+        <if test="param != null and param.parentId != null and param.parentId != ''">
+            AND tcc.parent_order_id = #{param.parentId}
         </if>
         <if test="param != null and param.phoneNum != null and param.phoneNum != ''">
             AND tcc.tel_child_order_phone = ${param.phoneNum}
@@ -46,7 +43,7 @@
     </select>
 
     <!--  根据条件获取子订单-->
-    <select id="findAllChildOrder" resultMap="BaseResultMap">
+    <select id="findTheChildOrder" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>
         from tb_telcertification_child_order tcc

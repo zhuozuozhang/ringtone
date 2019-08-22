@@ -38,7 +38,7 @@ public class TelCertificationChildController {
      */
     @GetMapping("/toTelMembersPage/{id}")
     public String toTelMembersPage(@PathVariable String id,ModelMap map){
-        map.put("memberId",id);
+        map.put("parentId",id);
         return "telcertification/members";
     }
 
@@ -53,13 +53,13 @@ public class TelCertificationChildController {
     public AjaxResult getTelCerMembersList(Page page,BaseRequest request){
         List<CertificationChildOrder> list = new ArrayList<CertificationChildOrder>();
         try{
-            int totalCount = telCertificationChildService.getCount();
-            list = telCertificationChildService.findAllChildOrder(page,request);
-            return AjaxResult.success(list,"查询成功",totalCount);
+            list = telCertificationChildService.findTheChildOrder(page,request);
+            int theTelCerMemberCount = list.size();
+            return AjaxResult.success(list,"查询成功",theTelCerMemberCount);
         }catch (Exception e){
             log.error("获取号码认证子订单列表数据 方法：getTelCerMembersList 错误信息",e);
         }
-        return null;
+        return AjaxResult.error("获取失败");
     }
 
     /**
@@ -74,10 +74,9 @@ public class TelCertificationChildController {
     public AjaxResult getFallDueList(Page page, BaseRequest request){
         List<CertificationChildOrder> list = null;
         try{
-//            int totalCount = telCertificationChildService.getFallDueCount();
-            int totalCount = telCertificationChildService.getCount();
             list = telCertificationChildService.getFallDueList(page,request);
-            return AjaxResult.success(list,"查询成功",totalCount);
+            int fallDueCount = list.size();
+            return AjaxResult.success(list,"查询成功",fallDueCount);
         }catch (Exception e){
             log.error("获取即将到期号码 方法：getFallDueList 错误信息",e);
         }
@@ -96,10 +95,9 @@ public class TelCertificationChildController {
     public AjaxResult getDueList(Page page, BaseRequest request){
         List<CertificationChildOrder> list = null;
         try{
-//            int totalCount = telCertificationChildService.getFallDueCount();
-            int totalCount = telCertificationChildService.getCount();
             list = telCertificationChildService.getDueList(page,request);
-            return AjaxResult.success(list,"查询成功",totalCount);
+            int dueCount = list.size();
+            return AjaxResult.success(list,"查询成功",dueCount);
         }catch (Exception e){
             log.error("获取到期号码 方法：getDueList 错误信息",e);
         }
@@ -124,8 +122,8 @@ public class TelCertificationChildController {
     @ResponseBody
     public AjaxResult getTheTelCerCostLogList(Page page,BaseRequest request){
         try{
-            int theCostLogCount = telCertificationChildService.getTheConsumeLogCount();
             List<CertificationConsumeLog> list = telCertificationChildService.getTheTelCerCostLogList(page,request);
+            int theCostLogCount = list.size();
             return AjaxResult.success(list,"查询成功",theCostLogCount);
         }catch (Exception e){
             log.error("获取号码认证子订单消费记录列表数据 方法：getTelCerCostLogList 错误信息",e);

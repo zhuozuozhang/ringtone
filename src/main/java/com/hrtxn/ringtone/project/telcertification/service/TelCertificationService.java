@@ -139,7 +139,7 @@ public class TelCertificationService {
                     return theTelCer;//手机号不正确
                 }
                 //根据成员电话号查找
-                List<CertificationChildOrder> ccList = certificationChildOrderMapper.findAllChildOrder(page, request);
+                List<CertificationChildOrder> ccList = certificationChildOrderMapper.findTheChildOrder(page, request);
                 for (CertificationChildOrder cc : ccList) {
                     request.setId(cc.getParentOrderId());
                     //根据id查找

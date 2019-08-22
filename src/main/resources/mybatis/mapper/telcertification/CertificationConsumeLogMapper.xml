@@ -33,13 +33,6 @@
     </if>
   </sql>
 
-  <select id="getTheConsumeLogCount" resultType="int">
-    SELECT COUNT(*)
-    FROM tb_telcertification_consume_log tccl
-    WHERE 1=1
-    <include refid="parameters"/>
-  </select>
-
 <!--  根据成员号码获得消费记录-->
   <select id="getTheTelCerCostLogList" resultMap="BaseResultMap">
     SELECT

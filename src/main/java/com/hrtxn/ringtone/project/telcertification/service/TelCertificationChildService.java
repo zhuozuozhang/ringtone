@@ -41,28 +41,24 @@ public class TelCertificationChildService {
      * @param request
      * @return
      */
-    public List<CertificationChildOrder> findAllChildOrder(Page page,BaseRequest request) {
+    public List<CertificationChildOrder> findTheChildOrder(Page page,BaseRequest request) {
         page.setPage((page.getPage() - 1) * page.getPagesize());
-        List<CertificationChildOrder> allChildOrderList = certificationChildOrderMapper.findAllChildOrder(page,request);
+        List<CertificationChildOrder> allChildOrderList = certificationChildOrderMapper.findTheChildOrder(page,request);
         for (CertificationChildOrder cc : allChildOrderList) {
             formatTelCerChildFromDatabase(cc);
         }
         //通过id查找对应的成员信息
         List<CertificationChildOrder> theChildList = new ArrayList<CertificationChildOrder>();
-        if(request.getId() != null){
+        if(request.getParentId() != null){
             for (CertificationChildOrder cc : allChildOrderList) {
                 formatTelCerChildFromDatabase(cc);
-                if(cc.getParentOrderId() == request.getId()){
+                if(cc.getParentOrderId() == request.getParentId()){
                     theChildList.add(cc);
                 }
             }
             return theChildList; //没有对应id的成员信息
         }
         return theChildList;
-    }
-
-    public int getTheConsumeLogCount() {
-        return certificationConsumeLogMapper.getTheConsumeLogCount();
     }
 
     /**
@@ -89,7 +85,7 @@ public class TelCertificationChildService {
      */
     public List<CertificationChildOrder> getFallDueList(Page page, BaseRequest request) {
         page.setPage((page.getPage() - 1) * page.getPagesize());
-        List<CertificationChildOrder> allChildOrderList = certificationChildOrderMapper.findAllChildOrder(page,request);
+        List<CertificationChildOrder> allChildOrderList = certificationChildOrderMapper.findTheChildOrder(page,request);
         List<CertificationChildOrder> fallDueList = new ArrayList<CertificationChildOrder>();
         if(allChildOrderList.size() > 0){
             for(CertificationChildOrder c : allChildOrderList){
@@ -101,15 +97,11 @@ public class TelCertificationChildService {
                     fallDueList.add(c);
                     c.setDue(2);
                 }
-
                 formatTelCerChildFromDatabase(c);
-
-
             }
             return fallDueList;
         }
-
-        return null;
+        return fallDueList;
     }
 
 
@@ -121,7 +113,7 @@ public class TelCertificationChildService {
      */
     public List<CertificationChildOrder> getDueList(Page page, BaseRequest request) {
         page.setPage((page.getPage() - 1) * page.getPagesize());
-        List<CertificationChildOrder> allChildOrderList = certificationChildOrderMapper.findAllChildOrder(page,request);
+        List<CertificationChildOrder> allChildOrderList = certificationChildOrderMapper.findTheChildOrder(page,request);
         List<CertificationChildOrder> dueList = new ArrayList<CertificationChildOrder>();
         if(allChildOrderList.size() > 0){
             for(CertificationChildOrder c : allChildOrderList){

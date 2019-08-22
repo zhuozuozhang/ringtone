@@ -10,7 +10,6 @@ import java.util.List;
 
 @Repository
 public interface CertificationConsumeLogMapper {
-    int getTheConsumeLogCount();
 
     List<CertificationConsumeLog> getTheTelCerCostLogList(@Param("page") Page page, @Param("param") BaseRequest request);
 }

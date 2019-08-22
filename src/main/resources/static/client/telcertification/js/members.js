@@ -1,6 +1,6 @@
 function showTelCerMemberTable() {
     var param = {
-        "id": $("#id").val(),
+        "parentId": $("#id").val(),
     }
     var columns = [
         {"data": null},
@@ -44,7 +44,7 @@ function showTelCerMemberTable() {
         }
     }];
     var url = "/telcertify/getTelCerMembersList";
-    page("#members", 15, param, url, columns, columnDefs);
+    page("#members", 10, param, url, columns, columnDefs);
 }
 
 

@@ -19,7 +19,7 @@ public interface CertificationChildOrderMapper {
 
     int getCount();
 
-    List<CertificationChildOrder> findAllChildOrder(@Param("page") Page page, @Param("param") BaseRequest request);
+    List<CertificationChildOrder> findTheChildOrder(@Param("page") Page page, @Param("param") BaseRequest request);
 
 
     int getMemberCountByParentId(int i);
