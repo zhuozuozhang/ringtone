@@ -3,7 +3,6 @@
 <mapper namespace="com.hrtxn.ringtone.project.threenets.kedas.kedasites.mapper.KedaChildOrderMapper">
     <resultMap id="BaseResultMap" type="com.hrtxn.ringtone.project.threenets.kedas.kedasites.domain.KedaChildOrder">
         <id column="id" property="id" jdbcType="INTEGER"/>
-        <result column="company_name" property="companyName" jdbcType="VARCHAR"/>
         <result column="link_man" property="linkMan" jdbcType="VARCHAR"/>
         <result column="link_tel" property="linkTel" jdbcType="VARCHAR"/>
         <result column="operate" property="operate" jdbcType="INTEGER"/>
@@ -12,6 +11,7 @@
         <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
         <result column="status" property="status" jdbcType="VARCHAR"/>
         <result column="operate_id" property="operateId" jdbcType="VARCHAR"/>
+        <result column="employee_id" property="employeeId" jdbcType="BIGINT"/>
         <result column="ring_id" property="ringId" jdbcType="INTEGER"/>
         <result column="ring_name" property="ringName" jdbcType="VARCHAR"/>
         <result column="is_monthly" property="isMonthly" jdbcType="INTEGER"/>
@@ -20,12 +20,10 @@
         <result column="remark" property="remark" jdbcType="LONGVARCHAR"/>
         <result column="order_id" property="orderId" jdbcType="INTEGER"/>
     </resultMap>
-
     <sql id="Base_Column_List">
-        id, company_name, link_man, link_tel, operate, province, city, create_time, status,
-        operate_id, ring_id, ring_name, is_monthly, is_ringtone_user, user_id,remark,order_id
+        id, link_man, link_tel, operate, province, city, create_time, status,
+        operate_id, employee_id, ring_id, ring_name, is_monthly, is_ringtone_user, user_id,remark,order_id
     </sql>
-
     <!-- 获取近5日信息-->
     <select id="getFiveData" resultType="com.hrtxn.ringtone.project.threenets.threenet.domain.PlotBarPhone">
         SELECT
@@ -35,12 +33,12 @@
             tb_keda_child_order
         WHERE
             user_id = #{id}
-            AND is_monthly = 2
+            AND is_monthly = 1
         GROUP BY DATE_FORMAT(create_time, '%Y-%m-%d') DESC
         LIMIT 0,5;
     </select>
     <!-- 获取总数 -->
-    <select id="getCount" resultType="java.lang.Integer" parameterType="KedaChildOrder">
+    <select id="getCount" resultType="java.lang.Integer" parameterType="com.hrtxn.ringtone.common.domain.BaseRequest">
         SELECT COUNT(*) FROM tb_keda_child_order
         WHERE 1=1
         <include refid="parameters"/>
@@ -67,7 +65,7 @@
         FROM
         tb_keda_child_order
         WHERE 1= 1
-        AND is_monthly = 2
+        AND is_monthly = 1
         <if test="param != null and param.userId != null">
             AND user_id = #{param.userId}
         </if>
@@ -100,7 +98,7 @@
         FROM
         tb_keda_child_order
         WHERE 1= 1
-        AND is_monthly = 3
+        AND is_monthly IN (2,3,5,6)
         <if test="param != null and param.userId != null">
             AND user_id = #{param.userId}
         </if>
@@ -128,7 +126,7 @@
         FROM
         tb_keda_child_order
         WHERE 1=1
-        AND is_monthly = 2
+        AND is_monthly = 1
         <if test="param != null and param.userId != null">
             AND user_id = #{param.userId}
         </if>
@@ -153,9 +151,6 @@
             useGeneratedKeys="true" keyProperty="id">
         insert into tb_keda_child_order
         <trim prefix="(" suffix=")" suffixOverrides=",">
-            <if test="companyName != null">
-                company_name,
-            </if>
             <if test="linkMan != null">
                 link_man,
             </if>
@@ -203,9 +198,6 @@
             </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
-            <if test="companyName != null">
-                #{companyName,jdbcType=VARCHAR},
-            </if>
             <if test="linkMan != null">
                 #{linkMan,jdbcType=VARCHAR},
             </if>
@@ -269,9 +261,6 @@
     <update id="updatKedaChildOrder" parameterType="com.hrtxn.ringtone.project.threenets.kedas.kedasites.domain.KedaChildOrder">
         update tb_keda_child_order
         <set>
-            <if test="companyName != null">
-                company_name = #{companyName,jdbcType=VARCHAR},
-            </if>
             <if test="linkMan != null">
                 link_man = #{linkMan,jdbcType=VARCHAR},
             </if>
@@ -295,6 +284,9 @@
             </if>
             <if test="operateId != null">
                 operate_id = #{operateId,jdbcType=VARCHAR},
+            </if>
+            <if test="employeeId != null">
+                employee_id = #{employeeId,jdbcType=BIGINT},
             </if>
             <if test="ringId != null">
                 ring_id = #{ringId,jdbcType=INTEGER},
@@ -345,9 +337,6 @@
         </if>
         <if test="param != null and param.tel != null and param.tel != ''">
             AND link_tel = #{param.tel}
-        </if>
-        <if test="param != null and param.companyName != null and param.companyName != ''">
-            AND company_name = #{param.companyName}
         </if>
         <if test="param != null and param.linkMan != null and param.linkMan != ''">
             AND link_man = #{param.linkMan}

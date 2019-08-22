@@ -150,7 +150,6 @@ public class KedaOrderService {
         // 添加子级订单
         kedaChildOrder.setProvince(kedaOrder.getProvince());
         kedaChildOrder.setCity(kedaOrder.getCity());
-        kedaChildOrder.setCompanyName(kedaOrder.getCompanyName());
         kedaChildOrder.setCreateTime(new Date());
         kedaChildOrder.setIsMonthly(0);
         kedaChildOrder.setIsRingtoneUser(1);
@@ -195,7 +194,7 @@ public class KedaOrderService {
         // 批量删除子级订单
         List<KedaChildOrder> keDaChildOrderBacklogList = kedaChildOrderMapper.getKeDaChildOrderBacklogList(null, baseRequest);
         if (keDaChildOrderBacklogList.size() > 0) {
-            int[] keDaChildOrderIds = new int[kedaRingList.size()];
+            int[] keDaChildOrderIds = new int[keDaChildOrderBacklogList.size()];
             for (int i = 0; i < keDaChildOrderBacklogList.size(); i++) {
                 keDaChildOrderIds[i] = keDaChildOrderBacklogList.get(i).getId();
             }

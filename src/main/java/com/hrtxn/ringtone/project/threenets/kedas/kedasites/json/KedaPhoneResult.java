@@ -3,6 +3,7 @@ package com.hrtxn.ringtone.project.threenets.kedas.kedasites.json;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.math.BigInteger;
 
 /**
  * Author:zcy
@@ -64,7 +65,8 @@ import java.io.Serializable;
 public class KedaPhoneResult implements Serializable {
 
     private String businessType;
-    private Integer businessEmpId;
+    // 员工ID
+    private BigInteger businessEmpId;
     private String businessEmpName;
     private String businessEmpPhone;
     // 用户状态 1.待员工确认/0.待发送确认/2.已确认
@@ -110,6 +112,4 @@ public class KedaPhoneResult implements Serializable {
     private Integer feeStatus;
     private Integer circleFlag;
     private Boolean expiration;
-
-
 }

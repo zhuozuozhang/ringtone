@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.math.BigInteger;
 import java.util.Date;
 
 /**
@@ -15,8 +16,6 @@ import java.util.Date;
 public class KedaChildOrder implements Serializable {
     // ID
     private Integer id;
-    // 企业名称
-    private String companyName;
     // 联系人
     private String linkMan;
     // 联系电话
@@ -34,6 +33,8 @@ public class KedaChildOrder implements Serializable {
     private String status;
     // 集团ID（运营商返回）
     private String operateId;
+    // 员工ID(运营商返回）
+    private BigInteger employeeId;
     // 铃音ID
     private Integer ringId;
     // 铃音名称

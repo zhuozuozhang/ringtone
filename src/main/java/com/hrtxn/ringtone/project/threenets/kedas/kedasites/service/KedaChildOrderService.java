@@ -2,6 +2,7 @@ package com.hrtxn.ringtone.project.threenets.kedas.kedasites.service;
 
 import com.hrtxn.ringtone.common.api.KedaApi;
 import com.hrtxn.ringtone.common.constant.AjaxResult;
+import com.hrtxn.ringtone.common.constant.Constant;
 import com.hrtxn.ringtone.common.domain.BaseRequest;
 import com.hrtxn.ringtone.common.domain.Page;
 import com.hrtxn.ringtone.common.utils.ShiroUtils;
@@ -12,8 +13,11 @@ import com.hrtxn.ringtone.project.system.json.JuhePhoneResult;
 import com.hrtxn.ringtone.project.system.user.domain.UserVo;
 import com.hrtxn.ringtone.project.system.user.mapper.UserMapper;
 import com.hrtxn.ringtone.project.threenets.kedas.kedasites.domain.KedaChildOrder;
+import com.hrtxn.ringtone.project.threenets.kedas.kedasites.domain.KedaRing;
 import com.hrtxn.ringtone.project.threenets.kedas.kedasites.mapper.KedaChildOrderMapper;
+import com.hrtxn.ringtone.project.threenets.kedas.kedasites.mapper.KedaRingMapper;
 import com.hrtxn.ringtone.project.threenets.threenet.domain.PlotBarPhone;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -33,12 +37,15 @@ import java.util.List;
  * Description:疑难杂单业务处理层
  */
 @Service
+@Slf4j
 public class KedaChildOrderService {
 
     @Autowired
     private KedaChildOrderMapper kedaChildOrderMapper;
     @Autowired
     private UserMapper userMapper;
+    @Autowired
+    private KedaRingMapper kedaRingMapper;
     @Autowired
     @Qualifier("createReactor")//同样指定并注入
             Reactor r;
@@ -183,20 +190,16 @@ public class KedaChildOrderService {
 
         // 查重
         BaseRequest b = new BaseRequest();
-        // 集团名称
-        b.setCompanyName(kedaChildOrder.getCompanyName());
-        List<KedaChildOrder> companyName = kedaChildOrderMapper.getKeDaChildOrderBacklogList(null, b);
-        if (companyName.size() > 0) return AjaxResult.error("集团名称重复！");
         // 联系人
         b.setCompanyName(null);
         b.setLinkMan(kedaChildOrder.getLinkMan());
         List<KedaChildOrder> linkMan = kedaChildOrderMapper.getKeDaChildOrderBacklogList(null, b);
-        if (linkMan.size() > 0) return AjaxResult.error("联系人重复！");
+        if (linkMan.size() > 0) return AjaxResult.error("员工姓名重复！");
         // 联系电话
         b.setLinkMan(null);
         b.setTel(kedaChildOrder.getLinkTel());
         List<KedaChildOrder> linkTel = kedaChildOrderMapper.getKeDaChildOrderBacklogList(null, b);
-        if (linkTel.size() > 0) return AjaxResult.error("联系电话重复！");
+        if (linkTel.size() > 0) return AjaxResult.error("员工号码重复！");
         // 根据电话号码获取省市
         JuhePhone<JuhePhoneResult> phone = JuhePhoneUtils.getPhone(kedaChildOrder.getLinkTel());
         if ("200".equals(phone.getResultcode())) {
@@ -211,10 +214,13 @@ public class KedaChildOrderService {
                 kedaChildOrder.setOperate(3);
             }
         }
+        kedaChildOrder.setCreateTime(new Date());
+        kedaChildOrder.setOperateId(Constant.OPERATEID);
+        kedaChildOrder.setUserId(ShiroUtils.getSysUser().getId());
         // 执行添加子订单操作
+        r.notify("insertKedaorder", Event.wrap(kedaChildOrder));
         int i = kedaChildOrderMapper.insertKedaChildOrder(kedaChildOrder);
         if (i > 0) {
-            r.notify("insertKedaorder", Event.wrap(kedaChildOrder));
             return AjaxResult.success(true, "创建子订单成功！");
         } else {
             return AjaxResult.error("创建子订单失败！");
@@ -333,5 +339,57 @@ public class KedaChildOrderService {
             return AjaxResult.success("删除成功！");
         }
         return AjaxResult.error("删除失败！");
+    }
+
+    /**
+     * 获取铃音设置已包月子订单列表
+     *
+     * @param orderId
+     * @return
+     */
+    public AjaxResult getKedaChildSettingList(Integer orderId) {
+        if (StringUtils.isNull(orderId) || orderId <= 0) return AjaxResult.error("参数格式不正确！");
+        // 根据orderId获取已包月子订单
+        BaseRequest b = new BaseRequest();
+        b.setOrderId(orderId);
+        b.setIsMonthly(1);
+        b.setUserId(ShiroUtils.getSysUser().getId());
+        List<KedaChildOrder> keDaChildOrderBacklogList = kedaChildOrderMapper.getKeDaChildOrderBacklogList(null, b);
+        int count = kedaChildOrderMapper.getCount(b);
+        return AjaxResult.success(keDaChildOrderBacklogList, "获取数据成功！", count);
+    }
+
+    /**
+     * 疑难杂单子订单设置铃音
+     *
+     * @param ringId
+     * @param linkTel
+     * @param employeeId
+     * @param childOrderId
+     * @return
+     */
+    public AjaxResult setKedaChidOrder(Integer ringId, String linkTel, String employeeId,Integer childOrderId) throws IOException {
+        if(StringUtils.isNull(ringId) || ringId <= 0) return AjaxResult.error("参数格式不正确！");
+        if(StringUtils.isNull(childOrderId) || childOrderId <= 0) return AjaxResult.error("参数格式不正确！");
+        if(StringUtils.isEmpty(linkTel)) return AjaxResult.error("参数格式不正确！");
+        if(StringUtils.isEmpty(employeeId)) return AjaxResult.error("参数格式不正确！");
+
+        // 根据铃音ID获取铃音信息
+        BaseRequest b = new BaseRequest();
+        b.setId(ringId);
+        List<KedaRing> kedaRingList = kedaRingMapper.getKedaRingList(null, b);
+        if (kedaRingList.size() <=0 || StringUtils.isEmpty(kedaRingList.get(0).getRingNum())) return AjaxResult.error("参数格式不正确！");
+        AjaxResult ajaxResult = kedaApi.setRing(kedaRingList.get(0).getRingNum(), employeeId, linkTel);
+        if ((int) ajaxResult.get("code") == 200) {
+            // 执行修改子订单信息
+            b.setId(childOrderId);
+            List<KedaChildOrder> keDaChildOrderList = kedaChildOrderMapper.getKeDaChildOrderBacklogList(null, b);
+            if (!employeeId.equals(keDaChildOrderList.get(0).getEmployeeId().toString())) return AjaxResult.error("子订单信息与员工编号不匹配！");
+            keDaChildOrderList.get(0).setRingName(kedaRingList.get(0).getRingName());
+            keDaChildOrderList.get(0).setRingId(kedaRingList.get(0).getId());
+            int i = kedaChildOrderMapper.updatKedaChildOrder(keDaChildOrderList.get(0));
+            log.info("疑难杂单子订单设置铃音修改结果：{}",i);
+        }
+        return ajaxResult;
     }
 }

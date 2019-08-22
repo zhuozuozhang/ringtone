@@ -12,7 +12,8 @@ function showTable() {
         {"data": "ringName"},
         {"data": "ringStatus"},
         {"data": "ringUrl"},
-        {"data": "createTime"}
+        {"data": "createTime"},
+        {"data": "remark"}
     ];
     var columnDefs = [{
         targets: [1],
@@ -40,19 +41,19 @@ function showTable() {
             return "<span onclick='openPlayer(\""+data+"\");'>试听</span>";
         }
     },{
-        targets: [5],
+        targets: [6],
         render: function (data, type, row, meta) {
             var id = row.id;
             var ringStatus = row.ringStatus;
             var setRing = "";
             if(ringStatus == 3 ){
-                setRing = "<a href='/threenets/clcy/toRingListSet/'><i class='layui-icon layui-icon-set' title='设置铃音'></i></a>";
+                setRing = "<a href='/threenets/clcy/toRingListSet/"+id+"/"+$("#orderId").val()+"/"+$("#name").html()+"'><i class='layui-icon layui-icon-set' title='设置铃音'></i></a>";
             }
             return "<i class='layui-icon' title='查看广告词' onclick='advertising(\"" + row.ringContent + "\");'><img src='/client/threenets/images/see.png'></i>"
                 + setRing + '<i class="layui-icon layui-icon-delete" title="删除" onclick="deleteRing(' + id + ')"></i>';
         }
     }];
-    page("#set", 1, params, "/threenets/clcy/getKedaRingList", columns, columnDefs);
+    page("#set", 10, params, "/threenets/clcy/getKedaRingList", columns, columnDefs);
 }
 
 //上传铃音
@@ -61,10 +62,29 @@ function AddUser() {
         type: 2,
         title: '上传铃音',
         area: ['650px', '550px'],
-        content: '/threenets/clcy/toAddring'
+        content: '/threenets/clcy/toAddring/'+$('#orderId').val(),
+        end: function () {
+            $('#set').DataTable().ajax.reload(null,false);//弹出层结束后，刷新主页面
+        }
     });
 }
-
+// 删除铃音
+function deleteRing(id) {
+    layer.confirm("你确定要删除该行记录吗?", {
+        btn: ["确定", "取消"] //按钮
+    }, function () {
+        AjaxDelete("/threenets/clcy/deleteRing/" + id, {}, function (res) {
+            if (res.code == 200) {
+                layer.msg(res.msg, {icon: 6, time: 3000});
+                $('#set').DataTable().ajax.reload(null, false);
+            } else {
+                layer.msg("删除失败！", {icon: 5, time: 3000});
+            }
+        });
+        layer.closeAll('dialog');//关闭弹层
+    }, function () {
+    });
+}
 //在线试听
 function openPlayer(ringUrl) {
     layer.open({
@@ -74,7 +94,6 @@ function openPlayer(ringUrl) {
         content: '<video id="ovideo" autoplay loop src="'+ringUrl+'" controls="controls " allowfullscreen="true" quality="high" width="800px" height="514px" align="middle" allowscriptaccess="always" flashvars="isAutoPlay=true" type="application/x-shockwave-flash"></video>'
     });
 }
-
 //查看广告词
 function advertising(ringContent) {
     layer.open({

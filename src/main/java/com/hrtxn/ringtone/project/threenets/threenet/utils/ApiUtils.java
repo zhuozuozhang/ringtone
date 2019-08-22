@@ -10,6 +10,7 @@ import com.hrtxn.ringtone.common.utils.ConfigUtil;
 import com.hrtxn.ringtone.common.utils.SpringUtils;
 import com.hrtxn.ringtone.common.utils.StringUtils;
 import com.hrtxn.ringtone.common.utils.json.JsonUtil;
+import com.hrtxn.ringtone.project.system.File.service.FileService;
 import com.hrtxn.ringtone.project.system.config.domain.SystemConfig;
 import com.hrtxn.ringtone.project.system.user.domain.User;
 import com.hrtxn.ringtone.project.system.user.mapper.UserMapper;
@@ -1246,6 +1247,9 @@ public class ApiUtils {
                 // 执行添加到本地数据库
                 int count = SpringUtils.getBean(UserMapper.class).insertUser(user);
                 if (count > 0) {
+                    // 修改文件状态
+                    SpringUtils.getBean(FileService.class).updateStatus(user.getUserCardFan());
+                    SpringUtils.getBean(FileService.class).updateStatus(user.getUserCardZhen());
                     return AjaxResult.success(true, "创建成功！");
                 } else {
                     msg = "执行添加本地数据库出错！";
