@@ -35,7 +35,8 @@ public class McardApi {
     private static String phone_address_url = "https://mcard.imusic.cn/user/getPhoneAddress";
     private static String to_user_list = "https://mcard.imusic.cn/user/userList";//跳转到商户  get   ?userId=1670298
     private static String add_apersonnel_url = "https://mcard.imusic.cn/user/addApersonnel";//新增成员
-
+    private static String to_ring_list = "https://mcard.imusic.cn/ring/loadRingList";
+    private static String to_ring_alert_list = "https://mcard.imusic.cn/ring/loadRingAlertList";
     private static String upload_file_url = "https://mcard.imusic.cn/file/uploadFile";//文件上传
     private static String saveRing_url = "http://mcard.imusic.cn/file/saveRing";//铃音上传
     private static String settingRing_url = "http://mcard.imusic.cn/ring/setUserRing";//设置铃音
@@ -122,6 +123,34 @@ public class McardApi {
     public String toUserList(String userId,String parent) {
         String url = to_user_list + "?userId=" + userId;
         return sendGet(url,parent);
+    }
+
+    /**
+     * 跳转到铃音页面
+     *
+     * @param parent
+     * @return
+     */
+    public String toRingList(String parent) {
+        Map<String, String> map = new HashMap<>();
+        map.put("pageSize", "100");
+        map.put("pageNo", "1");
+        return sendPost(map,to_ring_list,parent);
+    }
+
+    /**
+     * 铃音弹出框列表
+     *
+     * @param apersonnelId
+     * @param parent
+     * @return
+     */
+    public String toRingAlertList(String apersonnelId,String parent) {
+        Map<String, String> map = new HashMap<>();
+        map.put("pageSize", "100");
+        map.put("pageNo", "1");
+        map.put("apersonnelId",apersonnelId);
+        return sendPost(map,to_ring_alert_list,parent);
     }
 
     /**

@@ -117,7 +117,7 @@ public class ApiUtils {
                 }
             } else if (operate == 2) {// 电信
                 ThreeNetsOrderAttached attached = SpringUtils.getBean(ThreeNetsOrderAttachedMapper.class).selectByParentOrderId(threenetsChildOrder.getParentOrderId());
-                mcardApi.toUserList(threenetsChildOrder.getOperateId(),attached.getMcardDistributorId());
+                mcardApi.toUserList(threenetsChildOrder.getOperateId(), attached.getMcardDistributorId());
                 String result = mcardApi.getUserInfo(attached.getMcardDistributorId());
                 Document doc = Jsoup.parse(result);
                 Elements contents = doc.getElementsByTag("tbody");
@@ -295,7 +295,7 @@ public class ApiUtils {
                 }
             } else if (operate == 2) {// 电信
                 ThreeNetsOrderAttached attached = SpringUtils.getBean(ThreeNetsOrderAttachedMapper.class).selectByParentOrderId(threenetsChildOrder.getParentOrderId());
-                mcardApi.toUserList(threenetsChildOrder.getOperateId(),attached.getMcardDistributorId());
+                mcardApi.toUserList(threenetsChildOrder.getOperateId(), attached.getMcardDistributorId());
                 String result = mcardApi.getUserInfo(attached.getMcardDistributorId());
                 Document doc = Jsoup.parse(result);
                 Elements contents = doc.getElementsByTag("tbody");
@@ -407,7 +407,7 @@ public class ApiUtils {
     public Boolean normalBusinessInfo(ThreenetsOrder order) {
         boolean flag = false;
         ThreeNetsOrderAttached attached = SpringUtils.getBean(ThreeNetsOrderAttachedMapper.class).selectByParentOrderId(order.getId());
-        String result = mcardApi.refreshBusinessInfo(order,attached.getMcardDistributorId());
+        String result = mcardApi.refreshBusinessInfo(order, attached.getMcardDistributorId());
         if (StringUtils.isNotEmpty(result)) {
             Document doc = Jsoup.parse(result);
             Elements contents = doc.getElementsByTag("tbody");
@@ -579,7 +579,7 @@ public class ApiUtils {
                 }
             } else if (operator == 2) { // 电信
                 ThreeNetsOrderAttached attached = SpringUtils.getBean(ThreeNetsOrderAttachedMapper.class).selectByParentOrderId(threenetsRing.getOrderId());
-                mcardApi.toUserList(threenetsRing.getOperateId(),attached.getMcardDistributorId());
+                mcardApi.toUserList(threenetsRing.getOperateId(), attached.getMcardDistributorId());
                 String result = mcardApi.getRingInfo(attached.getMcardDistributorId());
                 Document doc = Jsoup.parse(result);
                 Elements contents = doc.getElementsByTag("tbody");
@@ -790,7 +790,7 @@ public class ApiUtils {
                 }
             } else if (operator == 2) { // 电信
                 ThreeNetsOrderAttached attached = SpringUtils.getBean(ThreeNetsOrderAttachedMapper.class).selectByParentOrderId(threenetsRing.getOrderId());
-                mcardApi.toUserList(threenetsRing.getOperateId(),attached.getMcardDistributorId());
+                mcardApi.toUserList(threenetsRing.getOperateId(), attached.getMcardDistributorId());
                 String result = mcardApi.getRingInfo(attached.getMcardDistributorId());
                 if (StringUtils.isEmpty(result)) {
                     return;
@@ -938,6 +938,7 @@ public class ApiUtils {
      * @throws NoLoginException
      */
     public AjaxResult setRing(String phones, ThreenetsRing threenetsRing, Integer operate, Integer orderId) throws IOException, NoLoginException {
+        operate = 2;
         String sucMsg = "";
         String errMsg = "";
         int failure = 0;
@@ -970,14 +971,53 @@ public class ApiUtils {
                 errMsg = rsr.getMsg();
             }
         } else if (operate == 2) { // 电信
-            ThreeNetsOrderAttached attached = SpringUtils.getBean(ThreeNetsOrderAttachedMapper.class).selectByParentOrderId(orderId);
-            //查询铃音列表获取铃音id
-            String ringId = "";
-
-            //查询人间列表获取人员id
             String apersonnelId = "";
-
-            mcardApi.settingRing(ringId,apersonnelId,attached.getMcardDistributorId());
+            String ringId = "";
+            ThreeNetsOrderAttached attached = SpringUtils.getBean(ThreeNetsOrderAttachedMapper.class).selectByParentOrderId(orderId);
+            //跳转到商户
+            mcardApi.toUserList(attached.getMcardId(), attached.getMcardDistributorId());
+            String userList = mcardApi.getUserInfo(attached.getMcardDistributorId());
+            if (StringUtils.isNotEmpty(userList)) {
+                Document doc = Jsoup.parse(userList);
+                Elements contents = doc.getElementsByTag("tbody");
+                Elements trs = contents.get(0).getElementsByTag("tr");
+                for (int i = 0; i < trs.size(); i++) {
+                    Elements tds = trs.get(i).getElementsByTag("td");
+                    if (tds.size() <= 0) {
+                        continue;
+                    }
+                    if (tds.get(2).text().equals(phones)) {
+                        Elements tag = tds.get(11).getElementsByTag("i");
+                        Element element = tag.get(2);
+                        apersonnelId = element.attributes().get("data-id");
+                        String text = element.attributes().get("data-name");
+                    }
+                }
+            }
+            //跳转到铃音页面
+            String ringList = mcardApi.toRingList(attached.getMcardDistributorId());
+            //String ringList = mcardApi.toRingAlertList(apersonnelId,"61203" );
+            if (StringUtils.isNotEmpty(ringList)) {
+                Document doc = Jsoup.parse(ringList);
+                Elements contents = doc.getElementsByTag("tbody");
+                Elements trs = contents.get(0).getElementsByTag("tr");
+                for (int i = 0; i < trs.size(); i++) {
+                    Elements tds = trs.get(i).getElementsByTag("td");
+                    if (tds.size() <= 0) {
+                        continue;
+                    }
+                    if (tds.get(1).text().equals(threenetsRing.getRingName())) {
+                        ringId = trs.get(i).attributes().get("id");
+                    }
+                }
+            }
+            if (StringUtils.isEmpty(ringId)||StringUtils.isEmpty(apersonnelId)){
+                return AjaxResult.error("电信铃音设置失败");
+            }
+            String result = mcardApi.settingRing(ringId, apersonnelId, "61204");
+            if (StringUtils.isNotEmpty(result) && result.indexOf("0000") > 0) {
+                sucMsg = "您的请求已受理，请稍后在【商户列表 ->号码管理】中点击刷新操作查看!";
+            }
         } else { // 联通
             String[] phoness = phones.split(",");
             for (String phone : phoness) {
@@ -1072,15 +1112,15 @@ public class ApiUtils {
         if (order.getProvince().equals("河南")) {
             attached.setMcardPrice(Const.TELECOM_10_YUAN_TRAIFF);
             attached.setMcardDistributorId(Const.parent_Distributor_ID_177);
-            mcardApi.toNormalUser(Const.child_Distributor_ID_177,Const.parent_Distributor_ID_177);
-        }else if (configUtil.getAreaArray("ten_yuan_tariff_area", order.getProvince())){
+            mcardApi.toNormalUser(Const.child_Distributor_ID_177, Const.parent_Distributor_ID_177);
+        } else if (configUtil.getAreaArray("ten_yuan_tariff_area", order.getProvince())) {
             attached.setMcardPrice(Const.TELECOM_10_YUAN_TRAIFF);
             attached.setMcardDistributorId(Const.parent_Distributor_ID_188);
-            mcardApi.toNormalUser(Const.child_Distributor_ID_188,Const.parent_Distributor_ID_188);
-        }else{
+            mcardApi.toNormalUser(Const.child_Distributor_ID_188, Const.parent_Distributor_ID_188);
+        } else {
             attached.setMcardPrice(Const.TELECOM_20_YUAN_TRAIFF);
             attached.setMcardDistributorId(Const.parent_Distributor_ID_188);
-            mcardApi.toNormalUser(Const.child_Distributor_ID_181,Const.parent_Distributor_ID_188);
+            mcardApi.toNormalUser(Const.child_Distributor_ID_181, Const.parent_Distributor_ID_188);
         }
         //添加商户，同步三次
         for (int i = 0; i < 3; i++) {
@@ -1130,7 +1170,7 @@ public class ApiUtils {
      * @throws IOException
      * @throws NoLoginException
      */
-    public boolean addRingByDx(ThreenetsRing ring){
+    public boolean addRingByDx(ThreenetsRing ring) {
         return mcardApi.uploadRing(ring);
     }
 
@@ -1180,15 +1220,15 @@ public class ApiUtils {
      * @throws IOException
      * @throws NoLoginException
      */
-    public List<ThreenetsChildOrder> addPhoneByDx(List<ThreenetsChildOrder> orders, String circleId,String distributorId) {
+    public List<ThreenetsChildOrder> addPhoneByDx(List<ThreenetsChildOrder> orders, String circleId, String distributorId) {
         SystemConfig unableToOpenArea = configUtil.getConfigByType("unable_to_open_area");
         List<ThreenetsChildOrder> newList = new ArrayList<>();
-        mcardApi.toUserList(circleId,distributorId);
+        mcardApi.toUserList(circleId, distributorId);
         for (int i = 0; i < orders.size(); i++) {
             if (unableToOpenArea.getInfo().indexOf(orders.get(i).getProvince()) > -1) {
                 continue;
             }
-            McardAddPhoneRespone mcardAddPhoneRespone = mcardApi.addApersonnel(orders.get(i),distributorId);
+            McardAddPhoneRespone mcardAddPhoneRespone = mcardApi.addApersonnel(orders.get(i), distributorId);
             if (mcardAddPhoneRespone.getCode().equals("0000")) {
                 ThreenetsChildOrder childOrder = orders.get(i);
                 childOrder.setStatus("审核成功");

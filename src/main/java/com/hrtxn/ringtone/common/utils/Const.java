@@ -37,15 +37,15 @@ public final class Const implements Serializable {
     /**
      * 电信子渠道商ID
      */
+    //public static String child_Distributor_ID_177 = "594095"; //子渠道商（四川）
     public static String child_Distributor_ID_181 = "296577"; //子渠道商（18159093112）
     public static String child_Distributor_ID_188 = "61204"; //子渠道商（18888666361）
-    //public static String child_Distributor_ID_177 = "61204"; //子渠道商（18888666361）
     public static String child_Distributor_ID_177 = "1352214"; //子渠道商（18888666361）
 
     /**
      * 电信主渠道商ID
      */
-    public static String parent_Distributor_ID_188 = "61204"; //主渠道商（18159093112）
+    public static String parent_Distributor_ID_188 = "61203"; //主渠道商（18159093112）
     public static String parent_Distributor_ID_177 = "1352066"; //主渠道商（17751937950）
 
     //子渠道商（17712033392）(四川)

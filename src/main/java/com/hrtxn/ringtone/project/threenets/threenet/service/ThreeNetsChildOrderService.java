@@ -88,6 +88,9 @@ public class ThreeNetsChildOrderService {
     public void refreshDxInfo(ThreenetsOrder order) {
         ApiUtils utils = new ApiUtils();
         ThreeNetsOrderAttached attached = threeNetsOrderAttachedService.selectByParentOrderId(order.getId());
+        if (attached == null){
+            return;
+        }
         if (StringUtils.isEmpty(attached.getMcardId()) || attached.getMcardStatus() == 1) {
             return;
         }
@@ -250,6 +253,10 @@ public class ThreeNetsChildOrderService {
                     batchChindOrder(orders, threenetsRing);
                 }
                 if (operator == 3) {
+                    order.setMianduan("0");
+                    if (StringUtils.isNotEmpty(request.getMianduan()) && request.getMianduan().equals("是")){
+                        order.setMianduan("1");
+                    }
                     ThreenetsRing threenetsRing = rings.get(0);
                     if (ringMap.get(3) == null) {
                         String path = fileService.cloneFile(threenetsRing);

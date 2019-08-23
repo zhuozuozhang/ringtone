@@ -51,4 +51,6 @@ public class ThreenetsOrder implements Serializable {
     private File upLoadAgreement;
     //----铃音名称
     private String ringName;
+
+    private String mianduan;
 }
