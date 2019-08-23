@@ -65,7 +65,7 @@ public class TelCertificationService {
      * @param request
      * @return
      */
-    public List<CertificationOrder> findAllTelCertification(Page page, BaseRequest request) throws ParseException {
+    public AjaxResult findAllTelCertification(Page page, BaseRequest request) throws ParseException {
         page.setPage((page.getPage() - 1) * page.getPagesize());
         List<CertificationOrder> allTelCer = certificationOrderMapper.findAllTelCertification(page,request);
         List<CertificationOrder> theTelCer = new ArrayList<CertificationOrder>();
@@ -74,7 +74,6 @@ public class TelCertificationService {
             formatParamFromDatabase(c);
             int member = certificationChildOrderMapper.getMemberCountByParentId(c.getId());
             c.setMemberNum(member);
-
         }
 
         //通过时间段、集团名称、联系人电话、成员号码查到商户信息
@@ -108,7 +107,7 @@ public class TelCertificationService {
 
             //如果商户名称可以不唯一 且 考虑模糊查询
             for(CertificationOrder c : allTelCer){
-                if(c.getTelCompanyName().indexOf(companyName) != -1){
+                if(c.getTelCompanyName().indexOf(companyName) != -1 && companyName != ""){
                     theTelCer.add(c);
                 }
             }
@@ -121,7 +120,7 @@ public class TelCertificationService {
                 Matcher m = p.matcher(tel);
                 boolean isMatch = m.matches();
                 if (!isMatch) {
-                    return theTelCer;//手机号不正确
+                    return AjaxResult.success(theTelCer,"手机号不正确");//
                 }
                 for (CertificationOrder c : allTelCer) {
                     if(c.getTelLinkPhone().equals(tel)){
@@ -136,7 +135,7 @@ public class TelCertificationService {
                 Matcher m = p.matcher(phoneNum);
                 boolean isMatch = m.matches();
                 if (!isMatch) {
-                    return theTelCer;//手机号不正确
+                    return AjaxResult.success(theTelCer,"手机号不正确");//手机号不正确
                 }
                 //根据成员电话号查找
                 List<CertificationChildOrder> ccList = certificationChildOrderMapper.findTheChildOrder(page, request);
@@ -151,16 +150,19 @@ public class TelCertificationService {
                 }
             }
 
+
             if(theTelCer != null && theTelCer.size()>0){
-                return theTelCer;
+                int count = theTelCer.size();
+                return AjaxResult.success(theTelCer,"获取到了",count);
             }
-            return theTelCer;
+            return AjaxResult.success(theTelCer,"未获取到");
         }
 
         if(allTelCer.size() > 0 && allTelCer != null){
-            return allTelCer;
+            int count = allTelCer.size();
+            return AjaxResult.success(allTelCer,"获取到了",count);
         }
-        return null;//没有从数据库获取到数据
+        return AjaxResult.success("没有从数据库获取到数据");//
     }
 
     /**

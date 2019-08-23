@@ -51,11 +51,8 @@ public class TelCertificationChildController {
     @PostMapping("/getTelCerMembersList")
     @ResponseBody
     public AjaxResult getTelCerMembersList(Page page,BaseRequest request){
-        List<CertificationChildOrder> list = new ArrayList<CertificationChildOrder>();
         try{
-            list = telCertificationChildService.findTheChildOrder(page,request);
-            int theTelCerMemberCount = list.size();
-            return AjaxResult.success(list,"查询成功",theTelCerMemberCount);
+            return telCertificationChildService.findTheChildOrder(page,request);
         }catch (Exception e){
             log.error("获取号码认证子订单列表数据 方法：getTelCerMembersList 错误信息",e);
         }
@@ -122,9 +119,7 @@ public class TelCertificationChildController {
     @ResponseBody
     public AjaxResult getTheTelCerCostLogList(Page page,BaseRequest request){
         try{
-            List<CertificationConsumeLog> list = telCertificationChildService.getTheTelCerCostLogList(page,request);
-            int theCostLogCount = list.size();
-            return AjaxResult.success(list,"查询成功",theCostLogCount);
+            return telCertificationChildService.getTheTelCerCostLogList(page,request);
         }catch (Exception e){
             log.error("获取号码认证子订单消费记录列表数据 方法：getTelCerCostLogList 错误信息",e);
         }

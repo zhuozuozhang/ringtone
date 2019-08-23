@@ -41,7 +41,7 @@ public class TelCertificationChildService {
      * @param request
      * @return
      */
-    public List<CertificationChildOrder> findTheChildOrder(Page page,BaseRequest request) {
+    public AjaxResult findTheChildOrder(Page page,BaseRequest request) {
         page.setPage((page.getPage() - 1) * page.getPagesize());
         List<CertificationChildOrder> allChildOrderList = certificationChildOrderMapper.findTheChildOrder(page,request);
         for (CertificationChildOrder cc : allChildOrderList) {
@@ -56,9 +56,9 @@ public class TelCertificationChildService {
                     theChildList.add(cc);
                 }
             }
-            return theChildList; //没有对应id的成员信息
+            return AjaxResult.success(theChildList,"查询到了",theChildList.size()); //没有对应id的成员信息
         }
-        return theChildList;
+        return AjaxResult.success(theChildList,"获取失败",theChildList.size());
     }
 
     /**
@@ -67,14 +67,14 @@ public class TelCertificationChildService {
      * @param request
      * @return
      */
-    public List<CertificationConsumeLog> getTheTelCerCostLogList(Page page,BaseRequest request) {
+    public AjaxResult getTheTelCerCostLogList(Page page,BaseRequest request) {
         page.setPage((page.getPage() - 1) * page.getPagesize());
         List<CertificationConsumeLog> theCostLogList = new ArrayList<CertificationConsumeLog>();
         if(request.getPhoneNum() != null && request.getPhoneNum() != ""){
             theCostLogList = certificationConsumeLogMapper.getTheTelCerCostLogList(page,request);
-            return theCostLogList;
+            return AjaxResult.success(theCostLogList,"获取到了",theCostLogList.size());
         }
-        return theCostLogList;
+        return AjaxResult.success(theCostLogList,"获取失败",theCostLogList.size());
     }
 
     /**

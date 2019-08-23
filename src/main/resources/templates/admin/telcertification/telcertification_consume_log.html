@@ -1,15 +1,15 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
 <head>
 	<meta charset="UTF-8">
 	<title>企业彩铃-号码认证</title>
 	<meta name="renderer" content="webkit">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 	<meta name="viewport" content="width=device-width,testUser-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi" />
-	<link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
-	<link rel="stylesheet" href="../../../static/admin/css/font.css">
-	<link rel="stylesheet" href="../../../static/admin/css/xadmin.css">
-	<link rel="stylesheet" type="text/css" href="../../../static/admin/dataTables/jquery.dataTables.min.css">
+	<link rel="shortcut icon" th:href="@{/favicon.ico}" type="image/x-icon" />
+	<link rel="stylesheet" th:href="@{/admin/css/font.css}">
+	<link rel="stylesheet" th:href="@{/admin/css/xadmin.css}">
+	<link rel="stylesheet" type="text/css" th:href="@{/admin/dataTables/jquery.dataTables.min.css}">
 </head>
 <body class="layui-anim layui-anim-up">
 	<div class="x-nav">
@@ -25,6 +25,7 @@
 		</a>
 	</div>
 	<div class="x-body">
+		<input type="hidden" id="phoneNum" th:value="${phoneNum}">
 		<table class="layui-table" id="telcertification_consume_log">
 			<thead>
 				<tr>
@@ -51,73 +52,19 @@
 					<td>2019-06-19 18:20:26</td>
 					<td>2021-06-19 18:20:26</td>
 				</tr>
-				<tr>
-					<td>2</td>
-					<td>测试周</td>
-					<td>15050840350</td>
-					<td>续费</td>
-					<td>开通成功</td>
-					<td>160</td>
-					<td>2019-06-19 17:20:26</td>
-					<td>2019-06-19 18:20:26</td>
-					<td>2021-06-19 18:20:26</td>
-				</tr>
-				<tr>
-					<td>3</td>
-					<td>测试周</td>
-					<td>15050840350</td>
-					<td>首次</td>
-					<td>开通成功</td>
-					<td>160</td>
-					<td>2019-06-19 17:20:26</td>
-					<td>2019-06-19 18:20:26</td>
-					<td>2021-06-19 18:20:26</td>
-				</tr>
-				<tr>
-					<td>4</td>
-					<td>测试周</td>
-					<td>15050840350</td>
-					<td>首次</td>
-					<td>开通成功</td>
-					<td>160</td>
-					<td>2019-06-19 17:20:26</td>
-					<td>2019-06-19 18:20:26</td>
-					<td>2021-06-19 18:20:26</td>
-				</tr>
-				<tr>
-					<td>5</td>
-					<td>测试周</td>
-					<td>15050840350</td>
-					<td>首次</td>
-					<td>开通成功</td>
-					<td>240</td>
-					<td>2019-06-19 17:20:26</td>
-					<td>2019-06-19 18:20:26</td>
-					<td>2021-06-19 18:20:26</td>
-				</tr>
-				<tr>
-					<td>6</td>
-					<td>测试周</td>
-					<td>15050840350</td>
-					<td>首次</td>
-					<td>开通成功</td>
-					<td>80</td>
-					<td>2019-06-19 17:20:26</td>
-					<td>2019-06-19 18:20:26</td>
-					<td>2021-06-19 18:20:26</td>
-				</tr>
 			</tbody>
 		</table>
 	</div>
 </body>
-<script src="../../../static/public/js/jquery.min.js"></script>
-<script type="text/javascript" src="../../../static/admin/lib/layui/layui.js" charset="utf-8"></script>
-<script type="text/javascript" src="../../../static/admin/js/xadmin.js"></script>
-<script type="text/javascript" src="../../../static/admin/dataTables/jquery.dataTables.min.js"></script>
-<script type="text/javascript" src="../../public/js/page.js"></script>
+<script th:src="@{/public/js/jquery.min.js}"></script>
+<script type="text/javascript" th:src="@{/admin/lib/layui/layui.js}" charset="utf-8"></script>
+<script type="text/javascript" th:src="@{/admin/js/xadmin.js}"></script>
+<script type="text/javascript" th:src="@{/admin/dataTables/jquery.dataTables.min.js}"></script>
+<script type="text/javascript" th:src="@{/public/js/page.js}"></script>
+<script type="text/javascript" th:src="@{/admin/js/my/telcer_consume.js}"></script>
 <script type="text/javascript">
 	$(document).ready(function() {
-	    page("#telcertification_consume_log",6);
-	} );
+	    showTelcertification_consume_log();
+	});
 </script>
 </html>

@@ -105,10 +105,8 @@ public class TelCertificationController {
     public AjaxResult getTelCerOrderList(Page page, BaseRequest request){
         List<CertificationOrder> list = new ArrayList<CertificationOrder>();
         try{
-            int totalCount = telCertificationService.getCount();
-            //查找成员号码，需要把返回值改为ajaxresult
-            list = telCertificationService.findAllTelCertification(page,request);
-            return AjaxResult.success(list,"Controller查询成功",totalCount);
+
+            return telCertificationService.findAllTelCertification(page,request);
         }catch (Exception e){
             log.error("获取号码认证订单列表数据 方法：getTelCerOrderList 错误信息",e);
         }

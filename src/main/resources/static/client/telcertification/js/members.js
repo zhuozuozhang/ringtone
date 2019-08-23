@@ -35,6 +35,15 @@ function showTelCerMemberTable() {
             }
         }
     }, {
+        targets:[6],
+        render: function(data, type, row, meta){
+            if(data != null && data != ""){
+                return data;
+            }else{
+                return "<span>暂无</span>";
+            }
+        }
+    }, {
         targets:[9],
         render: function (data, type, row, meta) {
             var id = row.id;
