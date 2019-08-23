@@ -6,14 +6,17 @@
 <link rel="stylesheet" type="text/css" th:href="@{/client/threenets/css/style.css}">
 <style>
     .layui-laydate .layui-this {
-        background-color: #039!important;
-        color: #fff!important;
+        background-color: #039 !important;
+        color: #fff !important;
     }
+
     #loading {
         border: none;
-        background: #17a9ff!important;
+        background: #17a9ff !important;
     }
-    .lists li{cursor: pointer;
+
+    .lists li {
+        cursor: pointer;
         color: black;
         line-height: 16px;
         opacity: 0.8;
@@ -23,80 +26,84 @@
         text-align: left;
         font-size: 12px;
     }
-    .selecteds{
+
+    .selecteds {
         padding-top: 0px;
         background-color: #99f;
     }
 </style>
 <body>
-    <!-- 头部 -->
-    <div th:include="threenets/threenet/common/include :: header"></div>
-    <div class="layui-row" id="mcontent">
-        <div th:include="threenets/threenet/business/include :: nav"></div>
-        <div class="layui-col-xs2 mconl">
-            <div class="grid-demo">
-                <div style="width: 99%; height: 1000px;border-left: solid #ddd 1px;border-right:solid #ddd 1px; overflow: auto; float: left;">
-                    <div class="title-bar btn-group">
-                        <input type="text" name="enterprisename" id="enterprisename" placeholder="请输入代理商的名称" style="width:55%;margin:10px 5px;">
-                        <input type="button" value="搜索" onclick="search();">
-                    </div>
-                    <ul class="lists">
-                        <li class="lists_li" onclick="Sel(this);">
-                            <span style="display: none">0</span>
-                            <span >全部汇总</span>
-                        </li>
-                        </li>
-                        <li class="lists_li" onclick="Sel(this)" th:each="user : ${userList}">
-                            <span style="display: none" th:text="${user.id}"></span>
-                            <span th:text="${user.userName}"></span>
-                        </li>
-                    </ul>
+<!-- 头部 -->
+<div th:include="threenets/threenet/common/include :: header"></div>
+<div class="layui-row" id="mcontent">
+    <div th:include="threenets/threenet/business/include :: nav"></div>
+    <div class="layui-col-xs2 mconl">
+        <div class="grid-demo">
+            <div style="width: 99%; height: 1000px;border-left: solid #ddd 1px;border-right:solid #ddd 1px; overflow: auto; float: left;">
+                <div class="title-bar btn-group">
+                    <input type="text" name="enterprisename" id="enterprisename" placeholder="请输入代理商的名称"
+                           style="width:55%;margin:10px 5px;">
+                    <input type="button" value="搜索" onclick="search();">
                 </div>
-            </div>
-        </div>
-        <div class="layui-col-xs9 mconr">
-            <div class="grid-demo">
-                <div class="title-bar clearfix">
-                    <h1 class="pull-left">
-                        <input type="hidden" value="" id="auserid">
-                        号码类型：
-                        <select name="phoneType" id="phoneType" style="width: 150px;height: 28px;">
-                            <option value="">全部</option>
-                            <option value="1">移动</option>
-                            <option value="2">电信</option>
-                            <option value="3">联通</option>
-                        </select>
-                        日发展量分布：
-                        <span class="DatePicker_Icon_Wrapper" style="display: inline-block; position: relative; float: none; top: auto; right: auto; bottom: auto; left: auto;">
-                            <input type="text" name="year" id="year" value="2019" class="datepicker input-small" readonly="readonly" style="height: 24px;margin-top: 7px;text-align: center;">
-                        </span>
-                        <button type="button" id="loading" onclick="loading()" class="btn btn-primary">查询</button>
-                    </h1>
-                </div>
-                <div class="layui-card">
-                    <div class="layui-card-body">
-                        <div id='main' style='width:90%;height:400px;margin-left:50px;'></div>
-                    </div>
-                </div>
-                <div id="tlist">
-                    <p>详细列表</p>
-                    <table class="layui-table" id="set">
-                        <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>月份</th>
-                                <th>新增用户数(已包月)</th>
-                                <th>退订用户数</th>
-                                <th>累计用户数(已包月)</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                        </tbody>
-                    </table>
-                </div>
+                <ul class="lists">
+                    <li class="lists_li" onclick="Sel(this);">
+                        <span style="display: none">0</span>
+                        <span>全部汇总</span>
+                    </li>
+                    </li>
+                    <li class="lists_li" onclick="Sel(this)" th:each="user : ${userList}">
+                        <span style="display: none" th:text="${user.id}"></span>
+                        <span th:text="${user.userName}"></span>
+                    </li>
+                </ul>
             </div>
         </div>
     </div>
+    <div class="layui-col-xs9 mconr">
+        <div class="grid-demo">
+            <div class="title-bar clearfix">
+                <h1 class="pull-left">
+                    <input type="hidden" value="" id="auserid">
+                    号码类型：
+                    <select name="phoneType" id="phoneType" style="width: 150px;height: 28px;">
+                        <option value="">全部</option>
+                        <option value="1">移动</option>
+                        <option value="2">电信</option>
+                        <option value="3">联通</option>
+                    </select>
+                    日发展量分布：
+                    <span class="DatePicker_Icon_Wrapper"
+                          style="display: inline-block; position: relative; float: none; top: auto; right: auto; bottom: auto; left: auto;">
+                            <input type="text" name="year" id="year" value="2019" class="datepicker input-small"
+                                   readonly="readonly" style="height: 24px;margin-top: 7px;text-align: center;">
+                        </span>
+                    <button type="button" id="loading" onclick="loading()" class="btn btn-primary">查询</button>
+                </h1>
+            </div>
+            <div class="layui-card">
+                <div class="layui-card-body">
+                    <div id='main' style='width:90%;height:400px;margin-left:50px;'></div>
+                </div>
+            </div>
+            <div id="tlist">
+                <p>详细列表</p>
+                <table class="layui-table" id="set">
+                    <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>月份</th>
+                        <th>新增用户数(已包月)</th>
+                        <th>退订用户数</th>
+                        <th>累计用户数(已包月)</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
 </body>
 <div th:include="threenets/threenet/common/head :: footer"></div>
 <script type="text/javascript" th:src="@{/public/js/echarts.min.js}"></script>
@@ -104,50 +111,54 @@
     $(".index6").addClass("active");
     $("#ring").addClass("selected");
 
-    layui.use('laydate', function() {
+    layui.use('laydate', function () {
         var laydate = layui.laydate;
         //年月选择器
         laydate.render({
             elem: '#year',
-            type: 'year'
+            type: 'year',
+            value: new Date()
         });
     });
 
-    $(document).ready(function() {
+    $(document).ready(function () {
         loading();
     });
 
-    function Sel(obj){
+    function Sel(obj) {
         $(".lists_li").removeClass("selecteds");
         $(obj).addClass("selecteds");
         var id = obj.children[0].innerHTML
         $("#auserid").val(id)
         loading();
     }
+
     //加载数据
     function loading() {
         let params = {
-            "userId":$("#auserid").val(),
-            "year":$("#year").val(),
-            "operator":$("#phoneType").val()
+            "userId": $("#auserid").val(),
+            "year": $("#year").val(),
+            "operator": $("#phoneType").val()
         }
-        AjaxPost("/threenets/getMbusinessDate",params,function (result) {
-            var data =  result.data;
+        AjaxPost("/threenets/getMbusinessDate", params, function (result) {
+            var data = result.data;
             showTable(data)
             showEcharts(data)
         });
     }
+
     //展示表格
     function showTable(data) {
         let html = ''
-        for (var i = 0;i<data.length;i++){
+        for (var i = 0; i < data.length; i++) {
             var ele = data[i];
-            html = html + "<tr><td>"+(i+1)+"</td><td>"+ele.dateTimes+"</td><td>"+ele.addUser+"</td><td>"+ele.unsubscribeUser+"</td><td>"+ele.cumulativeUser+"</td></tr>"
+            html = html + "<tr><td>" + (i + 1) + "</td><td>" + ele.dateTimes + "</td><td>" + ele.addUser + "</td><td>" + ele.unsubscribeUser + "</td><td>" + ele.cumulativeUser + "</td></tr>"
         }
         $("#set tbody").html(html);
     }
+
     //展示图表
-    function showEcharts(data){
+    function showEcharts(data) {
         var myChart = echarts.init(document.getElementById('main'));
         var option = {
             title: {
@@ -155,20 +166,20 @@
             },
             tooltip: {
                 trigger: 'axis',
-                formatter:formatterTool
+                formatter: formatterTool
             },
-            legend:{
-                data:['每月发展用户情况']
+            legend: {
+                data: ['每月发展用户情况']
             },
             xAxis: {
                 type: 'category',
-                data:data.map(x=>[x.dateTimes])
+                data: data.map(x => [x.dateTimes])
             },
             yAxis: {
                 type: 'value'
             },
             series: [{
-                data:data.map(x=>[x.dateTimes,x.addUser]),
+                data: data.map(x => [x.dateTimes, x.addUser]),
                 type: 'line',
                 symbol: 'circle',//折线点设置为实心点
                 symbolSize: 4,   //折线点的大小
@@ -184,9 +195,10 @@
         };
         myChart.setOption(option);
     }
+
     //格式化tooltip
-    function formatterTool(data){
-        return "<div><div>"+data[0].data[0]+"</div><div>每月发展用户情况："+data[0].data[1]+"</div></div>"
+    function formatterTool(data) {
+        return "<div><div>" + data[0].data[0] + "</div><div>每月发展用户情况：" + data[0].data[1] + "</div></div>"
     }
 </script>
 </html>

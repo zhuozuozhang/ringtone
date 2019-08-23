@@ -99,4 +99,11 @@ public interface KedaChildOrderMapper {
      * @return
      */
     int deleteKedaChilOrder(@Param("id") Integer id);
+
+    /**
+     * 定时器任务
+     *
+     * @return
+     */
+    List<KedaChildOrder> selectKedaChildorder(@Param("type") Integer type);
 }
