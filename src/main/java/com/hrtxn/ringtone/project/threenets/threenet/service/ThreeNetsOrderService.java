@@ -240,13 +240,13 @@ public class ThreeNetsOrderService {
             attached.setBusinessLicense(order.getCompanyUrl());//企业资质
         }
         if (StringUtils.isNotEmpty(order.getClientUrl())) {
-            attached.setBusinessLicense(order.getClientUrl());//客户确认函
+            attached.setConfirmLetter(order.getClientUrl());//客户确认函
         }
         if (StringUtils.isNotEmpty(order.getMainUrl())) {
-            attached.setBusinessLicense(order.getMainUrl());//主体证明
+            attached.setSubjectProve(order.getMainUrl());//主体证明
         }
         if (StringUtils.isNotEmpty(order.getProtocolUrl())) {
-            attached.setBusinessLicense(order.getProtocolUrl());//免短协议
+            attached.setAvoidShortAgreement(order.getProtocolUrl());//免短协议
         }
         //子订单手机号验证,以及子订单数据初始化
         List<ThreenetsChildOrder> childOrderList = threeNetsChildOrderService.formattedPhone(order.getMemberTels(), order.getId());
@@ -310,6 +310,10 @@ public class ThreeNetsOrderService {
             }
             //联通
             if (collect.get(Const.OPERATORS_UNICOM) != null) {
+                order.setMianduan("0");
+                if (StringUtils.isNotEmpty(orderRequest.getMianduan()) && orderRequest.getMianduan().equals("是")){
+                    order.setMianduan("1");
+                }
                 saveOrderByLt(order, attached, collect.get(Const.OPERATORS_UNICOM));
             }
             //电信

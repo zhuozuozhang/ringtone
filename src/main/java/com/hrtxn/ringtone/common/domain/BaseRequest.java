@@ -52,6 +52,7 @@ public class BaseRequest {
 
     private String linkMan;
 
+    private String mianduan;
 
     //号码认证订单编号
     private String telOrderNum;

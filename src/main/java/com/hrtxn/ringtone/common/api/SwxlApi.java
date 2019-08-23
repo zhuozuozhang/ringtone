@@ -5,7 +5,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hrtxn.ringtone.common.exception.NoLoginException;
 import com.hrtxn.ringtone.common.utils.ChaoJiYing;
 import com.hrtxn.ringtone.common.utils.PhoneUtils;
+import com.hrtxn.ringtone.common.utils.StringUtils;
 import com.hrtxn.ringtone.common.utils.WebClientDevWrapper;
+import com.hrtxn.ringtone.freemark.config.systemConfig.RingtoneConfig;
 import com.hrtxn.ringtone.project.system.user.domain.User;
 import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreeNetsOrderAttached;
 import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreenetsOrder;
@@ -39,10 +41,7 @@ import org.apache.http.params.CoreProtocolPNames;
 import org.apache.http.params.HttpParams;
 import org.apache.http.util.EntityUtils;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.Serializable;
+import java.io.*;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Date;
@@ -486,8 +485,13 @@ public class SwxlApi implements Serializable {
             params.setParameter(CoreProtocolPNames.HTTP_CONTENT_CHARSET, Charset.forName("UTF-8"));
             reqEntity.addPart("groupName", new StringBody(ringOrder.getCompanyName(), Charset.forName("UTF-8")));// 集团名称
             reqEntity.addPart("tel", new StringBody(ringOrder.getLinkmanTel()));//
-            reqEntity.addPart("payType", new StringBody("0"));
+            reqEntity.addPart("payType", new StringBody(ringOrder.getMianduan()));
             reqEntity.addPart("applyForSmsNotification", new StringBody("0"));// 免短信
+            if (StringUtils.isNotEmpty(attached.getAvoidShortAgreement())){
+                reqEntity.addPart("applyForSmsNotification", new StringBody("1"));// 免短信
+                File file = new File(RingtoneConfig.getProfile() + attached.getAvoidShortAgreement());
+                reqEntity.addPart("qualificationFile", new FileBody(file));
+            }
             reqEntity.addPart("smsFile", new StringBody(""));
             if (attached.getSwxlPrice() == 10) {
                 reqEntity.addPart("productId", new StringBody("225"));//价格10元
@@ -498,7 +502,6 @@ public class SwxlApi implements Serializable {
             if (ringOrder.getUpLoadAgreement() != null) {
                 reqEntity.addPart("ringFile", new FileBody(ringOrder.getUpLoadAgreement())); // 铃音文件
             }
-            reqEntity.addPart("qualificationFile", new StringBody(""));
             reqEntity.addPart("msisdns", new StringBody(ringOrder.getLinkmanTel()));// 号码
             reqEntity.addPart("bizCodes", new StringBody(""));
             httppost.setEntity(reqEntity);
