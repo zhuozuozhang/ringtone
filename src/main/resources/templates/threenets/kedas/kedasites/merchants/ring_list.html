@@ -32,7 +32,7 @@
                 <div class="layui-col-md12" id="search">
                     <div class="title-bar clearfix">
                         <h1 class="pull-cnter">
-                            您正在以 <span style="color: red;" th:text="${name}"></span> 的管理员身份进行操作。
+                            您正在以 <span style="color: red;" id="name" th:text="${name}"></span> 的管理员身份进行操作。
                             <input type="hidden" id="orderId" th:value="${id}">
                         </h1>
                     </div>
@@ -50,6 +50,7 @@
                                 <th>审核状态</th>
                                 <th>在线试听</th>
                                 <th>创建时间</th>
+                                <th>备注</th>
                                 <th>操作</th>
                             </tr>
                         </thead>

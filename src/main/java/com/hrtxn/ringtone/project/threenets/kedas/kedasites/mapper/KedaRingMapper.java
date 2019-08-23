@@ -40,4 +40,28 @@ public interface KedaRingMapper {
      * @return
      */
     int deletePlKedaRing(@Param("ids") int[] ids);
+
+    /**
+     * 添加鈴音
+     *
+     * @param kedaRing
+     * @return
+     */
+    int isertKedaRingOrder(KedaRing kedaRing);
+
+    /**
+     * 删除铃音
+     *
+     * @param id
+     * @return
+     */
+    int deleteRing(@Param("id") Integer id);
+
+    /**
+     * 修改铃音信息
+     *
+     * @param kedaRing
+     * @return
+     */
+    int updateKedaRing(KedaRing kedaRing);
 }

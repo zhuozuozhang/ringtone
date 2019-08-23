@@ -41,5 +41,7 @@ public class ThreeNetsOrderAttached implements Serializable {
     private Integer swxlStatus;
     //移动订单是否审核（0.待审核、1已审核）
     private Integer miguStatus;
+    //电信渠道商id
+    private String mcardDistributorId;
 
 }

@@ -46,10 +46,10 @@
                         <a class="banner" href="javascript:;">商户管理</a>
                     </li>
                     <li id="apersonnel">
-                        <a th:href="@{'/threenets/clcy/toNumberList/'+${id}+'/'+${name}}">号码管理</a>
+                        <a th:href="@{'/threenets/clcy/toNumberList/'+${orderId}+'/'+${name}}">号码管理</a>
                     </li>
                     <li id="ring" class="selected">
-                        <a th:href="@{'/threenets/clcy/toRingList/'+${id}+'/'+${name}}">铃音管理</a>
+                        <a th:href="@{'/threenets/clcy/toRingList/'+${orderId}+'/'+${name}}">铃音管理</a>
                     </li>
                 </ul>
             </div>
@@ -62,14 +62,16 @@
                 <div class="layui-col-md12" id="search">
                     <div class="title-bar clearfix">
                         <h1 class="pull-cnter">
-                            您正在以 <span style="color: red;"> 学优律师事务所 </span> 的管理员身份进行操作。
+                            您正在以 <span style="color: red;" id="name" th:text="${name}"> 学优律师事务所 </span> 的管理员身份进行操作。
+                            <input type="hidden" id="orderId" th:value="${orderId}">
+                            <input type="hidden" id="ringId" th:value="${id}">
                         </h1>
                     </div>
                     <div style="padding:10px 0 0 10px;font-size:16px;">
                         操作：
                         <button type="button" class="layui-btn layui-btn-radius layui-btn-normal" id="sear">确认</button>
                     </div>
-                    <table class="layui-table" id="set" style="width: 80%;margin-left: 20px;">
+                    <table class="layui-table" id="set" style="margin-left: 20px;">
                         <thead>
                         <tr>
                             <th>#</th>
@@ -80,24 +82,6 @@
                             <th>当前铃音</th>
                         </tr>
                         </thead>
-                        <tbody>
-                        <tr>
-                            <td>1</td>
-                            <td><input type="checkbox" name="check"></td>
-                            <td>18315065540</td>
-                            <td>18315065540</td>
-                            <td>江苏省</td>
-                            <td>3d环保墙体</td>
-                        </tr>
-                        <tr>
-                            <td>2</td>
-                            <td><input type="checkbox" name="check"></td>
-                            <td>12345678912</td>
-                            <td>12345678912</td>
-                            <td>重庆省</td>
-                            <td>3d环保墙体</td>
-                        </tr>
-                        </tbody>
                     </table>
                 </div>
             </div>
@@ -106,22 +90,5 @@
 </div>
 </body>
 <div th:include="threenets/kedas/kedasites/common/include::footer"></div>
-<script>
-    $(".index2").addClass("active");
-    //分页
-    $(document).ready(function () {
-    });
-    //全选框
-    $("#allCheck").click(function () {
-        $("input[name='check']").prop("checked", this.checked);
-    })
-    //单选框
-    $("input[name='check']").change(function () {
-        if ($("input[name='check']").not("input:checked").size() <= 0) {
-            $("#allCheck").prop("checked", true);
-        } else {
-            $("#allCheck").prop("checked", false);
-        }
-    })
-</script>
+<script th:src="@{/client/threenets/js/kedasites/ring_list_set.js}"></script>
 </html>

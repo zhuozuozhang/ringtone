@@ -17,7 +17,7 @@
     <sql id="Base_Column_List">
         id, company_name, link_man, link_tel, province, city, cerate_time, status, user_id,
         (SELECT COUNT(*) FROM tb_keda_child_order WHERE order_id = p.id) as childOrderQuantity,
-        (SELECT COUNT(*) FROM tb_keda_child_order WHERE order_id = p.id AND is_monthly = 2) as childOrderQuantityByMonthly,
+        (SELECT COUNT(*) FROM tb_keda_child_order WHERE order_id = p.id AND is_monthly = 1) as childOrderQuantityByMonthly,
         (SELECT user_name FROM tb_user u WHERE u.id = p.user_id ) AS userName
     </sql>
 

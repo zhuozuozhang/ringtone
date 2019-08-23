@@ -23,7 +23,7 @@ public class AjaxResult extends HashMap<String, Object> {
     }
 
     public static AjaxResult success(String msg){
-        return success(200,msg);
+        return success("",msg);
     }
 
     public static AjaxResult error(int code, String msg) {

@@ -10,6 +10,7 @@ import com.hrtxn.ringtone.project.threenets.kedas.kedasites.domain.KedaChildOrde
 import com.hrtxn.ringtone.project.threenets.kedas.kedasites.service.KedaChildOrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -44,8 +45,9 @@ public class KedaChildOrderController {
      *
      * @return
      */
-    @GetMapping("addnumber")
-    public String toAddnumber() {
+    @GetMapping("addnumber/{orderId}")
+    public String toAddnumber(@PathVariable Integer orderId, ModelMap map) {
+        map.put("orderId", orderId);
         return "threenets/kedas/kedasites/merchants/addnumber";
     }
 
@@ -77,10 +79,40 @@ public class KedaChildOrderController {
         return kedaChildOrderService.getPhoneInfo(id);
     }
 
+    /**
+     * 删除疑难杂单子级订单
+     *
+     * @param id
+     * @return
+     */
     @DeleteMapping("deleteKedaChildOrder/{id}")
     @ResponseBody
-    @Log(title = "删除疑难杂单子级订单",businessType = BusinessType.DELETE,operatorLogType = OperatorLogType.KEDASITES)
-    public AjaxResult deleteKedaChildOrder(@PathVariable Integer id){
+    @Log(title = "删除疑难杂单子级订单", businessType = BusinessType.DELETE, operatorLogType = OperatorLogType.KEDASITES)
+    public AjaxResult deleteKedaChildOrder(@PathVariable Integer id) {
         return kedaChildOrderService.deleteKedaChildOrder(id);
+    }
+
+    /**
+     * 获取铃音设置子订单列表
+     *
+     * @param orderId
+     * @return
+     */
+    @PostMapping("getKedaChildSettingList")
+    @ResponseBody
+    public AjaxResult getKedaChildSettingList(Integer orderId) {
+        return kedaChildOrderService.getKedaChildSettingList(orderId);
+    }
+
+    /**
+     * 疑难杂单子订单设置铃音
+     *
+     * @return
+     */
+    @ResponseBody
+    @PutMapping("setKedaChidOrder")
+    @Log(title = "疑难杂单子订单设置铃音",businessType = BusinessType.UPDATE,operatorLogType = OperatorLogType.KEDASITES)
+    public AjaxResult setKedaChidOrder(Integer ringId,String linkTel,String employeeId,Integer childOrderId) throws IOException {
+        return kedaChildOrderService.setKedaChidOrder(ringId,linkTel,employeeId,childOrderId);
     }
 }

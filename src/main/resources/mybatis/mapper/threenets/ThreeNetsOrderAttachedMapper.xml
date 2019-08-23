@@ -18,11 +18,12 @@
         <result column="swxl_status" property="swxlStatus" jdbcType="INTEGER"/>
         <result column="mcard_status" property="mcardStatus" jdbcType="INTEGER"/>
         <result column="migu_status" property="miguStatus" jdbcType="INTEGER"/>
+        <result column="mcard_distributor_id" property="mcardDistributorId" jdbcType="VARCHAR"/>
     </resultMap>
 
     <sql id="Base_Column_List">
         id, migu_id, mcard_id, swxl_id, migu_price, mcard_price, swxl_price, parent_order_id,
-        business_license, confirm_letter, subject_prove, avoid_short_agreement,swxl_status,mcard_status,migu_status
+        business_license, confirm_letter, subject_prove, avoid_short_agreement,swxl_status,mcard_status,migu_status,mcard_distributor_id
     </sql>
 
     <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer">
@@ -96,6 +97,9 @@
             <if test="miguStatus != null">
                 migu_status,
             </if>
+            <if test="mcardDistributorId != null">
+                mcard_distributor_id,
+            </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="id != null">
@@ -142,6 +146,9 @@
             </if>
             <if test="miguStatus != null">
                 #{miguStatus,jdbcType=INTEGER},
+            </if>
+            <if test="mcardDistributorId != null">
+                #{mcardDistributorId,jdbcType=VARCHAR},
             </if>
         </trim>
     </insert>
@@ -190,6 +197,9 @@
             </if>
             <if test="miguStatus != null">
                 migu_status = #{miguStatus,jdbcType=INTEGER},
+            </if>
+            <if test="mcardDistributorId != null">
+                mcard_distributor_id = #{mcardDistributorId,jdbcType=VARCHAR},
             </if>
         </set>
         where id = #{id,jdbcType=INTEGER}

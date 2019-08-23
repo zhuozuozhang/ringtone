@@ -3,11 +3,18 @@ package com.hrtxn.ringtone.project.threenets.kedas.kedasites.controller;
 import com.hrtxn.ringtone.common.constant.AjaxResult;
 import com.hrtxn.ringtone.common.domain.BaseRequest;
 import com.hrtxn.ringtone.common.domain.Page;
+import com.hrtxn.ringtone.freemark.config.logConfig.Log;
+import com.hrtxn.ringtone.freemark.enums.BusinessType;
+import com.hrtxn.ringtone.freemark.enums.OperatorLogType;
+import com.hrtxn.ringtone.project.threenets.kedas.kedasites.domain.KedaRing;
 import com.hrtxn.ringtone.project.threenets.kedas.kedasites.service.KedaRingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 /**
  * Author:zcy
@@ -45,7 +52,8 @@ public class KedaRingController {
      */
     @PostMapping("getKedaRingList")
     @ResponseBody
-    public AjaxResult getKedaRingList(Page page, BaseRequest baseRequest) {
+    @Log(title = "铃音刷新", businessType = BusinessType.UPDATE, operatorLogType = OperatorLogType.KEDASITES)
+    public AjaxResult getKedaRingList(Page page, BaseRequest baseRequest) throws IOException {
         return kedaRingService.getKedaRingList(page, baseRequest);
     }
 
@@ -54,9 +62,24 @@ public class KedaRingController {
      *
      * @return
      */
-    @GetMapping("toAddring")
-    public String toAddring() {
+    @GetMapping("toAddring/{orderId}")
+    public String toAddring(@PathVariable Integer orderId, ModelMap m) {
+        m.put("orderId", orderId);
         return "threenets/kedas/kedasites/merchants/addring";
+    }
+
+    /**
+     * 添加铃音订单
+     *
+     * @param kedaRing
+     * @param protocolFile
+     * @return
+     */
+    @PostMapping("addKedaRing")
+    @ResponseBody
+    @Log(title = "科大铃音上传", businessType = BusinessType.INSERT, operatorLogType = OperatorLogType.KEDASITES)
+    public AjaxResult addKedaRing(KedaRing kedaRing, @RequestParam("ringfile") MultipartFile protocolFile) throws Exception {
+        return kedaRingService.addKedaRing(kedaRing, protocolFile);
     }
 
     /**
@@ -64,10 +87,57 @@ public class KedaRingController {
      *
      * @return
      */
-
-    @GetMapping("toRingListSet")
-    public String toRingListSet() {
+    @GetMapping("toRingListSet/{id}/{orderId}/{name}")
+    public String toRingListSet(@PathVariable Integer id, @PathVariable Integer orderId, @PathVariable String name, ModelMap map) {
+        map.put("id", id);
+        map.put("orderId", orderId);
+        map.put("name", name);
         return "threenets/kedas/kedasites/merchants/ring_list_set";
     }
 
+    /**
+     * 疑难杂单删除铃音
+     *
+     * @param id
+     * @return
+     */
+    @DeleteMapping("deleteRing/{id}")
+    @ResponseBody
+    @Log(title = "疑难杂单删除铃音", businessType = BusinessType.DELETE, operatorLogType = OperatorLogType.KEDASITES)
+    public AjaxResult deleteRing(@PathVariable Integer id) {
+        return kedaRingService.deleteRing(id);
+    }
+
+    /**
+     * 疑难杂单铃音设置子订单
+     *
+     * @param phones
+     * @param orderId
+     * @param id
+     * @return
+     * @throws IOException
+     */
+    @ResponseBody
+    @PutMapping("setRing")
+    @Log(title = "疑难杂单铃音设置子订单", businessType = BusinessType.UPDATE, operatorLogType = OperatorLogType.KEDASITES)
+    public AjaxResult setRing(String phones, Integer orderId, Integer id) throws IOException {
+        return kedaRingService.setRing(phones, orderId, id);
+    }
+
+    /**
+     * 获取设置铃音列表
+     *
+     * @param orderId
+     * @return
+     */
+    @ResponseBody
+    @PostMapping("getKedaRingSetting/{orderId}")
+    public AjaxResult getKedaRingSetting(@PathVariable Integer orderId) {
+        try {
+            return kedaRingService.getKedaRingSetting(orderId);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 }

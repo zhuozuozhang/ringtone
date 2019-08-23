@@ -39,6 +39,12 @@ public interface ThreeNetsOrderAttachedMapper {
      */
     int updateByPrimaryKeySelective(ThreeNetsOrderAttached threeNetsOrderAttached);
 
+    /**
+     * 根据父级订单id获取附表数据
+     *
+     * @param id
+     * @return
+     */
     ThreeNetsOrderAttached selectByParentOrderId(Integer id);
 
     /**
