@@ -32,7 +32,7 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * Author:zcy
+ * @author :zcy
  * Date:2019-08-14 10:17
  * Description:疑难杂单业务处理层
  */
@@ -47,7 +47,7 @@ public class KedaChildOrderService {
     @Autowired
     private KedaRingMapper kedaRingMapper;
     @Autowired
-    @Qualifier("createReactor")//同样指定并注入
+    @Qualifier("createReactor")
             Reactor r;
     private KedaApi kedaApi = new KedaApi();
 
@@ -184,7 +184,7 @@ public class KedaChildOrderService {
      * @throws Exception
      */
     public AjaxResult insertKedaChildOrder(KedaChildOrder kedaChildOrder) throws Exception {
-        if (!StringUtils.isNotNull(kedaChildOrder)) return AjaxResult.error("参数格式不正确!");
+        if (!StringUtils.isNotNull(kedaChildOrder)){ return AjaxResult.error("参数格式不正确!");}
         if (!StringUtils.isNotEmpty(kedaChildOrder.getLinkMan())) return AjaxResult.error("参数格式不正确!");
         if (!StringUtils.isNotEmpty(kedaChildOrder.getLinkTel())) return AjaxResult.error("参数格式不正确!");
 

@@ -167,7 +167,7 @@ public class KedaApi {
      * @throws IOException
      */
     public AjaxResult addRing(String fileUrl, String ringName) throws IOException {
-        ringName = URLEncoder.encode(URLEncoder.encode(URLEncoder.encode(ringName, "utf-8"), "utf-8"), "utf-8");
+        ringName = URLEncoder.encode(URLEncoder.encode(URLEncoder.encode(URLEncoder.encode(ringName, "utf-8"), "utf-8"), "utf-8"),"utf-8");
         String param = "groupId=" + Constant.OPERATEID + "&name=" + ringName + "&ringPrice=0&ringActivePrice=0&addSetting=0&uploadMusicName=" + URLEncoder.encode(fileUrl, "UTF-8") + "&businessType=ring";
         double rm = (new Random()).nextDouble();
         String s = sendPost(SAVEORSETRINGBYUPLOAD + "?r=" + rm, param);
@@ -203,27 +203,29 @@ public class KedaApi {
                 if ("000000".equals(kedaRingBaseResult.getRetCode())) {
                     List<KedaRefresRingInfo> data = kedaRingBaseResult.getData();
                     List<KedaRefresRingInfo> kedaRefresRingInfos = new ArrayList<>();
-                    for (Object obj : data) {
-                        JSONObject jsonObject = JSONObject.fromObject(obj); // 将数据转成json字符串
-                        KedaRefresRingInfo kedaRefresRingInfo = (KedaRefresRingInfo) JSONObject.toBean(jsonObject, KedaRefresRingInfo.class); //将json转成需要的对象
-                        kedaRefresRingInfos.add(kedaRefresRingInfo);
-                    }
-                    if (kedaRefresRingInfos.size() > 0) {
-                        for (int j = 0; j < kedaRefresRingInfos.size(); j++) {
-                            if (kedaRingList.get(i).getRingNum().equals(kedaRefresRingInfos.get(j).getId().toString())) {
-                                if (kedaRefresRingInfos.get(j).getStatus() == 0) { // 待审核
-                                    kedaRingList.get(i).setRingStatus(2);
-                                } else if (kedaRefresRingInfos.get(j).getStatus() == 1) { // 审核中
-                                    kedaRingList.get(i).setRingStatus(2);
-                                } else if (kedaRefresRingInfos.get(j).getStatus() == 2) { // 审核通过
-                                    kedaRingList.get(i).setRingStatus(3);
-                                } else { // 审核失败
-                                    kedaRingList.get(i).setRingStatus(4);
+                    if (StringUtils.isNotNull(data)) {
+                        for (Object obj : data) {
+                            JSONObject jsonObject = JSONObject.fromObject(obj); // 将数据转成json字符串
+                            KedaRefresRingInfo kedaRefresRingInfo = (KedaRefresRingInfo) JSONObject.toBean(jsonObject, KedaRefresRingInfo.class); //将json转成需要的对象
+                            kedaRefresRingInfos.add(kedaRefresRingInfo);
+                        }
+                        if (kedaRefresRingInfos.size() > 0) {
+                            for (int j = 0; j < kedaRefresRingInfos.size(); j++) {
+                                if (kedaRingList.get(i).getRingNum().equals(kedaRefresRingInfos.get(j).getId().toString())) {
+                                    if (kedaRefresRingInfos.get(j).getStatus() == 0) { // 待审核
+                                        kedaRingList.get(i).setRingStatus(2);
+                                    } else if (kedaRefresRingInfos.get(j).getStatus() == 1) { // 审核中
+                                        kedaRingList.get(i).setRingStatus(2);
+                                    } else if (kedaRefresRingInfos.get(j).getStatus() == 2) { // 审核通过
+                                        kedaRingList.get(i).setRingStatus(3);
+                                    } else { // 审核失败
+                                        kedaRingList.get(i).setRingStatus(4);
+                                    }
+                                    kedaRingList.get(i).setRemark(kedaRefresRingInfos.get(j).getAuditDesc());
+                                    // 执行修改铃音操作
+                                    int count = SpringUtils.getBean(KedaRingMapper.class).updateKedaRing(kedaRingList.get(i));
+                                    log.info("疑难杂单刷新铃音修改结果:{}", count);
                                 }
-                                kedaRingList.get(i).setRemark(kedaRefresRingInfos.get(j).getAuditDesc());
-                                // 执行修改铃音操作
-                                int count = SpringUtils.getBean(KedaRingMapper.class).updateKedaRing(kedaRingList.get(i));
-                                log.info("疑难杂单刷新铃音修改结果:{}", count);
                             }
                         }
                     }
