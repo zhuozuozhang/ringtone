@@ -44,6 +44,15 @@
     <include refid="page"/>
   </select>
 
+  <select id="getAllCostLogList" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List"/>
+    FROM tb_telcertification_consume_log tccl
+    WHERE 1=1
+    ORDER BY tel_consume_log_ctime DESC
+    <include refid="page"/>
+  </select>
+
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select
     <include refid="Base_Column_List" />

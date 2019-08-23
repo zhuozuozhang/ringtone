@@ -12,4 +12,6 @@ import java.util.List;
 public interface CertificationConsumeLogMapper {
 
     List<CertificationConsumeLog> getTheTelCerCostLogList(@Param("page") Page page, @Param("param") BaseRequest request);
+
+    List<CertificationConsumeLog> getAllCostLogList(@Param("page") Page page, @Param("param") BaseRequest request);
 }

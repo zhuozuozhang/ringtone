@@ -69,12 +69,13 @@ public class TelCertificationChildService {
      */
     public AjaxResult getTheTelCerCostLogList(Page page,BaseRequest request) {
         page.setPage((page.getPage() - 1) * page.getPagesize());
+        List<CertificationConsumeLog> allCostLogList = certificationConsumeLogMapper.getAllCostLogList(page,request);
         List<CertificationConsumeLog> theCostLogList = new ArrayList<CertificationConsumeLog>();
         if(request.getPhoneNum() != null && request.getPhoneNum() != ""){
             theCostLogList = certificationConsumeLogMapper.getTheTelCerCostLogList(page,request);
-            return AjaxResult.success(theCostLogList,"获取到了",theCostLogList.size());
+            return AjaxResult.success(theCostLogList,"获取某条消费记录",theCostLogList.size());
         }
-        return AjaxResult.success(theCostLogList,"获取失败",theCostLogList.size());
+        return AjaxResult.success(allCostLogList,"获取全部消费记录",allCostLogList.size());
     }
 
     /**

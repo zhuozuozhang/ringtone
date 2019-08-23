@@ -99,7 +99,6 @@ public class TelCertificationAdminController {
         return "admin/telcertification/telcertification_consume_log";
     }
 
-    //getTheTelcerConsumeLog
     /**
      * 进入某条手机认证消费记录
      * @param map
@@ -186,9 +185,8 @@ public class TelCertificationAdminController {
         return AjaxResult.error("获取失败");
     }
 
-    //
     /**
-     * 获取消费记录列表
+     * 获取某条消费记录列表
      * @return
      */
     @PostMapping("/getTelcertification_consume_log")
@@ -202,6 +200,23 @@ public class TelCertificationAdminController {
         }
         return AjaxResult.error("获取数据失败");
     }
+
+
+    /**
+     * 获取某条消费记录列表
+     * @return
+     */
+//    @PostMapping("/getTelcertification_consume_log")
+//    @ResponseBody
+//    @RequiresRoles("admin")
+//    public AjaxResult getTelcertification_consume_log(Page page,BaseRequest request){
+//        try{
+//            return telCertificationChildService.getTheTelCerCostLogList(page,request);
+//        }catch (Exception e){
+//            log.error("获取管理端消费记录列表数据 方法：getTelcertification_consume_log 错误信息",e);
+//        }
+//        return AjaxResult.error("获取数据失败");
+//    }
 
 
 

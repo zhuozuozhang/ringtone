@@ -6,7 +6,6 @@ function showTelcertification_consume_log() {
         "phoneNum": $("#phoneNum").val()
     }
     var columns = [
-        {"data": null},
         {"data": "id"},
         {"data": "userName"},
         {"data": "userTel"},
@@ -52,5 +51,5 @@ function showTelcertification_consume_log() {
             }
         }
     }];
-    page("#cost", 15, param, "/telcertify/getTelCerCostLogList", columns, columnDefs);
+    page("#telcertification_consume_log", 15, param, "/admin/getTelcertification_consume_log", columns, columnDefs);
 }
