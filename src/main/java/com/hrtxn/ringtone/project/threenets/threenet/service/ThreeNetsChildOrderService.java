@@ -78,7 +78,15 @@ public class ThreeNetsChildOrderService {
         return threenetsChildOrderMapper.getCount(getParameters(request));
     }
 
-
+    /**
+     * 修改子订单
+     *
+     * @param childOrder
+     * @return
+     */
+    public Integer update(ThreenetsChildOrder childOrder){
+        return threenetsChildOrderMapper.updateThreeNetsChidOrder(childOrder);
+    }
     /**
      * 刷新电信，查询是否审核通过
      *
@@ -199,7 +207,7 @@ public class ThreeNetsChildOrderService {
         if (!StringUtils.isNotNull(threenetsChildOrder)) {
             return AjaxResult.error("参数格式不正确");
         }
-        List<ThreenetsChildOrder> list = formattedPhone(threenetsChildOrder.getMemberTels(), null);
+        List<ThreenetsChildOrder> list = formattedPhone(threenetsChildOrder.getMemberTels(), request.getParentOrderId());
         ThreeNetsOrderAttached attached = threeNetsOrderAttachedService.selectByParentOrderId(threenetsChildOrder.getParentOrderId());
         //克隆
         BeanUtils.copyProperties(attached, request);
@@ -209,21 +217,27 @@ public class ThreeNetsChildOrderService {
         if (attached.getSwxlPrice() == null) {
             attached.setSwxlPrice(threenetsChildOrder.getSwxlPrice());
         }
-        saveThreenetsPhone(attached, list, request);
+        batchChindOrder(list);
+        saveThreenetsPhone(attached,request);
         return AjaxResult.success(true, "保存成功");
     }
 
     /**
      * 保存手机号
      *
-     * @param childOrders
+     * @param attached
+     * @param request
      */
     @Synchronized
-    public void saveThreenetsPhone(ThreeNetsOrderAttached attached, List<ThreenetsChildOrder> childOrders, BaseRequest request) {
+    public void saveThreenetsPhone(ThreeNetsOrderAttached attached, BaseRequest request) {
         try {
             List<ThreenetsRing> rings = threenetsRingMapper.selectByOrderId(attached.getParentOrderId());
             Map<Integer, List<ThreenetsRing>> ringMap = rings.stream().collect(Collectors.groupingBy(ThreenetsRing::getOperate));
             ThreenetsOrder order = threenetsOrderMapper.selectByPrimaryKey(attached.getParentOrderId());
+
+            BaseRequest baseRequest = new BaseRequest();
+            baseRequest.setParentOrderId(order.getId());
+            List<ThreenetsChildOrder> childOrders = getChildOrder(baseRequest);
             Map<Integer, List<ThreenetsChildOrder>> map = childOrders.stream().collect(Collectors.groupingBy(ThreenetsChildOrder::getOperator));
             for (Integer operator : map.keySet()) {
                 List<ThreenetsChildOrder> list = map.get(operator);
@@ -417,6 +431,7 @@ public class ThreeNetsChildOrderService {
      * @return
      */
     public Integer batchChindOrder(List<ThreenetsChildOrder> orders, ThreenetsRing ring) {
+        Integer sum = 0 ;
         for (int i = 0; i < orders.size(); i++) {
             ThreenetsChildOrder childOrder = orders.get(i);
             childOrder.setRingName(ring.getRingName());
@@ -425,8 +440,9 @@ public class ThreeNetsChildOrderService {
             childOrder.setIsRingtoneUser(ring.getRingType().equals("视频") ? false : true);
             childOrder.setParentOrderId(ring.getOrderId());
             orders.set(i, childOrder);
+            sum = sum + threenetsChildOrderMapper.updateThreeNetsChidOrder(childOrder);
         }
-        return threenetsChildOrderMapper.batchChindOrder(orders);
+        return sum;
     }
 
     /**
