@@ -39,11 +39,12 @@ public class TelCertificationService {
 
     /**
      * 添加号码认证商户订单
+     *
      * @param certificationOrder
      * @return
      */
     public AjaxResult insertTelCertifyOrder(CertificationOrder certificationOrder) {
-        if(!StringUtils.isNotNull(certificationOrder)){
+        if (!StringUtils.isNotNull(certificationOrder)) {
             return AjaxResult.error("参数不正确！");
         }
         int count = certificationOrderMapper.insertTelCertifyOrder(certificationOrder);
@@ -52,6 +53,7 @@ public class TelCertificationService {
 
     /**
      * 获得商户订单数量
+     *
      * @return
      */
     public int getCount() {
@@ -61,57 +63,52 @@ public class TelCertificationService {
 
     /**
      * 获得所有商户订单（可通过各种条件查找）
+     *
      * @param page
      * @param request
      * @return
      */
     public AjaxResult findAllTelCertification(Page page, BaseRequest request) throws ParseException {
         page.setPage((page.getPage() - 1) * page.getPagesize());
-        List<CertificationOrder> allTelCer = certificationOrderMapper.findAllTelCertification(page,request);
+        List<CertificationOrder> allTelCer = certificationOrderMapper.findAllTelCertification(page, request);
         List<CertificationOrder> theTelCer = new ArrayList<CertificationOrder>();
-
-        for (CertificationOrder c: allTelCer) {
+        for (CertificationOrder c : allTelCer) {
             formatParamFromDatabase(c);
             int member = certificationChildOrderMapper.getMemberCountByParentId(c.getId());
             c.setMemberNum(member);
         }
-
         //通过时间段、集团名称、联系人电话、成员号码查到商户信息
         String rangeTime = request.getRangetime();
         String companyName = request.getCompanyName().trim();
         String tel = request.getTel().trim();
         String phoneNum = request.getPhoneNum().trim();
-        if((rangeTime != null && rangeTime != "") || (companyName != null && companyName != "") || (tel != null && tel != "") || (phoneNum != null && phoneNum != "")){
-
-            if(rangeTime != null && rangeTime != ""){
+        if ((rangeTime != null && rangeTime != "") || (companyName != null && companyName != "") || (tel != null && tel != "") || (phoneNum != null && phoneNum != "")) {
+            if (rangeTime != null && rangeTime != "") {
                 //对时间段的处理
-                String s[] = rangeTime.split("-") ;
-                String start = s[0]+"-"+s[1]+"-"+s[2]+" 00:00:00";
-                String end = s[3]+"-"+s[4]+"-"+s[5]+" 23:59:59";
+                String[] s = rangeTime.split("-");
+                String start = s[0] + "-" + s[1] + "-" + s[2] + " 00:00:00";
+                String end = s[3] + "-" + s[4] + "-" + s[5] + " 23:59:59";
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                 Date dateStart = sdf.parse(start);
                 Date dateEnd = sdf.parse(end);
                 request.setStart(start);
                 request.setEnd(end);
-
-                for (CertificationOrder c: allTelCer) {
+                for (CertificationOrder c : allTelCer) {
                     Date telOrderTime = c.getTelOrderTime();
                     long telCreateTime = telOrderTime.getTime();
                     long longStart = dateStart.getTime();
                     long longEnd = dateEnd.getTime();
-                    if(longStart <= telCreateTime && longEnd >= telCreateTime){
+                    if (longStart <= telCreateTime && longEnd >= telCreateTime) {
                         theTelCer.add(c);
                     }
                 }
             }
-
             //如果商户名称可以不唯一 且 考虑模糊查询
-            for(CertificationOrder c : allTelCer){
-                if(c.getTelCompanyName().indexOf(companyName) != -1 && companyName != ""){
+            for (CertificationOrder c : allTelCer) {
+                if (c.getTelCompanyName().indexOf(companyName) != -1 && companyName != "") {
                     theTelCer.add(c);
                 }
             }
-
             //对联系人电话的处理
             String regex = "^((13[0-9])|(14[5,7,9])|(15([0-3]|[5-9]))|(166)|(17[0,1,3,5,6,7,8])|(18[0-9])|(19[8|9]))\\d{8}$";
             Pattern p = Pattern.compile(regex);
@@ -120,22 +117,21 @@ public class TelCertificationService {
                 Matcher m = p.matcher(tel);
                 boolean isMatch = m.matches();
                 if (!isMatch) {
-                    return AjaxResult.success(theTelCer,"手机号不正确");//
+                    return AjaxResult.success(theTelCer, "手机号不正确");
                 }
                 for (CertificationOrder c : allTelCer) {
-                    if(c.getTelLinkPhone().equals(tel)){
+                    if (c.getTelLinkPhone().equals(tel)) {
                         theTelCer.add(c);
                     }
                 }
             }
-
             //成员电话号码
             int len2 = phoneNum.length();
-            if(len2 == 11) {
+            if (len2 == 11) {
                 Matcher m = p.matcher(phoneNum);
                 boolean isMatch = m.matches();
                 if (!isMatch) {
-                    return AjaxResult.success(theTelCer,"手机号不正确");//手机号不正确
+                    return AjaxResult.success(theTelCer, "手机号不正确");//手机号不正确
                 }
                 //根据成员电话号查找
                 List<CertificationChildOrder> ccList = certificationChildOrderMapper.findTheChildOrder(page, request);
@@ -149,29 +145,27 @@ public class TelCertificationService {
                     }
                 }
             }
-
-
-            if(theTelCer != null && theTelCer.size()>0){
+            if (theTelCer != null && theTelCer.size() > 0) {
                 int count = theTelCer.size();
-                return AjaxResult.success(theTelCer,"获取到了",count);
+                return AjaxResult.success(theTelCer, "获取到了", count);
             }
-            return AjaxResult.success(theTelCer,"未获取到");
+            return AjaxResult.success(theTelCer, "未获取到");
         }
-
-        if(allTelCer.size() > 0 && allTelCer != null){
+        if (allTelCer.size() > 0 && allTelCer != null) {
             int count = allTelCer.size();
-            return AjaxResult.success(allTelCer,"获取到了",count);
+            return AjaxResult.success(allTelCer, "获取到了", count);
         }
         return AjaxResult.success("没有从数据库获取到数据");//
     }
 
     /**
      * 通过订单id获取订单信息
+     *
      * @param id
      * @return
      */
     public CertificationOrder getTelCerOrderById(Integer id, ModelMap map) {
-        if(StringUtils.isNotNull(id)){
+        if (StringUtils.isNotNull(id)) {
             CertificationOrder c = certificationOrderMapper.getTelCerOrderById(id);
 
             formatParamFromDatabase(c);
@@ -185,8 +179,8 @@ public class TelCertificationService {
             }
             int num = certificationChildOrderMapper.getMemberCountByParentId(id);
             c.setMemberNum(num);
-            map.put("service",service);
-            map.put("telCerOrder",c);
+            map.put("service", service);
+            map.put("telCerOrder", c);
             return c;
         }
         return null;
@@ -194,29 +188,30 @@ public class TelCertificationService {
 
     /**
      * 格式化`tb_telcertification_order`数据库中的数据
+     *
      * @param c
      */
     private void formatParamFromDatabase(CertificationOrder c) {
 
         //号码认证订单状态（1.开通中/2.开通成功/3.开通失败/4.续费中/5.续费成功/6.续费失败）
-        if(c.getTelOrderStatus() == 1){
+        if (c.getTelOrderStatus() == 1) {
             c.setStatusName("开通中");
-        }else if(c.getTelOrderStatus() == 2){
+        } else if (c.getTelOrderStatus() == 2) {
             c.setStatusName("开通成功");
-        }else if(c.getTelOrderStatus() == 3){
+        } else if (c.getTelOrderStatus() == 3) {
             c.setStatusName("开通失败");
-        }else if(c.getTelOrderStatus() == 4){
+        } else if (c.getTelOrderStatus() == 4) {
             c.setStatusName("续费中");
-        }else if(c.getTelOrderStatus() == 5){
+        } else if (c.getTelOrderStatus() == 5) {
             c.setStatusName("续费成功");
-        }else if(c.getTelOrderStatus() == 6){
+        } else if (c.getTelOrderStatus() == 6) {
             c.setStatusName("续费失败");
-        }else{
+        } else {
             c.setStatusName("未知");
         }
 
         //如果备注中的内容为空，则改变值为无
-        if(c.getRemark()=="" || c.getRemark()==null){
+        if (c.getRemark() == "" || c.getRemark() == null) {
             c.setRemark("无");
         }
     }

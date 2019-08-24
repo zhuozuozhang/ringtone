@@ -1,6 +1,5 @@
 package com.hrtxn.ringtone.project.telcertification.mapper;
 
-import com.hrtxn.ringtone.common.constant.AjaxResult;
 import com.hrtxn.ringtone.common.domain.BaseRequest;
 import com.hrtxn.ringtone.common.domain.Page;
 import com.hrtxn.ringtone.project.telcertification.domain.CertificationChildOrder;
@@ -17,7 +16,7 @@ import java.util.List;
 @Repository
 public interface CertificationChildOrderMapper {
 
-    int getCount();
+       int getCount();
 
     List<CertificationChildOrder> findTheChildOrder(@Param("page") Page page, @Param("param") BaseRequest request);
 

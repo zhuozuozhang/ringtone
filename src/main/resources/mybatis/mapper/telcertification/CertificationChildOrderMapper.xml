@@ -42,7 +42,7 @@
         select count(*) from tb_telcertification_child_order
     </select>
 
-    <!--  根据条件获取子订单-->
+    <!--根据条件获取子订单-->
     <select id="findTheChildOrder" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>

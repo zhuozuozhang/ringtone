@@ -103,7 +103,7 @@ public class KedaOrderService {
      * @return
      * @throws Exception
      */
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public AjaxResult addKedaOrder(KedaOrder kedaOrder) throws Exception {
 
         if (!StringUtils.isNotNull(kedaOrder)) return AjaxResult.error("参数格式不正确!");
@@ -171,7 +171,7 @@ public class KedaOrderService {
      * @param id
      * @return
      */
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public AjaxResult deleteKedaOrder(Integer id) {
         if (!StringUtils.isNotNull(id) || id <= 0) return AjaxResult.error("参数格式不正确！");
         // 批量删除铃音

@@ -1,3 +1,6 @@
+$(document).ready(function () {
+    showTelCerTable();
+});
 // 获得订单列表-->我的订单
 function showTelCerTable() {
     var param = {
@@ -63,7 +66,7 @@ function showTelCerTable() {
             return;
         }
     }
-    page("#merchants", 10, param, "/telcertify/getTelCerOrderList", columns, columnDefs);
+    page("#merchants", 1, param, "/telcertify/getTelCerOrderList", columns, columnDefs);
 }
 
 // 获取订单列表-->即将到期列表
@@ -135,6 +138,7 @@ function determine() {
 //tab切换
 //我的订单
 function myorder() {
+    showTelCerTable();
     $('#myorder').addClass('active').siblings().removeClass('active');
     document.getElementsByClassName('myorder')[0].style.display = "block";
     document.getElementsByClassName('net_middle')[0].style.display = "none";
@@ -143,6 +147,7 @@ function myorder() {
 
 //即将到期号码
 function surplusOrder() {
+    showFallDueTable();
     $('#myorder2').addClass('active').siblings().removeClass('active');
     document.getElementsByClassName('myorder')[0].style.display = "none";
     document.getElementsByClassName('net_middle')[0].style.display = "block";
@@ -151,6 +156,7 @@ function surplusOrder() {
 
 //到期号码
 function overOrder() {
+    showDueTable();
     $('#myorder3').addClass('active').siblings().removeClass('active');
     document.getElementsByClassName('myorder')[0].style.display = "none";
     document.getElementsByClassName('net_middle')[0].style.display = "none";

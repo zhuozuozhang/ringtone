@@ -3,7 +3,7 @@ package com.hrtxn.ringtone.freemark.config.logConfig;
 import com.hrtxn.ringtone.common.utils.ServletUtils;
 import com.hrtxn.ringtone.common.utils.ShiroUtils;
 import com.hrtxn.ringtone.common.utils.StringUtils;
-import com.hrtxn.ringtone.freemark.config.AsyncConfig.AsyncConfig;
+import com.hrtxn.ringtone.freemark.config.asyncConfig.AsyncConfig;
 import com.hrtxn.ringtone.freemark.enums.BusinessStatus;
 import com.hrtxn.ringtone.project.system.log.domain.OperateLog;
 import com.hrtxn.ringtone.project.system.user.domain.User;

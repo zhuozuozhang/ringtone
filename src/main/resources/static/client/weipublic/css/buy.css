@@ -1,0 +1,149 @@
+.forms{
+	width: 90%;
+    margin: 225px 5% 0 5%;
+}
+.forms .input1{
+    background: white;
+    border-radius: 5px;
+    padding-left: 40px;
+    background-image: url(../images/user.png);
+    background-repeat: no-repeat;
+    background-position: 10px;
+    background-size: 15px;
+    height: 40px;
+    line-height: 40px;
+    font-size: 0.7rem;
+}
+.forms .input2{
+    background: white;
+    border-radius: 5px;
+    padding-left: 40px;
+    background-image: url(../images/code.png);
+    background-repeat: no-repeat;
+    background-position: 10px;
+    background-size: 15px;
+    margin-top: 15px;
+    width: 60%;
+    height: 40px;
+    line-height: 40px;
+    font-size: 0.7rem;
+}
+.codes{
+	width: 35%;
+    height: 40px;
+    margin-top: 15px;
+    border-radius: 5px;
+}
+.codess{
+	width: 35%;
+    height: 40px;
+    background: #FBC02D;
+    margin-top: 15px;
+    border-radius: 5px;
+    text-align: center;
+    line-height: 40px;
+    color:#E14E17;
+    font-size:0.7rem;
+    border: 0;
+}
+.charges{
+	width: 90%;
+    margin: 15px auto;
+    color: white;
+}
+.charges .p1{
+	color: white;
+}
+.charges .p2{
+	color: #d1b3ea;
+    font-size: 0.6rem;
+}
+.charges .p3{
+	color: #E7C98F;
+    text-align: right;
+    font-size: 0.7rem;
+    padding-top: 10px;
+    background: url(../images/next.png) no-repeat 100% 13px;
+    background-size: 15px;
+    padding-right: 20px;
+    width: 100%;
+}
+.subs {
+    width: 80%;
+    height: 40px;
+    background: #FC448C;
+    text-align: center;
+    color: white;
+    line-height: 40px;
+    margin-left: 10%;
+    margin-top: 30px;
+    border-radius: 100px;
+    letter-spacing: 5px;
+    border: 0;
+}
+.tan{
+	width: 250px;
+    height: 300px;
+    background-image: url(../images/detail.png);
+    margin: 0 auto;
+    background-size: 100%;
+    background-repeat: no-repeat;
+    background-position: 0px 31px;
+}
+#closes{
+	float: right;
+    font-size: 23px;
+    color:#d1b3ea;
+    width: 30px;
+}
+.tan .p1{
+	text-align: center;
+    color: #A48EF5;
+    padding-top: 50px;
+    font-family: 黑体;
+}
+.tan .p2,.p3{
+	width: 70%;
+    margin: 0 auto;
+    font-size: 0.6rem;
+    font-family: 黑体;
+}
+.tan .p3{
+	color:#888888;
+}
+.subss {
+    width: 70%;
+    height: 40px;
+    background: #FC448C;
+    text-align: center;
+    color: white;
+    line-height: 40px;
+    margin-left: 15%;
+    margin-top: 96px;
+    border-radius: 100px;
+    letter-spacing: 2px;
+}
+#cover{
+    position:absolute;left:0px;top:0px;
+    background:rgba(0, 0, 0, 1);
+    width:100%;  /*宽度设置为100%，这样才能使隐藏背景层覆盖原页面*/
+    height:100%;
+    filter:alpha(opacity=60);  /*设置透明度为60%*/
+    opacity:0.6;  /*非IE浏览器下设置透明度为60%*/
+    display:none;
+    z-index:999;
+}
+#modal{
+    position: fixed;
+    margin:auto;left:0; right:0; top:0; bottom:0;
+    width:100%;
+    height:300px;
+    top:0;
+    left:0;
+    display:none;
+    cursor:pointer;
+    z-index:9999;
+}
+input::-webkit-input-placeholder {
+    color:#cecdcd;
+}

@@ -1,234 +1,106 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="zh" xmlns:th="http://www.thymeleaf.org">
 <head th:include="admin/common/include :: header"></head>
-	<body>
-		<div class="container">
-			<div class="logo"><a href="index.html" th:href="@{/admin/index}">企业彩铃</a></div>
-			<div class="left_open">
-				<i title="展开左侧栏" class="iconfont">&#xe699;</i>
-			</div>
-			<ul class="layui-nav right" lay-filter="">
-				<li class="layui-nav-item">
-					<a href="javascript:;">[[${session.username}]]</a>
-					<dl class="layui-nav-child"> 
-						<dd><a th:href="@{/loginout}">退出</a></dd>
-					</dl>
-				</li>
-			</ul>
-		</div>
-		<div class="left-nav">
-			<div id="side-nav">
-				<ul id="nav">
-					<li>
-						<a href="javascript:;">
-							<i class="iconfont">&#xe6b8;</i>
-							<cite>用户管理</cite>
-							<i class="iconfont nav_right">&#xe6a7;</i>
-						</a>
-						<ul class="sub-menu">
-							<li>
-								<a _href="/admin/userList">
-									<i class="iconfont">&#xe6a7;</i>
-									<cite>用户列表</cite>
-								</a>
-							</li>
-							<li>
-								<a _href="/admin/toUserPartnerListPage">
-									<i class="iconfont">&#xe6a7;</i>
-									<cite>用户搜索</cite>
-								</a>
-							</li>
-						</ul>
-					</li>
-					<li>
-						<a href="javascript:;">
-							<i class="iconfont">&#xe713;</i>
-							<cite>铃音管理</cite>
-							<i class="iconfont nav_right">&#xe6a7;</i>
-						</a>
-						<ul class="sub-menu">
-							<li>
-								<a _href="/admin/ringList">
-									<i class="iconfont">&#xe6a7;</i>
-									<cite>铃音列表</cite>
-								</a>
-							</li>
-						</ul>
-					</li>
-					<li>
-						<a href="javascript:;">
-							<i class="iconfont">&#xe725;</i>
-							<cite>号码认证</cite>
-							<i class="iconfont nav_right">&#xe6a7;</i>
-						</a>
-						<ul class="sub-menu">
-							<li>
-								<a _href="/admin/telCertificationList">
-									<i class="iconfont">&#xe6a7;</i>
-									<cite>认证列表</cite>
-								</a>
-							</li>
-							<li>
-								<a _href="/admin/telcertification_config">
-									<i class="iconfont">&#xe6a7;</i>
-									<cite>认证配置</cite>
-								</a>
-							</li>
-							<li>
-								<a _href="/admin/telcertification_recharge_log">
-									<i class="iconfont">&#xe6a7;</i>
-									<cite>充值记录</cite>
-								</a>
-							</li>
-							<li>
-								<a _href="/admin/telcertification_consume_log">
-									<i class="iconfont">&#xe6a7;</i>
-									<cite>消费记录</cite>
-								</a>
-							</li>
-						</ul>
-					</li>
-					<li>
-						<a href="javascript:;">
-							<i class="iconfont">&#xe6ce;</i>
-							<cite>公众号管理</cite>
-							<i class="iconfont nav_right">&#xe6a7;</i>
-						</a>
-						<ul class="sub-menu">
-							<li>
-								<a _href="html/member-list.html">
-									<i class="iconfont">&#xe6a7;</i>
-									<cite>分类管理</cite>
-								</a>
-							</li>
-							<li>
-								<a _href="html/member-list.html">
-									<i class="iconfont">&#xe6a7;</i>
-									<cite>背景音乐</cite>
-								</a>
-							</li>
-							<li>
-								<a _href="html/member-list.html">
-									<i class="iconfont">&#xe6b8;</i>
-									<cite>订单列表</cite>
-								</a>
-							</li >
-							<li>
-								<a _href="html/member-list.html">
-									<i class="iconfont">&#xe6a7;</i>
-									<cite>在线办理</cite>
-								</a>
-							</li>
-						</ul>
-					</li>
-					<li>
-						<a href="javascript:;">
-							<i class="iconfont">&#xe6a8;</i>
-							<cite>公告管理</cite>
-							<i class="iconfont nav_right">&#xe6a7;</i>
-						</a>
-						<ul class="sub-menu">
-							<li>
-								<a _href="/admin/toNoticeListPage">
-									<i class="iconfont">&#xe6a7;</i>
-									<cite>公告列表</cite>
-								</a>
-							</li>
-						</ul>
-					</li>
-					<li>
-						<a href="javascript:;">
-							<i class="iconfont">&#xe757;</i>
-							<cite>数据统计</cite>
-							<i class="iconfont nav_right">&#xe6a7;</i>
-						</a>
-						<ul class="sub-menu">
-							<li>
-								<a _href="/admin/toMonth">
-									<i class="iconfont">&#xe6a7;</i>
-									<cite>按日统计</cite>
-								</a>
-							</li >
-							<li>
-								<a _href="/admin/toYear">
-									<i class="iconfont">&#xe6a7;</i>
-									<cite>按月统计</cite>
-								</a>
-							</li>
-						</ul>
-					</li> 
-					<li>
-						<a href="javascript:;">
-							<i class="iconfont">&#xe761;</i>
-							<cite>系统管理</cite>
-							<i class="iconfont nav_right">&#xe6a7;</i>
-						</a>
-						<ul class="sub-menu">
-							<li>
-								<a href="javascript:;">
-									<i class="iconfont">&#xe699;</i>
-									<cite>日志管理</cite>
-									<i class="iconfont nav_right">&#xe6a7;</i>
-								</a>
-								<ul class="sub-menu">
-									<li>
-										<a _href="/admin/toOperateLogPage">
-											<i class="iconfont">&#xe6a7;</i>
-											<cite>操作日志</cite>
-										</a>
-									</li >
-									<li>
-										<a _href="/admin/toLoginLogPage">
-											<i class="iconfont">&#xe6a7;</i>
-											<cite>登录日志</cite>
-										</a>
-									</li>
-								</ul>
-							</li>
-						</ul>
-						<ul class="sub-menu">
-							<li>
-								<a href="javascript:;">
-									<i class="iconfont">&#xe761;</i>
-									<cite>权限管理</cite>
-									<i class="iconfont nav_right">&#xe6a7;</i>
-								</a>
-								<ul class="sub-menu">
-									<li>
-										<a _href="/admin/toJurisdictionPage">
-											<i class="iconfont">&#xe6ae;</i>
-											<cite>权限设置</cite>
-										</a>
-									</li>
-								</ul>
-							</li>
-						</ul>
-						<ul class="sub-menu">
-							<li>
-								<a _href="/admin/toSystemConfig">
-									<i class="iconfont">&#xe761;</i>
-									<cite>系统配置</cite>
-									<i class="iconfont nav_right">&#xe6a7;</i>
-								</a>
-							</li>
-						</ul>
-					</li>
-				</ul>
-			</div>
-		</div>
-		<div class="page-content">
-			<div class="layui-tab tab" lay-filter="xbs_tab" lay-allowclose="false">
-				<ul class="layui-tab-title">
-					<li class="home"><i class="layui-icon">&#xe68e;</i>我的桌面</li>
-				</ul>
-				<div class="layui-tab-content">
-					<div class="layui-tab-item layui-show">
-						<iframe src='html/welcome.html' th:src="@{/admin/welcome}" frameborder="0" scrolling="yes" class="x-iframe"></iframe>
-					</div>
-				</div>
-			</div>
-		</div>
-		<div class="page-content-bg"></div>
-	</body>
-    <div th:include="admin/common/include :: footer"></div>
+<body>
+<div class="container">
+    <div class="logo"><a href="index.html" th:href="@{/admin/index}">企业彩铃</a></div>
+    <div class="left_open"><i title="展开左侧栏" class="iconfont">&#xe699;</i></div>
+    <ul class="layui-nav right" lay-filter="">
+        <li class="layui-nav-item"><a href="javascript:;">[[${session.username}]]</a>
+            <dl class="layui-nav-child">
+                <dd><a th:href="@{/loginout}">退出</a></dd>
+            </dl>
+        </li>
+    </ul>
+</div>
+<div class="left-nav">
+    <div id="side-nav">
+        <ul id="nav">
+            <li><a href="javascript:;"><i class="iconfont">&#xe6b8;</i><cite>用户管理</cite><i class="iconfont nav_right">&#xe6a7;</i></a>
+                <ul class="sub-menu">
+                    <li><a _href="/admin/userList"><i class="iconfont">&#xe6a7;</i><cite>用户列表</cite></a></li>
+                    <li><a _href="/admin/toUserPartnerListPage"><i class="iconfont">&#xe6a7;</i><cite>用户搜索</cite></a>
+                    </li>
+                </ul>
+            </li>
+            <li><a href="javascript:;"><i class="iconfont">&#xe713;</i><cite>铃音管理</cite><i class="iconfont nav_right">&#xe6a7;</i></a>
+                <ul class="sub-menu">
+                    <li><a _href="/admin/ringList"><i class="iconfont">&#xe6a7;</i><cite>铃音列表</cite></a></li>
+                </ul>
+            </li>
+            <li><a href="javascript:;"><i class="iconfont">&#xe725;</i><cite>号码认证</cite><i class="iconfont nav_right">&#xe6a7;</i></a>
+                <ul class="sub-menu">
+                    <li><a _href="admin/telCertificationList"><i class="iconfont">&#xe6a7;</i><cite>认证列表</cite></a></li>
+                    <li><a _href="html/telcertification/telcertification_config.html"><i
+                            class="iconfont">&#xe6a7;</i><cite>认证配置</cite></a></li>
+                    <li><a _href="html/telcertification/telcertification_recharge_log.html"><i
+                            class="iconfont">&#xe6a7;</i><cite>充值记录</cite></a></li>
+                    <li><a _href="html/telcertification/telcertification_consume_log.html"><i
+                            class="iconfont">&#xe6a7;</i><cite>消费记录</cite></a></li>
+                </ul>
+            </li>
+            <li><a href="javascript:;"><i class="iconfont">&#xe6ce;</i><cite>公众号管理</cite><i class="iconfont nav_right">&#xe6a7;</i></a>
+                <ul class="sub-menu">
+                    <li><a _href="html/member-list.html"><i class="iconfont">&#xe6a7;</i><cite>分类管理</cite></a></li>
+                    <li><a _href="html/member-list.html"><i class="iconfont">&#xe6a7;</i><cite>背景音乐</cite></a></li>
+                    <li><a _href="html/member-list.html"><i class="iconfont">&#xe6b8;</i><cite>订单列表</cite></a></li>
+                    <li><a _href="html/member-list.html"><i class="iconfont">&#xe6a7;</i><cite>在线办理</cite></a></li>
+                </ul>
+            </li>
+            <li><a href="javascript:;"><i class="iconfont">&#xe6a8;</i><cite>公告管理</cite><i class="iconfont nav_right">&#xe6a7;</i></a>
+                <ul class="sub-menu">
+                    <li><a _href="/admin/toNoticeListPage"><i class="iconfont">&#xe6a7;</i><cite>公告列表</cite></a></li>
+                </ul>
+            </li>
+            <li><a href="javascript:;"><i class="iconfont">&#xe757;</i><cite>数据统计</cite><i class="iconfont nav_right">&#xe6a7;</i></a>
+                <ul class="sub-menu">
+                    <li><a _href="/admin/toMonth"><i class="iconfont">&#xe6a7;</i><cite>按日统计</cite></a></li>
+                    <li><a _href="/admin/toYear"><i class="iconfont">&#xe6a7;</i><cite>按月统计</cite></a></li>
+                </ul>
+            </li>
+            <li><a href="javascript:;"><i class="iconfont">&#xe761;</i><cite>系统管理</cite><i class="iconfont nav_right">&#xe6a7;</i></a>
+                <ul class="sub-menu">
+                    <li><a href="javascript:;"><i class="iconfont">&#xe699;</i><cite>日志管理</cite><i
+                            class="iconfont nav_right">&#xe6a7;</i></a>
+                        <ul class="sub-menu">
+                            <li><a _href="/admin/toOperateLogPage"><i class="iconfont">&#xe6a7;</i><cite>操作日志</cite></a>
+                            </li>
+                            <li><a _href="/admin/toLoginLogPage"><i class="iconfont">&#xe6a7;</i><cite>登录日志</cite></a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+                <ul class="sub-menu">
+                    <li><a href="javascript:;"><i class="iconfont">&#xe761;</i><cite>权限管理</cite><i
+                            class="iconfont nav_right">&#xe6a7;</i></a>
+                        <ul class="sub-menu">
+                            <li><a _href="/admin/toJurisdictionPage"><i
+                                    class="iconfont">&#xe6ae;</i><cite>权限设置</cite></a></li>
+                        </ul>
+                    </li>
+                </ul>
+                <ul class="sub-menu">
+                    <li><a _href="/admin/toSystemConfig"><i class="iconfont">&#xe761;</i><cite>系统配置</cite><i
+                            class="iconfont nav_right">&#xe6a7;</i></a></li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+</div>
+<div class="page-content">
+    <div class="layui-tab tab" lay-filter="xbs_tab" lay-allowclose="false">
+        <ul class="layui-tab-title">
+            <li class="home"><i class="layui-icon">&#xe68e;</i>我的桌面</li>
+        </ul>
+        <div class="layui-tab-content">
+            <div class="layui-tab-item layui-show">
+                <iframe src='html/welcome.html' th:src="@{/admin/welcome}" frameborder="0" scrolling="yes"
+                        class="x-iframe"></iframe>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="page-content-bg"></div>
+</body>
+<div th:include="admin/common/include :: footer"></div>
 </html>
