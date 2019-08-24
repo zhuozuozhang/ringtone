@@ -13,6 +13,7 @@ import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreenetsChildOrder;
 import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreenetsOrder;
 import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreenetsRing;
 import com.hrtxn.ringtone.project.threenets.threenet.json.migu.MiguAddRingRespone;
+import com.hrtxn.ringtone.project.threenets.threenet.mapper.ThreenetsChildOrderMapper;
 import com.hrtxn.ringtone.project.threenets.threenet.mapper.ThreenetsOrderMapper;
 import com.hrtxn.ringtone.project.threenets.threenet.mapper.ThreenetsRingMapper;
 import com.hrtxn.ringtone.project.threenets.threenet.utils.ApiUtils;
@@ -52,10 +53,21 @@ public class ThreeNetsRingService {
     @Autowired
     private ThreeNetsOrderAttachedService threeNetsOrderAttachedService;
     @Autowired
-    private ThreeNetsChildOrderService threeNetsChildOrderService;
+    private ThreenetsChildOrderMapper threenetsChildOrderMapper;
 
 
     private ApiUtils apiUtils = new ApiUtils();
+
+    /**
+     * 增
+     *
+     * @param ring
+     * @return
+     */
+    public Integer insert(ThreenetsRing ring){
+        return threenetsRingMapper.insertThreeNetsRing(ring);
+    }
+
 
     /**
      * 根据订单id获取父级订单
@@ -118,10 +130,12 @@ public class ThreeNetsRingService {
     public AjaxResult saveRing(ThreenetsRing ring) throws Exception {
         ThreenetsOrder order = threenetsOrderMapper.selectByPrimaryKey(ring.getOrderId());
         ring.setCompanyName(order.getCompanyName());
-        BaseRequest request = new BaseRequest();
-        request.setParentId(ring.getOrderId());
-        List<ThreenetsChildOrder> childOrderList = threeNetsChildOrderService.getChildOrder(request);
-        Map<Integer, List<ThreenetsChildOrder>> collect = childOrderList.stream().collect(Collectors.groupingBy(ThreenetsChildOrder::getOperator));
+
+        ThreenetsChildOrder childOrder = new ThreenetsChildOrder();
+        childOrder.setParentOrderId(ring.getOrderId());
+        List<ThreenetsChildOrder> childOrders = threenetsChildOrderMapper.listByParamNoPage(childOrder);
+
+        Map<Integer, List<ThreenetsChildOrder>> collect = childOrders.stream().collect(Collectors.groupingBy(ThreenetsChildOrder::getOperator));
         int num = 1;
         for (Integer operator : collect.keySet()) {
             String extensionsName = ring.getRingWay().substring(ring.getRingWay().indexOf("."));

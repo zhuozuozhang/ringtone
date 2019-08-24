@@ -9,7 +9,7 @@ import com.hrtxn.ringtone.freemark.config.asyncConfig.AsyncConfig;
 import com.hrtxn.ringtone.project.system.log.domain.LoginLog;
 import com.hrtxn.ringtone.project.system.user.domain.LoginParam;
 import com.hrtxn.ringtone.project.system.user.service.UserService;
-import com.hrtxn.ringtone.project.threenets.threenet.service.ThreeNetsChildOrderService;
+import com.hrtxn.ringtone.project.threenets.threenet.mapper.ThreenetsChildOrderMapper;
 import com.hrtxn.ringtone.project.threenets.threenet.service.ThreeNetsRingService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.SecurityUtils;
@@ -43,7 +43,7 @@ public class LoginController {
     @Autowired
     private UserService userService;
     @Autowired
-    private ThreeNetsChildOrderService threeNetsChildOrderService;
+    private ThreenetsChildOrderMapper threenetsChildOrderMapper;
     @Autowired
     private ThreeNetsRingService threeNetsRingService;
 
@@ -167,28 +167,28 @@ public class LoginController {
 
         // 2、号码（总号码数、移动总数/已包月数、电信总数/已包月数、联通总数/已包月数）
         // 总数
-        Integer phoneCount = threeNetsChildOrderService.getPhoneCount(null, null);
+        Integer phoneCount = threenetsChildOrderMapper.getPhoneCount(null, null);
         map.put("phoneCount", phoneCount);
 
         // 移动
         // 移动总数
-        Integer miguPhoneCount = threeNetsChildOrderService.getPhoneCount(1, null);
+        Integer miguPhoneCount = threenetsChildOrderMapper.getPhoneCount(1, null);
         // 移动已包月数
-        Integer miguPhoneSuccCount = threeNetsChildOrderService.getPhoneCount(1, 2);
+        Integer miguPhoneSuccCount = threenetsChildOrderMapper.getPhoneCount(1, 2);
         map.put("miguPhoneCount", miguPhoneCount + "/" + miguPhoneSuccCount);
 
         // 电信
         // 电信总数
-        Integer mcardPhoneCount = threeNetsChildOrderService.getPhoneCount(2, null);
+        Integer mcardPhoneCount = threenetsChildOrderMapper.getPhoneCount(2, null);
         // 电信已包月数
-        Integer mcardPhoneSuccCount = threeNetsChildOrderService.getPhoneCount(2, 2);
+        Integer mcardPhoneSuccCount = threenetsChildOrderMapper.getPhoneCount(2, 2);
         map.put("mcardPhoneCount", mcardPhoneCount + "/" + mcardPhoneSuccCount);
 
         // 联通
         // 联通总数
-        Integer swxlPhoneCount = threeNetsChildOrderService.getPhoneCount(3, null);
+        Integer swxlPhoneCount = threenetsChildOrderMapper.getPhoneCount(3, null);
         // 联通已包月数
-        Integer swxlPhoneSuccCount = threeNetsChildOrderService.getPhoneCount(3, 2);
+        Integer swxlPhoneSuccCount = threenetsChildOrderMapper.getPhoneCount(3, 2);
         map.put("swxlPhoneCount", swxlPhoneCount + "/" + swxlPhoneSuccCount);
 
         // 3、铃音（总铃音数、移动总数/已包月数、电信总数/已包月数、联通总数/已包月数）

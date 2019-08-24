@@ -76,6 +76,14 @@
         from tb_threenets_child_order
         where id = #{id,jdbcType=INTEGER}
     </select>
+    <!-- 根据条件查询列表-->
+    <select id="listByParamNoPage" resultMap="BaseResultMap">
+        select p.*,c.company_name as companyLinkman from tb_threenets_order c
+        left join tb_threenets_child_order p on c.id = p.parent_order_id
+        where 1=1
+        <include refid="parameters"/>
+        order by create_date desc
+    </select>
     <!-- 获取近5日信息-->
     <select id="getFiveData" resultType="com.hrtxn.ringtone.project.threenets.threenet.domain.PlotBarPhone">
         SELECT
