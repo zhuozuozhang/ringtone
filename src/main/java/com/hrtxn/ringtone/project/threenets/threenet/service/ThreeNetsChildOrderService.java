@@ -165,7 +165,11 @@ public class ThreeNetsChildOrderService {
     private ThreenetsChildOrder getParameters(BaseRequest request) {
         ThreenetsChildOrder order = new ThreenetsChildOrder();
         if (StringUtils.isNotNull(request)) {
-            order.setParentOrderId(request.getId());
+            if (request.getParentOrderId() != null){
+                order.setParentOrderId(request.getParentOrderId());
+            }else {
+                order.setParentOrderId(request.getId());
+            }
             Integer userRole = ShiroUtils.getSysUser().getUserRole();
             if (userRole != 1) {
                 order.setUserId(ShiroUtils.getSysUser().getId());
