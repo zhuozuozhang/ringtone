@@ -105,7 +105,6 @@ public class TelCertificationController {
     public AjaxResult getTelCerOrderList(Page page, BaseRequest request){
         List<CertificationOrder> list = new ArrayList<CertificationOrder>();
         try{
-
             return telCertificationService.findAllTelCertification(page,request);
         }catch (Exception e){
             log.error("获取号码认证订单列表数据 方法：getTelCerOrderList 错误信息",e);

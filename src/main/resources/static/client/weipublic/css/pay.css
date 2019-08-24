@@ -1,0 +1,49 @@
+html,body{background: #F0F4FF;}
+.aui-bar{background: #F0F4FF;}
+.cons{
+	width: 90%;
+    height: 180px;
+    background: white;
+    margin: 20px auto;
+    border-radius: 20px;
+    box-shadow: 0 3px 3px #D8D7F0;
+}
+.aui-list{
+	padding-top: 20px;
+	border-radius: 20px;
+	font-size: 0.7rem !important;
+}
+.aui-list-item{
+	border-bottom: 1px solid #E2E2E2!important;
+    width: 90%!important;
+    margin: 0 auto!important;
+}
+.lis{
+	border: 0!important;
+}
+.lis input{
+	color:#EF7A9C;
+}
+.prompt{
+	width: 90%;
+    margin: 35px auto;
+}
+.prompt .p2{
+	font-size: 0.6rem;
+    padding: 10px 0;
+    line-height: 27px;
+    letter-spacing: 3px;
+}
+.subs {
+    width: 90%;
+    height: 40px;
+    background: #FC448C;
+    text-align: center;
+    color: white;
+    line-height: 40px;
+    margin-left: 5%;
+    border-radius: 100px;
+    letter-spacing: 5px;
+    position: absolute;
+    bottom: 30px;
+}

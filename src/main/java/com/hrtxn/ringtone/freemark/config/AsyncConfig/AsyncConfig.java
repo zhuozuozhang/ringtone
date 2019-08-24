@@ -1,4 +1,4 @@
-package com.hrtxn.ringtone.freemark.config.AsyncConfig;
+package com.hrtxn.ringtone.freemark.config.asyncConfig;
 
 import com.hrtxn.ringtone.common.utils.AddressUtils;
 import com.hrtxn.ringtone.common.utils.SpringUtils;

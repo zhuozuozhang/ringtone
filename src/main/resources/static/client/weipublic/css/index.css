@@ -1,0 +1,206 @@
+.titles {
+    text-align: center;
+    color: white;
+    height: 50px;
+    line-height: 70px;
+    letter-spacing: 1px;
+}
+.conedit{
+	width: 90%;
+    height: 140px;
+    background: white;
+    border-radius: 10px;
+    margin-left: 5%;
+    margin-top: 205px;
+}
+.conedit .d1{
+    background: url(../images/edit.png) no-repeat 0;
+    background-size: 18px;
+    padding-left: 25px;
+    width: 90%;
+    margin: 0 auto;
+    border-bottom: 1px solid #EEEEEE;
+    height: 30px;
+    line-height: 30px;
+    color: #714CF1;
+    font-size: 0.7rem;
+}
+.conedit .d2{
+	width: 90%;
+    margin: 0 auto;
+    font-size: 0.4rem;
+    color: #999797;
+    padding: 5px 0px;
+    height: 80px;
+    overflow: hidden;
+    -webkit-line-clamp: 4;
+    display: -webkit-box;
+    text-overflow: ellipsis;
+    -webkit-box-orient: vertical;
+    letter-spacing: 1px;
+}
+.conedit .d3{
+	font-size: 0.6rem;
+    color: white;
+    background: #714CF1;
+    width: 80px;
+    text-align: center;
+    border-radius: 16px;
+    float: right;
+    margin-right: 20px;
+    padding: 1px;
+    margin-top: 2px;
+    background-image: url(../images/next.png);
+    background-repeat: no-repeat;
+    background-size: 20px;
+    background-position: 100%;
+    padding-right: 5px;
+}
+.music{
+	width: 90%;
+    height: 170px;
+    background: white;
+    border-radius: 10px;
+    margin-left: 5%;
+    margin-top: 15px;
+}
+.music .d1{
+	background: url(../images/music.png) no-repeat 0;
+    background-size: 18px;
+    padding-left: 25px;
+    width: 90%;
+    margin: 0 auto;
+    border-bottom: 1px solid #EEEEEE;
+    height: 30px;
+    line-height: 30px;
+    color: #714CF1;
+    font-size: 0.7rem;
+}
+.music .d2{
+	padding-top: 10px;
+	height: 70px;
+	position: relative;
+}
+.music .d2 div{
+	text-align: center;
+	font-size:0.6rem;
+	height: 30px;
+    line-height: 30px;
+}
+.music .d2 span{
+	background: #F0F4FF;
+    padding: 4px 12px;
+    border-radius: 20px;
+}
+.refreshd{
+	width: 100px;
+    height: 25px;
+    line-height: 25px;
+    text-align: center;
+    margin: 0 auto;
+    font-size: 0.6rem;
+    background-image: url(../images/Refresh.png);
+    background-repeat: no-repeat;
+    background-size: 20px;
+    background-position: 10px 2px;
+}
+.actives{
+	background: #714CF1 !important;
+    color: white !important;
+}
+.btn-audio{
+    width: 100%;
+    height: 35px;
+    margin-top: 10px;
+}
+.btn-audio audio{
+	width: 100%;
+    height: 35px;
+}
+.audio-left {
+    float: left;
+    text-align: center;
+    width: 18%;
+    height: 100%;
+}
+
+.audio-left img {
+    width: 25px;
+    position: relative;
+    top: -5px;
+    margin: 0;
+    display: initial;
+    cursor: pointer;
+}
+
+.audio-right {
+    margin-right: 6%;
+    float: right;
+    width: 76%;
+    height: 100%;
+}
+
+.audio-right p {
+    font-size: 15px;
+    height: 35%;
+    margin: -3px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;   
+}
+
+.progress-bar-bg {
+    background-color: #d9d9d9;
+    position: relative;
+    height: 2px;
+    cursor: pointer;
+}
+
+.progress-bar {
+    background-color: #714CF1;
+    width: 0;
+    height: 2px;
+}
+
+.progress-bar-bg span {
+    content: " ";
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    -moz-border-radius: 50%;
+    -webkit-border-radius: 50%;
+    background-color: #714CF1;
+    position: absolute;
+    left: 0;
+    top: 50%;
+    margin-top: -5px;
+    margin-left: -5px;
+    cursor: pointer;
+}
+
+.audio-time {
+    overflow: hidden;
+    margin-top: 6px;
+}
+
+.audio-length-total {
+    float: right;
+    font-size: 12px;
+}
+
+.audio-length-current {
+    float: left;
+    font-size: 12px;
+}
+.subs {
+    width: 80%;
+    height: 40px;
+    background: #FC448C;
+    text-align: center;
+    color: white;
+    line-height: 40px;
+    margin-left: 10%;
+    margin-top:20px;
+    border-radius: 100px;
+    letter-spacing: 5px;
+}

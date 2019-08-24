@@ -26,6 +26,8 @@ import com.hrtxn.ringtone.project.threenets.threenet.utils.ApiUtils;
 import lombok.Synchronized;
 import org.apache.commons.beanutils.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -291,19 +293,26 @@ public class ThreeNetsOrderService {
         if (attached.getId() == null){
             threeNetsOrderAttachedService.save(attached);
         }
+        threeNetsChildOrderService.batchChindOrder(childOrders);
         //保存线上
-        saveOnlineOrder(threenetsOrder, attached, childOrders, order);
+        saveOnlineOrder(threenetsOrder, attached, order);
         return AjaxResult.success("保存成功！");
     }
 
     /**
-     * 三网保存订单
+     * 异步保存三网订单
      *
-     * @param list
+     * @param order
+     * @param attached
+     * @param orderRequest
      */
-    private void saveOnlineOrder(ThreenetsOrder order, ThreeNetsOrderAttached attached, List<ThreenetsChildOrder> list, OrderRequest orderRequest) {
-        Map<Integer, List<ThreenetsChildOrder>> collect = list.stream().collect(Collectors.groupingBy(ThreenetsChildOrder::getOperator));
+    @Async
+    void saveOnlineOrder(ThreenetsOrder order, ThreeNetsOrderAttached attached, OrderRequest orderRequest) {
         try {
+            BaseRequest baseRequest = new BaseRequest();
+            baseRequest.setParentOrderId(order.getId());
+            List<ThreenetsChildOrder> list = threeNetsChildOrderService.getChildOrder(baseRequest);
+            Map<Integer, List<ThreenetsChildOrder>> collect = list.stream().collect(Collectors.groupingBy(ThreenetsChildOrder::getOperator));
             // 移动
             if (collect.get(Const.OPERATORS_MOBILE) != null) {
                 saveOrderByYd(order, attached, collect.get(Const.OPERATORS_MOBILE));
@@ -327,14 +336,35 @@ public class ThreeNetsOrderService {
         }
     }
 
-    @Synchronized
+    /**
+     * 保存移动
+     * @param order
+     * @param attached
+     * @param childOrders
+     * @throws Exception
+     */
     private void saveOrderByYd(ThreenetsOrder order, ThreeNetsOrderAttached attached, List<ThreenetsChildOrder> childOrders) throws Exception {
         ApiUtils utils = new ApiUtils();
         order.setLinkmanTel(childOrders.get(0).getLinkmanTel());
         MiguAddGroupRespone miguAddGroupRespone = utils.addOrderByYd(order, attached);
         if (miguAddGroupRespone != null && miguAddGroupRespone.isSuccess()) {
-            ThreenetsRing ring = threeNetsRingService.getRing(childOrders.get(0).getRingId());
             attached.setMiguId(miguAddGroupRespone.getCircleId());
+            //成员
+            for (int i = 0; i < childOrders.size(); i++) {
+                ThreenetsChildOrder childOrder = childOrders.get(i);
+                childOrder.setOperateId(attached.getMiguId());
+                childOrder.setStatus(attached.getMiguPrice() <= 5 ? "审核通过" : "未审核");
+                childOrders.set(i, childOrder);
+                threeNetsChildOrderService.update(childOrder);
+            }
+            if (attached.getMiguPrice() <= 5) {
+                utils.addPhoneByYd(childOrders, attached.getMiguId());
+                attached.setMiguStatus(Const.REVIEWED);
+            } else {
+                attached.setMiguStatus(Const.UNREVIEWED);
+            }
+            //铃音
+            ThreenetsRing ring = threeNetsRingService.getRing(childOrders.get(0).getRingId());
             ring.setOperateId(miguAddGroupRespone.getCircleId());
             MiguAddRingRespone ringRespone = utils.saveMiguRing(ring, attached.getMiguId(), order.getCompanyName());
             if (ringRespone.isSuccess()) {
@@ -344,24 +374,17 @@ public class ThreeNetsOrderService {
                 threeNetsRingService.delete(ring.getId());
                 fileService.deleteFile(ring.getRingWay());
             }
-            for (int i = 0; i < childOrders.size(); i++) {
-                ThreenetsChildOrder childOrder = childOrders.get(i);
-                childOrder.setOperateId(attached.getMiguId());
-                childOrder.setStatus(attached.getMiguPrice() <= 5 ? "审核通过" : "未审核");
-                childOrders.set(i, childOrder);
-            }
-            if (attached.getMiguPrice() <= 5) {
-                utils.addPhoneByYd(childOrders, attached.getMiguId());
-                attached.setMiguStatus(Const.REVIEWED);
-            } else {
-                attached.setMiguStatus(Const.UNREVIEWED);
-            }
-            threeNetsChildOrderService.batchChindOrder(childOrders);
         }
         threeNetsOrderAttachedService.update(attached);
     }
 
-    @Synchronized
+    /**
+     * 保存联通
+     * @param order
+     * @param attached
+     * @param childOrders
+     * @throws Exception
+     */
     private void saveOrderByLt(ThreenetsOrder order, ThreeNetsOrderAttached attached, List<ThreenetsChildOrder> childOrders) throws Exception {
         ApiUtils utils = new ApiUtils();
         ThreenetsRing ring = threeNetsRingService.getRing(childOrders.get(0).getRingId());
@@ -379,30 +402,36 @@ public class ThreeNetsOrderService {
                 ThreenetsChildOrder childOrder = childOrders.get(i);
                 childOrder.setOperateId(attached.getSwxlId());
                 childOrders.set(i, childOrder);
+                threeNetsChildOrderService.update(childOrder);
             }
             utils.addPhoneByLt(childOrders, attached.getSwxlId());
             attached.setSwxlStatus(Const.REVIEWED);
-            threeNetsChildOrderService.batchChindOrder(childOrders);
             threeNetsRingService.update(ring);
         }
         threeNetsOrderAttachedService.update(attached);
     }
 
-    @Synchronized
+    /**
+     * 保存电信
+     * @param order
+     * @param attached
+     * @param orderRequest
+     * @param childOrders
+     */
     private void saveOrderByDx(ThreenetsOrder order, ThreeNetsOrderAttached attached, OrderRequest orderRequest, List<ThreenetsChildOrder> childOrders) {
         ApiUtils utils = new ApiUtils();
         //文件上传
         if (orderRequest.getCompanyUrl() != null && !orderRequest.getCompanyUrl().isEmpty()) {
-//            String path = utils.mcardUploadFile(new File(RingtoneConfig.getProfile() + orderRequest.getCompanyUrl()));
-//            attached.setBusinessLicense(path);
+            String path = utils.mcardUploadFile(new File(RingtoneConfig.getProfile() + orderRequest.getCompanyUrl()));
+            attached.setBusinessLicense(path);
         }
         if (orderRequest.getClientUrl() != null && !orderRequest.getClientUrl().isEmpty()) {
-//            String path = utils.mcardUploadFile(new File(RingtoneConfig.getProfile() + orderRequest.getClientUrl()));
-//            attached.setConfirmLetter(path);
+            String path = utils.mcardUploadFile(new File(RingtoneConfig.getProfile() + orderRequest.getClientUrl()));
+            attached.setConfirmLetter(path);
         }
         if (orderRequest.getMainUrl() != null && !orderRequest.getMainUrl().isEmpty()) {
-//            String path = utils.mcardUploadFile(new File(RingtoneConfig.getProfile() + orderRequest.getMainUrl()));
-//            attached.setSubjectProve(path);
+            String path = utils.mcardUploadFile(new File(RingtoneConfig.getProfile() + orderRequest.getMainUrl()));
+            attached.setSubjectProve(path);
         }
         order.setLinkmanTel(childOrders.get(0).getLinkmanTel());
         McardAddGroupRespone groupRespone = utils.addOrderByDx(order, attached);
@@ -416,8 +445,8 @@ public class ThreeNetsOrderService {
             childOrder.setOperateId(attached.getMcardId());
             childOrder.setStatus("待审核");
             childOrders.set(i, childOrder);
+            threeNetsChildOrderService.update(childOrder);
         }
-        threeNetsChildOrderService.batchChindOrder(childOrders);
         attached.setMcardStatus(Const.UNREVIEWED);
         threeNetsOrderAttachedService.update(attached);
     }

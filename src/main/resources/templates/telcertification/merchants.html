@@ -94,9 +94,9 @@
                 </div>
                 <button onclick="showTelCerTable()">搜索</button>
                 <div class="new_businesses" id="cause">新增商户</div>
-<!--                <div class="new_businesses" onclick="addTelMerchant()">新增商户</div>-->
+                <!-- <div class="new_businesses" onclick="addTelMerchant()">新增商户</div>-->
             </div>
-<!--            集团信息列表-->
+            <!-- 集团信息列表-->
             <div class="number_list">
                 <input type="hidden" id="id" th:value="${id}">
                 <table class="layui-table" id='merchants' style="width:1200px!important;">
@@ -127,7 +127,8 @@
                         <p>号码:</p>
                         <input type="text" id="number">
                     </div>
-                    <button onclick="showFallDueTable()" style="background:#17a9ff;border:none;color:#fff; border-radius:5px;">
+                    <button onclick="showFallDueTable()"
+                            style="background:#17a9ff;border:none;color:#fff; border-radius:5px;">
                         搜索
                     </button>
                 </div>
@@ -143,29 +144,29 @@
                             <th>业务反馈</th>
                             <th>提交时间</th>
                             <th>到期时间</th>
-<!--                            <th>备注</th>-->
+                            <!--                            <th>备注</th>-->
                             <th>操作</th>
                         </tr>
                         </thead>
-<!--                        <tbody>-->
-<!--                        <tr>-->
-<!--                            <td>12345678912</td>-->
-<!--                            <td>2018-05-26</td>-->
-<!--                            <td>260</td>-->
-<!--                            <td>开通中</td>-->
-<!--                            <td>aaaaaaa</td>-->
-<!--                            <td>2018-05-26 03:15:30</td>-->
-<!--                            <td>2018-06-26 03:15:30</td>-->
-<!--                            <td>aaaaaaaa</td>-->
-<!--                            <td><p><i class="layui-icon layui-icon-log" title="查看详情" onclick="ckeckDetails();"></i></p>-->
-<!--                            </td>-->
-<!--                        </tr>-->
-<!--                        </tbody>-->
+                        <!--                        <tbody>-->
+                        <!--                        <tr>-->
+                        <!--                            <td>12345678912</td>-->
+                        <!--                            <td>2018-05-26</td>-->
+                        <!--                            <td>260</td>-->
+                        <!--                            <td>开通中</td>-->
+                        <!--                            <td>aaaaaaa</td>-->
+                        <!--                            <td>2018-05-26 03:15:30</td>-->
+                        <!--                            <td>2018-06-26 03:15:30</td>-->
+                        <!--                            <td>aaaaaaaa</td>-->
+                        <!--                            <td><p><i class="layui-icon layui-icon-log" title="查看详情" onclick="ckeckDetails();"></i></p>-->
+                        <!--                            </td>-->
+                        <!--                        </tr>-->
+                        <!--                        </tbody>-->
                     </table>
                 </div>
             </div>
         </div>
-<!--        到期号码-->
+        <!-- 到期号码-->
         <div class="net_middle2" style="display:none">
             <div class="net_bottom">
                 <div class="search">
@@ -173,7 +174,8 @@
                         <p>号码:</p>
                         <input type="text" id="number2">
                     </div>
-                    <button onclick="showDueTable()" style="background:#17a9ff;border:none;color:#fff; border-radius:5px;">
+                    <button onclick="showDueTable()"
+                            style="background:#17a9ff;border:none;color:#fff; border-radius:5px;">
                         搜索
                     </button>
                 </div>
@@ -356,33 +358,32 @@
         </div>
     </div>
 </div>
-    <!--修改订单 -->
-    <div th:replace="telcertification/common/edit :: edit"></div>
-
-    <!--查看示例-->
-    <div class="back display" id="case">
-        <div class="pop_content">
-            <div class="approve_title">
-                <h5>查看示例</h5>
-                <div class="gban" id="closecase"><img th:src="@{/client/telcertification/images/close.png}"></div>
-            </div>
-            <div class="casecon"><img th:src="@{/client/telcertification/images/sqs.jpg}"></div>
+<!--修改订单 -->
+<div th:replace="telcertification/common/edit :: edit"></div>
+<!--查看示例-->
+<div class="back display" id="case">
+    <div class="pop_content">
+        <div class="approve_title">
+            <h5>查看示例</h5>
+            <div class="gban" id="closecase"><img th:src="@{/client/telcertification/images/close.png}"></div>
         </div>
+        <div class="casecon"><img th:src="@{/client/telcertification/images/sqs.jpg}"></div>
     </div>
-    <!--订购协议-->
-    <div th:replace="telcertification/common/agreement :: agreement"></div>
-    <!--展示机型弹窗1 -->
-    <div class="tcbk display" id="zsjxa">
-        <div class="zcjx">支持机型</div>
-        <div class="jxbk"><span>泰迪熊</span><span>其他</span></div>
-        <div class="gban" id="cancel">我已了解</div>
-    </div>
-    <!--展示机型弹窗2 -->
-    <div class="tcbk display" id="zsjxb">
-        <div class="zcjx">支持机型</div>
-        <div class="jxbk"><span>全部机型</span></div>
-        <div class="gban" id="close">我已了解</div>
-    </div>
+</div>
+<!--订购协议-->
+<div th:replace="telcertification/common/agreement :: agreement"></div>
+<!--展示机型弹窗1 -->
+<div class="tcbk display" id="zsjxa">
+    <div class="zcjx">支持机型</div>
+    <div class="jxbk"><span>泰迪熊</span><span>其他</span></div>
+    <div class="gban" id="cancel">我已了解</div>
+</div>
+<!--展示机型弹窗2 -->
+<div class="tcbk display" id="zsjxb">
+    <div class="zcjx">支持机型</div>
+    <div class="jxbk"><span>全部机型</span></div>
+    <div class="gban" id="close">我已了解</div>
+</div>
 </body>
 <script th:src="@{/public/js/jquery-2.1.4.min.js}"></script>
 <!--<script th:src="@{/public/js/jquery-3.2.0.min.js}"></script>-->
@@ -395,12 +396,4 @@
 <script type="text/javascript" th:src="@{/public/js/ajax.js}"></script>
 <script th:src="@{/client/telcertification/js/merchants.js}"></script>
 <script th:src="@{/client/telcertification/js/charge.js}"></script>
-<script>
-    $(document).ready(function () {
-        showTelCerTable();
-        showFallDueTable();
-        showDueTable();
-    });
-
-</script>
 </html>

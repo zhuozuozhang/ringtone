@@ -5,7 +5,7 @@ import com.hrtxn.ringtone.common.domain.BaseRequest;
 import com.hrtxn.ringtone.common.utils.AddressUtils;
 import com.hrtxn.ringtone.common.utils.MD5Utils;
 import com.hrtxn.ringtone.common.utils.ShiroUtils;
-import com.hrtxn.ringtone.freemark.config.AsyncConfig.AsyncConfig;
+import com.hrtxn.ringtone.freemark.config.asyncConfig.AsyncConfig;
 import com.hrtxn.ringtone.project.system.log.domain.LoginLog;
 import com.hrtxn.ringtone.project.system.user.domain.LoginParam;
 import com.hrtxn.ringtone.project.system.user.service.UserService;

@@ -25,6 +25,8 @@ public class BaseRequest {
 
     private Integer orderId;
 
+    private Integer parentOrderId;
+
     private String companyName;
 
     private String month;

@@ -242,8 +242,6 @@ public class HttpUtils
         // 下载网络文件
         int bytesum = 0;
         int byteread = 0;
-
-
         try {
             @SuppressWarnings("resource")
             FileOutputStream fs = new FileOutputStream("c:/abc.jpg");
