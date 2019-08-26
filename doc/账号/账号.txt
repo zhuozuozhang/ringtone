@@ -45,6 +45,10 @@ IP：120.27.226.14
 账号：zgjc@xuzhouglazure.partner.onmschina.cn
 密码：zG201900@
 
+微软云远程
+账号：ceshi
+密码：ceshi123456!@#
+
 聚合
 网址：https://www.juhe.cn
 账号：zhonggaojuncong
