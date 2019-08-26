@@ -7,63 +7,83 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport" content="width=device-width,testUser-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi" />
     <link rel="shortcut icon" th:href="@{/favicon.ico}" type="image/x-icon" />
+    <link rel="stylesheet" type="text/css" th:href="@{/public/layui/css/modules/layer/default/layer.css}">
     <link rel="stylesheet" th:href="@{/admin/css/font.css}">
     <link rel="stylesheet" th:href="@{/admin/css/xadmin.css}">
+    <link rel="stylesheet" type="text/css" href="../../public/dataTables/jquery.dataTables.min.css"
+          th:href="@{/admin/dataTables/jquery.dataTables.min.css}">
     <style type="text/css">
         .layui-input-inline{
             width: 490px!important;
         }
     </style>
-    
+
 </head>
-<body>
-    <div class="x-body layui-anim layui-anim-up">
-        <form class="layui-form">
-            <div class="layui-form-item">
-                <label for="telcertification" class="layui-form-label">
-                    <span class="x-red">*</span>价格
-                </label>
-                <div class="layui-input-inline">
-                    <input type="number" id="telcertification" name="telcertification" required lay-verify="telcertification" autocomplete="off" class="layui-input" value="80">
-                </div>
-            </div>
-            <div class="layui-form-item">
-                <label for="L_repass" class="layui-form-label"></label>
-                <button class="layui-btn" lay-filter="add" lay-submit="">增加</button>
-            </div>
-        </form>
-    </div>
+<body class="layui-anim layui-anim-up">
+<div class="x-nav">
+		<span class="layui-breadcrumb">
+			<a href="">首页</a>
+			<a href="">号码认证</a>
+			<a>
+				<cite>认证配置</cite>
+			</a>
+		</span>
+    <a class="layui-btn layui-btn-primary layui-btn-small" style="line-height:1.6em;margin-top:3px;float:right"
+       href="javascript:location.replace(location.href);" title="刷新">
+        <i class="layui-icon" style="line-height:38px">ဂ</i>
+    </a>
+</div>
+<div class="x-body">
+    <table class="layui-table" id="config_table">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>业务类型</th>
+            <th>金额</th>
+            <th>操作</th>
+        </tr>
+        </thead>
+    </table>
+</div>
 </body>
-<script type="text/javascript" th:src="@{/public/js/jquery-2.1.4.min.js}"></script>
-<script type="text/javascript" th:src="@{/public/js/jquery-3.4.1.js}"></script>
-<script th:src="@{/public/layui/layui.js}"></script>
-<script th:src="@{/public/layui/lay/modules/layer.js}"></script>
-<script type="text/javascript" th:src="@{/public/dataTables/jquery.dataTables.min.js}"></script>
-<script type="text/javascript" th:src="@{/public/js/datatables.js}"></script>
-
-
-<!--<script th:src="@{/public/js/jquery.min.js}"></script>-->
-<!--<script type="text/javascript" th:src="@{/admin/lib/layui/layui.js}" charset="utf-8"></script>-->
-<script type="text/javascript" th:src="@{/admin/js/xadmin.js}"></script>
-<script data-cfasync="false" th:src="@{/public/js/regular.js}"></script>
+<div th:include="admin/common/include :: footer"></div>
 <script type="text/javascript">
-    layui.use(['form','layer'], function(){
-        $ = layui.jquery;
-        var form = layui.form,layer = layui.layer;
-        //自定义验证规则
-        form.verify({
-            telcertification: function(value){
-                if(!isNotEmpty(value)){
-                    return '请输入价格';
+    $(document).ready(function () {
+        showTelCerConfigTable();
+    });
+    function showTelCerConfigTable(){
+        var columns = [
+            {"data": null},
+            {"data": "name"},
+            {"data": "price"}
+        ];
+        var columnDefs = [
+            {
+                targets: [3],
+                render: function (data, type, row, meta) {
+                    var id = row.id;
+                    return "<a title='修改' onclick=\"editConfig('修改配置信息','/admin/toEditTelCerConfig/"+id+"',800,500);\" ><i class=\"layui-icon\">&#xe642;</i></a>";
                 }
+            }];
+        page("#config_table", 10, {}, "/admin/getAllConfig", columns, columnDefs);
+    }
+
+    // 修改配置信息
+    function editConfig(title, url, w, h) {
+        layer.open({
+            type: 2,
+            area: [w + 'px', h + 'px'],
+            fix: false,
+            maxmin: true,
+            shadeClose: true,
+            shade: 0.4,
+            title: title,
+            content: url,
+            end: function () {
+                $('#config_table').DataTable().ajax.reload(null, false);
             }
         });
-        //监听提交
-        form.on('submit(add)', function(data){
-            console.log(data);
-            layer.msg('修改成功', {icon: 1});
-            return false;
-        });
-    });
+    }
+
 </script>
 </html>

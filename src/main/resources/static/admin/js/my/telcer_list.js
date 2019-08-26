@@ -7,7 +7,8 @@ function showTelcertification_table() {
         "phoneNum" : $("#membernum").val()
     }
     var columns = [
-        {"data": null},
+        {"data": "id"},
+        {"data": "id"},
         {"data": "id"},
         {"data": "telCompanyName"},
         {"data": "telLinkName"},
@@ -19,17 +20,16 @@ function showTelcertification_table() {
         {"data": "productName"},
         {"data": "remark"}
     ];
-    var columnDefs = [
-    //     {
-    //     targets:[10],
-    //     render: function (data, type, row, meta) {
-    //         var id = row.id;
-    //         return "<div class='layui-unselect layui-form-checkbox' lay-skin='primary' data-id='"+id+"'><i class='layui-icon layui-icon-ok'></i></div>"
-    //         // return "<div class='layui-unselect header layui-form-checkbox' lay-skin='primary'><i class='layui-icon'>&#xe605;</i></div>"
-    //     }
-    // },
-        {
-        targets:[9],
+    var columnDefs = [{
+        targets:[2],
+        render: function (data, type, row, meta) {
+            var id = row.id;
+            // return "<div class='layui-unselect layui-form-checkbox' lay-skin='primary' data-id='"+id+"'><i class='layui-icon'>&#xe605;</i></div>"
+            return "<div class='layui-unselect layui-form-checkbox' lay-skin='primary' data-id='"+id+"'><i class='layui-icon layui-icon-ok'>&#xe605;</div>"
+            // return "<div class='layui-unselect header layui-form-checkbox' lay-skin='primary'><i class='layui-icon'>&#xe605;</i></div>"
+        }
+    }, {
+        targets:[10],
         render: function (data, type, row, meta) {
             var productName = row.productName;
             var product = $.parseJSON(productName);
@@ -49,17 +49,13 @@ function showTelcertification_table() {
             return str;
         }
     }, {
-        targets:[11],
+        targets:[12],
         render: function (data, type, row, meta) {
             var id = row.id;
-            return "<a title='查看' onclick='x_admin_show(\"详细信息\",\"/admin/telcertification_detail/"+id+"\",\"\",\"\")' href='javascript:;'><i class='layui-icon layui-icon-survey'>&emsp;</i></a>" +
-                "<a title='成员管理' onclick='x_admin_show(\"成员管理\",\"/admin/telcertification_child_list/"+id+"\",\"\",\"\")' href='javascript:void();'><i class='layui-icon layui-icon-user'>&emsp;</i></a>" +
-                "<a title='删除' onclick='telCertification_del(this,\""+id+"\")' href='javascript:;'><i class='layui-icon layui-icon-delete'></i></a>";
-            //
-            // return "<i class='layui-icon layui-icon-log' title='查看详细信息' onclick='ckeckDetails("+id+");'></i>"
-            //     + "<a href='/telcertify/toTelMembersPage/"+id+"'><i class='layui-icon layui-icon-username' title='成员管理'></i></a>"
-            //     + "<a title='删除' onclick='telCertification_del(this,\"要删除的id\")' href='javascript:;'><i class='layui-icon layui-icon-delete'></i></a>";
-        }
+            return "<a title='查看' onclick='x_admin_show(\"详细信息\",\"/admin/telcertificationDetail/"+id+"\",\"\",\"\")' href='javascript:;'><i class='layui-icon layui-icon-survey'>&emsp;</i></a>" +
+                "<a title='成员管理' onclick='x_admin_show(\"成员管理\",\"/admin/telcertificationChildList/"+id+"\",\"\",\"\")' href='javascript:;'><i class='layui-icon layui-icon-user'>&emsp;</i></a>" +
+                "<a title='删除' onclick='telCertification_del(\""+id+"\")' href='javascript:;'><i class='layui-icon layui-icon-delete'></i></a>";
+         }
     }];
 
     if(param.phoneNum != "" && param.phoneNum != null){
@@ -71,17 +67,47 @@ function showTelcertification_table() {
     page("#telcertification_table", 10, param, "/admin/getTelCerOrderList", columns, columnDefs);
 }
 
+
+//全选框
+$('#checkAll').on('click', function () {
+    if (this.checked) {
+        $(this).attr('checked','checked')
+        $("input[name='ckb-jobid']").each(function () {
+            this.checked = true;
+        });
+    } else {
+        $(this).removeAttr('checked')
+        $("input[name='ckb-jobid']").each(function () {
+            this.checked = false;
+        });
+    }
+});
+
+function childclick(){
+    if ($(this).is(":checked") == false) {
+        $("#checkAll").prop("checked", false);
+    }
+}
+
 // $(document).ready(function(){
 // 	//  分页
 // 	page("#telcertification_table",9);
 // });
 
 /*用户-删除*/
-function telCertification_del(obj,id){
+function telCertification_del(id){
     layer.confirm('确认要删除吗？',function(index){
         //发异步删除数据
-        $(obj).parents("tr").remove();
-        layer.msg('已删除!',{icon:1,time:1000});
+        AjaxDelete("/admin/deleteTelCer/"+id,{},function (res) {
+            if (res.code == 200 && res.data) {
+                layer.msg(res.msg, {icon: 6, time: 2000});
+                $('#telcertification_table').DataTable().ajax.reload();
+            } else {
+                layer.msg(res.msg, {icon: 5, time: 2000});
+            }
+        });
+        // $(obj).parents("tr").remove();
+        // layer.msg('已删除!',{icon:1,time:1000});
     });
 }
 // 批量删除号码认证订单

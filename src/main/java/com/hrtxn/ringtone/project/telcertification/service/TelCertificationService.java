@@ -71,6 +71,7 @@ public class TelCertificationService {
     public AjaxResult findAllTelCertification(Page page, BaseRequest request) throws ParseException {
         page.setPage((page.getPage() - 1) * page.getPagesize());
         List<CertificationOrder> allTelCer = certificationOrderMapper.findAllTelCertification(page, request);
+        int totalCount = certificationOrderMapper.getCount();
         List<CertificationOrder> theTelCer = new ArrayList<CertificationOrder>();
         for (CertificationOrder c : allTelCer) {
             formatParamFromDatabase(c);
@@ -131,7 +132,7 @@ public class TelCertificationService {
                 Matcher m = p.matcher(phoneNum);
                 boolean isMatch = m.matches();
                 if (!isMatch) {
-                    return AjaxResult.success(theTelCer, "手机号不正确");//手机号不正确
+                    return AjaxResult.success(theTelCer, "手机号不正确");
                 }
                 //根据成员电话号查找
                 List<CertificationChildOrder> ccList = certificationChildOrderMapper.findTheChildOrder(page, request);
@@ -152,10 +153,9 @@ public class TelCertificationService {
             return AjaxResult.success(theTelCer, "未获取到");
         }
         if (allTelCer.size() > 0 && allTelCer != null) {
-            int count = allTelCer.size();
-            return AjaxResult.success(allTelCer, "获取到了", count);
+            return AjaxResult.success(allTelCer, "获取到了", totalCount);
         }
-        return AjaxResult.success("没有从数据库获取到数据");//
+        return AjaxResult.success("没有从数据库获取到数据");
     }
 
     /**
@@ -193,26 +193,41 @@ public class TelCertificationService {
      */
     private void formatParamFromDatabase(CertificationOrder c) {
 
-        //号码认证订单状态（1.开通中/2.开通成功/3.开通失败/4.续费中/5.续费成功/6.续费失败）
-        if (c.getTelOrderStatus() == 1) {
-            c.setStatusName("开通中");
-        } else if (c.getTelOrderStatus() == 2) {
-            c.setStatusName("开通成功");
-        } else if (c.getTelOrderStatus() == 3) {
-            c.setStatusName("开通失败");
-        } else if (c.getTelOrderStatus() == 4) {
-            c.setStatusName("续费中");
-        } else if (c.getTelOrderStatus() == 5) {
-            c.setStatusName("续费成功");
-        } else if (c.getTelOrderStatus() == 6) {
-            c.setStatusName("续费失败");
-        } else {
-            c.setStatusName("未知");
-        }
+        if(StringUtils.isNotNull(c) && c != null){
+            //号码认证订单状态（1.开通中/2.开通成功/3.开通失败/4.续费中/5.续费成功/6.续费失败）
+            if (c.getTelOrderStatus() == 1) {
+                c.setStatusName("开通中");
+            } else if (c.getTelOrderStatus() == 2) {
+                c.setStatusName("开通成功");
+            } else if (c.getTelOrderStatus() == 3) {
+                c.setStatusName("开通失败");
+            } else if (c.getTelOrderStatus() == 4) {
+                c.setStatusName("续费中");
+            } else if (c.getTelOrderStatus() == 5) {
+                c.setStatusName("续费成功");
+            } else if (c.getTelOrderStatus() == 6) {
+                c.setStatusName("续费失败");
+            } else {
+                c.setStatusName("未知");
+            }
 
-        //如果备注中的内容为空，则改变值为无
-        if (c.getRemark() == "" || c.getRemark() == null) {
-            c.setRemark("无");
+            //如果备注中的内容为空，则改变值为无
+            if (c.getRemark() == "" || c.getRemark() == null) {
+                c.setRemark("无");
+            }
+        }else {
+            return;
         }
+    }
+
+    public AjaxResult deleteTelCer(Integer id) {
+        if (StringUtils.isNotNull(id) && id != 0) {
+            int count = certificationOrderMapper.deleteByPrimaryKey(id);
+            if (count > 0) {
+                return AjaxResult.success(true, "删除成功！");
+            }
+            return AjaxResult.error("删除失败！");
+        }
+        return AjaxResult.error("参数格式错误！");
     }
 }

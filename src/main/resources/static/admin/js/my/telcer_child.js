@@ -1,9 +1,10 @@
 function showTelcertification_child_table() {
     var param = {
         "parentId": $("#id").val(),
+        "phoneNum": $("#phoneNum").val()
     }
     var columns = [
-        {"data": null},
+        {"data": "id"},
         {"data": "id"},
         {"data": "telChildOrderPhone"},
         {"data": "years"},
@@ -15,6 +16,14 @@ function showTelcertification_child_table() {
         {"data": "telChildOrderExpireTime"}
     ];
     var columnDefs = [{
+        targets:[1],
+        render: function (data, type, row, meta) {
+            var id = row.id;
+            // return "<div class='layui-unselect layui-form-checkbox' lay-skin='primary' data-id='"+id+"'><i class='layui-icon'>&#xe605;</i></div>"
+            return "<div class=\"layui-unselect layui-form-checkbox\" lay-skin=\"primary\" data-id='1'><i class=\"layui-icon\">&#xe605;</i></div>"
+            // return "<div class='layui-unselect header layui-form-checkbox' lay-skin='primary'><i class='layui-icon'>&#xe605;</i></div>"
+        }
+    }, {
         targets: [5],
         render: function (data, type, row, meta) {
             var status = row.telChildOrderStatus;
@@ -34,7 +43,7 @@ function showTelcertification_child_table() {
             if (data != null && data != "") {
                 return data;
             } else {
-                return "<span>暂无</span>";
+                return "<input type=\"text\" id=\"businessFeedback\" name=\"businessFeedback\" required lay-verify=\"businessFeedback\" autocomplete=\"off\" class=\"layui-input\">";
             }
         }
     }, {
@@ -42,11 +51,11 @@ function showTelcertification_child_table() {
         render: function (data, type, row, meta) {
             var id = row.id;
             var phoneNum = row.telChildOrderPhone;
-            return "<a title='费用支出记录' onclick='x_admin_show(\"费用支出记录\",\"/admin/getTheTelcerConsumeLog/" + phoneNum + "\",\"\",\"\")' href='javascript:;\'><i class='layui-icon'>&#xe60e;</i></a>" +
-                "<a title='删除' onclick='telCertification_del(this,\"" + phoneNum + "\")' href='javascript:;\'><i class='layui-icon'>&#xe640;</i></a>";
+            return "<a title='费用支出记录' onclick='x_admin_show(\"费用支出记录\",\"/admin/getTheTelcerConsumeLog/" + phoneNum + "\",\"\",\"\")' href='javascript:;\'><i class='layui-icon layui-icon-survey'>&emsp;</i></a>" +
+                "<a title='删除' onclick='telCertification_del(\""+id+"\")' href='javascript:;\'><i class='layui-icon'>&#xe640;</i></a>";
         }
     }];
-    var url = "/admin/getTelcertification_child_list";
+    var url = "/admin/getTelcertificationChildList";
     page("#telcertification_child_table", 10, param, url, columns, columnDefs);
 }
 
@@ -65,11 +74,17 @@ function updateTelCertificationStatus(obj) {
 }
 
 /*用户-删除*/
-function telCertification_del(obj, id) {
+function telCertification_del(id) {
     layer.confirm('确认要删除吗？', function (index) {
         //发异步删除数据
-        $(obj).parents("tr").remove();
-        layer.msg('已删除!', {icon: 1, time: 1000});
+        AjaxDelete("/admin/deleteTelCerChild/"+id,{},function (res) {
+            if (res.code == 200 && res.data) {
+                layer.msg(res.msg, {icon: 6, time: 2000});
+                $('#telcertification_child_table').DataTable().ajax.reload();
+            } else {
+                layer.msg(res.msg, {icon: 5, time: 2000});
+            }
+        });
     });
 }
 

@@ -43,10 +43,11 @@
     <table class="layui-table" id="telcertification_table">
         <thead>
         <tr>
+            <th>#</th>
+            <th>ID</th>
             <th>
                 <div class="layui-unselect header layui-form-checkbox" lay-skin="primary"><i class="layui-icon">&#xe605;</i></div>
             </th>
-            <th>ID</th>
             <th>集团名称</th>
             <th>联系人</th>
             <th>联系电话</th>
@@ -90,7 +91,7 @@
 <!--        </tbody>-->
     </table>
 </div>
-
+<!--<div th:include="admin/common/include :: footer"></div>-->
 <script type="text/javascript" th:src="@{/public/js/jquery-2.1.4.min.js}"></script>
 <script type="text/javascript" th:src="@{/public/js/jquery-3.4.1.js}"></script>
 <script th:src="@{/public/layui/layui.js}"></script>
@@ -98,6 +99,7 @@
 <script th:src="@{/public/js/regular.js}"></script>
 <script type="text/javascript" th:src="@{/public/dataTables/jquery.dataTables.min.js}"></script>
 <script type="text/javascript" th:src="@{/public/js/datatables.js}"></script>
+<script type="text/javascript" th:src="@{/public/js/ajax.js}"></script>
 <!--	<script type="text/javascript" th:src="@{/admin/lib/layui/layui.js}" charset="utf-8"></script>-->
 
 <!--	<script data-cfasync="false" th:src="@{/admin/js/page.js}"></script>-->

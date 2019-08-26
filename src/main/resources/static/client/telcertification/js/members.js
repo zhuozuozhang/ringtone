@@ -53,7 +53,7 @@ function showTelCerMemberTable() {
         }
     }];
     var url = "/telcertify/getTelCerMembersList";
-    page("#members", 10, param, url, columns, columnDefs);
+    page("#members", 2, param, url, columns, columnDefs);
 }
 
 

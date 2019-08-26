@@ -16,7 +16,7 @@ import java.util.List;
 @Repository
 public interface CertificationChildOrderMapper {
 
-       int getCount();
+    int getCount();
 
     List<CertificationChildOrder> findTheChildOrder(@Param("page") Page page, @Param("param") BaseRequest request);
 
@@ -24,4 +24,6 @@ public interface CertificationChildOrderMapper {
     int getMemberCountByParentId(int i);
 
     CertificationChildOrder getTelCerChildById(Integer id);
+
+    int deleteByPrimaryKey(@Param("id") Integer id);
 }

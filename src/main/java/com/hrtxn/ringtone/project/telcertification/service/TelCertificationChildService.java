@@ -52,11 +52,11 @@ public class TelCertificationChildService {
         if(request.getParentId() != null){
             for (CertificationChildOrder cc : allChildOrderList) {
                 formatTelCerChildFromDatabase(cc);
-                if(cc.getParentOrderId() == request.getParentId()){
+                if(cc.getParentOrderId().equals(request.getParentId())){
                     theChildList.add(cc);
                 }
             }
-            return AjaxResult.success(theChildList,"查询到了",theChildList.size()); //没有对应id的成员信息
+            return AjaxResult.success(theChildList,"查询到了",theChildList.size());
         }
         return AjaxResult.success(theChildList,"获取失败",theChildList.size());
     }
@@ -70,12 +70,13 @@ public class TelCertificationChildService {
     public AjaxResult getTheTelCerCostLogList(Page page,BaseRequest request) {
         page.setPage((page.getPage() - 1) * page.getPagesize());
         List<CertificationConsumeLog> allCostLogList = certificationConsumeLogMapper.getAllCostLogList(page,request);
+        int totalcount = certificationConsumeLogMapper.getCount();
         List<CertificationConsumeLog> theCostLogList = new ArrayList<CertificationConsumeLog>();
         if(request.getPhoneNum() != null && request.getPhoneNum() != ""){
             theCostLogList = certificationConsumeLogMapper.getTheTelCerCostLogList(page,request);
             return AjaxResult.success(theCostLogList,"获取某条消费记录",theCostLogList.size());
         }
-        return AjaxResult.success(allCostLogList,"获取全部消费记录",allCostLogList.size());
+        return AjaxResult.success(allCostLogList,"获取全部消费记录",totalcount);
     }
 
     /**
@@ -176,4 +177,14 @@ public class TelCertificationChildService {
 
     }
 
+    public AjaxResult deleteTelCerChild(Integer id) {
+        if (StringUtils.isNotNull(id) && id != 0) {
+            int count = certificationChildOrderMapper.deleteByPrimaryKey(id);
+            if (count > 0) {
+                return AjaxResult.success(true, "删除成功！");
+            }
+            return AjaxResult.error("删除失败！");
+        }
+        return AjaxResult.error("参数格式错误！");
+    }
 }

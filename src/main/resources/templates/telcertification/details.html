@@ -91,9 +91,9 @@
 
 <!--                <input type="text" name="title" readonly th:value="${service}" required lay-verify="required" autocomplete="off" class="layui-input" style="width: 95%;">-->
                 <tr th:each="s:${service}">
-                    <td th:text="'[' + ${s.name} + ','"></td>
+                    <td th:text="${s.name} + ','"></td>
                     <td th:text="${s.period0fValidity} + ','"></td>
-                    <td th:text="${s.cost} + '元]'"></td>
+                    <td th:text="${s.cost} + '元'"></td><br/>
                 </tr>
             </div>
         </div>

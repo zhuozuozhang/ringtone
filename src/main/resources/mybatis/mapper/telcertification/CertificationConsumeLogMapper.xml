@@ -7,14 +7,14 @@
     <result column="user_tel" property="userTel" jdbcType="VARCHAR" />
     <result column="tel_consume_log_type" property="telConsumeLogType" jdbcType="INTEGER" />
     <result column="tel_consume_log_status" property="telConsumeLogStatus" jdbcType="INTEGER" />
-    <result column="telconsume_log_price" property="telconsumeLogPrice" jdbcType="REAL" />
+    <result column="tel_consume_log_price" property="telConsumeLogPrice" jdbcType="REAL" />
     <result column="tel_consume_log_ctime" property="telConsumeLogCtime" jdbcType="TIMESTAMP" />
     <result column="tel_consume_log_open_time" property="telConsumeLogOpenTime" jdbcType="TIMESTAMP" />
     <result column="tel_consume_log_expire_time" property="telConsumeLogExpireTime" jdbcType="TIMESTAMP" />
     <result column="user_id" property="userId" jdbcType="INTEGER" />
   </resultMap>
   <sql id="Base_Column_List" >
-    id, user_name, user_tel, tel_consume_log_type, tel_consume_log_status, telconsume_log_price,
+    id, user_name, user_tel, tel_consume_log_type, tel_consume_log_status, tel_consume_log_price,
     tel_consume_log_ctime, tel_consume_log_open_time, tel_consume_log_expire_time, user_id
   </sql>
 
@@ -51,6 +51,12 @@
     WHERE 1=1
     ORDER BY tel_consume_log_ctime DESC
     <include refid="page"/>
+  </select>
+
+<!--  获取所有消费记录总数-->
+  <select id="getCount" resultType="int">
+    SELECT COUNT(*)
+    FROM tb_telcertification_consume_log
   </select>
 
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >

@@ -23,4 +23,6 @@ public interface CertificationOrderMapper {
     int getCount();
 
     CertificationOrder getTelCerOrderById(Integer id);
+
+    int deleteByPrimaryKey(@Param("id") Integer id);
 }

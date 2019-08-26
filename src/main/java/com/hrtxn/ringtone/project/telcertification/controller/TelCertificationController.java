@@ -127,8 +127,8 @@ public class TelCertificationController {
      * 进入即将到期号码查看详情页面
      * @return
      */
-    @GetMapping("/toTeldetails_onePage/{id}")
-    public String toTeldetails_onePage(@PathVariable Integer id, ModelMap map){
+    @GetMapping("/toTeldetailsOnePage/{id}")
+    public String toTeldetailsOnePage(@PathVariable Integer id, ModelMap map){
         CertificationChildOrder telcerChild = telCertificationChildService.getTelCerChildById(id,map);
         return "telcertification/details_one";
     }

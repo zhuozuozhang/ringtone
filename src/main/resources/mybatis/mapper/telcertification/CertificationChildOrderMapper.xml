@@ -68,6 +68,7 @@
         from tb_telcertification_child_order
         where id = #{id,jdbcType=INTEGER}
     </select>
+<!--    删除成员信息-->
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from tb_telcertification_child_order
     where id = #{id,jdbcType=INTEGER}

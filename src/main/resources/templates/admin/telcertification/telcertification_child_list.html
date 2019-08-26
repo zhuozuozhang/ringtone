@@ -27,8 +27,9 @@
 	<div class="x-body">
 		<div class="layui-row">
 			<div class="layui-form layui-col-md12 x-so">
-				<input type="text" name="username" placeholder="请输入手机号" autocomplete="off" class="layui-input">
-				<button class="layui-btn" lay-submit="" lay-filter="sreach"><i class="layui-icon">&#xe615;</i></button>
+				<input type="text" name="phoneNum" id="phoneNum" placeholder="请输入手机号" autocomplete="off" class="layui-input">
+<!--				<button class="layui-btn" lay-submit="" lay-filter="sreach"><i class="layui-icon">&#xe615;</i></button>-->
+				<button class="layui-btn" onclick="showTelcertification_child_table()"><i class="layui-icon">&#xe615;</i></button>
 			</div>
 		</div>
 		<xblock>
@@ -38,10 +39,10 @@
 		<table class="layui-table" id="telcertification_child_table">
 			<thead>
 				<tr>
+					<th>#</th>
 					<th>
 						<div class="layui-unselect header layui-form-checkbox" lay-skin="primary"><i class="layui-icon">&#xe605;</i></div>
 					</th>
-					<th>ID</th>
 					<th>成员号码</th>
 					<th>订购年份</th>
 					<th>价格</th>
@@ -53,41 +54,41 @@
 					<th>操作</th>
 				</tr>
 			</thead>
-			<tbody>
-				<tr>
-					<td>
-						<div class="layui-unselect layui-form-checkbox" lay-skin="primary" data-id='1'><i class="layui-icon">&#xe605;</i></div>
-					</td>
-					<td>1</td>
-					<td>15050840350</td>
-					<td>1</td>
-					<td>80</td>
-					<td>
-						<select id="selector" onchange="updateTelCertificationStatus(this);">
-							<option value="1">开通中</option>
-							<option value="2" selected>开通成功</option>
-							<option value="3">开通失败</option>
-							<option value="4">续费中</option>
-							<option value="5">续费成功</option>
-							<option value="6">续费失败</option>
-						</select>
-					</td>
-					<td>
-						<input type="text" id="businessFeedback" name="businessFeedback" required lay-verify="businessFeedback" autocomplete="off" class="layui-input">
-					</td>
-					<td>2019-06-21 11:46:42</td>
-					<td>2019-06-21 12:46:42</td>
-					<td>2020-06-21 12:46:42</td>
-					<td class="td-manage">
-						<a title="费用支出记录" onclick="x_admin_show('费用支出记录','telcertification_consume_log.html','','')" href="javascript:;">
-							<i class="layui-icon">&#xe60e;</i>
-						</a>
-						<a title="删除" onclick="telCertification_del(this,'要删除的id')" href="javascript:;">
-							<i class="layui-icon">&#xe640;</i>
-						</a>
-					</td>
-				</tr>
-			</tbody>
+<!--			<tbody>-->
+<!--				<tr>-->
+<!--					<td>-->
+<!--						<div class="layui-unselect layui-form-checkbox" lay-skin="primary" data-id='1'><i class="layui-icon">&#xe605;</i></div>-->
+<!--					</td>-->
+<!--					<td>1</td>-->
+<!--					<td>15050840350</td>-->
+<!--					<td>1</td>-->
+<!--					<td>80</td>-->
+<!--					<td>-->
+<!--						<select id="selector" onchange="updateTelCertificationStatus(this);">-->
+<!--							<option value="1">开通中</option>-->
+<!--							<option value="2" selected>开通成功</option>-->
+<!--							<option value="3">开通失败</option>-->
+<!--							<option value="4">续费中</option>-->
+<!--							<option value="5">续费成功</option>-->
+<!--							<option value="6">续费失败</option>-->
+<!--						</select>-->
+<!--					</td>-->
+<!--					<td>-->
+<!--						<input type="text" id="businessFeedback" name="businessFeedback" required lay-verify="businessFeedback" autocomplete="off" class="layui-input">-->
+<!--					</td>-->
+<!--					<td>2019-06-21 11:46:42</td>-->
+<!--					<td>2019-06-21 12:46:42</td>-->
+<!--					<td>2020-06-21 12:46:42</td>-->
+<!--					<td class="td-manage">-->
+<!--						<a title="费用支出记录" onclick="x_admin_show('费用支出记录','telcertification_consume_log.html','','')" href="javascript:;">-->
+<!--							<i class="layui-icon">&#xe60e;</i>-->
+<!--						</a>-->
+<!--						<a title="删除" onclick="telCertification_del(this,'要删除的id')" href="javascript:;">-->
+<!--							<i class="layui-icon">&#xe640;</i>-->
+<!--						</a>-->
+<!--					</td>-->
+<!--				</tr>-->
+<!--			</tbody>-->
 		</table>
 	</div>
 
@@ -98,7 +99,7 @@
 	<script th:src="@{/public/js/regular.js}"></script>
 	<script type="text/javascript" th:src="@{/public/dataTables/jquery.dataTables.min.js}"></script>
 	<script type="text/javascript" th:src="@{/public/js/datatables.js}"></script>
-
+	<script type="text/javascript" th:src="@{/public/js/ajax.js}"></script>
 <!--	<script th:src="@{/public/js/jquery.min.js}"></script>-->
 <!--	<script type="text/javascript" th:src="@{/admin/lib/layui/layui.js}" charset="utf-8"></script>-->
 <!--	<script type="text/javascript" th:src="@{/admin/dataTables/jquery.dataTables.min.js}"></script>-->

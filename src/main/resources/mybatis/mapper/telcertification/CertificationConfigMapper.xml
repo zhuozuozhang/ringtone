@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hrtxn.ringtone.project.telcertification.mapper.CertificationConfigMapper">
+    <resultMap id="BaseResultMap" type="com.hrtxn.ringtone.project.telcertification.domain.CertificationConfig">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="type" property="type" jdbcType="INTEGER"/>
+        <result column="price" property="price" jdbcType="REAL"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    id, type, price
+  </sql>
+    <!--获取配置列表-->
+    <select id="getAllConfig" resultMap="BaseResultMap">
+        SELECT * FROM tb_telcertification_config
+        <if test="page.page != null and page.pagesize != null and page.pagesize !=''">
+            LIMIT #{page.page},#{page.pagesize}
+        </if>
+    </select>
+
+    <!--获取总数-->
+    <select id="getCount" resultType="int">
+    SELECT COUNT(*) FROM tb_telcertification_config
+  </select>
+    <!--  根据id获取配置信息-->
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+        select
+        <include refid="Base_Column_List"/>
+        from tb_telcertification_config
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+    <!--  修改配置信息-->
+    <update id="updateTelCerConfig"
+            parameterType="com.hrtxn.ringtone.project.telcertification.domain.CertificationConfig">
+        UPDATE tb_telcertification_config
+        <set>
+            <if test="type != null">
+                type = #{type,jdbcType=INTEGER},
+            </if>
+            <if test="price != null">
+                price = #{price,jdbcType=REAL},
+            </if>
+        </set>
+        where id=#{id,jdbcType=INTEGER}
+    </update>
+    <!--  根据id删除配置信息-->
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from tb_telcertification_config
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+
+    <insert id="insert" parameterType="com.hrtxn.ringtone.project.telcertification.domain.CertificationConfig">
+    insert into tb_telcertification_config (id, type, price)
+    values (#{id,jdbcType=INTEGER}, #{type,jdbcType=INTEGER}, #{price,jdbcType=REAL})
+  </insert>
+    <insert id="insertSelective" parameterType="com.hrtxn.ringtone.project.telcertification.domain.CertificationConfig">
+        insert into tb_telcertification_config
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="type != null">
+                type,
+            </if>
+            <if test="price != null">
+                price,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=INTEGER},
+            </if>
+            <if test="type != null">
+                #{type,jdbcType=INTEGER},
+            </if>
+            <if test="price != null">
+                #{price,jdbcType=REAL},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective"
+            parameterType="com.hrtxn.ringtone.project.telcertification.domain.CertificationConfig">
+        update tb_telcertification_config
+        <set>
+            <if test="type != null">
+                type = #{type,jdbcType=INTEGER},
+            </if>
+            <if test="price != null">
+                price = #{price,jdbcType=REAL},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+    <update id="updateByPrimaryKey"
+            parameterType="com.hrtxn.ringtone.project.telcertification.domain.CertificationConfig">
+    update tb_telcertification_config
+    set type = #{type,jdbcType=INTEGER},
+      price = #{price,jdbcType=REAL}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

@@ -66,7 +66,7 @@ function showTelCerTable() {
             return;
         }
     }
-    page("#merchants", 1, param, "/telcertify/getTelCerOrderList", columns, columnDefs);
+    page("#merchants", 2, param, "/telcertify/getTelCerOrderList", columns, columnDefs);
 }
 
 // 获取订单列表-->即将到期列表
@@ -92,7 +92,7 @@ function showFallDueTable() {
             return "<p><i class='layui-icon layui-icon-log' title='查看详情' onclick='ckeckDetailsOne("+id+");'></i></p>";
         }
     }];
-    page("#fall_due_table", 10, param, "/telcertify/getFallDueList", columns, columnDefs);
+    page("#fall_due_table", 2, param, "/telcertify/getFallDueList", columns, columnDefs);
 }
 //获取订单列表-->已经到期列表
 function showDueTable() {
@@ -187,7 +187,7 @@ function ckeckDetailsOne(id) {
     layer.open({
         type: 2,
         title: '详情',
-        content: '/telcertify/toTeldetails_onePage/'+id,
+        content: '/telcertify/toTeldetailsOnePage/'+id,
         area: ['500px', '680px']
     });
 }

@@ -4,10 +4,11 @@ import com.hrtxn.ringtone.common.constant.AjaxResult;
 import com.hrtxn.ringtone.common.domain.BaseRequest;
 import com.hrtxn.ringtone.common.domain.Page;
 import com.hrtxn.ringtone.freemark.config.logConfig.Log;
+import com.hrtxn.ringtone.freemark.enums.BusinessType;
 import com.hrtxn.ringtone.freemark.enums.OperatorLogType;
-import com.hrtxn.ringtone.project.telcertification.domain.CertificationChildOrder;
-import com.hrtxn.ringtone.project.telcertification.domain.CertificationOrder;
+import com.hrtxn.ringtone.project.telcertification.domain.CertificationConfig;
 import com.hrtxn.ringtone.project.telcertification.service.TelCertificationChildService;
+import com.hrtxn.ringtone.project.telcertification.service.TelCertificationConfigService;
 import com.hrtxn.ringtone.project.telcertification.service.TelCertificationService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authz.annotation.RequiresRoles;
@@ -34,6 +35,8 @@ public class TelCertificationAdminController {
     private TelCertificationService telCertificationService;
     @Autowired
     private TelCertificationChildService telCertificationChildService;
+    @Autowired
+    private TelCertificationConfigService telCertificationConfigService;
 
     /**
      * 进入手机认证列表
@@ -53,18 +56,42 @@ public class TelCertificationAdminController {
 
     /**
      * 进入手机认证配置
+     * @param
+     * @return
+     */
+    @RequiresRoles("admin")
+    @GetMapping("/telcertificationConfig")
+    public String telcertificationConfig(){
+        return "admin/telcertification/telcertification_config";
+    }
+
+    @RequiresRoles("admin")
+    @PostMapping("/getAllConfig")
+    @ResponseBody
+    public AjaxResult  getAllConfig(Page page, ModelMap map){
+        return telCertificationConfigService.getAllConfig(page,map);
+    }
+
+    /**
+     * 跳转到修改配置页面
+     * @param id
      * @param map
      * @return
      */
     @RequiresRoles("admin")
-    @GetMapping("/telcertification_config")
-    public String telcertification_config(ModelMap map){
-        try {
-            map.put("telCertifications",null);
-        } catch (Exception e) {
-            log.error("获取手机认证认证配置,方法：telcertification_config,错误信息",e);
-        }
-        return "admin/telcertification/telcertification_config";
+    @GetMapping("/toEditTelCerConfig/{id}")
+    public String toEditTelCerConfig(@PathVariable Integer id, ModelMap map){
+        CertificationConfig certificationConfig = telCertificationConfigService.getTelCerConfigById(id);
+        map.put("telCerConfig",certificationConfig);
+        return "admin/telcertification/telcertification_config_edit";
+    }
+
+    @RequiresRoles("admin")
+    @ResponseBody
+    @PutMapping("/editTelCerConfig")
+    @Log(title = "修改配置信息", businessType = BusinessType.UPDATE, operatorLogType = OperatorLogType.ADMIN)
+    public AjaxResult editTelCerConfig(CertificationConfig certificationConfig) {
+        return telCertificationConfigService.editTelCerConfig(certificationConfig);
     }
 
     /**
@@ -73,12 +100,12 @@ public class TelCertificationAdminController {
      * @return
      */
     @RequiresRoles("admin")
-    @GetMapping("/telcertification_recharge_log")
-    public String telcertification_recharge_log(ModelMap map){
+    @GetMapping("/telcertificationRechargeLog")
+    public String telcertificationRechargeLog(ModelMap map){
         try {
             map.put("telcertification_recharge_log",null);
         } catch (Exception e) {
-            log.error("获取手机充值记录,方法：telcertification_recharge_log,错误信息",e);
+            log.error("获取手机充值记录,方法：telcertificationRechargeLog,错误信息",e);
         }
         return "admin/telcertification/telcertification_recharge_log";
     }
@@ -89,12 +116,12 @@ public class TelCertificationAdminController {
      * @return
      */
     @RequiresRoles("admin")
-    @GetMapping("/telcertification_consume_log")
-    public String telcertification_consume_log(ModelMap map){
+    @GetMapping("/telcertificationConsumeLog")
+    public String telcertificationConsumeLog(ModelMap map){
         try {
             map.put("phoneNum",null);
         } catch (Exception e) {
-            log.error("获取手机认证消费记录,方法：telcertification_consume_log,错误信息",e);
+            log.error("获取手机认证消费记录,方法：telcertificationConsumeLog,错误信息",e);
         }
         return "admin/telcertification/telcertification_consume_log";
     }
@@ -120,12 +147,12 @@ public class TelCertificationAdminController {
      * @return
      */
     @RequiresRoles("admin")
-    @GetMapping("/telcertification_detail/{id}")
-    public String telcertification_detail(@PathVariable String id, ModelMap map){
+    @GetMapping("/telcertificationDetail/{id}")
+    public String telcertificationDetail(@PathVariable String id, ModelMap map){
         try {
             map.put("parentId",id);
         } catch (Exception e) {
-            log.error("获取手机认证详细信息,方法：telcertification_detail,错误信息",e);
+            log.error("获取手机认证详细信息,方法：telcertificationDetail,错误信息",e);
         }
         return "admin/telcertification/telcertification_detail";
     }
@@ -136,12 +163,12 @@ public class TelCertificationAdminController {
      * @return
      */
     @RequiresRoles("admin")
-    @GetMapping("/telcertification_child_list/{id}")
-    public String telcertification_child_list(@PathVariable String id, ModelMap map){
+    @GetMapping("/telcertificationChildList/{id}")
+    public String telcertificationChildList(@PathVariable String id, ModelMap map){
         try {
             map.put("parentId",id);
         } catch (Exception e) {
-            log.error("获取手机认证成员管理列表,方法：telcertification_child_list,错误信息",e);
+            log.error("获取手机认证成员管理列表,方法：telcertificationChildList,错误信息",e);
         }
         return "admin/telcertification/telcertification_child_list";
     }
@@ -173,30 +200,59 @@ public class TelCertificationAdminController {
      * @param request
      * @return
      */
-    @PostMapping("/getTelcertification_child_list")
+    @PostMapping("/getTelcertificationChildList")
     @ResponseBody
     @RequiresRoles("admin")
-    public AjaxResult getTelcertification_child_list(Page page,BaseRequest request){
+    public AjaxResult getTelcertificationChildList(Page page,BaseRequest request){
         try{
             return telCertificationChildService.findTheChildOrder(page,request);
         }catch (Exception e){
-            log.error("获取商户的所有成员 方法：getTelcertification_child_list 错误信息",e);
+            log.error("获取商户的所有成员 方法：getTelcertificationChildList 错误信息",e);
         }
         return AjaxResult.error("获取失败");
+    }
+
+    /**
+     * 根据id删除号码认证信息
+     *
+     * @param id
+     * @return
+     */
+    @ResponseBody
+    @RequiresRoles("admin")
+    @DeleteMapping("/deleteTelCer/{id}")
+    @Log(title = "删除号码认证信息",businessType = BusinessType.DELETE,operatorLogType = OperatorLogType.ADMIN)
+    public AjaxResult deleteTelCer(@PathVariable Integer id) {
+        return telCertificationService.deleteTelCer(id);
+    }
+
+
+    /**
+     * 根据id删除号码认证成员信息
+     *
+     * @param id
+     * @return
+     */
+    @ResponseBody
+    @RequiresRoles("admin")
+    @DeleteMapping("/deleteTelCerChild/{id}")
+    @Log(title = "删除号码认证成员信息",businessType = BusinessType.DELETE,operatorLogType = OperatorLogType.ADMIN)
+    public AjaxResult deleteTelCerChild(@PathVariable Integer id) {
+        return telCertificationChildService.deleteTelCerChild(id);
     }
 
     /**
      * 获取某条消费记录列表
      * @return
      */
-    @PostMapping("/getTelcertification_consume_log")
+    @PostMapping("/getTelcerConsumeLog")
     @ResponseBody
     @RequiresRoles("admin")
-    public AjaxResult getTelcertification_consume_log(Page page,BaseRequest request){
+    public AjaxResult getTelcerConsumeLog(Page page,BaseRequest request){
         try{
             return telCertificationChildService.getTheTelCerCostLogList(page,request);
         }catch (Exception e){
-            log.error("获取管理端消费记录列表数据 方法：getTelcertification_consume_log 错误信息",e);
+            log.error("获取管理端消费记录列表数据 方法：getTelcerConsumeLog 错误信息",e);
         }
         return AjaxResult.error("获取数据失败");
     }

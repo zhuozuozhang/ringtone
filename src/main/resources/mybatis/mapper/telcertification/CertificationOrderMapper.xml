@@ -53,6 +53,7 @@
     </if>
   </sql>
 
+<!--  获取全部或者按条件查找商户信息-->
   <select id="findAllTelCertification" resultMap="BaseResultMap">
     SELECT
         <include refid="Base_Column_List"/>
@@ -71,6 +72,11 @@
   <select id="getTelCerOrderById" parameterType="int" resultMap="BaseResultMap">
     SELECT * FROM tb_telcertification_order WHERE id = #{id}
   </select>
+<!--  删除号码认证信息-->
+  <delete id="deleteByPrimaryKey" parameterType="int">
+    DELETE FROM tb_telcertification_order
+    WHERE id = #{id,jdbcType=INTEGER}
+  </delete>
 
 
   <insert id="insertTelCertifyOrder" parameterType="com.hrtxn.ringtone.project.telcertification.domain.CertificationOrder" >

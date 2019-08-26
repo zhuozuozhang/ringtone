@@ -51,5 +51,5 @@ function showTelcertification_consume_log() {
             }
         }
     }];
-    page("#telcertification_consume_log", 15, param, "/admin/getTelcertification_consume_log", columns, columnDefs);
+    page("#telcertification_consume_log", 15, param, "/admin/getTelcerConsumeLog", columns, columnDefs);
 }
