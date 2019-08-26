@@ -1177,38 +1177,27 @@ public class ApiUtils {
     /**
      * 移动 添加成员
      *
-     * @param orders
+     * @param childOrder
      * @param circleId
      * @return
      * @throws IOException
      * @throws NoLoginException
      */
-    public MiguAddPhoneRespone addPhoneByYd(List<ThreenetsChildOrder> orders, String circleId) throws IOException, NoLoginException {
-        String data = "";
-        for (int i = 0; i < orders.size(); i++) {
-            data = data + orders.get(i).getLinkmanTel() + (i == orders.size() - 1 ? "" : ",");
-        }
-        return miguApi.addPhone(data, circleId);
+    public MiguAddPhoneRespone addPhoneByYd(ThreenetsChildOrder childOrder, String circleId) throws IOException, NoLoginException {
+        return miguApi.addPhone(childOrder.getLinkmanTel(), circleId);
     }
 
     /**
      * 联通 添加成员
      *
-     * @param orders
+     * @param childOrder
      * @param circleId
      * @return
      * @throws IOException
      * @throws NoLoginException
      */
-    public String addPhoneByLt(List<ThreenetsChildOrder> orders, String circleId) throws IOException, NoLoginException {
-        if (circleId == null) {
-            return "集团ID错误";
-        }
-        String data = "";
-        for (int i = 0; i < orders.size(); i++) {
-            data = data + orders.get(i).getLinkmanTel() + (i == orders.size() - 1 ? "" : ",");
-        }
-        return swxlApi.addPhone(data, circleId);
+    public SwxlBaseBackMessage addPhoneByLt(ThreenetsChildOrder childOrder, String circleId) throws IOException, NoLoginException {
+        return swxlApi.addPhone(childOrder.getLinkmanTel(), circleId);
     }
 
     /**

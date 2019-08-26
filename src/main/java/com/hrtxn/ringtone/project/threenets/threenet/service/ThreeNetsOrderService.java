@@ -178,7 +178,10 @@ public class ThreeNetsOrderService {
     public AjaxResult isRepetitionByName(String name) {
         List<ThreenetsOrder> orders = threenetsOrderMapper.isRepetitionByName(name);
         if (orders == null || orders.isEmpty()) {
-            return AjaxResult.success("");
+            ThreenetsOrder order= new ThreenetsOrder();
+            order.setCompanyName(name);
+            threenetsOrderMapper.insertThreenetsOrder(order);
+            return AjaxResult.success(order.getId(),"");
         } else {
             return AjaxResult.error("商户名称不允许重复！");
         }
@@ -191,23 +194,18 @@ public class ThreeNetsOrderService {
      * @return
      */
     @Transactional
-    public AjaxResult init(ThreenetsOrder order) throws Exception {
-        if (order.getCompanyName() == null || order.getCompanyName().isEmpty()) {
-            return AjaxResult.error("商户名称不能为空！");
-        }
+    public ThreenetsOrder init(ThreenetsOrder order) throws Exception {
         JuhePhone phone = JuhePhoneUtils.getPhone(order.getLinkmanTel());
-        if (!phone.getResultcode().equals("200")) {
-            return AjaxResult.error("获取归属地失败，请填写正确的手机号码！");
+        if (phone.getResultcode().equals("200")) {
+            JuhePhoneResult result = (JuhePhoneResult) phone.getResult();
+            order.setOperator(JuhePhoneUtils.getOperate(result));
+            order.setProvince(result.getProvince());
+            order.setCity(result.getCity());
         }
-        JuhePhoneResult result = (JuhePhoneResult) phone.getResult();
-        order.setOperator(JuhePhoneUtils.getOperate(result));
-        order.setProvince(result.getProvince());
-        order.setCity(result.getCity());
         order.setUserId(ShiroUtils.getSysUser().getId());
         order.setCreateTime(new Date());
         order.setStatus("审核通过");
-        threenetsOrderMapper.insertThreenetsOrder(order);
-        return AjaxResult.success(order.getId(), "保存成功");
+        return  order;
     }
 
 
@@ -225,20 +223,11 @@ public class ThreeNetsOrderService {
         ThreenetsOrder threenetsOrder = threenetsOrderMapper.selectByPrimaryKey(order.getId());
         threenetsOrder.setCompanyName(order.getCompanyName());
         threenetsOrder.setCompanyLinkman(order.getCompanyLinkman());
-        if (!threenetsOrder.getLinkmanTel().equals(order.getLinkmanTel())) {
-            //如果更改手机号则更改手机号归属地
-            threenetsOrder = JuhePhoneUtils.getPhone(threenetsOrder);
-            BeanUtils.copyProperties(threenetsOrder, order);
-            threenetsOrderMapper.updateByPrimaryKey(threenetsOrder);
-        }
+        threenetsOrder.setLinkmanTel(order.getLinkmanTel());
+        threenetsOrder = init(threenetsOrder);
+        threenetsOrderMapper.updateByPrimaryKey(threenetsOrder);
         //订单附表初始化
         ThreeNetsOrderAttached attached = new ThreeNetsOrderAttached();
-        if (order.getMobilePay() != null || order.getSpecialPrice() != null) {
-            attached.setMiguPrice(Integer.parseInt(order.getMobilePay() != null ? order.getMobilePay() : order.getSpecialPrice()));
-        }
-        if (order.getUmicomPay() != null) {
-            attached.setSwxlPrice(Integer.parseInt(order.getUmicomPay()));
-        }
         attached.setParentOrderId(order.getId());
         if (StringUtils.isNotEmpty(order.getCompanyUrl())) {
             attached.setBusinessLicense(order.getCompanyUrl());//企业资质
@@ -259,6 +248,12 @@ public class ThreeNetsOrderService {
         Map<Integer, List<ThreenetsChildOrder>> collect = childOrderList.stream().collect(Collectors.groupingBy(ThreenetsChildOrder::getOperator));
         int num = 1;
         for (Integer operator : collect.keySet()) {
+            if (operator.equals(Const.OPERATORS_MOBILE)) {
+                attached.setMiguPrice(Integer.parseInt(order.getMobilePay() != null ? order.getMobilePay() : order.getSpecialPrice()));
+            }
+            if (operator.equals(Const.OPERATORS_UNICOM)) {
+                attached.setSwxlPrice(Integer.parseInt(order.getUmicomPay()));
+            }
             ThreenetsRing ring = new ThreenetsRing();
             ring.setRingWay(order.getRingUrl());
             ring.setOperate(order.getOperate());
@@ -280,6 +275,7 @@ public class ThreeNetsOrderService {
                     flag = ConfigUtil.getAreaArray("unable_to_open_area",childOrder.getProvince());
                 }
                 if (flag){
+                    childOrder.setRemark("电信当前不提供"+childOrder.getProvince()+"地区的服务");
                     return AjaxResult.error("电信当前不提供"+childOrder.getProvince()+"地区的服务");
                 }
                 childOrder.setRingId(ring.getId());

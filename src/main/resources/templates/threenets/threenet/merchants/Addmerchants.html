@@ -52,7 +52,7 @@
         </div>
         <div class="newBlocPage-con3 clear">
             <input class="input_css1" type="number" required lay-verify="required" name="linkmanTel" id="linkmanTel"
-                   maxlength="32" autocomplete="off" onblur="verificationTel()">
+                   maxlength="32" autocomplete="off">
             <h6><i style="color: red">*</i>联系电话</h6>
         </div>
         <div class="newBlocPage-con4 clear">
@@ -297,13 +297,16 @@
         //添加控制
         $("#ringName,#ringFile,#ringContent").attr("disabled", true);
         $('input[name="mianduan"]').click(function () {
-           alert("in")
+            alert("in")
         });
     });
 
     function verificationName() {
+        if ($("#orderId").val()) {
+            return;
+        }
         var name = $("#companyName").val();
-        if (name == '' || name == null){
+        if (name == '' || name == null) {
             layer.msg("集团名称不能为空！");
             return
         }
@@ -313,36 +316,14 @@
             if (result.code == 500) {
                 layer.msg(result.msg);
                 $("#companyName").focus();
+            } else {
+                $("#orderId").val(result.data);
+                $("#parentOrderId").val(result.data);
+                $("#ringName").val(name);
+                $("#ringName,#ringFile,#ringContent").attr("disabled", false);
             }
         })
     }
-    
-    function verificationTel() {
-        var name = $("#companyName").val();
-        var lname = $("#companyLinkman").val();
-        var tel = $("#linkmanTel").val();
-        var orderId = $("#orderId").val();
-        if (lname != '' && tel != '') {
-            if (!isnull(orderId)) {
-                return;
-            }
-            AjaxPost("/threenets/insterThreeNetsOrder", {
-                "companyName": name,
-                "companyLinkman": lname,
-                "linkmanTel": tel
-            }, function (result) {
-                layer.msg(result.msg);
-                if (result.code == 200) {
-                    $("#orderId").val(result.data);
-                    $("#parentOrderId").val(result.data);
-                    $("#ringName").val(name);
-                    $("#ringName,#ringFile,#ringContent").attr("disabled", false);
-                }
-            })
-        }
-    }
-    
-    
 
     //成员号码验证
     function mykeyup() {

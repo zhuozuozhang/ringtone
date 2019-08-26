@@ -719,6 +719,13 @@ public class MiguApi implements Serializable {
             HttpEntity resEntity = response.getEntity();
             String result = EntityUtils.toString(resEntity);
             miguAddPhoneRespone = (MiguAddPhoneRespone) JsonUtil.getObject4JsonString(result, MiguAddPhoneRespone.class);
+            JSONObject jsonObject = JSONObject.fromObject(result);
+            JSONArray jsonArray = jsonObject.getJSONArray("list");
+            for (int i = 0; i < jsonArray.size(); i++) {
+                JSONObject partDaily = jsonArray.getJSONObject(i);
+                String info = partDaily.getString("info");
+                miguAddPhoneRespone.setMessage(info);
+            }
             this.setMiguCookie(httpclient.getCookieStore());
         } catch (Exception e) {
             System.out.println(e);

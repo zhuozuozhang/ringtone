@@ -153,6 +153,8 @@
             <input type="hidden" id="parentOrderId" name="parentOrderId" th:value="${orderId}">
             <input type="hidden" id="miguId" name="miguId" th:value="${miguId}">
             <input type="hidden" id="swxlId" name="swxlId" th:value="${swxlId}">
+            <input type="hidden" id="dxCount" value="0">
+            <input type="hidden" id="ltCount" value="0">
             <div id="tijiao" class="newBlocPage-button" lay-submit lay-filter="formDemo">确定提交</div>
         </div>
     </form>
@@ -218,10 +220,12 @@
                     }
                     //电信
                     if (result.data[1] > 0) {
+                        $("#dxCount").val(1);
                         $("#fee1,#qyzzdiv").show();
                     }
                     //联通
                     if (result.data[2] > 0 && $("#swxlId").val() == "") {
+                        $("#ltCount").val(1);
                         $("#fee2,#sfmd,#fee3").show();
                     }
                 } else {
@@ -278,12 +282,24 @@
             });
             //监听提交
             form.on('submit(formDemo)', function (data) {
+                //存在电信用户时需要验证电信的文件
+                if ($("#dxCount").val() > 0 && $("#companyUrl").val() == "") {
+                    layer.msg("电信用户需要上传企业资质!");
+                    return;
+                }
+                if ($("#dxCount").val() > 0 && $("#clientUrl").val() == "") {
+                    layer.msg("电信用户需要上传客户确认函!");
+                    return;
+                }
+                //联通开通免短需要设置免短协议
+                if ($("input[name='mianduan']:checked").val() == "是" && $("#protocolUrl").val() == "") {
+                    layer.msg("开通免短需要上传免短协议!");
+                    return;
+                }
                 $("#Form").submit();
-                setTimeout(function () {
-                    let index = parent.layer.getFrameIndex(window.name); //获取窗口索引
-                    parent.layer.close(index);
-                    window.parent.location.reload();//刷新父页面
-                },200)
+                let index = parent.layer.getFrameIndex(window.name); //获取窗口索引
+                parent.layer.close(index);
+                window.parent.location.reload();//刷新父页面
                 return false;
             });
         });

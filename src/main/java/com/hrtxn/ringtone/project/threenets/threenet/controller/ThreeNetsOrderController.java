@@ -90,22 +90,6 @@ public class ThreeNetsOrderController {
         return threeNetsOrderService.isRepetitionByName(companyName);
     }
 
-    /**
-     * 初始化三网订单
-     *
-     * @return
-     */
-    @PostMapping("/threenets/insterThreeNetsOrder")
-    @ResponseBody
-    @Log(title = "初始化三网订单", businessType = BusinessType.INSERT, operatorLogType = OperatorLogType.THREENETS)
-    public AjaxResult insterThreeNetsOrder(ThreenetsOrder order) {
-        try{
-            return threeNetsOrderService.init(order);
-        }catch (Exception e){
-            log.error("初始化三网订单失败 方法：insterThreeNetsOrder 错误信息", e);
-            return AjaxResult.error("保存失败");
-        }
-    }
 
     /**
      * 添加三网订单

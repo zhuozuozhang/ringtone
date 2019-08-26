@@ -3,10 +3,7 @@ package com.hrtxn.ringtone.common.api;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hrtxn.ringtone.common.exception.NoLoginException;
-import com.hrtxn.ringtone.common.utils.ChaoJiYing;
-import com.hrtxn.ringtone.common.utils.PhoneUtils;
-import com.hrtxn.ringtone.common.utils.StringUtils;
-import com.hrtxn.ringtone.common.utils.WebClientDevWrapper;
+import com.hrtxn.ringtone.common.utils.*;
 import com.hrtxn.ringtone.freemark.config.systemConfig.RingtoneConfig;
 import com.hrtxn.ringtone.project.system.user.domain.User;
 import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreeNetsOrderAttached;
@@ -487,7 +484,7 @@ public class SwxlApi implements Serializable {
             reqEntity.addPart("tel", new StringBody(ringOrder.getLinkmanTel()));//
             reqEntity.addPart("payType", new StringBody(ringOrder.getMianduan()));
             reqEntity.addPart("applyForSmsNotification", new StringBody("0"));// 免短信
-            if (StringUtils.isNotEmpty(attached.getAvoidShortAgreement())){
+            if (StringUtils.isNotEmpty(attached.getAvoidShortAgreement())) {
                 reqEntity.addPart("applyForSmsNotification", new StringBody("1"));// 免短信
                 File file = new File(RingtoneConfig.getProfile() + attached.getAvoidShortAgreement());
                 reqEntity.addPart("qualificationFile", new FileBody(file));
@@ -585,7 +582,7 @@ public class SwxlApi implements Serializable {
         DefaultHttpClient httpclient = WebClientDevWrapper.wrapClient(new DefaultHttpClient());
         long longTime = new Date().getTime();
         String getUrl = "https://swxl.10155.com/swxlapi/web/group?order=asc&maxresult=15&offset=0&currentpage=1&draw=1&start=0&groupName=" + order.getCompanyName() + "&msisdn=" + order.getLinkmanTel() + "&status=&noSMS=&payType=&payWay=&_=" + longTime;
-        getUrl= getUrl.replaceAll(" ", "%20");
+        getUrl = getUrl.replaceAll(" ", "%20");
         HttpGet httpGet = new HttpGet(getUrl);
         httpclient.setCookieStore(this.getCookieStore());
         try {
@@ -669,8 +666,9 @@ public class SwxlApi implements Serializable {
      * @throws IOException
      * @throws NoLoginException
      */
-    public String addPhone(String members, String groupId) throws IOException, NoLoginException {
+    public SwxlBaseBackMessage addPhone(String members, String groupId) throws IOException, NoLoginException {
         String result = null;
+        SwxlBaseBackMessage<SwxlAddPhoneNewResult> info = null;
         DefaultHttpClient httpclient = WebClientDevWrapper.wrapClient(new DefaultHttpClient());
         HttpPost httppost = new HttpPost(ADD_PHONE_URL);
         List<NameValuePair> formparams = new ArrayList<NameValuePair>();
@@ -683,6 +681,8 @@ public class SwxlApi implements Serializable {
             HttpResponse response = httpclient.execute(httppost);
             HttpEntity resEntity = response.getEntity();
             result = EntityUtils.toString(resEntity);
+            //{"recode":"200015","message":"成员属于其他企业,无法操作","data":null,"success":false}
+            info = SpringUtils.getBean(ObjectMapper.class).readValue(result, SwxlBaseBackMessage.class);
             System.out.println("result:" + result);
         } catch (Exception e) {
             System.out.println(e);
@@ -690,7 +690,7 @@ public class SwxlApi implements Serializable {
             httppost.abort();
             httpclient.getConnectionManager().shutdown();
         }
-        return result;
+        return info;
     }
 
     /***

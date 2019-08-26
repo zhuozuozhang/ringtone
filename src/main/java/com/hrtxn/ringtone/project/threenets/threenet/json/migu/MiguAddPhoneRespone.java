@@ -18,5 +18,5 @@ public class MiguAddPhoneRespone {
     private String successfulMsisdns;
     private String failedCount;
     private String leftMemberAddNum;
-    private List list;
+    private String message;
 }
