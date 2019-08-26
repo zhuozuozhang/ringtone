@@ -85,6 +85,15 @@ function showFallDueTable() {
         {"data": "telChildOrderExpireTime"}
     ];
     var columnDefs = [{
+        targets: [5],
+        render: function (data, type, row, meta) {
+            if (data != null && data != "") {
+                return data;
+            } else {
+                return "<div>暂无<div/>";
+            }
+        }
+    },{
         targets:[8],
         render: function (data, type, row, meta) {
             var phoneNumber = row.telChildOrderPhone;
@@ -111,6 +120,15 @@ function showDueTable() {
         // {"data": "remark"}
     ];
     var columnDefs = [{
+        targets: [5],
+        render: function (data, type, row, meta) {
+            if (data != null && data != "") {
+                return data;
+            } else {
+                return "<span>暂无</span>";
+            }
+        }
+    },{
         targets:[8],
         render: function (data, type, row, meta) {
             var phoneNumber = row.telChildOrderPhone;

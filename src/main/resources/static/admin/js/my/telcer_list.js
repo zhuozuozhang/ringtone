@@ -1,3 +1,8 @@
+
+// 获取号码认证信息
+$(document).ready(function () {
+    showTelcertification_table();
+});
 function showTelcertification_table() {
     var param = {
         "id": $("#id").val(),
@@ -60,7 +65,7 @@ function showTelcertification_table() {
 
     if(param.phoneNum != "" && param.phoneNum != null){
         if(!isTel(param.phoneNum.trim())){
-            layer.msg("请输入正确的成员手机号码！",{icon: 0, time: 3000});
+            layer.msg("请输入正确的手机号码！",{icon: 0, time: 3000});
             return;
         }
     }
@@ -89,10 +94,6 @@ function childclick(){
     }
 }
 
-// $(document).ready(function(){
-// 	//  分页
-// 	page("#telcertification_table",9);
-// });
 
 /*用户-删除*/
 function telCertification_del(id){

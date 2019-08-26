@@ -171,10 +171,6 @@ public class TelCertificationChildService {
             c.setStatusName("未知");
         }
 
-        if(c.getBusinessFeedback() == null || c.getBusinessFeedback() == ""){
-            c.setBusinessFeedback("无");
-        }
-
     }
 
     public AjaxResult deleteTelCerChild(Integer id) {
@@ -184,6 +180,17 @@ public class TelCertificationChildService {
                 return AjaxResult.success(true, "删除成功！");
             }
             return AjaxResult.error("删除失败！");
+        }
+        return AjaxResult.error("参数格式错误！");
+    }
+
+    public AjaxResult editFeedBackById(CertificationChildOrder certificationChildOrder) {
+        if (StringUtils.isNotNull(certificationChildOrder) && StringUtils.isNotNull(certificationChildOrder.getId())  && certificationChildOrder.getId() != 0) {
+            int count = certificationChildOrderMapper.editFeedBackById(certificationChildOrder);
+            if (count > 0) {
+                return AjaxResult.success(true, "修改成功！");
+            }
+            return AjaxResult.error("修改失败！");
         }
         return AjaxResult.error("参数格式错误！");
     }

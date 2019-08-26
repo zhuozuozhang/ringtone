@@ -6,7 +6,9 @@ import com.hrtxn.ringtone.common.domain.Page;
 import com.hrtxn.ringtone.freemark.config.logConfig.Log;
 import com.hrtxn.ringtone.freemark.enums.BusinessType;
 import com.hrtxn.ringtone.freemark.enums.OperatorLogType;
+import com.hrtxn.ringtone.project.telcertification.domain.CertificationChildOrder;
 import com.hrtxn.ringtone.project.telcertification.domain.CertificationConfig;
+import com.hrtxn.ringtone.project.telcertification.domain.CertificationOrder;
 import com.hrtxn.ringtone.project.telcertification.service.TelCertificationChildService;
 import com.hrtxn.ringtone.project.telcertification.service.TelCertificationConfigService;
 import com.hrtxn.ringtone.project.telcertification.service.TelCertificationService;
@@ -148,8 +150,9 @@ public class TelCertificationAdminController {
      */
     @RequiresRoles("admin")
     @GetMapping("/telcertificationDetail/{id}")
-    public String telcertificationDetail(@PathVariable String id, ModelMap map){
+    public String telcertificationDetail(@PathVariable Integer id, ModelMap map){
         try {
+            CertificationOrder c = telCertificationService.getTelCerOrderById(id,map);
             map.put("parentId",id);
         } catch (Exception e) {
             log.error("获取手机认证详细信息,方法：telcertificationDetail,错误信息",e);
@@ -226,6 +229,18 @@ public class TelCertificationAdminController {
         return telCertificationService.deleteTelCer(id);
     }
 
+    //editFeedBackById
+    @RequiresRoles("admin")
+    @PostMapping("/editFeedBackById")
+    @ResponseBody
+    @Log(title = "修改业务反馈",businessType = BusinessType.UPDATE,operatorLogType = OperatorLogType.TELCERTIFICATION)
+    public AjaxResult editFeedBackById(CertificationChildOrder certificationChildOrder) {
+        try {
+            return telCertificationChildService.editFeedBackById(certificationChildOrder);
+        } catch (Exception e) {
+            return AjaxResult.error("修改业务反馈失败！");
+        }
+    }
 
     /**
      * 根据id删除号码认证成员信息

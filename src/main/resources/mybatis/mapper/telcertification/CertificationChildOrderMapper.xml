@@ -73,6 +73,17 @@
     delete from tb_telcertification_child_order
     where id = #{id,jdbcType=INTEGER}
   </delete>
+
+    <update id="editFeedBackById" parameterType="com.hrtxn.ringtone.project.telcertification.domain.CertificationChildOrder">
+        UPDATE tb_telcertification_child_order
+        <set>
+            <if test="businessFeedback != null">
+                business_feedback = #{businessFeedback,jdbcType=VARCHAR},
+            </if>
+        </set>
+        WHERE id = #{id,jdbcType=INTEGER}
+    </update>
+
     <insert id="insert" parameterType="com.hrtxn.ringtone.project.telcertification.domain.CertificationChildOrder">
     insert into tb_telcertification_child_order (id, tel_child_order_num, years, 
       price, tel_child_order_status, business_feedback, 
