@@ -27,6 +27,15 @@ public interface ThreenetsChildOrderMapper {
     ThreenetsChildOrder selectByPrimaryKey(Integer id) throws Exception;
 
     /**
+     * 查询自定单列表
+     *
+     * @param param
+     * @return
+     * @throws Exception
+     */
+    List<ThreenetsChildOrder> listByParamNoPage(@Param("param") ThreenetsChildOrder param) throws Exception;
+
+    /**
      * 删除
      *
      * @param id
