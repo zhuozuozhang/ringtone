@@ -166,6 +166,17 @@
             if (name == '' || name == null) {
                 return
             }
+            var layuiLoding = layer.load(0, { //icon支持传入0-2
+                time:false,
+                shade: [0.5, '#9c9c9c'], //0.5透明度的灰色背景
+                content: '文件上传中...',
+                success: function (layero) {
+                    layero.find('.layui-layer-content').css({
+                        'padding': '39px 10px',
+                        'width': '100px'
+                    });
+                }
+            });
             $.ajax({
                 url: '/system/upload/ringFile',
                 type: 'POST',
@@ -174,6 +185,7 @@
                 processData: false,
                 contentType: false,
                 success: function(res) {
+                    layer.close(layuiLoding);
                     layer.msg(res.msg, {icon: 1, time: 1000});
                     $("#ringWay").val(res.data);
                 },
