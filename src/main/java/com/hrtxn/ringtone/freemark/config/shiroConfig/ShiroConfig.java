@@ -1,4 +1,4 @@
-package com.hrtxn.ringtone.freemark.config.shiroconfig;
+package com.hrtxn.ringtone.freemark.config.shiroConfig;
 
 import at.pollux.thymeleaf.shiro.dialect.ShiroDialect;
 import com.hrtxn.ringtone.common.constant.Constant;

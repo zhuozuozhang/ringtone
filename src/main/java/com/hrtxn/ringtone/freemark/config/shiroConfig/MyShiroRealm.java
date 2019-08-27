@@ -1,4 +1,4 @@
-package com.hrtxn.ringtone.freemark.config.shiroconfig;
+package com.hrtxn.ringtone.freemark.config.shiroConfig;
 
 import com.hrtxn.ringtone.common.utils.SpringUtils;
 import com.hrtxn.ringtone.project.system.user.domain.RoleRelation;

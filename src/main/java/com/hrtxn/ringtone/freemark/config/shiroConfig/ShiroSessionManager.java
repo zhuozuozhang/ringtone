@@ -1,4 +1,4 @@
-package com.hrtxn.ringtone.freemark.config.shiroconfig;
+package com.hrtxn.ringtone.freemark.config.shiroConfig;
 
 import com.hrtxn.ringtone.common.utils.StringUtils;
 import lombok.extern.slf4j.Slf4j;
