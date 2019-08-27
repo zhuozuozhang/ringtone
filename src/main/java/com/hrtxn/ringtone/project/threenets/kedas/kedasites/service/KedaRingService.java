@@ -64,7 +64,7 @@ public class KedaRingService {
         kedaRingList = kedaApi.refreshRingInfo(kedaRingList);
         // 获取铃音数量
         int count = kedaRingMapper.getCount(baseRequest);
-        return AjaxResult.success(kedaRingList, "", count);
+        return AjaxResult.success(kedaRingList, "获取数据成功！", count);
     }
 
     /**
@@ -76,14 +76,14 @@ public class KedaRingService {
      * @throws EncoderException
      * @throws IOException
      */
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public AjaxResult addKedaRing(KedaRing kedaRing, MultipartFile file) throws EncoderException, IOException {
         if (StringUtils.isNull(kedaRing)) return AjaxResult.error("参数格式不正确！");
         if (StringUtils.isEmpty(kedaRing.getRingName())) return AjaxResult.error("参数格式不正确！");
         if (StringUtils.isEmpty(kedaRing.getRingContent())) return AjaxResult.error("参数格式不正确！");
         if (StringUtils.isNull(file)) return AjaxResult.error("参数格式不正确！");
-
-        String ringName = kedaRing.getRingName().replaceAll(" ", "");// 去除空格
+        // 去除空格
+        String ringName = kedaRing.getRingName().replaceAll(" ", "");
         // 去除空格和其他字符
         String regEx = "[`~!@#$%^&*()+=|{}':;',\\[\\].<>/?~！@#￥%……&*（）——+|{}【】‘；：”“’。，、？]";
         Pattern p = Pattern.compile(regEx);
@@ -245,7 +245,6 @@ public class KedaRingService {
         // 根据条件获取铃音列表
         BaseRequest b = new BaseRequest();
         b.setOrderId(orderId);
-        b.setIsMonthly(3);
         List<KedaRing> kedaRingList = kedaRingMapper.getKedaRingList(null, b);
         return AjaxResult.success(kedaRingList, "获取数据成功！");
     }

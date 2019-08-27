@@ -81,14 +81,24 @@ public class KedaApi {
             List<KedaPhoneResult> kedaPhoneResults = new ArrayList<>();
             for (Object obj : data) {
                 JSONObject jsonObject = JSONObject.fromObject(obj); // 将数据转成json字符串
-                KedaPhoneResult kedaPhoneResult = (KedaPhoneResult) JSONObject.toBean(jsonObject, KedaPhoneResult.class); //将json转成需要的对象
+                KedaPhoneResult kedaPhoneResult = (KedaPhoneResult) JSONObject.toBean(jsonObject, KedaPhoneResult.class);
                 kedaPhoneResults.add(kedaPhoneResult);
             }
             int l = kedaPhoneResults.size();
             for (int i = 0; i < l; i++) {
                 String businessEmpPhone = kedaPhoneResults.get(i).getBusinessEmpPhone();
                 if (businessEmpPhone.equals(tel)) {
-                    kedaChildOrder.setIsMonthly(kedaPhoneResults.get(i).getBusinessState());
+                    // 判断是否是未开通
+                    if (kedaPhoneResults.get(i).getBusinessState() == 0){
+                        // 判断是否恢复短信（是）
+                        if (kedaPhoneResults.get(i).getBusinessEmpState() == 2){
+                            kedaChildOrder.setIsMonthly(7);
+                        } else {
+                            kedaChildOrder.setIsMonthly(kedaPhoneResults.get(i).getBusinessState());
+                        }
+                    } else {
+                        kedaChildOrder.setIsMonthly(kedaPhoneResults.get(i).getBusinessState());
+                    }
                     // 0.未设置/1.设置成功/2.设置失败/3.设置中/4.审核驳回
                     if ("0".equals(kedaPhoneResults.get(i).getSetStatus())) {
                         kedaChildOrder.setRemark("未设置");
@@ -231,9 +241,8 @@ public class KedaApi {
                     }
                 }
             }
-            return kedaRingList;
         }
-        return null;
+        return kedaRingList;
     }
 
     /**

@@ -43,7 +43,7 @@ IP：120.27.226.14
 微软Azure云
 网址：https://login.partner.microsoftonline.cn/common/oauth2/authorize?resource=https%3a%2f%2fmanagement.core.chinacloudapi.cn%2f&response_mode=form_post&response_type=code+id_token&scope=user_impersonation+openid&state=OpenIdConnect.AuthenticationProperties%3dyNQ9Pe66te_3S8Vp7xi5_bviDEDwrcEnDRBXMCBxcN6wyYi_DsFlP1O7k1G87AHmKsxXlg-LYOvnIFSxSoIJ084KYPLZQ-PGQFe_BNyHIooKxXESnTZo2eTZErP-RY7w_5nXQZLqyeDcaFTYoyb_tawXsfs37T33As6HIrp8NdMFR7O6nCK9hI8R4u8SkeXqc714OlPXkh2-w5qC6LTJlh9RfI8RZYrsret-8XRd6NUY0qQzti_5LSqm9LmebWTmeNx51yq_ZtDe5gMMIhRs1A&nonce=636951525316837718.NWE2NTU4M2UtNDFiYy00Y2QzLWFjNjktZTZhODk2M2VkNWU2MGQ1ZWIyYzMtNjk3Yi00MmUwLWIwMGUtZjljOWQyNTAyZDc1&client_id=c44b4083-3bb0-49c1-b47d-974e53cbdf3c&redirect_uri=https%3a%2f%2fportal.azure.cn%2fsignin%2findex%2f&site_id=501430&msafed=0&client-request-id=5485e81d-9435-4f78-bd6a-dc3b6ff6cce4&x-client-SKU=ID_NET&x-client-ver=1.0.40306.1554
 账号：zgjc@xuzhouglazure.partner.onmschina.cn
-密码：zG201900@
+密码：zG201900@!
 
 微软云远程
 账号：ceshi

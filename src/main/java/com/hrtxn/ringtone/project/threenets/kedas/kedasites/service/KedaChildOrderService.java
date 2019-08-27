@@ -348,12 +348,10 @@ public class KedaChildOrderService {
      * @return
      */
     public AjaxResult getKedaChildSettingList(Integer orderId) {
-        if (StringUtils.isNull(orderId) || orderId <= 0) return AjaxResult.error("参数格式不正确！");
+        if (StringUtils.isNull(orderId) || orderId <= 0) {return AjaxResult.error("参数格式不正确！");}
         // 根据orderId获取已包月子订单
         BaseRequest b = new BaseRequest();
         b.setOrderId(orderId);
-        b.setIsMonthly(1);
-        b.setUserId(ShiroUtils.getSysUser().getId());
         List<KedaChildOrder> keDaChildOrderBacklogList = kedaChildOrderMapper.getKeDaChildOrderBacklogList(null, b);
         int count = kedaChildOrderMapper.getCount(b);
         return AjaxResult.success(keDaChildOrderBacklogList, "获取数据成功！", count);

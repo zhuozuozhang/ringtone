@@ -1,1 +1,123 @@
-<!DOCTYPE html><html lang="zh"xmlns:th="http://www.thymeleaf.org"><title>待办任务</title><link rel="stylesheet"th:href="@{/client/threenets/css/index.css}"><head th:include="threenets/kedas/kedasites/common/include::head"></head><style>.layui-container{width:100%}.contant{width:96%;margin:0 auto;padding-top:20px}.layui-card-body{padding:0 15px}table.dataTable thead th,table.dataTable thead td{padding:10px 0px}select{font-size:13px}</style><body><!--头部--><div th:include="threenets/kedas/kedasites/common/include::nav"></div><div class="layui-container"><div class="layui-row"><div class="layui-col-md9"><!--等待设置铃音--><div class="layui-row contant"style="border:1px solid #e6e6e6!important; margin:20px auto!important;padding: 10px;"><div class="layui-col-md12"><div class="layui-form-item"style='text-align: right;margin-bottom:0;'><div class="layui-inline"><label class="layui-form-label">用户状态</label><div class="layui-input-inline"><select id="isMonthly"style="width:107%;"onchange="showTable();"><!--0.未开通/1.开通成功/2.开通失败/3.已退订/4.开通中/5.删除中/6.删除失败--><option value="1"selected="selected">已包月</option><option value="0">未包月</option><option value="2">包月失败</option><option value="3">已退订</option><option value="4">包月中</option><option value="5">删除中</option><option value="6">删除失败</option></select></div></div><div class="layui-inline"><label class="layui-form-label">时间段</label><div class="layui-input-inline"style='width: auto;'><select id="timeType"style="width:90px;"onchange="showTable();"><option value="1"selected="selected">一天</option><option value="2">一周</option><option value="3">半个月</option><option value="4">一个月</option></select></div></div></div><div class="layui-row per"style="margin-top: 0;background: #EEF5FB;"><div class="layui-col-md4"><div class="grid-demo grid-demo-bg1 lt">等待铃音设置</div></div><div class="layui-col-md4 layui-col-md-offset4"><a th:href="@{/threenets/clcy/toMerchants}"><div class="grid-demo rg">更多</div></a></div></div><table class="layui-table"id="set"><thead><tr><th>#</th><th>成员号码</th><th>员工姓名</th><th>商户名称</th><th>省份</th><th>加入时间</th><th>铃音</th><th>企业彩铃</th><th>备注</th><th>操作</th></tr></thead></table></div></div></div><div class="layui-col-md3"><!--公告--><div class="layui-row"style="width: 90%;margin: 20px auto;"><div class="layui-col-md12"><div class="layui-card"><div class="layui-card-header"style="background: #EEF5FB;"><span>公告</span><a th:href="@{/threenets/clcy/toAnnouncementPage}"><span class="moreg">更多公告</span></a></div><div class="layui-card-body ofo"th:each="notice : ${noticeList}"><span th:onclick="openDetails([[${notice}]]);"th:text="${notice.noticeTitle}">疑难杂单平台上线通知</span></div></div></div></div><!--近5日信息--><div class="layui-row contant"style="width:100%;padding: 0;"><div class="layui-col-md12"><div class="layui-row per"style="background: #EEF5FB;"><div class="layui-col-md4"><div class="grid-demo grid-demo-bg1 lt">近5日信息</div></div><div class="layui-col-md4 layui-col-md-offset4"><a th:href="@{/threenets/clcy/toBusiness/1}"><div class="grid-demo rg">更多</div></a></div></div><table class="layui-table"><thead><tr><th>#</th><th>日期</th><th>累计用户数</th><th>新增用户数</th></tr></thead><tbody><tr th:each="plotBarPhone,iterStat:${plotBarPhoneList}"><td th:text="${iterStat.count}">1</td><td th:text="${plotBarPhone.dateTimes}">2019-0622</td><td th:text="${plotBarPhone.cumulativeUser}">68</td><td th:text="${plotBarPhone.addUser}">4</td></tr></tbody></table></div></div></div></div></div></body><div th:include="threenets/kedas/kedasites/common/include::footer"></div><script th:src="@{/client/threenets/js/kedasites/index.js}"></script></html>
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org"><title>待办任务</title>
+<link rel="stylesheet" th:href="@{/client/threenets/css/index.css}">
+<head th:include="threenets/kedas/kedasites/common/include::head"></head>
+<style>.layui-container {width: 100%}
+
+.contant {width: 96%;margin: 0 auto;padding-top: 20px}
+
+.layui-card-body {padding: 0 15px}
+
+table.dataTable thead th, table.dataTable thead td {padding: 10px 0px}
+
+select {font-size: 13px}</style>
+<body><!--头部-->
+<div th:include="threenets/kedas/kedasites/common/include::nav"></div>
+<div class="layui-container">
+    <div class="layui-row">
+        <div class="layui-col-md9"><!--等待设置铃音-->
+            <div class="layui-row contant"
+                 style="border:1px solid #e6e6e6!important; margin:20px auto!important;padding: 10px;">
+                <div class="layui-col-md12">
+                    <div class="layui-form-item" style='text-align: right;margin-bottom:0;'>
+                        <div class="layui-inline"><label class="layui-form-label">用户状态</label>
+                            <div class="layui-input-inline"><select id="isMonthly" style="width:107%;"
+                                                                    onchange="showTable();">
+                                <!--0.未开通/1.开通成功/2.开通失败/3.已退订/4.开通中/5.删除中/6.删除失败-->
+                                <option value="1" selected="selected">已包月</option>
+                                <option value="0">未包月</option>
+                                <option value="2">包月失败</option>
+                                <option value="3">已退订</option>
+                                <option value="4">包月中</option>
+                                <option value="5">删除中</option>
+                                <option value="6">删除失败</option>
+                            </select></div>
+                        </div>
+                        <div class="layui-inline"><label class="layui-form-label">时间段</label>
+                            <div class="layui-input-inline" style='width: auto;'><select id="timeType"
+                                                                                         style="width:90px;"
+                                                                                         onchange="showTable();">
+                                <option value="1" selected="selected">一天</option>
+                                <option value="2">一周</option>
+                                <option value="3">半个月</option>
+                                <option value="4">一个月</option>
+                            </select></div>
+                        </div>
+                    </div>
+                    <div class="layui-row per" style="margin-top: 0;background: #EEF5FB;">
+                        <div class="layui-col-md4">
+                            <div class="grid-demo grid-demo-bg1 lt">等待铃音设置</div>
+                        </div>
+                        <div class="layui-col-md4 layui-col-md-offset4"><a th:href="@{/threenets/clcy/toMerchants}">
+                            <div class="grid-demo rg">更多</div>
+                        </a></div>
+                    </div>
+                    <table class="layui-table" id="set">
+                        <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>成员号码</th>
+                            <th>员工姓名</th>
+                            <th>商户名称</th>
+                            <th>省份</th>
+                            <th>加入时间</th>
+                            <th>铃音</th>
+                            <th>企业彩铃</th>
+                            <th>备注</th>
+                            <th>操作</th>
+                        </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="layui-col-md3"><!--公告-->
+            <div class="layui-row" style="width: 90%;margin: 20px auto;">
+                <div class="layui-col-md12">
+                    <div class="layui-card">
+                        <div class="layui-card-header" style="background: #EEF5FB;"><span>公告</span><a
+                                th:href="@{/threenets/clcy/toAnnouncementPage}"><span class="moreg">更多公告</span></a>
+                        </div>
+                        <div class="layui-card-body ofo" th:each="notice : ${noticeList}"><span
+                                th:onclick="openDetails([[${notice}]]);"
+                                th:text="${notice.noticeTitle}">疑难杂单平台上线通知</span></div>
+                    </div>
+                </div>
+            </div><!--近5日信息-->
+            <div class="layui-row contant" style="width:100%;padding: 0;">
+                <div class="layui-col-md12">
+                    <div class="layui-row per" style="background: #EEF5FB;">
+                        <div class="layui-col-md4">
+                            <div class="grid-demo grid-demo-bg1 lt">近5日信息</div>
+                        </div>
+                        <div class="layui-col-md4 layui-col-md-offset4"><a th:href="@{/threenets/clcy/toBusiness/1}">
+                            <div class="grid-demo rg">更多</div>
+                        </a></div>
+                    </div>
+                    <table class="layui-table">
+                        <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>日期</th>
+                            <th>累计用户数</th>
+                            <th>新增用户数</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="plotBarPhone,iterStat:${plotBarPhoneList}">
+                            <td th:text="${iterStat.count}">1</td>
+                            <td th:text="${plotBarPhone.dateTimes}">2019-0622</td>
+                            <td th:text="${plotBarPhone.cumulativeUser}">68</td>
+                            <td th:text="${plotBarPhone.addUser}">4</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+<div th:include="threenets/kedas/kedasites/common/include::footer"></div>
+<script th:src="@{/client/threenets/js/kedasites/index.js}"></script>
+</html>

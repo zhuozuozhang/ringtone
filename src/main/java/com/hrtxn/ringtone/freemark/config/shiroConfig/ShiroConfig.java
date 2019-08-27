@@ -1,4 +1,4 @@
-package com.hrtxn.ringtone.freemark.config.shiroConfig;
+package com.hrtxn.ringtone.freemark.config.shiroconfig;
 
 import at.pollux.thymeleaf.shiro.dialect.ShiroDialect;
 import com.hrtxn.ringtone.common.constant.Constant;
@@ -30,23 +30,27 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
- * Author:zcy
- * Date:2019-06-26 17:45
- * Description:Shiro 配置类
+ * @Author zcy
+ * @Date 2019-06-26 17:45
+ * @Description Shiro 配置类
  */
 @Slf4j
 @Configuration
 public class ShiroConfig {
 
-    // Session超时时间，单位为毫秒（默认30分钟）
+    /**
+     * Session超时时间，单位为毫秒（默认30分钟）
+     */
     @Value("${shiro.session.expireTime}")
     private int expireTime;
-    // 设置Cookie的过期时间，秒为单位
+    /**
+     * 设置Cookie的过期时间，秒为单位
+     */
     @Value("${shiro.cookie.maxAge}")
     private int maxAge;
 
     @Bean
-    public FilterRegistrationBean delegatingFilterProxy(){
+    public FilterRegistrationBean delegatingFilterProxy() {
         FilterRegistrationBean filterRegistrationBean = new FilterRegistrationBean();
         DelegatingFilterProxy proxy = new DelegatingFilterProxy();
         proxy.setTargetFilterLifecycle(true);
@@ -57,30 +61,36 @@ public class ShiroConfig {
 
     /**
      * shiro 拦截器
+     *
      * @param securityManager
      * @return
      */
     @Bean("shiroFilter")
     public ShiroFilterFactoryBean shirFilter(SecurityManager securityManager) {
-        log.info("启动ShiroFilter--时间是："+new Date());
+        log.info("启动ShiroFilter--时间是：" + new Date());
         ShiroFilterFactoryBean shiroFilterFactoryBean = new ShiroFilterFactoryBean();
         shiroFilterFactoryBean.setSecurityManager(securityManager);
         // shiro拦截器.
-        Map<String,String> filterChainDefinitionMap = new LinkedHashMap<String,String>();
+        Map<String, String> filterChainDefinitionMap = new LinkedHashMap<String, String>();
         // 配置不会被拦截的链接 顺序判断
-        //filterChainDefinitionMap.put("/","anon");// 配置登录页不被拦截
-        filterChainDefinitionMap.put("/login","anon");// 配置登录页不被拦截
-        filterChainDefinitionMap.put("/imageCode","anon");// 配置图片验证码不被拦截
+        // 配置登录页不被拦截
+        filterChainDefinitionMap.put("/login", "anon");
+        // 配置图片验证码不被拦截
+        filterChainDefinitionMap.put("/imageCode", "anon");
         // 配置静态资源不被拦截
-        filterChainDefinitionMap.put("/**/css/**","anon");
-        filterChainDefinitionMap.put("/**/dataTables/**","anon");
-        filterChainDefinitionMap.put("/**/fonts/**","anon");
-        filterChainDefinitionMap.put("/**/images/**","anon");
-        filterChainDefinitionMap.put("/**/js/**","anon");
-        filterChainDefinitionMap.put("/**/lib/**","anon");
-        filterChainDefinitionMap.put("/**/favicon.ico","anon");
-        // 设置拦截所有资源
-        filterChainDefinitionMap.put("/**","authc");
+        filterChainDefinitionMap.put("/admin/**", "anon");
+        filterChainDefinitionMap.put("/client/**", "anon");
+        filterChainDefinitionMap.put("/public/**", "anon");
+        filterChainDefinitionMap.put("/**/center/**", "anon");
+        filterChainDefinitionMap.put("/**/error/**", "anon");
+        filterChainDefinitionMap.put("/**/home/**", "anon");
+        filterChainDefinitionMap.put("/**/login/**", "anon");
+        filterChainDefinitionMap.put("/**/notice/**", "anon");
+        filterChainDefinitionMap.put("/favicon.ico", "anon");
+//      设置不拦截公众号资源
+        filterChainDefinitionMap.put("/public/**", "anon");
+        /**设置拦截所有资源*/
+        filterChainDefinitionMap.put("/**", "authc");
         shiroFilterFactoryBean.setFilterChainDefinitionMap(filterChainDefinitionMap);
         // 如果不设置默认会自动寻找Web工程根目录下的login页面
         shiroFilterFactoryBean.setLoginUrl("/");
@@ -94,6 +104,7 @@ public class ShiroConfig {
     /**
      * 开启缓存
      * shiro-ehcache实现
+     *
      * @return
      */
     @Bean
@@ -102,33 +113,28 @@ public class ShiroConfig {
         ehCacheManager.setCacheManagerConfigFile("classpath:ehcache/ehcache-shiro.xml");
         return ehCacheManager;
     }
+
     /**
      * 自定义sessionManager
+     *
      * @return
      */
     @Bean
-    public SessionManager sessionManager(){
-        ShiroSessionManager shiroSessionManager = new ShiroSessionManager();
+    public SessionManager sessionManager() {
+        com.hrtxn.ringtone.freemark.config.shiroconfig.ShiroSessionManager shiroSessionManager = new com.hrtxn.ringtone.freemark.config.shiroconfig.ShiroSessionManager();
         Cookie cookie = new SimpleCookie(Constant.COOKIENAME);
         cookie.setMaxAge(maxAge * 24 * 60 * 60);
-
         shiroSessionManager.setSessionIdCookie(cookie);
-        //Cookie cookie2 = new SimpleCookie("x-token");
-        //shiroSessionManager.setSessionIdCookie(cookie2);
-        // 这里可以不设置。Shiro有默认的session管理
         EnterpriseCacheSessionDAO sessionDAO = new EnterpriseCacheSessionDAO();
         SessionIdGenerator sessionIdGenerator = new SessionIdGenerator() {
             // 自定义cookie的值
             @Override
             public Serializable generateId(Session session) {
-                String sessionA = UUIDUtils.get32UUID();
-                String sessionB = UUIDUtils.get24UUID();
-                session.setAttribute("sessionA",sessionA);
-                session.setAttribute("sessionB",sessionB);
-                String cookieValue = sessionA + Constant.APPID + sessionB;
-                //log.info("sessionA -- > " + sessionA);
-                //log.info("sessionB -- > " + sessionB);
-                //log.info("加密后cookie的值 -- > " + MD5Utils.GetMD5Code(cookieValue));
+                String sessionOne = UUIDUtils.get32UUID();
+                String sessionTwo = UUIDUtils.get24UUID();
+                session.setAttribute("sessionA", sessionOne);
+                session.setAttribute("sessionB", sessionTwo);
+                String cookieValue = sessionOne + Constant.APPID + sessionTwo;
                 return MD5Utils.GetMD5Code(cookieValue);
             }
         };
@@ -140,11 +146,12 @@ public class ShiroConfig {
 
     /**
      * 自定义身份验证Realm （包含用户名密码校验，权限校验等）
+     *
      * @return
      */
     @Bean(name = "myShiroRealm")
-    public MyShiroRealm myShiroRealm(){
-        MyShiroRealm myShiroRealm = new MyShiroRealm();
+    public com.hrtxn.ringtone.freemark.config.shiroconfig.MyShiroRealm myShiroRealm() {
+        com.hrtxn.ringtone.freemark.config.shiroconfig.MyShiroRealm myShiroRealm = new com.hrtxn.ringtone.freemark.config.shiroconfig.MyShiroRealm();
         return myShiroRealm;
     }
 
@@ -152,13 +159,12 @@ public class ShiroConfig {
      * 安全管理器
      */
     @Bean
-    public SecurityManager securityManager(MyShiroRealm myShiroRealm){
-        DefaultWebSecurityManager securityManager =  new DefaultWebSecurityManager();
+    public SecurityManager securityManager(com.hrtxn.ringtone.freemark.config.shiroconfig.MyShiroRealm myShiroRealm) {
+        DefaultWebSecurityManager securityManager = new DefaultWebSecurityManager();
         //设置realm
         securityManager.setRealm(myShiroRealm);
         //自定义缓存实现
-//        securityManager.setCacheManager(ehCacheManager());
-        //自定义session管理
+        /**securityManager.setCacheManager(ehCacheManager());*/
         securityManager.setSessionManager(sessionManager());
         SecurityUtils.setSecurityManager(securityManager);
         return securityManager;
@@ -170,23 +176,24 @@ public class ShiroConfig {
      * 配置以下两个bean(DefaultAdvisorAutoProxyCreator和AuthorizationAttributeSourceAdvisor)
      */
     @Bean
-    public DefaultAdvisorAutoProxyCreator advisorAutoProxyCreator(){
+    public DefaultAdvisorAutoProxyCreator advisorAutoProxyCreator() {
         DefaultAdvisorAutoProxyCreator advisorAutoProxyCreator = new DefaultAdvisorAutoProxyCreator();
         advisorAutoProxyCreator.setProxyTargetClass(true);
         return advisorAutoProxyCreator;
     }
+
     /**
      * 开启shiro aop 注解支持，不开启的话权限验证就会失效
+     *
      * @param securityManager
      * @return
      */
     @Bean
-    public AuthorizationAttributeSourceAdvisor authorizationAttributeSourceAdvisor(SecurityManager securityManager){
+    public AuthorizationAttributeSourceAdvisor authorizationAttributeSourceAdvisor(SecurityManager securityManager) {
         AuthorizationAttributeSourceAdvisor authorizationAttributeSourceAdvisor = new AuthorizationAttributeSourceAdvisor();
         authorizationAttributeSourceAdvisor.setSecurityManager(securityManager);
         return authorizationAttributeSourceAdvisor;
     }
-
 
 
     /**

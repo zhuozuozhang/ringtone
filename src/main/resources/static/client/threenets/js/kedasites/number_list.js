@@ -34,8 +34,10 @@ function showTable() {
                     status = '包月中';
                 } else if (data == 5) {
                     status = '删除中';
-                } else {
+                } else if (data == 6) {
                     status = '删除失败';
+                } else {
+                    status = '已回短信';
                 }
                 return status;
             }
@@ -78,10 +80,10 @@ function showTable() {
             var linkMan = row.linkMan;
             var linkTel = row.linkTel;
             var employeeId = row.employeeId;
-            var setRing = "<a href='javascript:;' onclick='ringSet(\""+linkMan+"\",\""+linkTel+"\","+employeeId+","+id+");'><i class='layui-icon layui-icon-set' title='设置铃音'></i></a>";
+            var setRing = "<a href='javascript:;' onclick='ringSet(\"" + linkMan + "\",\"" + linkTel + "\"," + employeeId + "," + id + ");'><i class='layui-icon layui-icon-set' title='设置铃音'></i></a>";
             var refresh = "<i onclick='getPhoneInfo(" + id + ")' class='layui-icon layui-icon-refresh-3' title='刷新'></i>";
             var del = "<i class='layui-icon layui-icon-delete' title='删除' onclick='deleteTel(" + id + ")'></i>";
-            return refresh + (isMonthly == 1 ? setRing : '') + del;
+            return refresh + setRing + del;
         }
     }];
     page("#set", 10, params, "/threenets/clcy/getKedaChidList", columns, columnDefs);
@@ -101,26 +103,25 @@ function AddUser() {
 }
 
 //设置铃音
-function ringSet(linkMan,linkTel,employeeId,id) {
+function ringSet(linkMan, linkTel, employeeId, id) {
     var str = '';
     str += '<div class="layui-col-md12" id="search">';
     str += '<div class="setting_title">';
-    str += '成员姓名：<span id="settingRing_apersonnelName" style="color:#17a9ff;">'+linkMan+'</span>';
-    str += '| 成员电话：<span id="settingRing_apersonnelPhone" style="color:#17a9ff;">'+linkTel+'</span>';
+    str += '成员姓名：<span id="settingRing_apersonnelName" style="color:#17a9ff;">' + linkMan + '</span>';
+    str += '| 成员电话：<span id="settingRing_apersonnelPhone" style="color:#17a9ff;">' + linkTel + '</span>';
     str += '</div>';
     str += '<table class="layui-table" id="setRing" style="width:700px;margin: 0 auto;">';
-        str += '<thead>';
-            str += '<tr>';
-                str += '<th>#</th>';
-                str += '<th></th>';
-                str += '<th>铃音名称</th>';
-                str += '<th>创建时间</th>';
-                str += '<th>在线试听</th>';
-            str += '</tr>';
-        str += '</thead>';
-        str += '<tbody>';
-
-        str += '</tbody>';
+    str += '<thead>';
+    str += '<tr>';
+    str += '<th>#</th>';
+    str += '<th></th>';
+    str += '<th>铃音名称</th>';
+    str += '<th>创建时间</th>';
+    str += '<th>在线试听</th>';
+    str += '</tr>';
+    str += '</thead>';
+    str += '<tbody>';
+    str += '</tbody>';
     str += '</table>';
     str += '</div>';
     layer.open({
@@ -128,34 +129,34 @@ function ringSet(linkMan,linkTel,employeeId,id) {
         area: ['750px', '500px'],
         content: str,
         btn: ['确定'],
-        yes: function(index, layero){
+        yes: function (index, layero) {
             // 判断是否选择铃音,获取铃音编号
             var ringId = $('input[name="check"]:checked').val();
             if (!isNotEmpty(ringId)) return layer.msg("请选中一条铃音！", {icon: 5, time: 3000});
-            AjaxPut("/threenets/clcy/setKedaChidOrder",{
-                ringId:ringId,
-                linkTel:linkTel,
-                employeeId:employeeId,
-                childOrderId:id
-            },function (res) {
-                if (res.code == 200){
+            AjaxPut("/threenets/clcy/setKedaChidOrder", {
+                ringId: ringId,
+                linkTel: linkTel,
+                employeeId: employeeId,
+                childOrderId: id
+            }, function (res) {
+                if (res.code == 200) {
                     layer.msg(res.msg, {icon: 6, time: 3000});
                     $('#set').DataTable().ajax.reload(null, false);
                     setTimeout(function () {
                         layer.close(index);
-                    },3000);
+                    }, 3000);
                 } else {
                     layer.msg(res.msg, {icon: 5, time: 3000});
                 }
             });
         }
     });
-    AjaxPost("/threenets/clcy/getKedaRingSetting/"+$('#orderId').val(),{},function (res) {
-        if (res.code == 200 && isNotEmpty(res.data)){
+    AjaxPost("/threenets/clcy/getKedaRingSetting/" + $('#orderId').val(), {}, function (res) {
+        if (res.code == 200 && isNotEmpty(res.data)) {
             var list = res.data;
-            var data='';
-            for (var i = 0; i < list.length; i++){
-                data += '<tr><td>'+(i+1)+'</td><td><input type="radio" name="check" value="'+list[i].id+'"></td><td>'+list[i].ringName+'</td><td>'+list[i].createTime+'</td><td><span onclick="openPlayer(\''+list[i].ringUrl+'\');">试听</span></td></tr>';
+            var data = '';
+            for (var i = 0; i < list.length; i++) {
+                data += '<tr><td>' + (i + 1) + '</td><td><input type="radio" name="check" value="' + list[i].id + '"></td><td>' + list[i].ringName + '</td><td>' + list[i].createTime + '</td><td><span onclick="openPlayer(\'' + list[i].ringUrl + '\');">试听</span></td></tr>';
             }
             $("#setRing tbody").html(data);
         }

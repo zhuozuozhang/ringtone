@@ -80,9 +80,11 @@ function page(obj,pagesize,dataJsonStr,url,columns,columnDefs){
                             arr = $.parseJSON(data);//将json字符串转化为了一个Object对象
                         }
                         var returnData = {};
-                        returnData.recordsTotal = arr.totalCount;//totalCount指的是总记录数
-                        returnData.recordsFiltered = arr.totalCount;//后台不实现过滤功能,全部的记录数都需输出到前端，记录数为总数
-                        returnData.data = arr.data;//返回数据列表
+                        if (arr != null){
+                            returnData.recordsTotal = arr.totalCount;//totalCount指的是总记录数
+                            returnData.recordsFiltered = arr.totalCount;//后台不实现过滤功能,全部的记录数都需输出到前端，记录数为总数
+                            returnData.data = arr.data;//返回数据列表
+                        }
                         callback(returnData);
                     }else {
                         layer.msg(data.msg, {icon: 5, time: 1000});
