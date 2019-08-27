@@ -37,7 +37,6 @@ import java.util.Map;
 @Slf4j
 @Configuration
 public class ShiroConfig {
-
     /**
      * Session超时时间，单位为毫秒（默认30分钟）
      */

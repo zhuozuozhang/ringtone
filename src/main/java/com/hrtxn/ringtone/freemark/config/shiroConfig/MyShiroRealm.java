@@ -16,9 +16,9 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * Author:zcy
- * Date:2019-06-26 17:52
- * Description:shiro实现认证、授权处理
+ * @Author zcy
+ * @Date 2019-8-27 14:40
+ * @Description shiro实现认证、授权处理
  */
 @Slf4j
 public class MyShiroRealm extends AuthorizingRealm {
@@ -58,6 +58,6 @@ public class MyShiroRealm extends AuthorizingRealm {
             // 账号不正确
             return null;
         }
-        return new SimpleAuthenticationInfo(user,user.getUserPassword(),getName());// 验证密码
+        return new SimpleAuthenticationInfo(user,user.getUserPassword(),getName());
     }
 }
