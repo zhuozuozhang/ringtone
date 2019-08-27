@@ -10,6 +10,7 @@ function showTelcertification_child_table() {
     var columns = [
         {"data": "id"},
         {"data": "id"},
+        {"data": "id"},
         {"data": "telChildOrderPhone"},
         {"data": "years"},
         {"data": "price"},
@@ -20,7 +21,7 @@ function showTelcertification_child_table() {
         {"data": "telChildOrderExpireTime"}
     ];
     var columnDefs = [{
-        targets:[1],
+        targets:[2],
         render: function (data, type, row, meta) {
             var id = row.id;
             // return "<div class='layui-unselect layui-form-checkbox' lay-skin='primary' data-id='"+id+"'><i class='layui-icon'>&#xe605;</i></div>"
@@ -28,42 +29,64 @@ function showTelcertification_child_table() {
             // return "<div class='layui-unselect header layui-form-checkbox' lay-skin='primary'><i class='layui-icon'>&#xe605;</i></div>"
         }
     }, {
-        targets: [5],
+        targets: [6],
         render: function (data, type, row, meta) {
-            var status = row.telChildOrderStatus;
-            // var str = "<select id='selector' onchange='updateTelCertificationStatus(this);'>" +
-            //     "<option id='1' value='1'>开通中</option>" +
-            //     "<option id='2' value='2'>开通成功</option>" +
-            //     "<option id='3' value='3'>开通失败</option>" +
-            //     "<option id='4' value='4'>续费中</option>" +
-            //     "<option id='5' value='5'>续费成功</option>" +
-            //     "<option id='6' value='6'>续费失败</option>" +
-            //     "</select>"
-            // display(status);
-            var str = "<select id='selector' name='selector' onchange='updateTelCertificationStatus(this);'>" +
-                "<option value='1'>开通中</option>" +
-                "<option value='2'>开通成功</option>" +
-                "<option value='3'>开通失败</option>" +
-                "<option value='4'>续费中</option>" +
-                "<option value='5'>续费成功</option>" +
-                "<option value='6'>续费失败</option>" +
-                "</select>"
-            var selector = $("#selector").option;
-            // alert(selector);
-            // initSelectedValue(selector,status);
+            var pgmt = "";
+            pgmt += '<option value = "1" ';
+            if(data == 1 ){
+                pgmt += 'selected = "selected" >';
+            }else{
+                pgmt += '>';
+            }
+            pgmt += '开通中</option>';
+            pgmt += '<option value = "2" ';
+            if(data == 2 ){
+                pgmt += 'selected = "selected" >';
+            }else{
+                pgmt += '>';
+            }
+            pgmt += '开通成功</option>';
+            pgmt += '<option value = "3" ';
+            if(data == 3 ){
+                pgmt += 'selected = "selected" >';
+            }else{
+                pgmt += '>';
+            }
+            pgmt += '开通失败</option>';
+            pgmt += '<option value = "4" ';
+            if(data == 4 ){
+                pgmt += 'selected = "selected" >';
+            }else{
+                pgmt += '>';
+            }
+            pgmt += '续费中</option>';
+            pgmt += '<option value = "5" ';
+            if(data == 5 ){
+                pgmt += 'selected = "selected" >';
+            }else{
+                pgmt += '>';
+            }
+            pgmt += '续费成功</option>';
+            pgmt += '<option value = "6" ';
+            if(data == 6 ){
+                pgmt += 'selected = "selected" >';
+            }else{
+                pgmt += '>';
+            }
+            pgmt += '续费失败</option>';
+            var id = row.id;
+            var str = "<select id='selector' name='selector' onchange='updateTelCertificationStatus(this,"+id+");'>"+
+                pgmt+
+                "</select>";
             return str;
         }
     }, {
-        targets: [6],
+        targets: [7],
         render: function (data, type, row, meta) {
-            if (data != null && data != "") {
-                return data;
-            } else {
-                return "<input onchange='editFeedBackWhenMyKeyUp("+row.id+",this.value)' type=\"text\" id=\"businessFeedback\" name=\"businessFeedback\" required lay-verify=\"businessFeedback\" autocomplete=\"off\" class=\"layui-input\">";
-            }
+            return "<input onchange='editFeedBackWhenMyKeyUp("+row.id+",this.value)' value='"+data+"' type=\"text\" id=\"businessFeedback\" name=\"businessFeedback\" required lay-verify=\"businessFeedback\" autocomplete=\"off\" class=\"layui-input\">";
         }
     }, {
-        targets: [10],
+        targets: [11],
         render: function (data, type, row, meta) {
             var id = row.id;
             var phoneNum = row.telChildOrderPhone;
@@ -81,15 +104,7 @@ function showTelcertification_child_table() {
     var url = "/admin/getTelcertificationChildList";
     page("#telcertification_child_table", 10, param, url, columns, columnDefs);
 }
-function initSelectedValue(selObj, val) {
-    var i;
-    for (i = 0; i < selObj.options.length; i++) {
-        if (selObj.options[i].value == val) {    // 选项值与变量相同
-            selObj.selectedIndex = i;            // 设置下拉选择框的选中索引号
-            break;
-        }
-    }
-}
+
 //修改业务反馈
 function editFeedBackWhenMyKeyUp(id,feedBack){
     layer.confirm('确认要修改吗？', {
@@ -113,18 +128,25 @@ function editFeedBackWhenMyKeyUp(id,feedBack){
 
 var a = $("#selector option:selected").val();
 
-function updateTelCertificationStatus(obj) {
+// 修改状态
+function updateTelCertificationStatus(selObj,id) {
     layer.confirm('确认要修改吗？', {
         btn: ['确定', '取消']
     }, function () {
-        var status = $(obj).val();
-        // AjaxPost("/admin/editChildStatus",{
-        //
-        // })
-        alert($(obj).val());
-        layer.msg('修改成功!', {icon: 1, time: 1000});
+        var status = $(selObj).val();
+        AjaxPost("/admin/editChildStatus",{
+            id:id,
+            telChildOrderStatus:status
+        },function (res) {
+            if (res.code == 200 && res.data) {
+                layer.msg(res.msg, {icon: 6, time: 2000});
+                $('#telcertification_child_table').DataTable().ajax.reload();
+            } else {
+                layer.msg(res.msg, {icon: 5, time: 2000});
+            }
+        });
     }, function () {
-        $(obj).val(a);
+        $('#telcertification_child_table').DataTable().ajax.reload();
     });
 }
 

@@ -229,7 +229,28 @@ public class TelCertificationAdminController {
         return telCertificationService.deleteTelCer(id);
     }
 
-    //editFeedBackById
+    /**
+     * 修改成员号码状态
+     * @param certificationChildOrder
+     * @return
+     */
+    @RequiresRoles("admin")
+    @PostMapping("/editChildStatus")
+    @ResponseBody
+    @Log(title = "修改成员号码状态",businessType = BusinessType.UPDATE,operatorLogType = OperatorLogType.TELCERTIFICATION)
+    public AjaxResult editChildStatus(CertificationChildOrder certificationChildOrder) {
+        try {
+            return telCertificationChildService.editChildStatus(certificationChildOrder);
+        } catch (Exception e) {
+            return AjaxResult.error("修改成员号码状态失败！");
+        }
+    }
+
+    /**
+     * 修改业务反馈
+     * @param certificationChildOrder
+     * @return
+     */
     @RequiresRoles("admin")
     @PostMapping("/editFeedBackById")
     @ResponseBody

@@ -73,7 +73,17 @@
     delete from tb_telcertification_child_order
     where id = #{id,jdbcType=INTEGER}
   </delete>
-
+<!--修改成员状态-->
+    <update id="editChildStatus" parameterType="com.hrtxn.ringtone.project.telcertification.domain.CertificationChildOrder">
+        UPDATE tb_telcertification_child_order
+        <set>
+            <if test="telChildOrderStatus != null">
+                tel_child_order_status = #{telChildOrderStatus,jdbcType=VARCHAR},
+            </if>
+        </set>
+        WHERE id = #{id,jdbcType=INTEGER}
+    </update>
+<!--修改业务反馈-->
     <update id="editFeedBackById" parameterType="com.hrtxn.ringtone.project.telcertification.domain.CertificationChildOrder">
         UPDATE tb_telcertification_child_order
         <set>

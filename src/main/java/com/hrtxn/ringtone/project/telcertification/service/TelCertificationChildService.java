@@ -184,6 +184,18 @@ public class TelCertificationChildService {
         return AjaxResult.error("参数格式错误！");
     }
 
+    public AjaxResult editChildStatus(CertificationChildOrder certificationChildOrder) {
+        CertificationChildOrder childOrder = certificationChildOrder;
+        if (StringUtils.isNotNull(certificationChildOrder) && StringUtils.isNotNull(certificationChildOrder.getId())  && certificationChildOrder.getId() != 0) {
+            int count = certificationChildOrderMapper.editChildStatus(certificationChildOrder);
+            if (count > 0) {
+                return AjaxResult.success(true, "修改成功！");
+            }
+            return AjaxResult.error("修改失败！");
+        }
+        return AjaxResult.error("参数格式错误！");
+    }
+
     public AjaxResult editFeedBackById(CertificationChildOrder certificationChildOrder) {
         if (StringUtils.isNotNull(certificationChildOrder) && StringUtils.isNotNull(certificationChildOrder.getId())  && certificationChildOrder.getId() != 0) {
             int count = certificationChildOrderMapper.editFeedBackById(certificationChildOrder);
@@ -194,4 +206,6 @@ public class TelCertificationChildService {
         }
         return AjaxResult.error("参数格式错误！");
     }
+
+
 }

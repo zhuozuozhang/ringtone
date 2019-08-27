@@ -27,5 +27,9 @@ public interface CertificationChildOrderMapper {
 
     int deleteByPrimaryKey(@Param("id") Integer id);
 
+    int editChildStatus(CertificationChildOrder certificationChildOrder);
+
     int editFeedBackById(CertificationChildOrder certificationChildOrder);
+
+
 }
