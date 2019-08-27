@@ -77,7 +77,7 @@ public class ThreeNetsAsyncService {
                 if (StringUtils.isNotEmpty(orderRequest.getMianduan()) && orderRequest.getMianduan().equals("是")) {
                     order.setMianduan("1");
                 }
-                //saveOrderByLt(order, attached, collect.get(Const.OPERATORS_UNICOM));
+                saveOrderByLt(order, attached, collect.get(Const.OPERATORS_UNICOM));
             }
             //电信
             if (collect.get(Const.OPERATORS_TELECOM) != null) {
@@ -199,11 +199,14 @@ public class ThreeNetsAsyncService {
             attached.setSubjectProve(path);
         }
         order.setLinkmanTel(childOrders.get(0).getLinkmanTel());
+        order.setProvince(childOrders.get(0).getProvince());
+        order.setCity(childOrders.get(0).getCity());
         McardAddGroupRespone groupRespone = utils.addOrderByDx(order, attached);
         if (groupRespone.getCode().equals(Const.ILLEFAL_AREA)) {
             for (int i = 0; i < childOrders.size(); i++) {
                 ThreenetsChildOrder childOrder = childOrders.get(i);
                 childOrder.setRemark("审核失败：电信商户—" + groupRespone.getMessage());
+                childOrder.setStatus("审核失败");
                 childOrders.set(i, childOrder);
             }
         }
@@ -240,6 +243,7 @@ public class ThreeNetsAsyncService {
             for (int i = 0; i < childOrders.size(); i++) {
                 ThreenetsChildOrder childOrder = childOrders.get(i);
                 childOrder.setRemark(prompt);
+                childOrder.setStatus("审核失败");
                 threenetsChildOrderMapper.updateThreeNetsChidOrder(childOrder);
             }
             ThreenetsRing ring = threenetsRingMapper.selectByPrimaryKey(ringId);
@@ -265,6 +269,7 @@ public class ThreeNetsAsyncService {
 
             ThreenetsChildOrder childOrder = new ThreenetsChildOrder();
             childOrder.setParentOrderId(order.getId());
+            childOrder.setNoEqualsStatus("审核失败");
             List<ThreenetsChildOrder> childOrders = threenetsChildOrderMapper.listByParamNoPage(childOrder);
 
             Map<Integer, List<ThreenetsChildOrder>> map = childOrders.stream().collect(Collectors.groupingBy(ThreenetsChildOrder::getOperator));
@@ -356,7 +361,10 @@ public class ThreeNetsAsyncService {
                 threeNetsOrderAttachedService.update(attached);
             } else {
                 for (int i = 0; i < list.size(); i++) {
-                    list.get(i).setRemark("审核失败：移动商户—" + miguAddGroupRespone.getMsg());
+                    ThreenetsChildOrder childOrder = list.get(i);
+                    childOrder.setRemark("审核失败：移动商户—" + miguAddGroupRespone.getMsg());
+                    childOrder.setStatus("审核失败");
+                    list.set(i,childOrder);
                 }
                 return list;
             }
@@ -412,7 +420,10 @@ public class ThreeNetsAsyncService {
                 threeNetsOrderAttachedService.update(attached);
             } else {
                 for (int i = 0; i < list.size(); i++) {
-                    list.get(i).setRemark("审核失败：联通商户—" + swxlGroupResponse.getRemark());
+                    ThreenetsChildOrder childOrder = list.get(i);
+                    childOrder.setRemark("审核失败：联通商户—" + swxlGroupResponse.getRemark());
+                    childOrder.setStatus("审核失败");
+                    list.set(i,childOrder);
                 }
                 return list;
             }
@@ -453,6 +464,9 @@ public class ThreeNetsAsyncService {
                 attached.setSubjectProve(path);
             }
             //没有电信商户，先新增商户
+            order.setLinkmanTel(list.get(0).getLinkmanTel());
+            order.setProvince(list.get(0).getProvince());
+            order.setCity(list.get(0).getCity());
             McardAddGroupRespone respone = apiUtils.addOrderByDx(order, attached);
             if (respone.getCode().equals("0000")) {
                 attached.setMcardId(respone.getAuserId());
@@ -473,4 +487,19 @@ public class ThreeNetsAsyncService {
         }
         return list;
     }
+
+    /**
+     * 创建移动商户
+     */
+    private void createMobileMerchant(){}
+
+    /**
+     * 创建联通商户
+     */
+    private void createUnicomMerchant(){}
+
+    /**
+     * 创建电信商户
+     */
+    private void createTelecomMerchant(){}
 }

@@ -392,6 +392,10 @@
         <if test="param != null and param.year != null and param.year != ''">
             AND left(p.create_date, 4) ='${param.year}'
         </if>
+        <if test="param != null and param.noEqualsStatus != null and param.noEqualsStatus != ''">
+            AND p.status	!= '审核失败'
+        </if>
+
     </sql>
 
     <sql id="page">

@@ -73,4 +73,5 @@ public class ThreenetsChildOrder implements Serializable {
 
     private String year;
 
+    private String noEqualsStatus;
 }
