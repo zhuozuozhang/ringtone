@@ -120,7 +120,7 @@ public class ShiroConfig {
      */
     @Bean
     public SessionManager sessionManager() {
-        com.hrtxn.ringtone.freemark.config.shiroconfig.ShiroSessionManager shiroSessionManager = new com.hrtxn.ringtone.freemark.config.shiroconfig.ShiroSessionManager();
+        ShiroSessionManager shiroSessionManager = new ShiroSessionManager();
         Cookie cookie = new SimpleCookie(Constant.COOKIENAME);
         cookie.setMaxAge(maxAge * 24 * 60 * 60);
         shiroSessionManager.setSessionIdCookie(cookie);
@@ -149,8 +149,8 @@ public class ShiroConfig {
      * @return
      */
     @Bean(name = "myShiroRealm")
-    public com.hrtxn.ringtone.freemark.config.shiroconfig.MyShiroRealm myShiroRealm() {
-        com.hrtxn.ringtone.freemark.config.shiroconfig.MyShiroRealm myShiroRealm = new com.hrtxn.ringtone.freemark.config.shiroconfig.MyShiroRealm();
+    public MyShiroRealm myShiroRealm() {
+        MyShiroRealm myShiroRealm = new MyShiroRealm();
         return myShiroRealm;
     }
 
@@ -158,7 +158,7 @@ public class ShiroConfig {
      * 安全管理器
      */
     @Bean
-    public SecurityManager securityManager(com.hrtxn.ringtone.freemark.config.shiroconfig.MyShiroRealm myShiroRealm) {
+    public SecurityManager securityManager(MyShiroRealm myShiroRealm) {
         DefaultWebSecurityManager securityManager = new DefaultWebSecurityManager();
         //设置realm
         securityManager.setRealm(myShiroRealm);
