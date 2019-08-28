@@ -595,7 +595,7 @@ public class MiguApi implements Serializable {
         builder.addTextBody("circle.name", ringOrder.getCompanyName(), ContentType.TEXT_PLAIN.withCharset("UTF-8"));
         builder.addTextBody("circle.cmName", user.getUserName(), ContentType.TEXT_PLAIN.withCharset("UTF-8"));
         builder.addTextBody("circle.cmMsisdn", user.getUserTel());
-        builder.addTextBody("groupManagerName", ringOrder.getCompanyLinkman(), ContentType.TEXT_PLAIN.withCharset("UTF-8"));
+        builder.addTextBody("groupManagerName", ShiroUtils.getSysUser().getUserName(), ContentType.TEXT_PLAIN.withCharset("UTF-8"));
         builder.addTextBody("circle.owner.msisdn", ringOrder.getLinkmanTel(), ContentType.TEXT_PLAIN.withCharset("UTF-8"));
         builder.addTextBody("manager.password", ringOrder.getLinkmanTel(), ContentType.TEXT_PLAIN.withCharset("UTF-8"));
         builder.addTextBody("manager.status", "1");

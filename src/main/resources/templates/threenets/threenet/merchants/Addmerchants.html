@@ -34,6 +34,10 @@
             height: 25px;
             margin-top: 7px;
         }
+
+        .disable {
+            pointer-events: none;
+        }
     </style>
 </head>
 
@@ -294,6 +298,7 @@
     //初始化
     $(document).ready(function () {
         $("#orderId").val("")
+        $("#tijiao").removeClass("disable");
         //添加控制
         $("#ringName,#ringFile,#ringContent").attr("disabled", true);
         $('input[name="mianduan"]').click(function () {
@@ -307,6 +312,7 @@
         }
         var name = $("#companyName").val();
         if (name == '' || name == null) {
+            $("#companyName").focus();
             layer.msg("集团名称不能为空！");
             return
         }
@@ -317,8 +323,9 @@
                 layer.msg(result.msg);
                 $("#companyName").focus();
             } else {
-                $("#orderId").val(result.data);
-                $("#parentOrderId").val(result.data);
+                $("#orderId").val(result.data.id);
+                $("#parentOrderId").val(result.data.id);
+                $("#companyName").val(result.data.companyName);
                 $("#ringName").val(name);
                 $("#ringName,#ringFile,#ringContent").attr("disabled", false);
             }
@@ -459,6 +466,7 @@
         });
         //监听提交
         form.on('submit(formDemo)', function (data) {
+            $("#tijiao").addClass("disable");
             var orderId = $("#orderId").val();
             //如果没有orderid则说明建立本地商户出错
             if (isnull(orderId)) {
@@ -484,27 +492,16 @@
                 layer.msg("开通免短需要上传免短协议!");
                 return;
             }
-            // $.ajax({
-            //     url: "/threenets/saveThreeNetsOrder",
-            //     data: $('#Form').serialize(),
-            //     type: "post",
-            //     dataType: "json",
-            //     success: function (data) {
-            //         if (data.code == "200") {
-            //             let index = parent.layer.getFrameIndex(window.name); //获取窗口索引
-            //             parent.layer.close(index);
-            //             window.parent.location.reload();//刷新父页面
-            //         } else {
-            //             layer.msg(data.msg, {icon: 3, time: 1000});
-            //         }
-            //     }
-            // });
-
-            $("#Form").submit();
-            let index = parent.layer.getFrameIndex(window.name); //获取窗口索引
-            parent.layer.close(index);
-            window.parent.location.reload();//刷新父页面
-            return false;
+            AjaxPost("/threenets/saveThreeNetsOrder",$('#Form').serialize(),function (result) {
+                if (result.code == "200") {
+                    let index = parent.layer.getFrameIndex(window.name); //获取窗口索引
+                    parent.layer.close(index);
+                    window.parent.location.reload();//刷新父页面
+                } else {
+                    $("#tijiao").removeClass("disable");
+                    layer.msg(data.msg, {icon: 3, time: 1000});
+                }
+            })
         });
     });
 

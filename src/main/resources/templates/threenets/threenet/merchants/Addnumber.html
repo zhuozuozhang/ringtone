@@ -34,6 +34,10 @@
             height: 25px;
             margin-top: 7px;
         }
+
+        .disable {
+            pointer-events: none;
+        }
     </style>
 </head>
 
@@ -191,7 +195,7 @@
         floatingWindows.style.height = '1000px';
         //初始化
         $(document).ready(function () {
-
+            $("#tijiao").removeClass("disable");
         });
         //成员号码验证
         function mykeyup() {
@@ -282,6 +286,7 @@
             });
             //监听提交
             form.on('submit(formDemo)', function (data) {
+                $("#tijiao").addClass("disable");
                 //存在电信用户时需要验证电信的文件
                 if ($("#dxCount").val() > 0 && $("#companyUrl").val() == "") {
                     layer.msg("电信用户需要上传企业资质!");
@@ -296,11 +301,16 @@
                     layer.msg("开通免短需要上传免短协议!");
                     return;
                 }
-                $("#Form").submit();
-                let index = parent.layer.getFrameIndex(window.name); //获取窗口索引
-                parent.layer.close(index);
-                window.parent.location.reload();//刷新父页面
-                return false;
+                AjaxPost("/threenets/insterThreeNetsChildOrder",$('#Form').serialize(),function (result) {
+                    if (result.code == "200") {
+                        let index = parent.layer.getFrameIndex(window.name); //获取窗口索引
+                        parent.layer.close(index);
+                        window.parent.location.reload();//刷新父页面
+                    } else {
+                        $("#tijiao").removeClass("disable");
+                        layer.msg(data.msg, {icon: 3, time: 1000});
+                    }
+                })
             });
         });
 

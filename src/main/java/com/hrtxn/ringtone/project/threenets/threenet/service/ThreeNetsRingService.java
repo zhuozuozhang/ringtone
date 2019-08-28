@@ -183,6 +183,7 @@ public class ThreeNetsRingService {
         if (ringRespone != null && ringRespone.isSuccess()) {
             //保存铃音
             ring.setOperateRingId(ringRespone.getRingId());
+            ring.setRemark("上传成功，铃音正在审核中");
             threenetsRingMapper.updateByPrimaryKeySelective(ring);
             fileService.updateStatus(ring.getRingWay());
         }

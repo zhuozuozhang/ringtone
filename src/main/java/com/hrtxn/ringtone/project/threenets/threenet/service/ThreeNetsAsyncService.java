@@ -104,6 +104,7 @@ public class ThreeNetsAsyncService {
         MiguAddGroupRespone miguAddGroupRespone = utils.addOrderByYd(order, attached);
         if (miguAddGroupRespone != null && miguAddGroupRespone.isSuccess()) {
             attached.setMiguId(miguAddGroupRespone.getCircleId());
+            attached.setMiguStatus(Const.REVIEWED);
             //成员
             for (int i = 0; i < childOrders.size(); i++) {
                 ThreenetsChildOrder childOrder = childOrders.get(i);
@@ -355,9 +356,11 @@ public class ThreeNetsAsyncService {
     private List<ThreenetsChildOrder> addMembersByYd(ThreenetsOrder order, ThreeNetsOrderAttached attached, List<ThreenetsChildOrder> list) throws IOException, NoLoginException {
         //无集团id则先进行集团新增
         if (attached.getMiguId() == null) {
+            order.setLinkmanTel(list.get(0).getLinkmanTel());
             MiguAddGroupRespone miguAddGroupRespone = apiUtils.addOrderByYd(order, attached);
             if (miguAddGroupRespone.isSuccess()) {
                 attached.setMiguId(miguAddGroupRespone.getCircleId());
+                attached.setMiguStatus(Const.REVIEWED);
                 threeNetsOrderAttachedService.update(attached);
             } else {
                 for (int i = 0; i < list.size(); i++) {
@@ -431,8 +434,10 @@ public class ThreeNetsAsyncService {
         for (int i = 0; i < list.size(); i++) {
             ThreenetsChildOrder childOrder = list.get(i);
             childOrder.setOperateId(attached.getMiguId());
-            SwxlBaseBackMessage result = apiUtils.addPhoneByLt(childOrder, attached.getSwxlId());
-            childOrder.setRemark(result.getMessage());
+            if(!childOrder.getLinkmanTel().equals(order.getLinkmanTel())){
+                SwxlBaseBackMessage result = apiUtils.addPhoneByLt(childOrder, attached.getSwxlId());
+                childOrder.setRemark(result.getMessage());
+            }
             list.set(i, childOrder);
         }
         return list;

@@ -176,12 +176,13 @@ public class ThreeNetsOrderService {
      * @return
      */
     public AjaxResult isRepetitionByName(String name) {
+        name = name + DateUtils.getTimeRadom();
         List<ThreenetsOrder> orders = threenetsOrderMapper.isRepetitionByName(name);
         if (orders == null || orders.isEmpty()) {
             ThreenetsOrder order= new ThreenetsOrder();
             order.setCompanyName(name);
             threenetsOrderMapper.insertThreenetsOrder(order);
-            return AjaxResult.success(order.getId(),"");
+            return AjaxResult.success(order,"");
         } else {
             return AjaxResult.error("商户名称不允许重复！");
         }

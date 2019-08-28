@@ -29,6 +29,10 @@
             padding: 18px 25px 0 25px;
             margin-left: 35px!important;
         }
+
+        .disable {
+            pointer-events: none;
+        }
     </style>
 </head>
 
@@ -85,6 +89,9 @@
     </div>
 </form>
     <script>
+        $(document).ready(function () {
+            $("#tijiao").removeClass("disable");
+        });
         document.getElementById("file").addEventListener("mousedown", function () {
             if ($("#ringName").val() == '') {
                 layer.msg("请填写铃音名称", {icon: 2, time: 1000});
@@ -129,36 +136,33 @@
             uploadRing();
         })
 
-        function findbyringname() {
-
-        }
+        function findbyringname() {}
 
         //表单提交
         layui.use('form', function() {
             var form = layui.form;
             //监听提交
             form.on('submit(formDemo)', function(data) {
-                //layer.msg(JSON.stringify(data.field));
-                addRing();
+                $("#tijiao").addClass("disable");
+                let ringWay = $("#ringWay").val()
+                if (ringWay == '' || ringWay == null) {
+                    layer.msg("文件上传失败", {icon: 2, time: 1000});
+                    $("#tijiao").removeClass("disable");
+                    return ;
+                }
+                AjaxPost("/threenets/insterThreeNetsRing",$('#Form').serialize(),function (result) {
+                    if (result.code == "200") {
+                        let index = parent.layer.getFrameIndex(window.name); //获取窗口索引
+                        parent.layer.close(index);
+                        window.parent.location.reload();//刷新父页面
+                    } else {
+                        $("#tijiao").removeClass("disable");
+                        layer.msg(data.msg, {icon: 3, time: 1000});
+                    }
+                })
                 return false;
             });
-
         });
-
-        //保存铃音
-        function addRing() {
-            let ringWay = $("#ringWay").val()
-            if (ringWay == '' || ringWay == null) {
-                layer.msg("文件上传失败", {icon: 2, time: 1000});
-            } else {
-                $("#Form").submit();
-                setTimeout(function () {
-                    let index = parent.layer.getFrameIndex(window.name); //获取窗口索引
-                    parent.layer.close(index);
-                    window.parent.location.reload();//刷新父页面
-                },500);
-            }
-        }
 
         //上传铃音
         function uploadRing() {
