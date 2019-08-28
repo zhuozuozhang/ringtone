@@ -1144,7 +1144,7 @@ public class ApiUtils {
      */
     public MiguAddRingRespone saveMiguRing(ThreenetsRing ring, String circleID, String groupName) throws IOException, NoLoginException {
         String trade = "其他普通行业";
-        return miguApi.saveRing(ring, trade, groupName);
+        return miguApi.saveRing(ring, trade);
     }
 
 

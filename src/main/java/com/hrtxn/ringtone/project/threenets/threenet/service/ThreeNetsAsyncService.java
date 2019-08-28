@@ -286,8 +286,8 @@ public class ThreeNetsAsyncService {
                         threenetsRing.setRingName(path.substring(path.lastIndexOf("\\")));
                         threenetsRingMapper.insertThreeNetsRing(threenetsRing);
                     }
-                    order.setUpLoadAgreement(new File(RingtoneConfig.getProfile() + threenetsRing.getRingWay()));
-                    list = addMembersByYd(order, attached, list);
+                    //order.setUpLoadAgreement(new File(RingtoneConfig.getProfile() + threenetsRing.getRingWay()));
+                    list = addMembersByYd(order, attached, list,threenetsRing);
                     batchChindOrder(list, threenetsRing);
                 }
                 if (operator == 2) {
@@ -353,7 +353,7 @@ public class ThreeNetsAsyncService {
      * @throws IOException
      * @throws NoLoginException
      */
-    private List<ThreenetsChildOrder> addMembersByYd(ThreenetsOrder order, ThreeNetsOrderAttached attached, List<ThreenetsChildOrder> list) throws IOException, NoLoginException {
+    private List<ThreenetsChildOrder> addMembersByYd(ThreenetsOrder order, ThreeNetsOrderAttached attached, List<ThreenetsChildOrder> list,ThreenetsRing ring) throws IOException, NoLoginException {
         //无集团id则先进行集团新增
         if (attached.getMiguId() == null) {
             order.setLinkmanTel(list.get(0).getLinkmanTel());
@@ -371,20 +371,26 @@ public class ThreeNetsAsyncService {
                 }
                 return list;
             }
+            MiguAddRingRespone ringRespone = apiUtils.saveMiguRing(ring, attached.getMiguId(), "");
+            if (ringRespone.isSuccess()) {
+                ring.setOperateRingId(ringRespone.getRingId());
+                threenetsRingMapper.updateByPrimaryKeySelective(ring);
+            }
         }
         MiguAddPhoneRespone addPhoneRespone = new MiguAddPhoneRespone();
         for (int i = 0; i < list.size(); i++) {
             ThreenetsChildOrder childOrder = list.get(i);
             childOrder.setOperateId(attached.getMiguId());
             childOrder.setOperateOrderId(addPhoneRespone.getLeftMemberAddNum());
-            //if (attached.getMiguStatus() == 1) {
             addPhoneRespone = apiUtils.addPhoneByYd(childOrder, attached.getMiguId());
             if (addPhoneRespone.getSuccessCount().equals("0")) {
                 childOrder.setRemark(addPhoneRespone.getMessage());
             } else {
                 childOrder.setRemark("添加成功");
             }
-            //}
+            if(!childOrder.getLinkmanTel().equals(order.getLinkmanTel())){
+                childOrder.setRemark("添加成功");
+            }
             list.set(i, childOrder);
         }
         return list;
@@ -507,4 +513,16 @@ public class ThreeNetsAsyncService {
      * 创建电信商户
      */
     private void createTelecomMerchant(){}
+
+    /**
+     *添加移动铃音
+     */
+    private void addAMobileRingTone(ThreenetsRing ring,String circleID){
+        try {
+
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
 }

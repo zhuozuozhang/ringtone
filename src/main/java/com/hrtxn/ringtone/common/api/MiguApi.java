@@ -641,12 +641,11 @@ public class MiguApi implements Serializable {
      * 上传铃音，还要添加商户登录
      * @param ring
      * @param trade
-     * @param groupName
      * @return
      * @throws IOException
      * @throws NoLoginException
      */
-    public MiguAddRingRespone saveRing(ThreenetsRing ring, String trade, String groupName) throws IOException,NoLoginException {
+    public MiguAddRingRespone saveRing(ThreenetsRing ring, String trade) throws IOException,NoLoginException {
         MiguAddRingRespone miguAddRingRespone = new MiguAddRingRespone();
         String ringName = ring.getRingName().substring(0,ring.getRingName().indexOf("."));
         String result = null;
