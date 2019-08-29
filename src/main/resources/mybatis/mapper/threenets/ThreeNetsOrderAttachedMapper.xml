@@ -142,7 +142,7 @@
                 #{swxlStatus,jdbcType=INTEGER},
             </if>
             <if test="mcardStatus != null">
-                #{swxlStatus,jdbcType=INTEGER},
+                #{mcardStatus,jdbcType=INTEGER},
             </if>
             <if test="miguStatus != null">
                 #{miguStatus,jdbcType=INTEGER},
@@ -193,7 +193,7 @@
                 swxl_status = #{swxlStatus,jdbcType=INTEGER},
             </if>
             <if test="mcardStatus != null">
-                mcard_status = #{swxlStatus,jdbcType=INTEGER},
+                mcard_status = #{mcardStatus,jdbcType=INTEGER},
             </if>
             <if test="miguStatus != null">
                 migu_status = #{miguStatus,jdbcType=INTEGER},

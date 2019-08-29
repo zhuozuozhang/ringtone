@@ -29,3 +29,5 @@ build/
 
 ### VS Code ###
 .vscode/
+
+src/main/resources/static/system/login/images/Password.png

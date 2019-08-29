@@ -484,12 +484,9 @@ public class ThreeNetsAsyncService {
             McardAddGroupRespone respone = apiUtils.addOrderByDx(order, attached);
             if (respone.getCode().equals("0000")) {
                 attached.setMcardId(respone.getAuserId());
-                attached.setMcardStatus(Const.REVIEWED);
-                threeNetsOrderAttachedService.update(attached);
-            } else {
-                attached.setMcardStatus(Const.UNREVIEWED);
-                return new ArrayList<>();
             }
+            attached.setMcardStatus(Const.UNREVIEWED);
+            threeNetsOrderAttachedService.update(attached);
         }
         //特殊处理，需要先进入对应商户，然后进行成员添加
         if (attached.getMcardStatus() == 1) {
@@ -518,16 +515,4 @@ public class ThreeNetsAsyncService {
      * 创建电信商户
      */
     private void createTelecomMerchant(){}
-
-    /**
-     *添加移动铃音
-     */
-    private void addAMobileRingTone(ThreenetsRing ring,String circleID){
-        try {
-
-
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-    }
 }

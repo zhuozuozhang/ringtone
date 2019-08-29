@@ -294,6 +294,7 @@ public class McardApi {
      * @return
      */
     public McardAddGroupRespone addGroup(ThreenetsOrder order, ThreeNetsOrderAttached attached) {
+        McardAddGroupRespone groupRespone =  null;
         McardPhoneAddressRespone respone = phoneAdd(order.getLinkmanTel(),attached.getMcardDistributorId());
         Map<String, String> map = new HashMap<>();
         map.put("ausertype", "");
@@ -328,12 +329,21 @@ public class McardApi {
         map.put("auserCardidPath", attached.getConfirmLetter());
         map.put("auserFilePath", attached.getSubjectProve() == null ? "" : attached.getSubjectProve());
         String result = sendPost(map, add_user_url,attached.getMcardDistributorId());
-        JSONObject jsonObject = JSONObject.fromObject(result);
-        JSONObject data = jsonObject.getJSONObject("data");
-        McardAddGroupRespone groupRespone = (McardAddGroupRespone) JSONObject.toBean(data, McardAddGroupRespone.class);
-        groupRespone.setCode(jsonObject.getString("code"));
-        groupRespone.setMessage(jsonObject.getString("message"));
-        return groupRespone;
+        try {
+            log.info("电信创建集团结果--->" + result);
+            JSONObject jsonObject = JSONObject.fromObject(result);
+            String code = jsonObject.getString("code");
+            if (code.equals("0000")){
+                JSONObject data = jsonObject.getJSONObject("data");
+                groupRespone = (McardAddGroupRespone) JSONObject.toBean(data, McardAddGroupRespone.class);
+                groupRespone.setCode(jsonObject.getString("code"));
+                groupRespone.setMessage(jsonObject.getString("message"));
+            }
+        }catch (Exception e){
+            log.info("电信添加商户失败" + e);
+        }finally {
+            return groupRespone;
+        }
     }
 
 
@@ -349,6 +359,7 @@ public class McardApi {
         map.put("personnelName", childOrder.getLinkman());
         map.put("personnelPhone", childOrder.getLinkmanTel());
         String result = sendPost(map, add_apersonnel_url,distributorId);
+        log.info("电信添加成员结果--->" + result);
         McardAddPhoneRespone addPhoneRespone = (McardAddPhoneRespone) JsonUtil.getObject4JsonString(result, McardAddPhoneRespone.class);
         return addPhoneRespone;
     }
@@ -394,6 +405,7 @@ public class McardApi {
         try {
             Response response = client.newCall(request).execute();
             result = response.body().string();
+            log.info("电信上传铃音结果--->" + result);
             flag = true;
         } catch (IOException e) {
             e.printStackTrace();
