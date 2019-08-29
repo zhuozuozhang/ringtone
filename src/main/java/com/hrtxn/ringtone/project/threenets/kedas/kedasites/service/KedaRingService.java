@@ -6,6 +6,7 @@ import com.hrtxn.ringtone.common.constant.Constant;
 import com.hrtxn.ringtone.common.domain.BaseRequest;
 import com.hrtxn.ringtone.common.domain.Page;
 import com.hrtxn.ringtone.common.utils.FileUtil;
+import com.hrtxn.ringtone.common.utils.Mp3Util;
 import com.hrtxn.ringtone.common.utils.StringUtils;
 import com.hrtxn.ringtone.common.utils.UUIDUtils;
 import com.hrtxn.ringtone.freemark.config.systemConfig.RingtoneConfig;
@@ -15,9 +16,6 @@ import com.hrtxn.ringtone.project.threenets.kedas.kedasites.domain.KedaChildOrde
 import com.hrtxn.ringtone.project.threenets.kedas.kedasites.domain.KedaRing;
 import com.hrtxn.ringtone.project.threenets.kedas.kedasites.mapper.KedaChildOrderMapper;
 import com.hrtxn.ringtone.project.threenets.kedas.kedasites.mapper.KedaRingMapper;
-import it.sauronsoftware.jave.Encoder;
-import it.sauronsoftware.jave.EncoderException;
-import it.sauronsoftware.jave.MultimediaInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -56,7 +54,6 @@ public class KedaRingService {
      * @return
      */
     public AjaxResult getKedaRingList(Page page, BaseRequest baseRequest) throws IOException {
-
         page.setPage((page.getPage() - 1) * page.getPagesize());
         // 获取铃音列表
         List<KedaRing> kedaRingList = kedaRingMapper.getKedaRingList(page, baseRequest);
@@ -73,11 +70,10 @@ public class KedaRingService {
      * @param kedaRing
      * @param file
      * @return
-     * @throws EncoderException
      * @throws IOException
      */
     @Transactional(rollbackFor = Exception.class)
-    public AjaxResult addKedaRing(KedaRing kedaRing, MultipartFile file) throws EncoderException, IOException {
+    public AjaxResult addKedaRing(KedaRing kedaRing, MultipartFile file) throws IOException {
         if (StringUtils.isNull(kedaRing)) return AjaxResult.error("参数格式不正确！");
         if (StringUtils.isEmpty(kedaRing.getRingName())) return AjaxResult.error("参数格式不正确！");
         if (StringUtils.isEmpty(kedaRing.getRingContent())) return AjaxResult.error("参数格式不正确！");
@@ -98,15 +94,18 @@ public class KedaRingService {
         kedaRing.setOpertateId(Constant.OPERATEID);
         // 文件判断
         // 判断文件类型、文件大小、文件时长
-        String fileTrueName = file.getOriginalFilename();// 文件真实名称
+        // 文件真实名称
+        String fileTrueName = file.getOriginalFilename();
         // 获取文件后缀名
         String[] fileNameS = fileTrueName.split("\\.");
-        String fileType = '.' + fileNameS[fileNameS.length - 1];// 文件后缀名
+        // 文件后缀名
+        String fileType = '.' + fileNameS[fileNameS.length - 1];
         // 判断文件格式
-        if (!fileType.equals(".mp3") && !fileType.equals(".wav")) return AjaxResult.error("文件格式不正确！");
+        if (!fileType.equals(".mp3") && !fileType.equals(".wav")) { return AjaxResult.error("文件格式不正确！");}
         kedaRing.setRingName(ringName);
         String filePath = "/" + UUIDUtils.get8UUID();
-        String path = RingtoneConfig.getProfile() + File.separator + "keda" + filePath;// 存放文件的全路径
+        // 存放文件的全路径
+        String path = RingtoneConfig.getProfile() + File.separator + "keda" + filePath;
         kedaRing.setRingPath(File.separator + "keda" + filePath + ringName + fileType);
         File targetFile = new File(path, ringName + fileType);
         if (!targetFile.exists()) {
@@ -114,13 +113,10 @@ public class KedaRingService {
         }
         file.transferTo(targetFile);
         // 判断文件大小
-        if (targetFile.length() > 800 * 1024) return AjaxResult.error("文件大小大于800K");
+        if (targetFile.length() > 800 * 1024) { return AjaxResult.error("文件大小大于800K");}
         File source = new File(path + File.separator + ringName + fileType);
-        Encoder encoder = new Encoder();
-        MultimediaInfo m1 = encoder.getInfo(source);
-        long ls = m1.getDuration();
-        long duration = ls / 1000;
-        if (duration > 60) return AjaxResult.error("文件时长大于60S");
+        int length = Mp3Util.getMp3TrackLength(source);
+        if (length > 60) {return AjaxResult.error("文件时长大于60S");}
         // 添加文件纪录
         Uploadfile u = new Uploadfile();
         u.setPath(File.separator + "keda" + filePath + ringName + fileType);
@@ -134,7 +130,7 @@ public class KedaRingService {
         AjaxResult ajaxResult = kedaApi.uploadRing(source);
         if ((int) ajaxResult.get("code") == 200) {
             String fileUrl = ajaxResult.get("msg").toString();
-            if (StringUtils.isNotEmpty(fileUrl)) kedaRing.setRingUrl(fileUrl);
+            if (StringUtils.isNotEmpty(fileUrl)) {kedaRing.setRingUrl(fileUrl);}
             // 执行暂存作品操作
             AjaxResult a = kedaApi.addRing(fileUrl, kedaRing.getRingName());
             if ((int) a.get("code") == 200) {
@@ -170,7 +166,7 @@ public class KedaRingService {
             FileUtil.deleteFile(RingtoneConfig.getProfile() + kedaRingList.get(0).getRingPath());
             // 删除铃音纪录
             int count = kedaRingMapper.deleteRing(id);
-            if (count > 0) return AjaxResult.success(true, "删除成功！");
+            if (count > 0) {return AjaxResult.success(true, "删除成功！");}
         }
         return AjaxResult.error("删除失败！");
 

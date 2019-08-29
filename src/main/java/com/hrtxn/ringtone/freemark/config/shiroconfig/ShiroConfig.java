@@ -79,7 +79,12 @@ public class ShiroConfig {
         // 配置静态资源不被拦截
         filterChainDefinitionMap.put("/admin/**", "anon");
         filterChainDefinitionMap.put("/client/**", "anon");
-        filterChainDefinitionMap.put("/public/**", "anon");
+        filterChainDefinitionMap.put("/**/css/**", "anon");
+        filterChainDefinitionMap.put("/**/dataTables/**", "anon");
+        filterChainDefinitionMap.put("/**/file/**", "anon");
+        filterChainDefinitionMap.put("/**/images/**", "anon");
+        filterChainDefinitionMap.put("/**/js/**", "anon");
+        filterChainDefinitionMap.put("/**/layui/**", "anon");
         filterChainDefinitionMap.put("/**/center/**", "anon");
         filterChainDefinitionMap.put("/**/error/**", "anon");
         filterChainDefinitionMap.put("/**/home/**", "anon");
@@ -88,7 +93,7 @@ public class ShiroConfig {
         filterChainDefinitionMap.put("/favicon.ico", "anon");
 //      设置不拦截公众号资源
         filterChainDefinitionMap.put("/public/**", "anon");
-        /**设置拦截所有资源*/
+//        /**设置拦截所有资源*/
         filterChainDefinitionMap.put("/**", "authc");
         shiroFilterFactoryBean.setFilterChainDefinitionMap(filterChainDefinitionMap);
         // 如果不设置默认会自动寻找Web工程根目录下的login页面
