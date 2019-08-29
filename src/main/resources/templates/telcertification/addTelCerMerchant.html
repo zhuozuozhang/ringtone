@@ -46,170 +46,16 @@
         }
     </style>
 </head>
-
 <body>
-<div class="header">
-    <div class="top">
-        <div class="logo"><img th:src="@{/client/telcertification/images/logo.png}"></div>
-        <div class="top_r">
-            <span style="float: left">欢迎！</span>
-            <i>[[${session.username}]]</i>
-            <a href="/telcertify/toTelNoticePage" class="notice">公告</a>
-        </div>
-    </div>
-    <div class="menu">
-        <div class="cdwbk">
-            <a href="/telcertify/toTelIndexPage" class="home">首页</a>
-            <a href="/telcertify/toTelChoosePage">号码认证订购</a>
-            <a href="/telcertify/toTelMerchantsPage" class="dqxx">订单列表</a>
-            <a href="#">认证查询与取消</a>
-        </div>
-    </div>
-</div>
-<div id="allOrder">
-    <div class="order_middle">
-        <div class="order_div1">
-            <p style="cursor:pointer" class="active" id="myorder" onclick="myorder()">我的订单</p>
-            <p style="cursor:pointer" id="myorder2" onclick="surplusOrder()">即将到期号码</p>
-            <p style="cursor:pointer" id="myorder3" onclick="overOrder()">到期号码</p>
-        </div>
-        <!-- 我的订单 -->
-        <div class="myorder">
-            <div class="number_search">
-                <div>
-                    <p>提交时间:</p>
-                    <input type="text" class="layui-input" id="rangetime" name="rangetime">
-                </div>
-                <div>
-                    <p>集团名称:</p>
-                    <input type="text" id="companyName" name="companyName">
-                </div>
-                <div>
-                    <p>联系电话:</p>
-                    <input type="text" id="tel" name="tel">
-                </div>
-                <div>
-                    <p>成员号码:</p>
-                    <input type="text" id="membernum" name="membernum">
-                </div>
-                <button onclick="showTelCerTable()">搜索</button>
-<!--                <button class="new_businesses" id="cause">新增商户</button>-->
-                 <div class="new_businesses" id="cause" onclick="addTelCerMerchant()">新增商户</div>
-            </div>
-            <!-- 集团信息列表-->
-            <div class="number_list">
-                <input type="hidden" id="id" th:value="${id}">
-                <table class="layui-table" id='merchants' style="width:1200px!important;">
-                    <thead>
-                    <tr>
-                        <th>#</th>
-                        <th>集团名称</th>
-                        <th>展示名称</th>
-                        <th>联系人</th>
-                        <th>联系电话</th>
-                        <th>成员数</th>
-                        <th>状态</th>
-                        <th>总价(元)</th>
-                        <th>创建时间</th>
-                        <th>订购的产品</th>
-                        <th>备注</th>
-                        <th>操作</th>
-                    </tr>
-                    </thead>
-                </table>
-            </div>
-        </div>
-        <!-- 即将到期号码 -->
-        <div class="net_middle" style="display:none">
-            <div class="net_bottom">
-                <div class="search">
-                    <div>
-                        <p>号码:</p>
-                        <input type="text" id="number">
-                    </div>
-                    <button onclick="showFallDueTable()"
-                            style="background:#17a9ff;border:none;color:#fff; border-radius:5px;">
-                        搜索
-                    </button>
-                </div>
-                <div class="numberdf_list">
-                    <table class="layui-table" id="fall_due_table" style="width:1200px!important;">
-                        <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>成员号码</th>
-                            <th>订购年份</th>
-                            <th>价格(元)</th>
-                            <th>业务状态</th>
-                            <th>业务反馈</th>
-                            <th>提交时间</th>
-                            <th>到期时间</th>
-                            <!--                            <th>备注</th>-->
-                            <th>操作</th>
-                        </tr>
-                        </thead>
-                        <!--                        <tbody>-->
-                        <!--                        <tr>-->
-                        <!--                            <td>12345678912</td>-->
-                        <!--                            <td>2018-05-26</td>-->
-                        <!--                            <td>260</td>-->
-                        <!--                            <td>开通中</td>-->
-                        <!--                            <td>aaaaaaa</td>-->
-                        <!--                            <td>2018-05-26 03:15:30</td>-->
-                        <!--                            <td>2018-06-26 03:15:30</td>-->
-                        <!--                            <td>aaaaaaaa</td>-->
-                        <!--                            <td><p><i class="layui-icon layui-icon-log" title="查看详情" onclick="ckeckDetails();"></i></p>-->
-                        <!--                            </td>-->
-                        <!--                        </tr>-->
-                        <!--                        </tbody>-->
-                    </table>
-                </div>
-            </div>
-        </div>
-        <!-- 到期号码-->
-        <div class="net_middle2" style="display:none">
-            <div class="net_bottom">
-                <div class="search">
-                    <div>
-                        <p>号码:</p>
-                        <input type="text" id="number2">
-                    </div>
-                    <button onclick="showDueTable()"
-                            style="background:#17a9ff;border:none;color:#fff; border-radius:5px;">
-                        搜索
-                    </button>
-                </div>
-                <div class="numberdf_list">
-                    <table class="layui-table" id="due_table" style="width:1200px!important;">
-                        <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>成员号码</th>
-                            <th>订购年份</th>
-                            <th>价格(元)</th>
-                            <th>业务状态</th>
-                            <th>业务反馈</th>
-                            <th>提交时间</th>
-                            <th>到期时间</th>
-                            <th>操作</th>
-                        </tr>
-                        </thead>
-                    </table>
-                </div>
-            </div>
-        </div>
-        <div id="page"></div>
-    </div>
-    <div class="zsy"></div>
-</div>
 <!--订购弹窗 -->
 <!--<div th:replace="telcertification/common/charge :: charge"></div>-->
-<div id="pop" class="back display">
-    <div class="pop_content">
+<form action="/telcertify/saveTelCerMerchant" name="Form" id="Form" method="post" class="layui-form">
+<div class="back">
+    <div class="pop_content" style="left: 0%;top:0%;">
         <div class="approve_title">
-            <h3>业务订购</h3>
+<!--            <h3>业务订购</h3>-->
             <h4>共需支付：<span id="yfje">80</span>元</h4>
-            <div class="gban" id="cancel"><img th:src="@{/client/telcertification/images/close.png}"></div>
+<!--            <div class="gban" id="cancel"><img th:src="@{/client/telcertification/images/close.png}"></div>-->
         </div>
         <div class="rz_y">
             <div class="title" th:each="c:${configList}">
@@ -275,23 +121,26 @@
         </div>
         <div class="approvecon">
             <div class="approvebk"><span><i>*</i>集团名称</span>
-                <input type="text" placeholder="需跟营业执照名称一致" required lay-verify="required" name="companyName" id="companyName"
-                       maxlength="32" autocomplete="off" onblur="verificationName()">
+                <input type="text" placeholder="需跟营业执照名称一致" name="companyName" id="companyName"
+                       maxlength="32" autocomplete="off" onblur="verificationTelCerMerName()">
             </div>
             <div class="approvebk"><span><i>*</i>联系人姓名</span>
-                <input type="text">
+                <input type="text" name="companyLinkman" id="companyLinkman" maxlength="32" autocomplete="off">
             </div>
             <div class="approvebk"><span><i>*</i>联系人电话</span>
-                <input type="tel">
+                <input type="tel" name="linkmanTel" id="linkmanTel" maxlength="11" autocomplete="off">
             </div>
             <div class="approvebk"><span><i>*</i>认证展示内容</span>
                 <input type="text" placeholder="请跟营业执照主体一致">
             </div>
             <div class="phonenum">
                 <div class="approvebk"><span><i>*</i>开通号码</span>
-                    <input class="opennum" type="tel" placeholder="如果是座机号码务必加上区号">
-                    <em id="moreadd" onClick="addtel(this);"><img th:src="@{/client/telcertification/images/addphone.png}"></em>
+                    <input class="opennum" type="tel" id="member" placeholder="如果是座机号码务必加上区号">
+                    <img th:src="@{/client/telcertification/images/addphone.png}" alt="" class="add_phone" onclick="addLandline();" width="25px">
+                    <!--                    <em id="moreadd" onClick="addtel(this,$('#member').val());"><img-->
+<!--                            th:src="@{/client/telcertification/images/addphone.png}"></em>-->
                 </div>
+                <div id="num"></div>
                 <!--                &lt;!&ndash;<div class="approvebk">-->
                 <!--                  <input type="tel" placeholder="如果是座机号码务必加上区号" style="margin-left:180px;">-->
                 <!--                  <em onClick="remove(this)"><img th:src="@{/client/telcertification/images/del.png}"></em>-->
@@ -345,45 +194,23 @@
                     <div class="mbxz"><a href="http://v.130.xyz/api/auth/uploadModel?type=2">号码证明模板下载</a></div>
                 </div>
                 <div class="bzbk"><span>备注</span>
-                    <textarea placeholder="添加商户的成员，请在商户的信息显示在订单页面后，进入操作栏中的成员管理界面中添加"></textarea>
+                    <textarea placeholder="备注"></textarea>
                 </div>
                 <div class="approvebk"><span><i>*</i>订购协议</span>
                     <div class="dgxy">
                         <input type="radio" checked="checked">
                         <span>我同意此<i class="openagreement">订购协议</i></span></div>
                 </div>
-<!--                <div class="xgan" onClick="determine()">确认添加</div>-->
-                            <div class="xgan" lay-submit lay-filter="addform">确认添加</div>
+                <div class="xgan" onClick="determine()">确认添加</div>
+                <!--            <div class="xgan" lay-submit lay-filter="addform">确认添加</div>-->
             </div>
         </div>
     </div>
 </div>
-<!--修改订单 -->
-<div th:replace="telcertification/common/edit :: edit"></div>
-<!--查看示例-->
-<div class="back display" id="case">
-    <div class="pop_content">
-        <div class="approve_title">
-            <h5>查看示例</h5>
-            <div class="gban" id="closecase"><img th:src="@{/client/telcertification/images/close.png}"></div>
-        </div>
-        <div class="casecon"><img th:src="@{/client/telcertification/images/sqs.jpg}"></div>
-    </div>
-</div>
 <!--订购协议-->
 <div th:replace="telcertification/common/agreement :: agreement"></div>
-<!--展示机型弹窗1 -->
-<div class="tcbk display" id="zsjxa">
-    <div class="zcjx">支持机型</div>
-    <div class="jxbk"><span>泰迪熊</span><span>其他</span></div>
-    <div class="gban" id="cancel">我已了解</div>
-</div>
-<!--展示机型弹窗2 -->
-<div class="tcbk display" id="zsjxb">
-    <div class="zcjx">支持机型</div>
-    <div class="jxbk"><span>全部机型</span></div>
-    <div class="gban" id="close">我已了解</div>
-</div>
+</form>
+
 </body>
 <script th:src="@{/public/js/jquery-2.1.4.min.js}"></script>
 <!--<script th:src="@{/public/js/jquery-3.2.0.min.js}"></script>-->
@@ -396,4 +223,115 @@
 <script type="text/javascript" th:src="@{/public/js/ajax.js}"></script>
 <script th:src="@{/client/telcertification/js/merchants.js}"></script>
 <script th:src="@{/client/telcertification/js/charge.js}"></script>
+<script>
+    function verificationTelCerMerName() {
+        if ($("#orderId").val()) {
+            return;
+        }
+        var name = $("#companyName").val();
+        if (name == '' || name == null) {
+            layer.msg("集团名称不能为空！");
+            return
+        }
+        // AjaxPost("/threenets/verificationName", {
+        //     "companyName": name,
+        // }, function (result) {
+        //     if (result.code == 500) {
+        //         layer.msg(result.msg);
+        //         $("#companyName").focus();
+        //     } else {
+        //         $("#orderId").val(result.data);
+        //         $("#parentOrderId").val(result.data);
+        //         $("#ringName").val(name);
+        //         $("#ringName,#ringFile,#ringContent").attr("disabled", false);
+        //     }
+        // })
+    }
+
+    //addPhoneNumList
+    //添加号码
+    function addLandline() {
+        //所输入的号码集合
+        var checkData = [];
+        for (var i = 0; i < document.getElementsByClassName('numlists').length; i++) {
+            if (document.getElementsByClassName('numlists')[i].value.length == 0) {
+                layui.use('layer', function () {
+                    layer.msg("新增号码不能为空！");
+                });
+                return;
+            }
+            if (document.getElementsByClassName('numlists')[i].value.length != 0) {
+                checkData.push(document.getElementsByClassName('numlists')[i].value)
+            }
+        }
+        $("#num").append(
+            '<div class="layui-form-item" style="position: relative;">' +
+                '<div class="layui-input-block" style="margin-left: 156px;">' +
+                    '<input type="text" style="width:81%;" name="content" class="layui-input numlists" value="" placeholder="如果是座机号码务必加上区号" ' +
+                        'autocomplete="off" onblur="checkNum(this)">' +
+                '</div>' +
+                '<img src="../../client/telcertification/images/del.png" alt="" class="add_phone" ' +
+                    'onclick="delLandline(this);" width="28px">' +
+            '</div>'
+        );
+    }
+    //删除号码
+    function delLandline(obj) {
+        $(obj).parent().remove();
+        checkNum(obj);
+    }
+
+    //号码添加按钮
+    function addtel(obj,phone) {
+        var phoneNum = phone;
+        var err = 0;
+        //判断座机格式的
+        // var partten = /^(\d{3,4}\-)?\d{7,8}$/i;   //座机格式是 010-98909899
+        var partten = /^0(([1-9]\d)|([3-9]\d{2}))\d{8}$/; //没有中间那段 -的 座机格式是 01098909899
+        var zuoji = partten.test(phoneNum);
+        //判断手机格式可以用
+        // var re = /^1[35]\d{9}$/i;
+        var re = /^1(3|4|5|6|7|8|9)\d{9}$/;
+        var shouji = re.test(phoneNum);
+        $(".opennum").each(function () {
+            if (phoneNum == "") {
+                alert("请输入开通号码！");
+                err++;
+                return;
+            }
+            if(!isTel(phoneNum)){
+                alert("你输入的电话号码有误！")
+                $(obj).focus();
+                return;
+            }
+            // if (phoneNum != zuoji || phoneNum !=shouji) {
+            //
+            // }
+        });
+        if (err > 0) {
+            return false;
+        }
+        //循环添加开通号码
+        var str = '<div class="approvebk">' +
+            '<input class="opennum" type="tel" placeholder="如果是座机号码务必加上区号" style="margin-left:180px;" ' +
+            'onblur="jiSuan()">' +
+            '<em onClick="removephone(this)">' +
+            '<img th:src="@{/client/telcertification/images/del.png}"></em></div>';
+        $("#before").before(str);
+    }
+
+
+    //移除号码
+    function removephone(e) {
+        $(e).parent().remove();
+        var total = Number($("#yfje").html());
+        var num = 0;
+        $(".opennum").each(function () {
+            if ($(this).val() != "") {
+                num++;
+            }
+        });
+        $("#yfje").html(price * num);
+    };
+</script>
 </html>

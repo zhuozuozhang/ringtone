@@ -8,8 +8,11 @@ import com.hrtxn.ringtone.common.domain.Page;
 import com.hrtxn.ringtone.common.utils.StringUtils;
 import com.hrtxn.ringtone.project.telcertification.domain.CertificationChildOrder;
 import com.hrtxn.ringtone.project.telcertification.domain.CertificationOrder;
+import com.hrtxn.ringtone.project.telcertification.domain.CertificationRechargeLog;
 import com.hrtxn.ringtone.project.telcertification.mapper.CertificationChildOrderMapper;
 import com.hrtxn.ringtone.project.telcertification.mapper.CertificationOrderMapper;
+import com.hrtxn.ringtone.project.telcertification.mapper.CertificationRechargeLogMapper;
+import org.aspectj.weaver.loadtime.Aj;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.ModelMap;
@@ -35,6 +38,8 @@ public class TelCertificationService {
     private CertificationOrderMapper certificationOrderMapper;
     @Autowired
     private CertificationChildOrderMapper certificationChildOrderMapper;
+    @Autowired
+    private CertificationRechargeLogMapper certificationRechargeLogMapper;
 
 
     /**
@@ -229,5 +234,16 @@ public class TelCertificationService {
             return AjaxResult.error("删除失败！");
         }
         return AjaxResult.error("参数格式错误！");
+    }
+
+    public AjaxResult getTelCerRechargeLogList(Page page) {
+        page.setPage((page.getPage() - 1) * page.getPagesize());
+        List<CertificationRechargeLog> allCharge = certificationRechargeLogMapper.getTelCerRechargeLogList(page);
+        int totalCount = certificationRechargeLogMapper.getCount();
+        if(allCharge.size() > 0 && allCharge != null){
+            return AjaxResult.success(allCharge,"获取成功",totalCount);
+        }
+        return AjaxResult.success(false,"获取失败");
+
     }
 }

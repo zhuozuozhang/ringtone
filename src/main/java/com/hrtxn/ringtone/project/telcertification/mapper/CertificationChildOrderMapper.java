@@ -30,6 +30,4 @@ public interface CertificationChildOrderMapper {
     int editChildStatus(CertificationChildOrder certificationChildOrder);
 
     int editFeedBackById(CertificationChildOrder certificationChildOrder);
-
-
 }

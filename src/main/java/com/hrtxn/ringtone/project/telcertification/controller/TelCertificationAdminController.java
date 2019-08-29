@@ -295,20 +295,20 @@ public class TelCertificationAdminController {
 
 
     /**
-     * 获取某条消费记录列表
+     * 获取全部充值记录
      * @return
      */
-//    @PostMapping("/getTelcertification_consume_log")
-//    @ResponseBody
-//    @RequiresRoles("admin")
-//    public AjaxResult getTelcertification_consume_log(Page page,BaseRequest request){
-//        try{
-//            return telCertificationChildService.getTheTelCerCostLogList(page,request);
-//        }catch (Exception e){
-//            log.error("获取管理端消费记录列表数据 方法：getTelcertification_consume_log 错误信息",e);
-//        }
-//        return AjaxResult.error("获取数据失败");
-//    }
+    @PostMapping("/getTelCerRechargeLogList")
+    @ResponseBody
+    @RequiresRoles("admin")
+    public AjaxResult getTelCerRechargeLogList(Page page){
+        try{
+            return telCertificationService.getTelCerRechargeLogList(page);
+        }catch (Exception e){
+            log.error("获取全部充值记录 方法：getTelCerRechargeLogList 错误信息",e);
+        }
+        return AjaxResult.error("获取数据失败");
+    }
 
 
 

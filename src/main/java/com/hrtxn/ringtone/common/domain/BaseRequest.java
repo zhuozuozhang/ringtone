@@ -70,7 +70,5 @@ public class BaseRequest {
     //2019-08-14 - 2019-09-24
     private String rangetime;
 
-
-
-
+    private String phoneNumberList;
 }

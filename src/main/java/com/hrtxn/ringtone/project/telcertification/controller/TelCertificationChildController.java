@@ -4,10 +4,13 @@ import com.hrtxn.ringtone.common.constant.AjaxResult;
 import com.hrtxn.ringtone.common.domain.BaseRequest;
 import com.hrtxn.ringtone.common.domain.Page;
 import com.hrtxn.ringtone.freemark.config.logConfig.Log;
+import com.hrtxn.ringtone.freemark.enums.BusinessType;
 import com.hrtxn.ringtone.freemark.enums.OperatorLogType;
 import com.hrtxn.ringtone.project.telcertification.domain.CertificationChildOrder;
 import com.hrtxn.ringtone.project.telcertification.domain.CertificationConsumeLog;
+import com.hrtxn.ringtone.project.telcertification.domain.CertificationOrder;
 import com.hrtxn.ringtone.project.telcertification.service.TelCertificationChildService;
+import com.hrtxn.ringtone.project.telcertification.service.TelCertificationService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.weaver.loadtime.Aj;
@@ -31,14 +34,18 @@ public class TelCertificationChildController {
 
     @Autowired
     private TelCertificationChildService telCertificationChildService;
+    @Autowired
+    private TelCertificationService telCertificationService;
 
     /**
      * 进入成员管理页面
      * @return
      */
     @GetMapping("/toTelMembersPage/{id}")
-    public String toTelMembersPage(@PathVariable String id,ModelMap map){
+    public String toTelMembersPage(@PathVariable Integer id,ModelMap map){
         map.put("parentId",id);
+        CertificationOrder certificationOrder = telCertificationService.getTelCerOrderById(id,map);
+        map.put("childList",certificationOrder);
         return "telcertification/members";
     }
 
@@ -124,5 +131,25 @@ public class TelCertificationChildController {
             log.error("获取号码认证子订单消费记录列表数据 方法：getTelCerCostLogList 错误信息",e);
         }
         return AjaxResult.error("获取数据失败");
+    }
+
+    /**
+     * 添加子订单
+     * @param certificationChildOrder
+     * @param request
+     * @return
+     */
+    @PostMapping("/insertTelCerChild")
+    @ResponseBody
+    @Log(title = "添加号码认证子订单",businessType = BusinessType.INSERT,operatorLogType = OperatorLogType.TELCERTIFICATION)
+    public AjaxResult insertTelCerChild(CertificationChildOrder certificationChildOrder,BaseRequest request){
+        try {
+            BaseRequest request1 = request;
+            CertificationChildOrder childOrder = certificationChildOrder;
+            return telCertificationChildService.insertTelCerChild(certificationChildOrder,request);
+        }catch (Exception e){
+            log.error("批量添加号码认证子订单 方法：insertTelCerChild 错误信息", e);
+            return AjaxResult.error("保存失败");
+        }
     }
 }

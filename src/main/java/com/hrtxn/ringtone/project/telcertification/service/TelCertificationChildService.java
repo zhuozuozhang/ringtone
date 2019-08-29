@@ -11,6 +11,7 @@ import com.hrtxn.ringtone.project.telcertification.mapper.CertificationChildOrde
 import com.hrtxn.ringtone.project.telcertification.mapper.CertificationConsumeLogMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.ModelMap;
 
 import java.sql.Timestamp;
@@ -207,5 +208,29 @@ public class TelCertificationChildService {
         return AjaxResult.error("参数格式错误！");
     }
 
-
+    /**
+     * 添加号码认证子订单
+     * @param certificationChildOrder
+     * @param request
+     * @return
+     */
+    @Transactional
+    public AjaxResult insertTelCerChild(CertificationChildOrder certificationChildOrder, BaseRequest request) {
+        if (!StringUtils.isNotNull(certificationChildOrder)) {
+            return AjaxResult.error("参数格式不正确");
+        }
+//        List<CertificationChildOrder> list = formattedPhone(threenetsChildOrder.getMemberTels(), request.getParentOrderId());
+//        ThreeNetsOrderAttached attached = threeNetsOrderAttachedService.selectByParentOrderId(threenetsChildOrder.getParentOrderId());
+//        //克隆
+//        BeanUtils.copyProperties(attached, request);
+//        if (StringUtils.isEmpty(attached.getMiguId())) {
+//            attached.setMiguPrice(threenetsChildOrder.getMiguPrice() != null ? threenetsChildOrder.getMiguPrice() : threenetsChildOrder.getSpecialPrice());
+//        }
+//        if (StringUtils.isEmpty(attached.getSwxlId())) {
+//            attached.setSwxlPrice(threenetsChildOrder.getSwxlPrice());
+//        }
+//        threenetsChildOrderMapper.batchChindOrder(list);
+//        threeNetsAsyncService.saveThreenetsPhone(attached,request);
+        return AjaxResult.success(true, "保存成功");
+    }
 }

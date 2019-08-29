@@ -101,7 +101,7 @@ function showFallDueTable() {
             return "<p><i class='layui-icon layui-icon-log' title='查看详情' onclick='ckeckDetailsOne("+id+");'></i></p>";
         }
     }];
-    page("#fall_due_table", 2, param, "/telcertify/getFallDueList", columns, columnDefs);
+    page("#fall_due_table", 10, param, "/telcertify/getFallDueList", columns, columnDefs);
 }
 //获取订单列表-->已经到期列表
 function showDueTable() {
@@ -137,6 +137,15 @@ function showDueTable() {
         }
     }];
     page("#due_table", 10, param, "/telcertify/getDueList", columns, columnDefs);
+}
+
+function addTelCerMerchant() {
+    layer.open({
+        type: 2,
+        title: '业务订购',
+        area: ['790px', '850px'],
+        content: '/telcertify/toAddTelCerMerchantPage'
+    });
 }
 
 function determine() {
@@ -345,48 +354,6 @@ $(function () {
 
 });
 
-//号码添加按钮
-function addtel(obj) {
-    var err = 0;
-    //判断座机格式的
-    var partten = /^(\d{3,4}\-)?\d{7,8}$/i;   //座机格式是 010-98909899
-    //var partten = /^0(([1-9]\d)|([3-9]\d{2}))\d{8}$/; 没有中间那段 -的 座机格式是 01098909899
-    var zuoji = partten.test($(obj).val());
-    //判断手机格式可以用
-    var re = /^1[35]\d{9}$/i;
-    var shouji = re.test($(obj).val());
-    $(".opennum").each(function () {
-        if ($(obj).val() == "") {
-            alert("请输入开通号码！");
-            err++;
-            //return false;
-        }
-        if ($(obj).val() != zuoji || shouji) {
-            alert("你输入的电话号码有误！")
-            $(obj).focus();
-            return;
-        }
-    });
-    if (err > 0) {
-        return false;
-    }
-    //循环添加开通号码
-    var str = '<div class="approvebk"><input class="opennum" type="tel" placeholder="如果是座机号码务必加上区号" style="margin-left:180px;" onblur="jiSuan()"><em onClick="removephone(this)"><img th:src="@{/client/telcertification/images/del.png}"></em></div>';
-    $("#before").before(str);
-}
-
-//移除号码
-function removephone(e) {
-    $(e).parent().remove();
-    var total = Number($("#yfje").html());
-    var num = 0;
-    $(".opennum").each(function () {
-        if ($(this).val() != "") {
-            num++;
-        }
-    });
-    $("#yfje").html(price * num);
-};
 //计算业务订购中支付金额
 //$("body").on('blur','.opennum',function(){
 //var num=0;

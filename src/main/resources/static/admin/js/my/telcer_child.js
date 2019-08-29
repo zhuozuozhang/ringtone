@@ -10,7 +10,6 @@ function showTelcertification_child_table() {
     var columns = [
         {"data": "id"},
         {"data": "id"},
-        {"data": "id"},
         {"data": "telChildOrderPhone"},
         {"data": "years"},
         {"data": "price"},
@@ -21,7 +20,7 @@ function showTelcertification_child_table() {
         {"data": "telChildOrderExpireTime"}
     ];
     var columnDefs = [{
-        targets:[2],
+        targets:[1],
         render: function (data, type, row, meta) {
             var id = row.id;
             // return "<div class='layui-unselect layui-form-checkbox' lay-skin='primary' data-id='"+id+"'><i class='layui-icon'>&#xe605;</i></div>"
@@ -29,7 +28,7 @@ function showTelcertification_child_table() {
             // return "<div class='layui-unselect header layui-form-checkbox' lay-skin='primary'><i class='layui-icon'>&#xe605;</i></div>"
         }
     }, {
-        targets: [6],
+        targets: [5],
         render: function (data, type, row, meta) {
             var pgmt = "";
             pgmt += '<option value = "1" ';
@@ -81,12 +80,12 @@ function showTelcertification_child_table() {
             return str;
         }
     }, {
-        targets: [7],
+        targets: [6],
         render: function (data, type, row, meta) {
             return "<input onchange='editFeedBackWhenMyKeyUp("+row.id+",this.value)' value='"+data+"' type=\"text\" id=\"businessFeedback\" name=\"businessFeedback\" required lay-verify=\"businessFeedback\" autocomplete=\"off\" class=\"layui-input\">";
         }
     }, {
-        targets: [11],
+        targets: [10],
         render: function (data, type, row, meta) {
             var id = row.id;
             var phoneNum = row.telChildOrderPhone;

@@ -1,149 +1,149 @@
-<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<!--<html lang="zh" xmlns:th="http://www.thymeleaf.org">-->
 
-<!--订购弹窗 -->
-<div th:fragment="charge">
-<form action="/telcertify/insertTelCertifyOrder" name="Form" id="pop" method="post" class="back display" >
-    <div class="pop_content">
-        <div class="approve_title">
-            <h3>业务订购</h3>
-            <h4>共需支付：<span id="yfje">80</span>元</h4>
-            <div class="gban" id="cancel"><img th:src="@{/client/telcertification/images/close.png}"></div>
-        </div>
-        <div class="rz_y">
-            <div class="title"> <span>泰迪熊号码</span><i>¥ 80元/年</i></div>
-            <div class="title"> <span>电话邦</span><i>¥ 80元/年</i></div>
-            <div class="title"><span>彩印</span><i>免费/年</i></div>
-            <div class="title"><span>挂机短信</span><i>¥ 0.1元/条</i></div>
-            <div class="ywxz">
-                <div class="tswz">选择业务</div>
-                <div class="choosebk">
-                    <button id="taidix" class="btn-calculate active" value="80">泰迪熊</button>
-                    <button id="dhb" class="btn-calculate" value="80">电话邦</button>
-                    <button id="caiyin" class="btn-calculate">彩印</button>
-                    <button id="gjdx" class="btn-calculate">挂机短信</button>
-                </div>
-                <div class="zsy"></div>
-            </div>
-            <div class="ywxz" id="tdxcon">
-                <div class="tswz">泰迪熊有效期</div>
-                <div class="choosebk year">
-                    <button class="btn-calculate active" value="1">1年</button>
-                    <button class="btn-calculate" value="2">2年</button>
-                    <button class="btn-calculate" value="3">3年</button>
-                    <button class="btn-calculate" value="4">4年</button>
-                    <button class="btn-calculate" value="5">5年</button>
-                </div>
-                <div class="zsy"></div>
-            </div>
-            <div class="ywxz bxs" id="dhbcon">
-                <div class="tswz">电话邦有效期</div>
-                <div class="choosebk dhbyear">
-                    <button class="btn-calculate active" value="1">1年</button>
-                    <button class="btn-calculate" value="2">2年</button>
-                    <button class="btn-calculate" value="3">3年</button>
-                    <button class="btn-calculate" value="4">4年</button>
-                    <button class="btn-calculate" value="5">5年</button>
-                </div>
-                <div class="zsy"></div>
-            </div>
-            <div class="ywxz bxs" id="cycon">
-                <div class="tswz">彩印有效期</div>
-                <div class="choosebk permanent">
-                    <button class="btn-allocate btn-normal active">永久有效</button>
-                </div>
-                <div class="zsy"></div>
-            </div>
-            <div class="ywxz bxs" id="gjdxcon">
-                <div class="gmdx">
-                    <label>挂机短信</label>
-                    <input id="dxsrk" value="" type="number" placeholder="请输入整百数,例：100" step="100" min="100">
-                    <span>元<i id="dxnumber"> 0 </i>条</span></div>
-                <div class="dxsx">
-                    <div class="tswz">挂机短信上限</div>
-                    <div class="choosebk note">
-                        <button class="btn-calculate active">100条/月</button>
-                        <button class="btn-calculate">200条/月</button>
-                        <button class="btn-calculate">300条/月</button>
-                        <button class="btn-calculate">500条/月</button>
-                        <button class="btn-calculate">700条/月</button>
-                    </div>
-                    <div class="zsy"></div>
-                </div>
-            </div>
-        </div>
-        <div class="approvecon">
-            <div class="approvebk"><span><i>*</i>集团名称</span>
-                <input type="text" placeholder="需跟营业执照名称一致">
-            </div>
-            <div class="approvebk"><span><i>*</i>联系人姓名</span>
-                <input type="text">
-            </div>
-            <div class="approvebk"><span><i>*</i>联系人电话</span>
-                <input type="tel">
-            </div>
-            <div class="approvebk"><span><i>*</i>认证展示内容</span>
-                <input type="text" placeholder="请跟营业执照主体一致">
-            </div>
-<!--            <div class="phonenum">-->
-<!--                <div class="approvebk"><span><i>*</i>开通号码</span>-->
-<!--                    <input class="opennum" type="tel" placeholder="如果是座机号码务必加上区号">-->
-<!--                    <em id="moreadd" onClick="addtel(this);"><img th:src="@{/client/telcertification/images/addphone.png}"></em>-->
+<!--&lt;!&ndash;订购弹窗 &ndash;&gt;-->
+<!--<div th:fragment="charge">-->
+<!--<form action="/telcertify/insertTelCertifyOrder" name="Form" id="pop" method="post" class="back display" >-->
+<!--    <div class="pop_content">-->
+<!--        <div class="approve_title">-->
+<!--            <h3>业务订购</h3>-->
+<!--            <h4>共需支付：<span id="yfje">80</span>元</h4>-->
+<!--            <div class="gban" id="cancel"><img th:src="@{/client/telcertification/images/close.png}"></div>-->
+<!--        </div>-->
+<!--        <div class="rz_y">-->
+<!--            <div class="title"> <span>泰迪熊号码</span><i>¥ 80元/年</i></div>-->
+<!--            <div class="title"> <span>电话邦</span><i>¥ 80元/年</i></div>-->
+<!--            <div class="title"><span>彩印</span><i>免费/年</i></div>-->
+<!--            <div class="title"><span>挂机短信</span><i>¥ 0.1元/条</i></div>-->
+<!--            <div class="ywxz">-->
+<!--                <div class="tswz">选择业务</div>-->
+<!--                <div class="choosebk">-->
+<!--                    <button id="taidix" class="btn-calculate active" value="80">泰迪熊</button>-->
+<!--                    <button id="dhb" class="btn-calculate" value="80">电话邦</button>-->
+<!--                    <button id="caiyin" class="btn-calculate">彩印</button>-->
+<!--                    <button id="gjdx" class="btn-calculate">挂机短信</button>-->
 <!--                </div>-->
-<!--                &lt;!&ndash;<div class="approvebk">-->
-<!--                  <input type="tel" placeholder="如果是座机号码务必加上区号" style="margin-left:180px;">-->
-<!--                  <em onClick="remove(this)"><img th:src="@{/client/telcertification/images/del.png}"></em>-->
-<!--                </div> &ndash;&gt;-->
-<!--                <div class="zsy" id="before"></div>-->
+<!--                <div class="zsy"></div>-->
 <!--            </div>-->
-            <div class="imgbk"><span><i>*</i>上传营业执照</span>
-                <div class="tpscbk">
-                    <div class="tpimgbka"><img class="tpimga" border="0" th:src="@{/public/images/addimg.png}" test="111" style="margin:0px auto;max-height:140px;"></div>
-                    <input type="file" style="display: none;" name="file" class="tpdza" onclick="javascript:validate_img(this);">
-                </div>
-            </div>
-            <div class="imgbk"><span><i>*</i>上传法人身份证正面</span>
-                <div class="tpscbk">
-                    <div class="tpimgbka"><img class="tpimga" border="0" th:src="@{/public/images/addimg.png}" test="111" style="margin:0px auto;max-height:140px;"></div>
-                    <input type="file" style="display: none;" name="file" class="tpdza" onclick="javascript:validate_img(this);">
-                </div>
-            </div>
-            <div class="imgbk"><span><i>*</i>上传法人身份证反面</span>
-                <div class="tpscbk">
-                    <div class="tpimgbka"><img class="tpimga" border="0" th:src="@{/public/images/addimg.png}" test="111" style="margin:0px auto;max-height:140px;"></div>
-                    <input type="file" style="display: none;" name="file" class="tpdza" onclick="javascript:validate_img(this);">
-                </div>
-            </div>
-            <div class="imgbk"><span><i>*</i>上传LOGO</span>
-                <div class="tpscbk">
-                    <div class="tpimgbka"><img class="tpimga" border="0" th:src="@{/public/images/addimg.png}" test="111" style="margin:0px auto;max-height:140px;"></div>
-                    <input type="file" style="display: none;" name="file" class="tpdza" onclick="javascript:validate_img(this);">
-                </div>
-            </div>
-            <div class="approvebk"><span><i>*</i>上传授权书</span>
-                <input class="scwj" type="file" placeholder="选填">
-            </div>
-            <div class="ckalbk">
-                <div class="ckan opencase">查看案例</div>
-                <div class="mbxz"><a href="http://v.130.xyz/api/auth/uploadModel?type=3">授权书模板下载</a></div>
-            </div>
-            <div class="approvebk"><span><i>*</i>上传号码证明</span>
-                <input class="scwj" type="file" placeholder="选填">
-            </div>
-            <div class="ckalbk">
-                <div class="ckan opencase">查看案例</div>
-                <div class="mbxz"><a href="http://v.130.xyz/api/auth/uploadModel?type=2">号码证明模板下载</a></div>
-            </div>
-            <div class="bzbk"><span>备注</span>
-                <textarea placeholder="添加商户的成员，请在商户的信息显示在订单页面后，进入操作栏中的成员管理界面中添加"></textarea>
-            </div>
-            <div class="approvebk"><span><i>*</i>订购协议</span>
-                <div class="dgxy">
-                    <input type="radio" checked="checked" >
-                    <span>我同意此<i class="openagreement">订购协议</i></span></div>
-            </div>
-            <div class="xgan" onClick="determine()">确认添加</div>
-<!--            <div class="xgan" lay-submit lay-filter="addform">确认添加</div>-->
-        </div>
-    </div>
-</form>
-</div>
+<!--            <div class="ywxz" id="tdxcon">-->
+<!--                <div class="tswz">泰迪熊有效期</div>-->
+<!--                <div class="choosebk year">-->
+<!--                    <button class="btn-calculate active" value="1">1年</button>-->
+<!--                    <button class="btn-calculate" value="2">2年</button>-->
+<!--                    <button class="btn-calculate" value="3">3年</button>-->
+<!--                    <button class="btn-calculate" value="4">4年</button>-->
+<!--                    <button class="btn-calculate" value="5">5年</button>-->
+<!--                </div>-->
+<!--                <div class="zsy"></div>-->
+<!--            </div>-->
+<!--            <div class="ywxz bxs" id="dhbcon">-->
+<!--                <div class="tswz">电话邦有效期</div>-->
+<!--                <div class="choosebk dhbyear">-->
+<!--                    <button class="btn-calculate active" value="1">1年</button>-->
+<!--                    <button class="btn-calculate" value="2">2年</button>-->
+<!--                    <button class="btn-calculate" value="3">3年</button>-->
+<!--                    <button class="btn-calculate" value="4">4年</button>-->
+<!--                    <button class="btn-calculate" value="5">5年</button>-->
+<!--                </div>-->
+<!--                <div class="zsy"></div>-->
+<!--            </div>-->
+<!--            <div class="ywxz bxs" id="cycon">-->
+<!--                <div class="tswz">彩印有效期</div>-->
+<!--                <div class="choosebk permanent">-->
+<!--                    <button class="btn-allocate btn-normal active">永久有效</button>-->
+<!--                </div>-->
+<!--                <div class="zsy"></div>-->
+<!--            </div>-->
+<!--            <div class="ywxz bxs" id="gjdxcon">-->
+<!--                <div class="gmdx">-->
+<!--                    <label>挂机短信</label>-->
+<!--                    <input id="dxsrk" value="" type="number" placeholder="请输入整百数,例：100" step="100" min="100">-->
+<!--                    <span>元<i id="dxnumber"> 0 </i>条</span></div>-->
+<!--                <div class="dxsx">-->
+<!--                    <div class="tswz">挂机短信上限</div>-->
+<!--                    <div class="choosebk note">-->
+<!--                        <button class="btn-calculate active">100条/月</button>-->
+<!--                        <button class="btn-calculate">200条/月</button>-->
+<!--                        <button class="btn-calculate">300条/月</button>-->
+<!--                        <button class="btn-calculate">500条/月</button>-->
+<!--                        <button class="btn-calculate">700条/月</button>-->
+<!--                    </div>-->
+<!--                    <div class="zsy"></div>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--        <div class="approvecon">-->
+<!--            <div class="approvebk"><span><i>*</i>集团名称</span>-->
+<!--                <input type="text" placeholder="需跟营业执照名称一致">-->
+<!--            </div>-->
+<!--            <div class="approvebk"><span><i>*</i>联系人姓名</span>-->
+<!--                <input type="text">-->
+<!--            </div>-->
+<!--            <div class="approvebk"><span><i>*</i>联系人电话</span>-->
+<!--                <input type="tel">-->
+<!--            </div>-->
+<!--            <div class="approvebk"><span><i>*</i>认证展示内容</span>-->
+<!--                <input type="text" placeholder="请跟营业执照主体一致">-->
+<!--            </div>-->
+<!--&lt;!&ndash;            <div class="phonenum">&ndash;&gt;-->
+<!--&lt;!&ndash;                <div class="approvebk"><span><i>*</i>开通号码</span>&ndash;&gt;-->
+<!--&lt;!&ndash;                    <input class="opennum" type="tel" placeholder="如果是座机号码务必加上区号">&ndash;&gt;-->
+<!--&lt;!&ndash;                    <em id="moreadd" onClick="addtel(this);"><img th:src="@{/client/telcertification/images/addphone.png}"></em>&ndash;&gt;-->
+<!--&lt;!&ndash;                </div>&ndash;&gt;-->
+<!--&lt;!&ndash;                &lt;!&ndash;<div class="approvebk">&ndash;&gt;-->
+<!--&lt;!&ndash;                  <input type="tel" placeholder="如果是座机号码务必加上区号" style="margin-left:180px;">&ndash;&gt;-->
+<!--&lt;!&ndash;                  <em onClick="remove(this)"><img th:src="@{/client/telcertification/images/del.png}"></em>&ndash;&gt;-->
+<!--&lt;!&ndash;                </div> &ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;                <div class="zsy" id="before"></div>&ndash;&gt;-->
+<!--&lt;!&ndash;            </div>&ndash;&gt;-->
+<!--            <div class="imgbk"><span><i>*</i>上传营业执照</span>-->
+<!--                <div class="tpscbk">-->
+<!--                    <div class="tpimgbka"><img class="tpimga" border="0" th:src="@{/public/images/addimg.png}" test="111" style="margin:0px auto;max-height:140px;"></div>-->
+<!--                    <input type="file" style="display: none;" name="file" class="tpdza" onclick="javascript:validate_img(this);">-->
+<!--                </div>-->
+<!--            </div>-->
+<!--            <div class="imgbk"><span><i>*</i>上传法人身份证正面</span>-->
+<!--                <div class="tpscbk">-->
+<!--                    <div class="tpimgbka"><img class="tpimga" border="0" th:src="@{/public/images/addimg.png}" test="111" style="margin:0px auto;max-height:140px;"></div>-->
+<!--                    <input type="file" style="display: none;" name="file" class="tpdza" onclick="javascript:validate_img(this);">-->
+<!--                </div>-->
+<!--            </div>-->
+<!--            <div class="imgbk"><span><i>*</i>上传法人身份证反面</span>-->
+<!--                <div class="tpscbk">-->
+<!--                    <div class="tpimgbka"><img class="tpimga" border="0" th:src="@{/public/images/addimg.png}" test="111" style="margin:0px auto;max-height:140px;"></div>-->
+<!--                    <input type="file" style="display: none;" name="file" class="tpdza" onclick="javascript:validate_img(this);">-->
+<!--                </div>-->
+<!--            </div>-->
+<!--            <div class="imgbk"><span><i>*</i>上传LOGO</span>-->
+<!--                <div class="tpscbk">-->
+<!--                    <div class="tpimgbka"><img class="tpimga" border="0" th:src="@{/public/images/addimg.png}" test="111" style="margin:0px auto;max-height:140px;"></div>-->
+<!--                    <input type="file" style="display: none;" name="file" class="tpdza" onclick="javascript:validate_img(this);">-->
+<!--                </div>-->
+<!--            </div>-->
+<!--            <div class="approvebk"><span><i>*</i>上传授权书</span>-->
+<!--                <input class="scwj" type="file" placeholder="选填">-->
+<!--            </div>-->
+<!--            <div class="ckalbk">-->
+<!--                <div class="ckan opencase">查看案例</div>-->
+<!--                <div class="mbxz"><a href="http://v.130.xyz/api/auth/uploadModel?type=3">授权书模板下载</a></div>-->
+<!--            </div>-->
+<!--            <div class="approvebk"><span><i>*</i>上传号码证明</span>-->
+<!--                <input class="scwj" type="file" placeholder="选填">-->
+<!--            </div>-->
+<!--            <div class="ckalbk">-->
+<!--                <div class="ckan opencase">查看案例</div>-->
+<!--                <div class="mbxz"><a href="http://v.130.xyz/api/auth/uploadModel?type=2">号码证明模板下载</a></div>-->
+<!--            </div>-->
+<!--            <div class="bzbk"><span>备注</span>-->
+<!--                <textarea placeholder="添加商户的成员，请在商户的信息显示在订单页面后，进入操作栏中的成员管理界面中添加"></textarea>-->
+<!--            </div>-->
+<!--            <div class="approvebk"><span><i>*</i>订购协议</span>-->
+<!--                <div class="dgxy">-->
+<!--                    <input type="radio" checked="checked" >-->
+<!--                    <span>我同意此<i class="openagreement">订购协议</i></span></div>-->
+<!--            </div>-->
+<!--            <div class="xgan" onClick="determine()">确认添加</div>-->
+<!--&lt;!&ndash;            <div class="xgan" lay-submit lay-filter="addform">确认添加</div>&ndash;&gt;-->
+<!--        </div>-->
+<!--    </div>-->
+<!--</form>-->
+<!--</div>-->

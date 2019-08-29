@@ -9,8 +9,10 @@ import com.hrtxn.ringtone.freemark.enums.OperatorLogType;
 import com.hrtxn.ringtone.project.system.notice.domain.Notice;
 import com.hrtxn.ringtone.project.system.notice.service.NoticeService;
 import com.hrtxn.ringtone.project.telcertification.domain.CertificationChildOrder;
+import com.hrtxn.ringtone.project.telcertification.domain.CertificationConfig;
 import com.hrtxn.ringtone.project.telcertification.domain.CertificationOrder;
 import com.hrtxn.ringtone.project.telcertification.service.TelCertificationChildService;
+import com.hrtxn.ringtone.project.telcertification.service.TelCertificationConfigService;
 import com.hrtxn.ringtone.project.telcertification.service.TelCertificationService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Author:lile
@@ -37,6 +40,8 @@ public class TelCertificationController {
     private TelCertificationService telCertificationService;
     @Autowired
     private TelCertificationChildService telCertificationChildService;
+    @Autowired
+    private TelCertificationConfigService telCertificationConfigService;
     @Autowired
     private NoticeService noticeService;
 
@@ -88,7 +93,11 @@ public class TelCertificationController {
      */
     @GetMapping("/toTelMerchantsPage")
     @Log(title = "订单管理页面",operatorLogType = OperatorLogType.TELCERTIFICATION)
-    public String toTelMerchantsPage(){
+    public String toTelMerchantsPage(ModelMap map){
+        Page page = new Page();
+        page.setPage(1);
+        page.setPagesize(4);
+        AjaxResult list = telCertificationConfigService.getAllConfig(page,map);
         return "telcertification/merchants";
     }
 
@@ -133,6 +142,18 @@ public class TelCertificationController {
         return "telcertification/details_one";
     }
 
+    /**
+     * 进入添加号码认证商户
+     * @return
+     */
+    @GetMapping("/toAddTelCerMerchantPage")
+    public String toAddTelCerMerchantPage(ModelMap map){
+        Page page = new Page();
+        page.setPage(1);
+        page.setPagesize(4);
+        AjaxResult list = telCertificationConfigService.getAllConfig(page,map);
+        return "telcertification/addTelCerMerchant";
+    }
 
     /**
      * 新增商户

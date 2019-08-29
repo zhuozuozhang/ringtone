@@ -1,3 +1,5 @@
+
+
 function showTelCerMemberTable() {
     var param = {
         "parentId": $("#id").val(),
@@ -40,7 +42,7 @@ function showTelCerMemberTable() {
             if(data != null && data != ""){
                 return data;
             }else{
-                return "<span>暂无</span>";
+                return "<div>暂无</div>";
             }
         }
     }, {
@@ -54,6 +56,10 @@ function showTelCerMemberTable() {
     }];
     var url = "/telcertify/getTelCerMembersList";
     page("#members", 2, param, url, columns, columnDefs);
+}
+
+function addMember(){
+
 }
 
 
@@ -91,17 +97,35 @@ function Renewal(){
 function confirmRenew() {
 
 }
-//支付费用
+
+var falseNum = 0;
+//验证成员号码
 function checkNum(obj) {
+
     //所输入的号码集合
     var checkData = [];
     for (var i = 0; i < document.getElementsByClassName('numlists').length; i++) {
         if (document.getElementsByClassName('numlists')[i].value.length != 0) {
             checkData.push(document.getElementsByClassName('numlists')[i].value);
+            var phones = checkData[i];
+            var phoneregex = /^[1][3,4,5,7,8,9][0-9]{9}$/; //手机号码
+            var tel_regex = /^(\d{3,4}\-)?\d{7,8}$/i;   //座机格式是 010-98909899 010-86551122
+            var telregex = /^0(([1-9]\d)|([3-9]\d{2}))\d{8}$/; //没有中间那段 -的 座机格式是 01098909899
+
+            alert("phones "+phones);
+            if (!phoneregex.test(phones)) {
+                if (!tel_regex.test(phones)) {
+                    if(!telregex.test(phones)){
+                        layer.msg('号码"' + phones + '"不正确!');
+                        falseNum++;
+                        break;
+                    }
+                }
+            }
         }
     }
     if(checkData.length == 0){
-        $("#allPrice").html(80);
+        $("#allPrice").html(0);
     }else{
         $("#allPrice").html(checkData.length*80);
     }
@@ -121,12 +145,51 @@ function addLandline() {
             checkData.push(document.getElementsByClassName('numlists')[i].value)
         }
     }
+    // if(falseNum == 0){
+    //     $("#num").append(
+    //         '<div class="layui-form-item" style="position: relative;"><div class="layui-input-block" style="margin-left: 156px;"><input type="text" style="width:81%;" name="content" class="layui-input numlists" value="" placeholder="如果是座机号码务必加上区号" autocomplete="off" onblur="checkNum(this)"></div><img src="../../client/telcertification/images/del.png" alt="" class="add_phone" onclick="delLandline(this);" width="28px"></div>'
+    //     );
+    // }else{
+    //     layer.msg("请修改错误号码");
+    // }
+
     $("#num").append(
         '<div class="layui-form-item" style="position: relative;"><div class="layui-input-block" style="margin-left: 156px;"><input type="text" style="width:81%;" name="content" class="layui-input numlists" value="" placeholder="如果是座机号码务必加上区号" autocomplete="off" onblur="checkNum(this)"></div><img src="../../client/telcertification/images/del.png" alt="" class="add_phone" onclick="delLandline(this);" width="28px"></div>'
     );
+
+
 }
 //删除号码
 function delLandline(obj) {
     $(obj).parent().remove();
     checkNum(obj);
 }
+
+
+
+layui.use('form',function () {
+    var form = layui.form;
+    //添加号码
+    form.on('submit(formDemo)',function () {
+        var checkData = [];
+        for (var i = 0; i < document.getElementsByClassName('numlists').length; i++) {
+            if (document.getElementsByClassName('numlists')[i].value.length == 0) {
+                layui.use('layer', function () {
+                    layer.msg("请输入号码！");
+                });
+                return;
+            }
+            if (document.getElementsByClassName('numlists')[i].value.length != 0) {
+                checkData.push(document.getElementsByClassName('numlists')[i].value)
+            }
+        }
+        alert("lala");
+        alert("checkData");
+        $("#Form").submit();
+        // let index = parent.layer.getFrameIndex(window.name); //获取窗口索引
+        // parent.layer.close(index);
+        // window.parent.location.reload();//刷新父页面
+        // return false;
+    });
+
+});

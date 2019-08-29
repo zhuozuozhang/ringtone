@@ -14,7 +14,6 @@ function showTelcertification_table() {
     var columns = [
         {"data": "id"},
         {"data": "id"},
-        {"data": "id"},
         {"data": "telCompanyName"},
         {"data": "telLinkName"},
         {"data": "telLinkPhone"},
@@ -26,7 +25,7 @@ function showTelcertification_table() {
         {"data": "remark"}
     ];
     var columnDefs = [{
-        targets:[2],
+        targets:[1],
         render: function (data, type, row, meta) {
             var id = row.id;
             // return "<div class='layui-unselect layui-form-checkbox' lay-skin='primary' data-id='"+id+"'><i class='layui-icon'>&#xe605;</i></div>"
@@ -34,7 +33,7 @@ function showTelcertification_table() {
             // return "<div class='layui-unselect header layui-form-checkbox' lay-skin='primary'><i class='layui-icon'>&#xe605;</i></div>"
         }
     }, {
-        targets:[10],
+        targets:[9],
         render: function (data, type, row, meta) {
             var productName = row.productName;
             var product = $.parseJSON(productName);
@@ -54,7 +53,7 @@ function showTelcertification_table() {
             return str;
         }
     }, {
-        targets:[12],
+        targets:[11],
         render: function (data, type, row, meta) {
             var id = row.id;
             return "<a title='查看' onclick='x_admin_show(\"详细信息\",\"/admin/telcertificationDetail/"+id+"\",\"\",\"\")' href='javascript:;'><i class='layui-icon layui-icon-survey'>&emsp;</i></a>" +

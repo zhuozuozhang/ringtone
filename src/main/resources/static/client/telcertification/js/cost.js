@@ -7,7 +7,7 @@ function showTelCerCostTable() {
         {"data": "userTel"},
         {"data": "telConsumeLogType"},
         {"data": "telConsumeLogStatus"},
-        {"data": "telconsumeLogPrice"},
+        {"data": "telConsumeLogPrice"},
         {"data": "telConsumeLogCtime"},
         {"data": "telConsumeLogOpenTime"}
     ];
