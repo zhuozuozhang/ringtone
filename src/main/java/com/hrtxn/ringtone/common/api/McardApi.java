@@ -55,8 +55,8 @@ public class McardApi {
      * @param url
      * @return
      */
-    public static String sendGet(String url,String parent) {
-        String type = parent.equals(Const.parent_Distributor_ID_188)?"mcard_cookie_other":"mcard_cookie_hn";
+    public static String sendGet(String url, String parent) {
+        String type = parent.equals(Const.parent_Distributor_ID_188) ? "mcard_cookie_other" : "mcard_cookie_hn";
         ConfigUtil util = new ConfigUtil();
         SystemConfig config = util.getConfigByType(type);
         OkHttpClient client = new OkHttpClient();
@@ -66,7 +66,7 @@ public class McardApi {
             Response response = client.newCall(request).execute();
             result = response.body().string();
         } catch (IOException e) {
-            e.printStackTrace();
+            log.info("GET跳转失败：" + e);
         }
         return result;
     }
@@ -78,17 +78,17 @@ public class McardApi {
      * @param url 接口
      * @return
      */
-    public static String sendPost(Map<String, String> map, String url,String parent) {
-        String type = parent.equals(Const.parent_Distributor_ID_188)?"mcard_cookie_other":"mcard_cookie_hn";
+    public static String sendPost(Map<String, String> map, String url, String parent) {
+        String type = parent.equals(Const.parent_Distributor_ID_188) ? "mcard_cookie_other" : "mcard_cookie_hn";
         ConfigUtil util = new ConfigUtil();
         SystemConfig config = util.getConfigByType(type);
         OkHttpClient client = new OkHttpClient();
         String result = null;
         FormBody.Builder builder = new FormBody.Builder();
         for (String key : map.keySet()) {
-            if (map.get(key) == null){
+            if (map.get(key) == null) {
                 builder.add(key, "");
-            }else {
+            } else {
                 builder.add(key, map.get(key));
             }
         }
@@ -98,7 +98,7 @@ public class McardApi {
             Response response = client.newCall(request).execute();
             result = response.body().string();
         } catch (IOException e) {
-            e.printStackTrace();
+            log.info("POST请求失败：" + e);
         }
         return result;
     }
@@ -109,9 +109,9 @@ public class McardApi {
      * @param subuserid
      * @return
      */
-    public String toNormalUser(String subuserid,String parent) {
-        String url = to_normal_user + "?subuserid=" + subuserid + "&parent="+parent;
-        return sendGet(url,parent);
+    public String toNormalUser(String subuserid, String parent) {
+        String url = to_normal_user + "?subuserid=" + subuserid + "&parent=" + parent;
+        return sendGet(url, parent);
     }
 
     /**
@@ -120,9 +120,9 @@ public class McardApi {
      * @param userId
      * @return
      */
-    public String toUserList(String userId,String parent) {
+    public String toUserList(String userId, String parent) {
         String url = to_user_list + "?userId=" + userId;
-        return sendGet(url,parent);
+        return sendGet(url, parent);
     }
 
     /**
@@ -135,7 +135,7 @@ public class McardApi {
         Map<String, String> map = new HashMap<>();
         map.put("pageSize", "100");
         map.put("pageNo", "1");
-        return sendPost(map,to_ring_list,parent);
+        return sendPost(map, to_ring_list, parent);
     }
 
     /**
@@ -145,12 +145,12 @@ public class McardApi {
      * @param parent
      * @return
      */
-    public String toRingAlertList(String apersonnelId,String parent) {
+    public String toRingAlertList(String apersonnelId, String parent) {
         Map<String, String> map = new HashMap<>();
         map.put("pageSize", "100");
         map.put("pageNo", "1");
-        map.put("apersonnelId",apersonnelId);
-        return sendPost(map,to_ring_alert_list,parent);
+        map.put("apersonnelId", apersonnelId);
+        return sendPost(map, to_ring_alert_list, parent);
     }
 
     /**
@@ -159,7 +159,7 @@ public class McardApi {
      * @param order
      * @return
      */
-    public String refreshBusinessInfo(ThreenetsOrder order,String distributorId) {
+    public String refreshBusinessInfo(ThreenetsOrder order, String distributorId) {
         Map<String, String> map = new HashMap<>();
         map.put("pageSize", "100");
         map.put("pageNo", "1");
@@ -169,7 +169,7 @@ public class McardApi {
         if (order.getCompanyName() != null) {
             map.put("auserName", order.getCompanyName());
         }
-        return sendPost(map, normal_list,distributorId);
+        return sendPost(map, normal_list, distributorId);
     }
 
     /**
@@ -181,7 +181,7 @@ public class McardApi {
         Map<String, String> map = new HashMap<>();
         map.put("pageSize", "100");
         map.put("pageNo", "1");
-        return sendPost(map, load_ring_url,distributorId);
+        return sendPost(map, load_ring_url, distributorId);
     }
 
     /**
@@ -193,7 +193,7 @@ public class McardApi {
         Map<String, String> map = new HashMap<>();
         map.put("pageSize", "100");
         map.put("pageNo", "1");
-        return sendPost(map, load_user_url,distributorId);
+        return sendPost(map, load_user_url, distributorId);
     }
 
     /**
@@ -205,7 +205,7 @@ public class McardApi {
      */
     public String getCodeString(String parent) {
         ConfigUtil util = new ConfigUtil();
-        String type = parent.equals(Const.parent_Distributor_ID_188)?"mcard_cookie_other":"mcard_cookie_hn";
+        String type = parent.equals(Const.parent_Distributor_ID_188) ? "mcard_cookie_other" : "mcard_cookie_hn";
         SystemConfig config = util.getConfigByType(type);
         String code = null;
         DefaultHttpClient httpclientCode = new DefaultHttpClient();
@@ -245,29 +245,18 @@ public class McardApi {
     }
 
 
-    public static void main(String[] args) {
-        String result = "{\"code\":\"0000\",\"message\":\"新增成功\",\"data\":{\"auserId\":1691632,\"handupStartDayCN\":\"\",\"auserType\":2,\"source\":0,\"auserCreateTime\":\"2019-08-15T11:17:43.313+0800\",\"auserPhone\":\"15380170139\",\"auserParent\":296577,\"subChannelId\":296577,\"auserState\":0,\"chargingPhone\":\"15380170139\",\"feeType\":11,\"isNewUnifyPay\":0,\"chargingState\":1,\"unifyPayType\":2,\"auserCity\":\"320300\",\"ringIsSendSms\":1,\"provinceName\":\"江苏\",\"isUnifyPay\":2,\"isMakeFee\":0,\"mainChannelId\":61203,\"auserCardid\":820662,\"auserAccount\":\"15380170139\",\"isAddApersonnel\":1,\"industry\":1,\"handupEndDayCN\":\"\",\"auserEmail\":\"\",\"auserIsSendSms\":1,\"auserName\":\"北京九方愉悦商贸有限公司\",\"childrenCount\":0,\"auserMoney\":\"20\",\"auserAudit\":0,\"isxiafasms\":1,\"auserBlicence\":820660,\"auserLinkName\":\"赵春兰\",\"auserProvince\":\"320000\"}}";
-        McardAddGroupRespone groupRespone = new McardAddGroupRespone();
-        JSONObject jsonObject = JSONObject.fromObject(result);
-        JSONObject data = jsonObject.getJSONObject("data");
-        groupRespone = (McardAddGroupRespone) JSONObject.toBean(data, McardAddGroupRespone.class);
-        groupRespone.setCode(jsonObject.getString("code"));
-        groupRespone.setMessage(jsonObject.getString("message"));
-        groupRespone.getAuserId();
-    }
-
     /**
      * 获取手机号地址
      *
      * @param phone
      * @return
      */
-    public McardPhoneAddressRespone phoneAdd(String phone,String distributorId) {
+    public McardPhoneAddressRespone phoneAdd(String phone, String distributorId) {
         McardPhoneAddressRespone respone = new McardPhoneAddressRespone();
         Map<String, String> map = new HashMap<>();
         map.put("loginPhone", phone);
         map.put("fee", "1");
-        String result = sendPost(map, phone_address_url,distributorId);
+        String result = sendPost(map, phone_address_url, distributorId);
         JSONObject jsonObject = JSONObject.fromObject(result);
         JSONObject jsonData = jsonObject.getJSONObject("data");
         respone.setMNOs(jsonData.getInt("MNOs"));
@@ -294,8 +283,8 @@ public class McardApi {
      * @return
      */
     public McardAddGroupRespone addGroup(ThreenetsOrder order, ThreeNetsOrderAttached attached) {
-        McardAddGroupRespone groupRespone =  null;
-        McardPhoneAddressRespone respone = phoneAdd(order.getLinkmanTel(),attached.getMcardDistributorId());
+        McardAddGroupRespone groupRespone = null;
+        McardPhoneAddressRespone respone = phoneAdd(order.getLinkmanTel(), attached.getMcardDistributorId());
         Map<String, String> map = new HashMap<>();
         map.put("ausertype", "");
         map.put("codeId", "");
@@ -328,20 +317,20 @@ public class McardApi {
         map.put("auserBlicencePath", attached.getBusinessLicense());
         map.put("auserCardidPath", attached.getConfirmLetter());
         map.put("auserFilePath", attached.getSubjectProve() == null ? "" : attached.getSubjectProve());
-        String result = sendPost(map, add_user_url,attached.getMcardDistributorId());
+        String result = sendPost(map, add_user_url, attached.getMcardDistributorId());
         try {
             log.info("电信创建集团结果--->" + result);
             JSONObject jsonObject = JSONObject.fromObject(result);
             String code = jsonObject.getString("code");
-            if (code.equals("0000")){
+            if (code.equals("0000")) {
                 JSONObject data = jsonObject.getJSONObject("data");
                 groupRespone = (McardAddGroupRespone) JSONObject.toBean(data, McardAddGroupRespone.class);
                 groupRespone.setCode(jsonObject.getString("code"));
                 groupRespone.setMessage(jsonObject.getString("message"));
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             log.info("电信添加商户失败" + e);
-        }finally {
+        } finally {
             return groupRespone;
         }
     }
@@ -354,13 +343,19 @@ public class McardApi {
      * @param childOrder
      * @return
      */
-    public McardAddPhoneRespone addApersonnel(ThreenetsChildOrder childOrder,String distributorId) {
+    public McardAddPhoneRespone addApersonnel(ThreenetsChildOrder childOrder, String distributorId) {
+        McardAddPhoneRespone addPhoneRespone = new McardAddPhoneRespone();
         Map<String, String> map = new HashMap<>();
         map.put("personnelName", childOrder.getLinkman());
         map.put("personnelPhone", childOrder.getLinkmanTel());
-        String result = sendPost(map, add_apersonnel_url,distributorId);
+        String result = sendPost(map, add_apersonnel_url, distributorId);
         log.info("电信添加成员结果--->" + result);
-        McardAddPhoneRespone addPhoneRespone = (McardAddPhoneRespone) JsonUtil.getObject4JsonString(result, McardAddPhoneRespone.class);
+        try {
+            addPhoneRespone = (McardAddPhoneRespone) JsonUtil.getObject4JsonString(result, McardAddPhoneRespone.class);
+        } catch (Exception e) {
+            log.info("电信添加成员失败" + e);
+            addPhoneRespone.setCode("error");
+        }
         return addPhoneRespone;
     }
 
@@ -371,11 +366,11 @@ public class McardApi {
      * @param apersonnelId
      * @return
      */
-    public String settingRing(String ringId, String apersonnelId,String distributorId) {
+    public String settingRing(String ringId, String apersonnelId, String distributorId) {
         Map<String, String> map = new HashMap<>();
         map.put("ringId", ringId);
         map.put("apersonnelId", apersonnelId);
-        return sendPost(map,settingRing_url,distributorId);
+        return sendPost(map, settingRing_url, distributorId);
     }
 
     /**
@@ -408,7 +403,7 @@ public class McardApi {
             log.info("电信上传铃音结果--->" + result);
             flag = true;
         } catch (IOException e) {
-            e.printStackTrace();
+            log.info("电信铃音上传失败" + e);
         }
         return flag;
     }
@@ -441,7 +436,7 @@ public class McardApi {
                 result = path;
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            log.info("电信文件上传失败" + e);
         }
         return result;
     }
