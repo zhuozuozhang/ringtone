@@ -283,7 +283,7 @@ public class McardApi {
      * @return
      */
     public McardAddGroupRespone addGroup(ThreenetsOrder order, ThreeNetsOrderAttached attached) {
-        McardAddGroupRespone groupRespone = null;
+        McardAddGroupRespone groupRespone = new McardAddGroupRespone();
         McardPhoneAddressRespone respone = phoneAdd(order.getLinkmanTel(), attached.getMcardDistributorId());
         Map<String, String> map = new HashMap<>();
         map.put("ausertype", "");
@@ -327,6 +327,14 @@ public class McardApi {
                 groupRespone = (McardAddGroupRespone) JSONObject.toBean(data, McardAddGroupRespone.class);
                 groupRespone.setCode(jsonObject.getString("code"));
                 groupRespone.setMessage(jsonObject.getString("message"));
+            }else{
+                String message = jsonObject.getString("message");
+                if (message.equals("图像验证码错误,请刷新后输入")){
+                    groupRespone.setCode("");
+                }else{
+                    groupRespone.setCode(Const.ILLEFAL_AREA);
+                    groupRespone.setMessage(jsonObject.getString("message"));
+                }
             }
         } catch (Exception e) {
             log.info("电信添加商户失败" + e);

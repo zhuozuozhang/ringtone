@@ -1119,7 +1119,7 @@ public class ApiUtils {
         } else if (configUtil.getAreaArray("ten_yuan_tariff_area", order.getProvince())) {
             attached.setMcardPrice(Const.TELECOM_10_YUAN_TRAIFF);
             attached.setMcardDistributorId(Const.parent_Distributor_ID_188);
-            String user = mcardApi.toNormalUser(Const.child_Distributor_ID_188, Const.parent_Distributor_ID_188);
+            mcardApi.toNormalUser(Const.child_Distributor_ID_188, Const.parent_Distributor_ID_188);
         } else {
             attached.setMcardPrice(Const.TELECOM_20_YUAN_TRAIFF);
             attached.setMcardDistributorId(Const.parent_Distributor_ID_188);
@@ -1128,7 +1128,7 @@ public class ApiUtils {
         //添加商户，同步三次
         for (int i = 0; i < 3; i++) {
             mcardAddGroupRespone = mcardApi.addGroup(order, attached);
-            if (mcardAddGroupRespone != null && mcardAddGroupRespone.getCode().equals("0000")) {
+            if (mcardAddGroupRespone != null && StringUtils.isNotEmpty(mcardAddGroupRespone.getCode())) {
                 break;
             }
         }
