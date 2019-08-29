@@ -5,6 +5,7 @@ import com.hrtxn.ringtone.common.domain.OrderRequest;
 import com.hrtxn.ringtone.common.exception.NoLoginException;
 import com.hrtxn.ringtone.common.utils.Const;
 import com.hrtxn.ringtone.common.utils.StringUtils;
+import com.hrtxn.ringtone.common.utils.json.JsonUtil;
 import com.hrtxn.ringtone.freemark.config.systemConfig.RingtoneConfig;
 import com.hrtxn.ringtone.project.system.File.service.FileService;
 import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreeNetsOrderAttached;
@@ -228,6 +229,8 @@ public class ThreeNetsAsyncService {
             e.printStackTrace();
         }
         attached.setMcardStatus(Const.UNREVIEWED);
+        String jsonString4JavaPOJO = JsonUtil.getJsonString4JavaPOJO(attached);
+        System.out.println("电信添加商户："+jsonString4JavaPOJO);
         threeNetsOrderAttachedService.update(attached);
     }
 
@@ -481,8 +484,10 @@ public class ThreeNetsAsyncService {
             McardAddGroupRespone respone = apiUtils.addOrderByDx(order, attached);
             if (respone.getCode().equals("0000")) {
                 attached.setMcardId(respone.getAuserId());
+                attached.setMcardStatus(Const.REVIEWED);
                 threeNetsOrderAttachedService.update(attached);
             } else {
+                attached.setMcardStatus(Const.UNREVIEWED);
                 return new ArrayList<>();
             }
         }

@@ -117,6 +117,9 @@ public class ApiUtils {
                 }
             } else if (operate == 2) {// 电信
                 ThreeNetsOrderAttached attached = SpringUtils.getBean(ThreeNetsOrderAttachedMapper.class).selectByParentOrderId(threenetsChildOrder.getParentOrderId());
+                if(StringUtils.isEmpty(attached.getMiguId()) || StringUtils.isEmpty(attached.getMcardDistributorId())){
+                    break;
+                }
                 mcardApi.toUserList(threenetsChildOrder.getOperateId(), attached.getMcardDistributorId());
                 String result = mcardApi.getUserInfo(attached.getMcardDistributorId());
                 Document doc = Jsoup.parse(result);

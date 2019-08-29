@@ -21,7 +21,13 @@ function showTable() {
         targets: [1],
         render: function (data, type, row, meta) {
             var id = row.id;
-            return "<div style='text-overflow:ellipsis;overflow:hidden;white-space:nowrap;width:150px;' title='"+data+"'><a href='/threenets/toMerchantsPhonePage/" + id + "'>"+data+"</a></div>";
+            var number = data.substring(data.length - 6,data.length)
+            var companyName = data;
+            if(!isNaN(number)){
+                companyName = data.substring(0,data.length-6);
+                console.log(companyName)
+            }
+            return "<div style='text-overflow:ellipsis;overflow:hidden;white-space:nowrap;width:150px;' title='"+data+"'><a href='/threenets/toMerchantsPhonePage/" + id + "'>"+companyName+"</a></div>";
         }
     },{
         targets:[3],
