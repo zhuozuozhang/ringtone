@@ -94,6 +94,12 @@
         WHERE id = #{id,jdbcType=INTEGER}
     </update>
 
+    <select id="getTelcerChildParentIdByPhoneNum" parameterType="java.lang.String" resultType="int">
+        SELECT parent_order_id
+        FROM tb_telcertification_child_order
+        WHERE tel_child_order_phone = #{telChildOrderPhone,jdbcType=VARCHAR}
+    </select>
+
     <insert id="insert" parameterType="com.hrtxn.ringtone.project.telcertification.domain.CertificationChildOrder">
     insert into tb_telcertification_child_order (id, tel_child_order_num, years, 
       price, tel_child_order_status, business_feedback, 

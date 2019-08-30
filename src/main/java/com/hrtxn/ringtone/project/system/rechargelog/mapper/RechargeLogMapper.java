@@ -1,6 +1,8 @@
 package com.hrtxn.ringtone.project.system.rechargelog.mapper;
 
+import com.hrtxn.ringtone.common.domain.Page;
 import com.hrtxn.ringtone.project.system.rechargelog.domain.RechargeLog;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -26,4 +28,8 @@ public interface RechargeLogMapper {
      * @return
      */
     List<RechargeLog> findRechargeLogByUserId(Integer id);
+
+    List<RechargeLog> getRechargeLogList(@Param("page") Page page);
+
+    int getCount();
 }

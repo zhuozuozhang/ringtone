@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hrtxn.ringtone.project.system.consumelog.mapper.ConsumeLogMapper" >
+  <resultMap id="BaseResultMap" type="com.hrtxn.ringtone.project.system.consumelog.domain.ConsumeLog" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="consume_price" property="consumePrice" jdbcType="REAL" />
+    <result column="consume_money" property="consumeMoney" jdbcType="REAL" />
+    <result column="consume_time" property="consumeTime" jdbcType="TIMESTAMP" />
+    <result column="consume_type" property="consumeType" jdbcType="INTEGER" />
+    <result column="consume_operator" property="consumeOperator" jdbcType="VARCHAR" />
+    <result column="user_name" property="userName" jdbcType="VARCHAR" />
+    <result column="user_tel" property="userTel" jdbcType="VARCHAR" />
+    <result column="tel_consume_log_type" property="telConsumeLogType" jdbcType="INTEGER" />
+    <result column="tel_consume_log_status" property="telConsumeLogStatus" jdbcType="INTEGER" />
+    <result column="tel_consume_log_open_time" property="telConsumeLogOpenTime" jdbcType="TIMESTAMP" />
+    <result column="tel_consume_log_expire_time" property="telConsumeLogExpireTime" jdbcType="TIMESTAMP" />
+    <result column="user_id" property="userId" jdbcType="INTEGER" />
+    <result column="consume_remark" property="consumeRemark" jdbcType="LONGVARCHAR" />
+  </resultMap>
+
+  <sql id="Base_Column_List" >
+    id, consume_price, consume_money, consume_time, consume_type, consume_operator, user_name, 
+    user_tel, tel_consume_log_type, tel_consume_log_status, tel_consume_log_open_time, 
+    tel_consume_log_expire_time, user_id,consume_remark
+  </sql>
+
+  <sql id="page">
+    <if test="page.page != null and page.pagesize != null and page.pagesize !=''">
+      LIMIT #{page.page},#{page.pagesize}
+    </if>
+  </sql>
+
+<!--  获取全部消费记录-->
+  <select id="getConsumeLogList" resultMap="BaseResultMap">
+    SELECT * FROM sys_consume_log
+    ORDER BY consume_time DESC
+    <include refid="page"/>
+  </select>
+<!--获取消费记录总数-->
+  <select id="getCount" resultType="java.lang.Integer">
+     SELECT COUNT(*) FROM sys_consume_log
+  </select>
+<!--  根据用户id查询消费记录-->
+  <select id="findConsumeLogByUserId" parameterType="int" resultMap="BaseResultMap">
+    SELECT
+        <include refid="Base_Column_List"/>
+    FROM
+      sys_consume_log
+    WHERE
+        user_id = #{id}
+    ORDER BY consume_time DESC
+  </select>
+
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from sys_consume_log
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from sys_consume_log
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.hrtxn.ringtone.project.system.consumelog.domain.ConsumeLog" >
+    insert into sys_consume_log (id, consume_price, consume_money, 
+      consume_time, consume_type, consume_operator, 
+      user_name, user_tel, tel_consume_log_type, 
+      tel_consume_log_status, tel_consume_log_open_time, 
+      tel_consume_log_expire_time, user_id, consume_remark
+      )
+    values (#{id,jdbcType=INTEGER}, #{consumePrice,jdbcType=REAL}, #{consumeMoney,jdbcType=REAL}, 
+      #{consumeTime,jdbcType=TIMESTAMP}, #{consumeType,jdbcType=INTEGER}, #{consumeOperator,jdbcType=VARCHAR}, 
+      #{userName,jdbcType=VARCHAR}, #{userTel,jdbcType=VARCHAR}, #{telConsumeLogType,jdbcType=INTEGER}, 
+      #{telConsumeLogStatus,jdbcType=INTEGER}, #{telConsumeLogOpenTime,jdbcType=TIMESTAMP}, 
+      #{telConsumeLogExpireTime,jdbcType=TIMESTAMP}, #{userId,jdbcType=INTEGER}, #{consumeRemark,jdbcType=LONGVARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.hrtxn.ringtone.project.system.consumelog.domain.ConsumeLog" >
+    insert into sys_consume_log
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="consumePrice != null" >
+        consume_price,
+      </if>
+      <if test="consumeMoney != null" >
+        consume_money,
+      </if>
+      <if test="consumeTime != null" >
+        consume_time,
+      </if>
+      <if test="consumeType != null" >
+        consume_type,
+      </if>
+      <if test="consumeOperator != null" >
+        consume_operator,
+      </if>
+      <if test="userName != null" >
+        user_name,
+      </if>
+      <if test="userTel != null" >
+        user_tel,
+      </if>
+      <if test="telConsumeLogType != null" >
+        tel_consume_log_type,
+      </if>
+      <if test="telConsumeLogStatus != null" >
+        tel_consume_log_status,
+      </if>
+      <if test="telConsumeLogOpenTime != null" >
+        tel_consume_log_open_time,
+      </if>
+      <if test="telConsumeLogExpireTime != null" >
+        tel_consume_log_expire_time,
+      </if>
+      <if test="userId != null" >
+        user_id,
+      </if>
+      <if test="consumeRemark != null" >
+        consume_remark,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="consumePrice != null" >
+        #{consumePrice,jdbcType=REAL},
+      </if>
+      <if test="consumeMoney != null" >
+        #{consumeMoney,jdbcType=REAL},
+      </if>
+      <if test="consumeTime != null" >
+        #{consumeTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="consumeType != null" >
+        #{consumeType,jdbcType=INTEGER},
+      </if>
+      <if test="consumeOperator != null" >
+        #{consumeOperator,jdbcType=VARCHAR},
+      </if>
+      <if test="userName != null" >
+        #{userName,jdbcType=VARCHAR},
+      </if>
+      <if test="userTel != null" >
+        #{userTel,jdbcType=VARCHAR},
+      </if>
+      <if test="telConsumeLogType != null" >
+        #{telConsumeLogType,jdbcType=INTEGER},
+      </if>
+      <if test="telConsumeLogStatus != null" >
+        #{telConsumeLogStatus,jdbcType=INTEGER},
+      </if>
+      <if test="telConsumeLogOpenTime != null" >
+        #{telConsumeLogOpenTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="telConsumeLogExpireTime != null" >
+        #{telConsumeLogExpireTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="userId != null" >
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="consumeRemark != null" >
+        #{consumeRemark,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.hrtxn.ringtone.project.system.consumelog.domain.ConsumeLog" >
+    update sys_consume_log
+    <set >
+      <if test="consumePrice != null" >
+        consume_price = #{consumePrice,jdbcType=REAL},
+      </if>
+      <if test="consumeMoney != null" >
+        consume_money = #{consumeMoney,jdbcType=REAL},
+      </if>
+      <if test="consumeTime != null" >
+        consume_time = #{consumeTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="consumeType != null" >
+        consume_type = #{consumeType,jdbcType=INTEGER},
+      </if>
+      <if test="consumeOperator != null" >
+        consume_operator = #{consumeOperator,jdbcType=VARCHAR},
+      </if>
+      <if test="userName != null" >
+        user_name = #{userName,jdbcType=VARCHAR},
+      </if>
+      <if test="userTel != null" >
+        user_tel = #{userTel,jdbcType=VARCHAR},
+      </if>
+      <if test="telConsumeLogType != null" >
+        tel_consume_log_type = #{telConsumeLogType,jdbcType=INTEGER},
+      </if>
+      <if test="telConsumeLogStatus != null" >
+        tel_consume_log_status = #{telConsumeLogStatus,jdbcType=INTEGER},
+      </if>
+      <if test="telConsumeLogOpenTime != null" >
+        tel_consume_log_open_time = #{telConsumeLogOpenTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="telConsumeLogExpireTime != null" >
+        tel_consume_log_expire_time = #{telConsumeLogExpireTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="userId != null" >
+        user_id = #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="consumeRemark != null" >
+        consume_remark = #{consumeRemark,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.hrtxn.ringtone.project.system.consumelog.domain.ConsumeLog" >
+    update sys_consume_log
+    set consume_price = #{consumePrice,jdbcType=REAL},
+      consume_money = #{consumeMoney,jdbcType=REAL},
+      consume_time = #{consumeTime,jdbcType=TIMESTAMP},
+      consume_type = #{consumeType,jdbcType=INTEGER},
+      consume_operator = #{consumeOperator,jdbcType=VARCHAR},
+      user_name = #{userName,jdbcType=VARCHAR},
+      user_tel = #{userTel,jdbcType=VARCHAR},
+      tel_consume_log_type = #{telConsumeLogType,jdbcType=INTEGER},
+      tel_consume_log_status = #{telConsumeLogStatus,jdbcType=INTEGER},
+      tel_consume_log_open_time = #{telConsumeLogOpenTime,jdbcType=TIMESTAMP},
+      tel_consume_log_expire_time = #{telConsumeLogExpireTime,jdbcType=TIMESTAMP},
+      user_id = #{userId,jdbcType=INTEGER},
+      consume_remark = #{consumeRemark,jdbcType=LONGVARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.hrtxn.ringtone.project.system.consumelog.domain.ConsumeLog" >
+    update sys_consume_log
+    set consume_price = #{consumePrice,jdbcType=REAL},
+      consume_money = #{consumeMoney,jdbcType=REAL},
+      consume_time = #{consumeTime,jdbcType=TIMESTAMP},
+      consume_type = #{consumeType,jdbcType=INTEGER},
+      consume_operator = #{consumeOperator,jdbcType=VARCHAR},
+      user_name = #{userName,jdbcType=VARCHAR},
+      user_tel = #{userTel,jdbcType=VARCHAR},
+      tel_consume_log_type = #{telConsumeLogType,jdbcType=INTEGER},
+      tel_consume_log_status = #{telConsumeLogStatus,jdbcType=INTEGER},
+      tel_consume_log_open_time = #{telConsumeLogOpenTime,jdbcType=TIMESTAMP},
+      tel_consume_log_expire_time = #{telConsumeLogExpireTime,jdbcType=TIMESTAMP},
+      user_id = #{userId,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

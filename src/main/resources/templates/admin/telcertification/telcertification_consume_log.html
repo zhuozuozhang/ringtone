@@ -30,33 +30,23 @@
 			<thead>
 				<tr>
 					<th>ID</th>
-					<th>成员名称</th>
-					<th>成员号码</th>
-					<th>类型</th>
-					<th>状态</th>
-					<th>资费</th>
-					<th>提交时间</th>
-					<th>开通时间</th>
-					<th>到期时间</th>
+					<th>支出金额</th>
+					<th>剩余金额</th>
+					<th>支出费用的时间</th>
+					<th>消费类型</th>
+					<th>操作者</th>
+					<th>消费账户</th>
+					<th>消费号码</th>
+					<th>消费记录账户ID</th>
+					<th>备注</th>
 				</tr>
 			</thead>
-<!--			<tbody>-->
-<!--				<tr>-->
-<!--					<td>1</td>-->
-<!--					<td>测试周</td>-->
-<!--					<td>15050840350</td>-->
-<!--					<td>首次</td>-->
-<!--					<td>开通成功</td>-->
-<!--					<td>160</td>-->
-<!--					<td>2019-06-19 17:20:26</td>-->
-<!--					<td>2019-06-19 18:20:26</td>-->
-<!--					<td>2021-06-19 18:20:26</td>-->
-<!--				</tr>-->
-<!--			</tbody>-->
 		</table>
 	</div>
 </body>
 <div th:include="admin/common/include :: footer"></div>
+<script type="text/javascript" th:src="@{/admin/js/my/telcer_consume.js}"></script>
+
 <!--<script type="text/javascript" th:src="@{/public/js/jquery-2.1.4.min.js}"></script>-->
 <!--<script type="text/javascript" th:src="@{/public/js/jquery-3.4.1.js}"></script>-->
 <!--<script th:src="@{/public/layui/layui.js}"></script>-->
@@ -71,10 +61,4 @@
 <!--<script type="text/javascript" th:src="@{/admin/js/xadmin.js}"></script>-->
 <!--&lt;!&ndash;<script type="text/javascript" th:src="@{/admin/dataTables/jquery.dataTables.min.js}"></script>&ndash;&gt;-->
 <!--&lt;!&ndash;<script type="text/javascript" th:src="@{/public/js/page.js}"></script>&ndash;&gt;-->
-<script type="text/javascript" th:src="@{/admin/js/my/telcer_consume.js}"></script>
-<script type="text/javascript">
-	$(document).ready(function() {
-	    showTelcertification_consume_log();
-	});
-</script>
 </html>

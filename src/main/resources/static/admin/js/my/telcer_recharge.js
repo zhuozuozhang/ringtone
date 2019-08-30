@@ -4,20 +4,21 @@ $(document).ready(function () {
 
 function showRechargeLog() {
     var param = {
-        // "parentId": $("#id").val(),
     }
     var columns = [
         {"data": null},
+        {"data": "userId"},
         {"data": "userName"},
-        {"data": "userTel"},
-        {"data": "price"},
+        {"data": "rechargePrice"},
+        {"data": "rechargeMoney"},
         {"data": "rechargeTime"},
-        {"data": "operatorId"},
-        {"data": "remark"},
+        {"data": "rechargeTypeName"},
+        {"data": "rechargeOperator"},
+        {"data": "rechargeRemark"}
     ];
     var columnDefs = [
 
     ];
-    var url = "/admin/getTelCerRechargeLogList";
+    var url = "/admin/getRechargeLogList";
     page("#recharge", 2, param, url, columns, columnDefs);
 }

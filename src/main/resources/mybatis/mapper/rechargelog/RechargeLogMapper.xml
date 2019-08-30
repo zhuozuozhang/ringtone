@@ -16,8 +16,15 @@
 
     <sql id="Base_Column_List">
         id, recharge_price, recharge_money ,recharge_time, recharge_type,user_name, recharge_operator,
-        user_id,recharge_remark
+        recharge_remark,user_id
     </sql>
+
+    <sql id="page">
+        <if test="page.page != null and page.pagesize != null and page.pagesize !=''">
+            LIMIT #{page.page},#{page.pagesize}
+        </if>
+    </sql>
+
     <!-- 根据用户ID查询充值记录-->
     <select id="findRechargeLogByUserId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
         SELECT
@@ -28,6 +35,7 @@
             user_id = #{id}
         ORDER BY recharge_time DESC
     </select>
+
     <!-- 添加充值记录 -->
     <insert id="insertRechargeLog" parameterType="RechargeLog">
         INSERT INTO sys_recharge_log
@@ -85,4 +93,14 @@
         </trim>
     </insert>
 
+<!--    获取全部充值记录-->
+    <select id="getRechargeLogList" resultMap="BaseResultMap">
+        SELECT * FROM sys_recharge_log
+        ORDER BY recharge_time DESC
+        <include refid="page"/>
+    </select>
+<!--获取充值记录总数-->
+    <select id="getCount" resultType="java.lang.Integer">
+        SELECT COUNT(*) FROM sys_recharge_log
+    </select>
 </mapper>

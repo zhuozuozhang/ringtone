@@ -152,4 +152,17 @@ public class TelCertificationChildController {
             return AjaxResult.error("保存失败");
         }
     }
+
+    /**
+     * 进入续费页面
+     * @param map
+     * @return
+     */
+    @GetMapping("/toRenewPage/{phoneNum}")
+    public String toRenewPage(@PathVariable String phoneNum,ModelMap map){
+        String s = phoneNum;
+        int id = telCertificationChildService.getTelcerChildParentIdByPhoneNum(phoneNum);
+        CertificationOrder certificationOrder = telCertificationService.getTelCerOrderById(id,map);
+        return "telcertification/renew";
+    }
 }

@@ -50,7 +50,7 @@ function showTelCerMemberTable() {
         render: function (data, type, row, meta) {
             var id = row.id;
             var phoneNum = row.telChildOrderPhone;
-            return "<a href='javascript:;'><i class='layui-icon layui-icon-rmb' title='续费' onclick='Renewal();'></i></a>"
+            return "<a href='javascript:;'><i class='layui-icon layui-icon-rmb' title='续费' onclick='Renewal("+phoneNum+");'></i></a>"
                 + "<a href='/telcertify/toTelCostPage/"+phoneNum+"'><i class='layui-icon layui-icon-form' title='费用支出记录'></i></a>"
         }
     }];
@@ -84,13 +84,19 @@ function closePanel(){
     $("body").css("overflow","auto");
 }
 //续费
-function Renewal(){
+function Renewal(phoneNum){
+    var str = '<div><div>' +
+        '<h4 class="h4s"><span>小米号码认证-小米（查看下方开通注意事项）</span></h4> ' +
+        '<p class="zhifu">共需支付：<span>80</span><span>元</span></p></div> ' +
+        '<div class="renew_div"><div><p>订购年份:</p>' +
+        '<div><a class="btnactive">1年</a></div></div><div style="margin-top: 0px;">' +
+        '<button onclick="confirmRenew()" class="btnactive">确认续费</button></div> ' +
+        '<p>支付后，制作商会在2小时内主动联系您</p></div></div>';
     layer.open({
-        type: 1,
+        type: 2,
         title: '续费',
         area: ['540px', '320px'],
-        content: '<div><div><h4 class="h4s"><span>小米号码认证-小米（查看下方开通注意事项）</span></h4> <p class="zhifu">共需支付：<span>80</span><span>元</span></p></div> <div class="renew_div"><div><p>订购年份:</p> <div><a class="btnactive">1年</a></div></div><div style="margin-top: 0px;"><button onclick="confirmRenew()" class="btnactive">确认续费</button></div> <p>支付后，制作商会在2小时内主动联系您</p></div></div>'
-
+        content: '/telcertify/toRenewPage/'+phoneNum
     });
 }
 // 确认续费

@@ -32,17 +32,11 @@
 				<button class="layui-btn" onclick="showTelcertification_child_table()"><i class="layui-icon">&#xe615;</i></button>
 			</div>
 		</div>
-		<xblock>
-			<button class="layui-btn layui-btn-danger" onclick="delAll();"><i class="layui-icon"></i>批量删除</button>
-		</xblock>
 		<input type="hidden" id="id" th:value="${parentId}">
 		<table class="layui-table" id="telcertification_child_table">
 			<thead>
 				<tr>
 					<th>#</th>
-					<th>
-						<div class="layui-unselect header layui-form-checkbox" lay-skin="primary"><i class="layui-icon">&#xe605;</i></div>
-					</th>
 					<th>成员号码</th>
 					<th>订购年份</th>
 					<th>价格</th>

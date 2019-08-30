@@ -30,4 +30,9 @@ public class RechargeLog implements Serializable {
     private Integer userId;
     // 备注
     private String rechargeRemark;
+
+    /*************************VO***************************/
+
+    // 充值类型的名称
+    private String rechargeTypeName;
 }

@@ -233,4 +233,8 @@ public class TelCertificationChildService {
 //        threeNetsAsyncService.saveThreenetsPhone(attached,request);
         return AjaxResult.success(true, "保存成功");
     }
+
+    public int getTelcerChildParentIdByPhoneNum(String phoneNum) {
+        return certificationChildOrderMapper.getTelcerChildParentIdByPhoneNum(phoneNum);
+    }
 }

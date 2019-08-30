@@ -292,24 +292,4 @@ public class TelCertificationAdminController {
         }
         return AjaxResult.error("获取数据失败");
     }
-
-
-    /**
-     * 获取全部充值记录
-     * @return
-     */
-    @PostMapping("/getTelCerRechargeLogList")
-    @ResponseBody
-    @RequiresRoles("admin")
-    public AjaxResult getTelCerRechargeLogList(Page page){
-        try{
-            return telCertificationService.getTelCerRechargeLogList(page);
-        }catch (Exception e){
-            log.error("获取全部充值记录 方法：getTelCerRechargeLogList 错误信息",e);
-        }
-        return AjaxResult.error("获取数据失败");
-    }
-
-
-
 }

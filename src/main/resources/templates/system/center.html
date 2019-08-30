@@ -74,12 +74,13 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td>2018-08-05 14:01:12</td>
-                                <td>联通座机彩铃(河北联通座机)</td>
-                                <td>100</td>
-                                <td>300</td>
-                                <td>交易成功</td>
+                            <tr th:each="consumeLog:${consumeLostList}">
+                                <td th:text="${#dates.format(consumeLog.consumeTime,'yyyy-MM-dd HH:mm:ss')}">2018-08-05 14:01:12</td>
+<!--                                <td th:if="${consumeLog.consumeType} == 1">联通座机彩铃(河北联通座机)</td>-->
+                                <td th:if="${consumeLog.consumeType} == 1">号码认证</td>
+                                <td th:text="${consumeLog.consumePrice}">100</td>
+                                <td th:text="${consumeLog.consumeMoney}">300</td>
+                                <td th:text="交易成功">交易成功</td>
                             </tr>
                         </tbody>
                     </table>

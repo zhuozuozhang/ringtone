@@ -1,5 +1,7 @@
 package com.hrtxn.ringtone.project.system.rechargelog.service;
 
+import com.hrtxn.ringtone.common.constant.AjaxResult;
+import com.hrtxn.ringtone.common.domain.Page;
 import com.hrtxn.ringtone.common.utils.StringUtils;
 import com.hrtxn.ringtone.project.system.rechargelog.domain.RechargeLog;
 import com.hrtxn.ringtone.project.system.rechargelog.mapper.RechargeLogMapper;
@@ -36,5 +38,22 @@ public class RechargeLogService {
             return rechargeLogMapper.findRechargeLogByUserId(id);
         }
         return null;
+    }
+
+    public AjaxResult getRechargeLogList(Page page) {
+        page.setPage((page.getPage() - 1) * page.getPagesize());
+        List<RechargeLog> allCharge = rechargeLogMapper.getRechargeLogList(page);
+        for (RechargeLog r: allCharge) {
+            if(r.getRechargeType() == 1){
+                r.setRechargeTypeName("号码认证");
+            }else if(r.getRechargeType() == 2){
+                r.setRechargeTypeName("三网");
+            }
+        }
+        int totalCount = rechargeLogMapper.getCount();
+        if(allCharge.size() > 0 && allCharge != null){
+            return AjaxResult.success(allCharge,"获取成功",totalCount);
+        }
+        return AjaxResult.success(false,"获取失败");
     }
 }

@@ -8,6 +8,8 @@ import com.hrtxn.ringtone.common.utils.juhe.JuheMessageUtils;
 import com.hrtxn.ringtone.freemark.config.logConfig.Log;
 import com.hrtxn.ringtone.freemark.enums.BusinessType;
 import com.hrtxn.ringtone.freemark.enums.OperatorLogType;
+import com.hrtxn.ringtone.project.system.consumelog.domain.ConsumeLog;
+import com.hrtxn.ringtone.project.system.consumelog.service.ConsumeLogService;
 import com.hrtxn.ringtone.project.system.rechargelog.domain.RechargeLog;
 import com.hrtxn.ringtone.project.system.rechargelog.service.RechargeLogService;
 import com.hrtxn.ringtone.project.system.user.domain.User;
@@ -34,6 +36,8 @@ public class CenterController {
     private UserService userService;
     @Autowired
     private RechargeLogService rechargeLogService;
+    @Autowired
+    private ConsumeLogService consumeLogService;
 
     @GetMapping("/system/toCenterPage")
     public String toCenterPage(ModelMap map){
@@ -41,6 +45,8 @@ public class CenterController {
         map.put("user",user);
         List<RechargeLog> rechargeLogList = rechargeLogService.findRechargeLogByUserId(ShiroUtils.getSysUser().getId());
         map.put("rechargeLogList",rechargeLogList);
+        List<ConsumeLog> consumeLogList = consumeLogService.findConsumeLogByUserId(ShiroUtils.getSysUser().getId());
+        map.put("consumeLostList",consumeLogList);
         return  "system/center";
     }
 

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>续费</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" th:href="@{/public/layui/css/layui.css}">
+    <link rel="stylesheet" th:href="@{/public/layui/css/modules/layer/default/layer.css}">
+    <link rel="stylesheet" th:href="@{/public/css/commer.css}">
+    <link rel="stylesheet" th:href="@{/client/telcertification/css/boxstyle.css}">
+    <link rel="stylesheet" th:href="@{/client/telcertification/css/msgbox.css}">
+    <link rel="stylesheet" th:href="@{/client/telcertification/css/webandwxxcx.css}">
+    <link rel="stylesheet" th:href="@{/client/telcertification/css/orderform.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/public/dataTables/jquery.dataTables.min.css}">
+    <link rel="stylesheet" th:href="@{/client/telcertification/css/order.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/client/telcertification/css/header.css}">
+</head>
+<body>
+<div>
+    <div>
+        <h4 class="h4s">
+            <span>已开通的业务</span></br>
+            <tr th:each="s:${service}">
+                <td th:text="${s.name} + ','"></td>
+                <td th:text="${s.period0fValidity} + ','"></td>
+                <td th:text="${s.cost} + '元'"></td></br>
+            </tr>
+        </h4>
+        <p class="zhifu">共需支付：<span th:text="${telCerOrder.unitPrice}">0</span><span>元</span></p>
+    </div>
+    <div class="renew_div">
+        <div>
+            <div>
+            </div>
+        </div>
+        <div style="margin-top: 0px;">
+            <button onclick="confirmRenew()" class="btnactive">确认续费</button>
+        </div>
+        <p>支付后，制作商会在2小时内主动联系您</p>
+    </div>
+</div>
+</body>
+<script th:src="@{/public/js/jquery-2.1.4.min.js}"></script>
+<script th:src="@{/public/layui/layui.js}"></script>
+<script th:src="@{/public/layui/lay/modules/layer.js}"></script>
+<script type="text/javascript" th:src="@{/public/dataTables/jquery.dataTables.min.js}"></script>
+<script type="text/javascript" th:src="@{/public/js/datatables.js}"></script>
+<script th:src="@{/client/telcertification/js/members.js}"></script>
+<script type="text/javascript" th:src="@{/public/js/numASMD.js}"></script>
+<script type="text/javascript" th:src="@{/public/js/ajax.js}"></script>
+</html>
