@@ -179,7 +179,7 @@ public class ThreeNetsRingService {
         ring.setFile(new File(RingtoneConfig.getProfile() + ring.getRingWay()));
         ThreeNetsOrderAttached attached = threeNetsOrderAttachedService.selectByParentOrderId(ring.getOrderId());
         ring.setOperateId(attached.getMiguId());
-        MiguAddRingRespone ringRespone = apiUtils.saveMiguRing(ring, attached.getMiguId(), ring.getCompanyName());
+        MiguAddRingRespone ringRespone = apiUtils.saveMiguRing(ring);
         if (ringRespone != null && ringRespone.isSuccess()) {
             //保存铃音
             ring.setOperateRingId(ringRespone.getRingId());

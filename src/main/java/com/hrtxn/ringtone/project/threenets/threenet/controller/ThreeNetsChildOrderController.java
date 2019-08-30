@@ -41,9 +41,9 @@ public class ThreeNetsChildOrderController {
      */
     @PutMapping("/threenets/chidSetRing")
     @ResponseBody
-    @Log(title = "号码管理设置铃音",businessType = BusinessType.UPDATE,operatorLogType = OperatorLogType.THREENETS)
-    public AjaxResult chidSetRing(Integer orderId,Integer operate,Integer ringId, Integer childOrderId) throws Exception {
-        return threeNetsChildOrderService.chidSetRing(orderId,operate,ringId,childOrderId);
+    @Log(title = "号码管理设置铃音", businessType = BusinessType.UPDATE, operatorLogType = OperatorLogType.THREENETS)
+    public AjaxResult chidSetRing(Integer orderId, Integer operate, Integer ringId, Integer childOrderId) throws Exception {
+        return threeNetsChildOrderService.chidSetRing(orderId, operate, ringId, childOrderId);
     }
 
     /**
@@ -58,19 +58,19 @@ public class ThreeNetsChildOrderController {
      */
     @GetMapping("/threenets/toUserSetingRing/{id}/{operator}/{companyName}/{orderId}")
     public String toUserSetingRing(@PathVariable("id") Integer id,
-           @PathVariable("operator") Integer operator,
-           @PathVariable("companyName") String companyName,
-           @PathVariable("orderId") Integer orderId,ModelMap map){
-        map.put("companyName",companyName);
-        map.put("orderId",orderId);
-        map.put("operate",operator);
-        map.put("id",id);// 子订单ID
+                                   @PathVariable("operator") Integer operator,
+                                   @PathVariable("companyName") String companyName,
+                                   @PathVariable("orderId") Integer orderId, ModelMap map) {
+        map.put("companyName", companyName);
+        map.put("orderId", orderId);
+        map.put("operate", operator);
+        map.put("id", id);// 子订单ID
         // 根据ID获取子订单信息
         try {
             ThreenetsChildOrder threenetsChildOrder = threeNetsChildOrderService.selectByPrimaryKey(id);
-            map.put("threenetsChildOrder",threenetsChildOrder);
+            map.put("threenetsChildOrder", threenetsChildOrder);
         } catch (Exception e) {
-            log.error("获取子订单信息出错"+e);
+            log.error("获取子订单信息出错" + e);
         }
         return "threenets/threenet/merchants/number_list_set";
     }
@@ -86,11 +86,11 @@ public class ThreeNetsChildOrderController {
      */
     @PostMapping("/threenets/getThreeNetsChidOrderSetingList")
     @ResponseBody
-    public AjaxResult getThreeNetsChidOrderSetingList(Page page,Integer orderId,Integer operate){
+    public AjaxResult getThreeNetsChidOrderSetingList(Page page, Integer orderId, Integer operate) {
         try {
-            return threeNetsChildOrderService.findChildOrderByOrderId(page,orderId,operate);
+            return threeNetsChildOrderService.findChildOrderByOrderId(page, orderId, operate);
         } catch (Exception e) {
-            log.error("获取设置铃音子订单数据 方法：getThreeNetsChidOrderSetingList 错误信息：",e);
+            log.error("获取设置铃音子订单数据 方法：getThreeNetsChidOrderSetingList 错误信息：", e);
             return AjaxResult.error(e.getMessage());
         }
     }
@@ -105,9 +105,14 @@ public class ThreeNetsChildOrderController {
         try {
             ThreenetsOrder order = threeNetsChildOrderService.getOrderById(parentOrderId);
             map.put("parentOrderId", parentOrderId);
-            map.put("companyName", order.getCompanyName());
-        }catch (Exception e){
-            log.error("获取集团名称失败 方法：toMerchantsPhonePage 错误信息：",e);
+            if (order.getCompanyName().length() <= 6) {
+                map.put("companyName", order.getCompanyName());
+            } else {
+                boolean result = order.getCompanyName().substring(order.getCompanyName().length() - 6).matches("[0-9]+");
+                map.put("companyName", result ? order.getCompanyName().substring(0, order.getCompanyName().length() - 6) : order.getCompanyName());
+            }
+        } catch (Exception e) {
+            log.error("获取集团名称失败 方法：toMerchantsPhonePage 错误信息：", e);
         }
         return "threenets/threenet/merchants/number_list";
     }
@@ -141,10 +146,10 @@ public class ThreeNetsChildOrderController {
     @PostMapping("/threenets/insterThreeNetsChildOrder")
     @ResponseBody
     @Log(title = "添加子订单", businessType = BusinessType.INSERT, operatorLogType = OperatorLogType.THREENETS)
-    public AjaxResult insterThreeNetsChildOrder(ThreenetsChildOrder childOrder,BaseRequest request) {
+    public AjaxResult insterThreeNetsChildOrder(ThreenetsChildOrder childOrder, BaseRequest request) {
         try {
-            return threeNetsChildOrderService.insterThreeNetsChildOrder(childOrder,request);
-        }catch (Exception e){
+            return threeNetsChildOrderService.insterThreeNetsChildOrder(childOrder, request);
+        } catch (Exception e) {
             log.error("批量保存 方法：insterThreeNetsChildOrder 错误信息", e);
             return AjaxResult.error("保存失败");
         }
@@ -176,7 +181,7 @@ public class ThreeNetsChildOrderController {
     @Log(title = "获取号码信息功能", businessType = BusinessType.UPDATE, operatorLogType = OperatorLogType.THREENETS)
     public AjaxResult getPhoneInfo(Integer type, Integer data) {
         try {
-            return threeNetsChildOrderService.getPhoneInfo(type,data);
+            return threeNetsChildOrderService.getPhoneInfo(type, data);
         } catch (Exception e) {
             log.error("获取号码信息 方法：getPhoneInfo 错误信息", e);
             return AjaxResult.error(e.getMessage());
@@ -203,6 +208,7 @@ public class ThreeNetsChildOrderController {
 
     /**
      * 发送短信
+     *
      * @param type
      * @param flag
      * @param data
@@ -211,9 +217,9 @@ public class ThreeNetsChildOrderController {
     @PutMapping("/threenets/sendMessage")
     @ResponseBody
     @Log(title = "发送短信", businessType = BusinessType.UPDATE, operatorLogType = OperatorLogType.THREENETS)
-    public AjaxResult sendMessage(Integer type, Integer flag, Integer data){
+    public AjaxResult sendMessage(Integer type, Integer flag, Integer data) {
         try {
-            return threeNetsChildOrderService.sendMessage(type,flag,data);
+            return threeNetsChildOrderService.sendMessage(type, flag, data);
         } catch (Exception e) {
             log.error("发送短信功能 方法：sendMessage 错误信息", e);
             return AjaxResult.error(e.getMessage());
@@ -222,13 +228,14 @@ public class ThreeNetsChildOrderController {
 
     /**
      * 移动工具箱-->用户信息
+     *
      * @param ringMsisdn
      * @return
      */
     @PutMapping("/threenets/getUserInfoByRingMsisdn/{ringMsisdn}")
     @ResponseBody
-    @Log(title = "移动工具箱-->获取用户信息",operatorLogType = OperatorLogType.THREENETS)
-    public AjaxResult getUserInfo(String ringMsisdn){
+    @Log(title = "移动工具箱-->获取用户信息", operatorLogType = OperatorLogType.THREENETS)
+    public AjaxResult getUserInfo(String ringMsisdn) {
         try {
             return threeNetsChildOrderService.getUserInfoByRingMsisdn(ringMsisdn);
         } catch (Exception e) {
@@ -239,13 +246,14 @@ public class ThreeNetsChildOrderController {
 
     /**
      * 移动工具箱-->删除铃音-->搜索
+     *
      * @param msisdn
      * @return
      */
     @PutMapping("/threenets/findRingInfoByMsisdn/{msisdn}")
     @ResponseBody
-    @Log(title = "移动工具箱-->删除铃音-->搜索",operatorLogType = OperatorLogType.THREENETS)
-    public AjaxResult findRingInfoByMsisdn(@PathVariable String msisdn){
+    @Log(title = "移动工具箱-->删除铃音-->搜索", operatorLogType = OperatorLogType.THREENETS)
+    public AjaxResult findRingInfoByMsisdn(@PathVariable String msisdn) {
         try {
             return threeNetsChildOrderService.findRingInfoByMsisdn(msisdn);
         } catch (Exception e) {
@@ -256,6 +264,7 @@ public class ThreeNetsChildOrderController {
 
     /**
      * 移动工具箱-->删除铃音-->删除个人铃音设置
+     *
      * @param msisdn
      * @param settingID
      * @param toneID
@@ -264,18 +273,19 @@ public class ThreeNetsChildOrderController {
      */
     @PutMapping("/threenets/singleDeleteRingSet/{msisdn}")
     @ResponseBody
-    @Log(title = "通过移动手机号、设置ID、铃音ID、铃音类型删除某条个人铃音设置",businessType = BusinessType.DELETE,operatorLogType = OperatorLogType.THREENETS)
-    public AjaxResult singleDeleteRingSet(@PathVariable String msisdn,String settingID,String toneID,String type){
+    @Log(title = "通过移动手机号、设置ID、铃音ID、铃音类型删除某条个人铃音设置", businessType = BusinessType.DELETE, operatorLogType = OperatorLogType.THREENETS)
+    public AjaxResult singleDeleteRingSet(@PathVariable String msisdn, String settingID, String toneID, String type) {
         try {
-            return threeNetsChildOrderService.singleDeleteRingSet(msisdn,settingID,toneID,type);
+            return threeNetsChildOrderService.singleDeleteRingSet(msisdn, settingID, toneID, type);
         } catch (Exception e) {
-            log.error("删除某条个人铃音设置 方法：singleDeleteRingSet 错误信息",e);
+            log.error("删除某条个人铃音设置 方法：singleDeleteRingSet 错误信息", e);
             return AjaxResult.error(e.getMessage());
         }
     }
 
     /**
      * 移动工具箱-->删除铃音-->删除某条个人铃音库
+     *
      * @param msisdn
      * @param toneIds
      * @param type
@@ -283,60 +293,63 @@ public class ThreeNetsChildOrderController {
      */
     @PutMapping("/threenets/singleDeleteRing/{msisdn}")
     @ResponseBody
-    @Log(title = "删除某条个人铃音库",businessType = BusinessType.DELETE,operatorLogType = OperatorLogType.THREENETS)
-    public AjaxResult singleDeleteRing(@PathVariable String msisdn,String toneIds,String type){
+    @Log(title = "删除某条个人铃音库", businessType = BusinessType.DELETE, operatorLogType = OperatorLogType.THREENETS)
+    public AjaxResult singleDeleteRing(@PathVariable String msisdn, String toneIds, String type) {
         try {
-            return threeNetsChildOrderService.singleDeleteRing(msisdn,toneIds,type);
+            return threeNetsChildOrderService.singleDeleteRing(msisdn, toneIds, type);
         } catch (Exception e) {
-            log.error("通过移动手机号、铃音ID、铃音类型删除某条个人铃音库 方法：singleDeleteRing 错误信息",e);
+            log.error("通过移动手机号、铃音ID、铃音类型删除某条个人铃音库 方法：singleDeleteRing 错误信息", e);
             return AjaxResult.error(e.getMessage());
         }
     }
 
     /**
      * 批量删除个人铃音设置
+     *
      * @param msisdn
      * @param vals
      * @return
      */
     @PutMapping("/threenets/batchDeleteRingSet")
     @ResponseBody
-    @Log(title = "批量删除个人铃音设置",businessType = BusinessType.DELETE,operatorLogType = OperatorLogType.THREENETS)
-    public AjaxResult batchDeleteRingSet(String msisdn,String vals){
+    @Log(title = "批量删除个人铃音设置", businessType = BusinessType.DELETE, operatorLogType = OperatorLogType.THREENETS)
+    public AjaxResult batchDeleteRingSet(String msisdn, String vals) {
         try {
-            return threeNetsChildOrderService.batchDeleteRingSet(msisdn,vals);
+            return threeNetsChildOrderService.batchDeleteRingSet(msisdn, vals);
         } catch (Exception e) {
-            log.error("批量删除个人铃音设置 方法：batchDeleteRingSet 错误信息",e);
+            log.error("批量删除个人铃音设置 方法：batchDeleteRingSet 错误信息", e);
             return AjaxResult.error(e.getMessage());
         }
     }
 
     /**
      * 批量删除个人铃音库
+     *
      * @param msisdn
      * @param vals
      * @return
      */
     @PutMapping("/threenets/batchDeleteRing")
     @ResponseBody
-    @Log(title = "批量删除个人铃音库",businessType = BusinessType.DELETE,operatorLogType = OperatorLogType.THREENETS)
-    public AjaxResult batchDeleteRing(String msisdn,String vals){
+    @Log(title = "批量删除个人铃音库", businessType = BusinessType.DELETE, operatorLogType = OperatorLogType.THREENETS)
+    public AjaxResult batchDeleteRing(String msisdn, String vals) {
         try {
-            return threeNetsChildOrderService.batchDeleteRing(msisdn,vals);
+            return threeNetsChildOrderService.batchDeleteRing(msisdn, vals);
         } catch (Exception e) {
-            log.error("批量删除个人铃音库 方法：batchDeleteRing 错误信息",e);
+            log.error("批量删除个人铃音库 方法：batchDeleteRing 错误信息", e);
             return AjaxResult.error(e.getMessage());
         }
     }
 
     /**
      * 联通工具箱-->用户信息
+     *
      * @param phoneNumber
      * @return
      */
     @PutMapping("/threenets/getUnicomUserInfoByPhoneNumber/{phoneNumber}")
     @ResponseBody
-    @Log(title = "联通工具箱-->用户信息",operatorLogType = OperatorLogType.THREENETS)
+    @Log(title = "联通工具箱-->用户信息", operatorLogType = OperatorLogType.THREENETS)
     public AjaxResult getUnicomUserInfoByPhoneNumber(@PathVariable String phoneNumber) {
         try {
             return threeNetsChildOrderService.getUnicomUserInfoByPhoneNumber(phoneNumber);
@@ -348,12 +361,13 @@ public class ThreeNetsChildOrderController {
 
     /**
      * 联通工具箱-->用户信息-->删除某条用户信息
+     *
      * @param msisdn
      * @return
      */
     @PutMapping("/threenets/deleteSilentMemberByMsisdn/{msisdn}")
     @ResponseBody
-    @Log(title = "删除联通某条用户信息",businessType = BusinessType.DELETE,operatorLogType = OperatorLogType.THREENETS)
+    @Log(title = "删除联通某条用户信息", businessType = BusinessType.DELETE, operatorLogType = OperatorLogType.THREENETS)
     public AjaxResult deleteSilentMemberByMsisdn(@PathVariable String msisdn) {
         try {
             return threeNetsChildOrderService.deleteSilentMemberByMsisdn(msisdn);

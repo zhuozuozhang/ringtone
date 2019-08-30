@@ -680,7 +680,7 @@ public class MiguApi implements Serializable {
                     miguAddRingRespone.setMsg("集团还有铃音正在分发中，不能上传铃音");
                     miguAddRingRespone.setSuccess(false);
                 }else {
-                    miguAddRingRespone.setMsg("上传成功");
+                    miguAddRingRespone.setMsg("激活中");
                     miguAddRingRespone.setSuccess(true);
                 }
             }

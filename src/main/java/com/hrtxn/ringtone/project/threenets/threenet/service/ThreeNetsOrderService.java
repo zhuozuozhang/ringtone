@@ -61,6 +61,7 @@ public class ThreeNetsOrderService {
 
     @Autowired
     private ThreeNetsAsyncService threeNetsAsyncService;
+
     /**
      * 根据id查询
      *
@@ -176,15 +177,29 @@ public class ThreeNetsOrderService {
      * @return
      */
     public AjaxResult isRepetitionByName(String name) {
-        name = name + DateUtils.getTimeRadom();
-        List<ThreenetsOrder> orders = threenetsOrderMapper.isRepetitionByName(name);
-        if (orders == null || orders.isEmpty()) {
-            ThreenetsOrder order= new ThreenetsOrder();
-            order.setCompanyName(name);
-            threenetsOrderMapper.insertThreenetsOrder(order);
-            return AjaxResult.success(order,"");
-        } else {
+        boolean isItRedundant = false;
+        ThreenetsOrder order = new ThreenetsOrder();
+        List<ThreenetsOrder> list = threenetsOrderMapper.isRepetitionByName(name);
+        if (list != null && list.size() >= 1) {
+            for (int i = 0; i < list.size(); i++) {
+                String cName = list.get(i).getCompanyName();
+                if (cName.length() <= 6) {
+                    continue;
+                }
+                boolean result = cName.substring(cName.length() - 6).matches("[0-9]+");
+                if (result) {
+                    isItRedundant = cName.substring(0, cName.length() - 6).equals(name);
+                } else {
+                    isItRedundant = cName.equals(name);
+                }
+            }
+        }
+        if (isItRedundant) {
             return AjaxResult.error("商户名称不允许重复！");
+        } else {
+            order.setCompanyName(name + DateUtils.getTimeRadom());
+            threenetsOrderMapper.insertThreenetsOrder(order);
+            return AjaxResult.success(order, "");
         }
     }
 
@@ -206,7 +221,7 @@ public class ThreeNetsOrderService {
         order.setUserId(ShiroUtils.getSysUser().getId());
         order.setCreateTime(new Date());
         order.setStatus("审核通过");
-        return  order;
+        return order;
     }
 
 
@@ -273,11 +288,11 @@ public class ThreeNetsOrderService {
                 ThreenetsChildOrder childOrder = list.get(i);
                 boolean flag = false;
                 if (operator.equals(Const.OPERATORS_TELECOM)) {
-                    flag = ConfigUtil.getAreaArray("unable_to_open_area",childOrder.getProvince());
+                    flag = ConfigUtil.getAreaArray("unable_to_open_area", childOrder.getProvince());
                 }
-                if (flag){
-                    childOrder.setRemark("电信当前不提供"+childOrder.getProvince()+"地区的服务");
-                    return AjaxResult.error("电信当前不提供"+childOrder.getProvince()+"地区的服务");
+                if (flag) {
+                    childOrder.setRemark("电信当前不提供" + childOrder.getProvince() + "地区的服务");
+                    return AjaxResult.error("电信当前不提供" + childOrder.getProvince() + "地区的服务");
                 }
                 childOrder.setRingId(ring.getId());
                 childOrder.setRingName(ring.getRingName());
@@ -289,7 +304,7 @@ public class ThreeNetsOrderService {
             num++;
         }
         //保存订单附表
-        if (attached.getId() == null){
+        if (attached.getId() == null) {
             threeNetsOrderAttachedService.save(attached);
         }
         threeNetsChildOrderService.batchChindOrder(childOrders);

@@ -25,7 +25,6 @@ function showTable() {
             var companyName = data;
             if(!isNaN(number)){
                 companyName = data.substring(0,data.length-6);
-                console.log(companyName)
             }
             return "<div style='text-overflow:ellipsis;overflow:hidden;white-space:nowrap;width:150px;' title='"+data+"'><a href='/threenets/toMerchantsPhonePage/" + id + "'>"+companyName+"</a></div>";
         }

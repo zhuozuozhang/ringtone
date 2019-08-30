@@ -414,6 +414,9 @@ public class ApiUtils {
         if (StringUtils.isNotEmpty(result)) {
             Document doc = Jsoup.parse(result);
             Elements contents = doc.getElementsByTag("tbody");
+            if (contents.size() <= 0 ){
+                return flag;
+            }
             Elements trs = contents.get(0).getElementsByTag("tr");
             for (int i = 0; i < trs.size(); i++) {
                 Elements tds = trs.get(i).getElementsByTag("td");
@@ -1139,13 +1142,11 @@ public class ApiUtils {
      * 保存铃音
      *
      * @param ring
-     * @param circleID
-     * @param groupName
      * @return
      * @throws IOException
      * @throws NoLoginException
      */
-    public MiguAddRingRespone saveMiguRing(ThreenetsRing ring, String circleID, String groupName) throws IOException, NoLoginException {
+    public MiguAddRingRespone saveMiguRing(ThreenetsRing ring) throws IOException, NoLoginException {
         String trade = "其他普通行业";
         return miguApi.saveRing(ring, trade);
     }

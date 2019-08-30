@@ -86,9 +86,13 @@
         },{
             targets: [3],
             render: function (data, type, row, meta) {
+                var number = data.substring(data.length - 6,data.length)
+                var companyName = data;
+                if(!isNaN(number)){
+                    companyName = data.substring(0,data.length-6);
+                }
                 var id = row.parentOrderId;
-                var name = row.companyLinkman;
-                return "<div style='text-overflow:ellipsis;overflow:hidden;white-space:nowrap;width:150px;' title='" + data + "'><a href='/threenets/toMerchantsPhonePage/" + id + "'>"+name+"</a></div>";
+                return "<div style='text-overflow:ellipsis;overflow:hidden;white-space:nowrap;width:150px;' title='" + data + "'><a href='/threenets/toMerchantsPhonePage/" + id + "'>"+companyName+"</a></div>";
             }
         },{
             targets:[6],

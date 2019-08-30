@@ -46,7 +46,7 @@
             <include refid="Base_Column_List"/>
         FROM
             tb_threenets_order p
-        WHERE  1 = 1
+        WHERE  1 = 1 and user_id is not null
         <include refid="parameters" />
         ORDER BY create_time DESC
         <if test="page.page != null and page.pagesize != null and page.pagesize !=''">
@@ -59,13 +59,13 @@
             count(*)
         from
             tb_threenets_order p
-        where 1 = 1
+        where 1 = 1 and user_id is not null
         <include refid="parameters" />
     </select>
     <!-- 查询名称是否重复-->
     <select id="isRepetitionByName" resultMap="BaseResultMap" parameterType="java.lang.String">
         select * from tb_threenets_order
-        where company_name = #{name,jdbcType=VARCHAR}
+        where company_name like '%${name}%'
     </select>
     <!-- 根据ID获取三网订单信息 -->
     <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer">

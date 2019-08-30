@@ -65,7 +65,7 @@ public interface ThreenetsOrderMapper {
      * @param name
      * @return
      */
-    List<ThreenetsOrder> isRepetitionByName(String name);
+    List<ThreenetsOrder> isRepetitionByName(@Param("name") String name);
 
     /**
      * 修改message为1（无）

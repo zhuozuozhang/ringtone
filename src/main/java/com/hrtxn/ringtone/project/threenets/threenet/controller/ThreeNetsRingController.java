@@ -47,7 +47,12 @@ public class ThreeNetsRingController {
         try {
             ThreenetsOrder order = threeNetsRingService.getOrderById(orderId);
             map.put("orderId", orderId);
-            map.put("companyName", order.getCompanyName());
+            if (order.getCompanyName().length() <= 6) {
+                map.put("companyName", order.getCompanyName());
+            } else {
+                boolean result = order.getCompanyName().substring(order.getCompanyName().length() - 6).matches("[0-9]+");
+                map.put("companyName", result ? order.getCompanyName().substring(0, order.getCompanyName().length() - 6) : order.getCompanyName());
+            }
             // 根据父级ID获取铃音运营商
             String operate = threeNetsRingService.getRingOperate(orderId);
             if (StringUtils.isNotEmpty(operate)) {

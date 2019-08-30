@@ -125,7 +125,8 @@ public class ThreeNetsAsyncService {
             //铃音
             ThreenetsRing ring = threenetsRingMapper.selectByPrimaryKey(childOrders.get(0).getRingId());
             ring.setOperateId(miguAddGroupRespone.getCircleId());
-            MiguAddRingRespone ringRespone = utils.saveMiguRing(ring, attached.getMiguId(), order.getCompanyName());
+            ring.setFile(new File(RingtoneConfig.getProfile() + ring.getRingWay()));
+            MiguAddRingRespone ringRespone = utils.saveMiguRing(ring);
             if (ringRespone.isSuccess()) {
                 ring.setOperateRingId(ringRespone.getRingId());
                 threenetsRingMapper.updateByPrimaryKeySelective(ring);
@@ -284,6 +285,7 @@ public class ThreeNetsAsyncService {
                         threenetsRing.setOperate(1);
                         threenetsRing.setRingStatus(2);
                         threenetsRing.setRingName(path.substring(path.lastIndexOf("\\")));
+                        threenetsRing.setRemark("");
                         threenetsRingMapper.insertThreeNetsRing(threenetsRing);
                     }
                     //order.setUpLoadAgreement(new File(RingtoneConfig.getProfile() + threenetsRing.getRingWay()));
@@ -297,6 +299,8 @@ public class ThreeNetsAsyncService {
                         threenetsRing.setRingWay(path);
                         threenetsRing.setOperate(2);
                         threenetsRing.setRingStatus(2);
+                        threenetsRing.setRemark("");
+                        threenetsRing.setRingName(path.substring(path.lastIndexOf("\\")));
                         threenetsRingMapper.insertThreeNetsRing(threenetsRing);
                     }
                     List<ThreenetsChildOrder> orders = addMcardByDx(order, attached, list, request);
@@ -313,6 +317,8 @@ public class ThreeNetsAsyncService {
                         threenetsRing.setRingWay(path);
                         threenetsRing.setOperate(3);
                         threenetsRing.setRingStatus(2);
+                        threenetsRing.setRemark("");
+                        threenetsRing.setRingName(path.substring(path.lastIndexOf("\\")));
                         threenetsRingMapper.insertThreeNetsRing(threenetsRing);
                     }
                     list = addMemberByLt(order, attached, list);
@@ -371,9 +377,12 @@ public class ThreeNetsAsyncService {
                 }
                 return list;
             }
-            MiguAddRingRespone ringRespone = apiUtils.saveMiguRing(ring, attached.getMiguId(), "");
+            ring.setFile(new File(RingtoneConfig.getProfile() + ring.getRingWay()));
+            ring.setOperateId(attached.getMiguId());
+            MiguAddRingRespone ringRespone = apiUtils.saveMiguRing(ring);
             if (ringRespone.isSuccess()) {
                 ring.setOperateRingId(ringRespone.getRingId());
+                ring.setRemark(ringRespone.getMsg());
                 threenetsRingMapper.updateByPrimaryKeySelective(ring);
             }
         }
