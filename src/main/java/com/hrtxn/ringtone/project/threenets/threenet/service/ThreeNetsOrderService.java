@@ -294,10 +294,6 @@ public class ThreeNetsOrderService {
                     childOrder.setRemark("电信当前不提供" + childOrder.getProvince() + "地区的服务");
                     return AjaxResult.error("电信当前不提供" + childOrder.getProvince() + "地区的服务");
                 }
-                childOrder.setRingId(ring.getId());
-                childOrder.setRingName(ring.getRingName());
-                childOrder.setIsVideoUser(ring.getRingType().equals("视频") ? true : false);
-                childOrder.setIsRingtoneUser(ring.getRingType().equals("视频") ? false : true);
                 childOrder.setPaymentType(Integer.parseInt(order.getPaymentType()));
                 childOrders.add(childOrder);
             }

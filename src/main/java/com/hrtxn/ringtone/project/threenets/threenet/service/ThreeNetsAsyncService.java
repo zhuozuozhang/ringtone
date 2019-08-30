@@ -340,10 +340,6 @@ public class ThreeNetsAsyncService {
         Integer sum = 0;
         for (int i = 0; i < orders.size(); i++) {
             ThreenetsChildOrder childOrder = orders.get(i);
-            childOrder.setRingName(ring.getRingName());
-            childOrder.setRingId(ring.getId());
-            childOrder.setIsVideoUser(ring.getRingType().equals("视频") ? true : false);
-            childOrder.setIsRingtoneUser(ring.getRingType().equals("视频") ? false : true);
             childOrder.setParentOrderId(ring.getOrderId());
             orders.set(i, childOrder);
             sum = sum + threenetsChildOrderMapper.updateThreeNetsChidOrder(childOrder);

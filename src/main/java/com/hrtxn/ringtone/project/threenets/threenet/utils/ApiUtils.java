@@ -958,7 +958,10 @@ public class ApiUtils {
                     // 根据父级订单ID以及电话号码查询子级订单信息
                     ThreenetsChildOrder threenetsChildOrder = SpringUtils.getBean(ThreenetsChildOrderMapper.class).findChildOrderByOrderIdAndPhone(orderId, phone);
                     if (threenetsChildOrder.getIsMonthly() == 2) {
+                        threenetsChildOrder.setRingId(threenetsRing.getId());
                         threenetsChildOrder.setRingName(ringName);
+                        threenetsChildOrder.setIsVideoUser(threenetsRing.getRingType().equals("视频") ? true : false);
+                        threenetsChildOrder.setIsRingtoneUser(threenetsRing.getRingType().equals("视频") ? false : true);
                         threenetsChildOrder.setRemark("您的请求已受理，请稍后在【商户列表 ->号码管理】中点击刷新操作查看");
                         // 执行修改子订单操作
                         int count = SpringUtils.getBean(ThreenetsChildOrderMapper.class).updateThreeNetsChidOrder(threenetsChildOrder);
@@ -983,23 +986,7 @@ public class ApiUtils {
             //跳转到商户
             mcardApi.toUserList(attached.getMcardId(), attached.getMcardDistributorId());
             String userList = mcardApi.getUserInfo(attached.getMcardDistributorId());
-            if (StringUtils.isNotEmpty(userList)) {
-                Document doc = Jsoup.parse(userList);
-                Elements contents = doc.getElementsByTag("tbody");
-                Elements trs = contents.get(0).getElementsByTag("tr");
-                for (int i = 0; i < trs.size(); i++) {
-                    Elements tds = trs.get(i).getElementsByTag("td");
-                    if (tds.size() <= 0) {
-                        continue;
-                    }
-                    if (tds.get(2).text().equals(phones)) {
-                        Elements tag = tds.get(11).getElementsByTag("i");
-                        Element element = tag.get(2);
-                        apersonnelId = element.attributes().get("data-id");
-                        String text = element.attributes().get("data-name");
-                    }
-                }
-            }
+            String[] phoness = phones.split(",");
             //跳转到铃音页面
             String ringList = mcardApi.toRingList(attached.getMcardDistributorId());
             //String ringList = mcardApi.toRingAlertList(apersonnelId,"61203" );
@@ -1017,12 +1004,42 @@ public class ApiUtils {
                     }
                 }
             }
-            if (StringUtils.isEmpty(ringId)||StringUtils.isEmpty(apersonnelId)){
-                return AjaxResult.error("电信铃音设置失败");
-            }
-            String result = mcardApi.settingRing(ringId, apersonnelId, "61204");
-            if (StringUtils.isNotEmpty(result) && result.indexOf("0000") > 0) {
-                sucMsg = "您的请求已受理，请稍后在【商户列表 ->号码管理】中点击刷新操作查看!";
+            if (StringUtils.isNotEmpty(userList)) {
+                for (String phone:phoness) {
+                    ThreenetsChildOrder threenetsChildOrder = SpringUtils.getBean(ThreenetsChildOrderMapper.class).findChildOrderByOrderIdAndPhone(orderId, phone);
+                    Document doc = Jsoup.parse(userList);
+                    Elements contents = doc.getElementsByTag("tbody");
+                    Elements trs = contents.get(0).getElementsByTag("tr");
+                    for (int i = 0; i < trs.size(); i++) {
+                        Elements tds = trs.get(i).getElementsByTag("td");
+                        if (tds.size() <= 0) {
+                            continue;
+                        }
+                        if (tds.get(2).text().equals(phone)) {
+                            Elements tag = tds.get(11).getElementsByTag("i");
+                            Element element = tag.get(2);
+                            apersonnelId = element.attributes().get("data-id");
+                            String text = element.attributes().get("data-name");
+                            String result = mcardApi.settingRing(ringId, apersonnelId, "61204");
+                            if (StringUtils.isNotEmpty(result) && result.indexOf("0000") > 0) {
+                                String ringName = StringUtils.subString(threenetsRing.getRingName(), '.');
+                                threenetsChildOrder.setRingName(ringName);
+                                threenetsChildOrder.setRemark("您的请求已受理，请稍后在【商户列表 ->号码管理】中点击刷新操作查看");
+                                threenetsChildOrder.setRingId(threenetsRing.getId());
+                                threenetsChildOrder.setIsVideoUser(false);
+                                threenetsChildOrder.setIsRingtoneUser(true);
+                                int count = SpringUtils.getBean(ThreenetsChildOrderMapper.class).updateThreeNetsChidOrder(threenetsChildOrder);
+                                if (count <= 0) {
+                                    failure++;
+                                }
+                                sucMsg = "您的请求已受理，请稍后在【商户列表 ->号码管理】中点击刷新操作查看!";
+                            } else {
+                                failure++;
+                            }
+                        }
+                    }
+
+                }
             }
         } else { // 联通
             String[] phoness = phones.split(",");
@@ -1035,7 +1052,10 @@ public class ApiUtils {
                         // 根据父级订单ID以及电话号码查询子级订单信息
                         ThreenetsChildOrder threenetsChildOrder = SpringUtils.getBean(ThreenetsChildOrderMapper.class).findChildOrderByOrderIdAndPhone(orderId, phone);
                         if (threenetsChildOrder.getIsMonthly() == 2) {
+                            threenetsChildOrder.setRingId(threenetsRing.getId());
                             threenetsChildOrder.setRingName(ringName);
+                            threenetsChildOrder.setIsVideoUser(false);
+                            threenetsChildOrder.setIsRingtoneUser(true);
                             threenetsChildOrder.setRemark("您的请求已受理，请稍后在【商户列表 ->号码管理】中点击刷新操作查看");
                             // 执行修改子订单操作
                             int count = SpringUtils.getBean(ThreenetsChildOrderMapper.class).updateThreeNetsChidOrder(threenetsChildOrder);
