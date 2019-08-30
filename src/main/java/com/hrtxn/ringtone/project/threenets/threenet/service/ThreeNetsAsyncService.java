@@ -211,6 +211,13 @@ public class ThreeNetsAsyncService {
                 childOrder.setStatus("审核失败");
                 childOrders.set(i, childOrder);
             }
+            try {
+                ThreenetsRing ring = threenetsRingMapper.selectByPrimaryKey(childOrders.get(0).getRingId());
+                ring.setRemark("审核失败：电信商户—" + groupRespone.getMessage());
+                threenetsRingMapper.updateByPrimaryKeySelective(ring);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
         attached.setMcardId(groupRespone.getAuserId());
         //本地保存铃音和子表
@@ -221,16 +228,7 @@ public class ThreeNetsAsyncService {
             childOrders.set(i, childOrder);
             threenetsChildOrderMapper.updateThreeNetsChidOrder(childOrder);
         }
-        try {
-            ThreenetsRing ring = threenetsRingMapper.selectByPrimaryKey(childOrders.get(0).getRingId());
-            ring.setRemark("审核失败：电信商户—" + groupRespone.getMessage());
-            threenetsRingMapper.updateByPrimaryKeySelective(ring);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
         attached.setMcardStatus(Const.UNREVIEWED);
-        String jsonString4JavaPOJO = JsonUtil.getJsonString4JavaPOJO(attached);
-        System.out.println("电信添加商户："+jsonString4JavaPOJO);
         threeNetsOrderAttachedService.update(attached);
     }
 
@@ -463,7 +461,9 @@ public class ThreeNetsAsyncService {
      * @throws NoLoginException
      */
     public List<ThreenetsChildOrder> addMcardByDx(ThreenetsOrder order, ThreeNetsOrderAttached attached, List<ThreenetsChildOrder> list, BaseRequest request) throws IOException, NoLoginException {
-        if (attached.getMcardId() == null) {
+        String remark = "请等待电信商户审核完成！";
+        String status = "待审核";
+        if (StringUtils.isEmpty(attached.getMcardId())) {
             //新增电信商户需要先上传审核文件
             if (StringUtils.isNotEmpty(request.getCompanyUrl())) {
                 String path = apiUtils.mcardUploadFile(new File(RingtoneConfig.getProfile() + request.getCompanyUrl()));
@@ -484,12 +484,13 @@ public class ThreeNetsAsyncService {
             McardAddGroupRespone respone = apiUtils.addOrderByDx(order, attached);
             if (respone.getCode().equals("0000")) {
                 attached.setMcardId(respone.getAuserId());
-                attached.setMcardStatus(Const.REVIEWED);
-                threeNetsOrderAttachedService.update(attached);
-            } else {
-                attached.setMcardStatus(Const.UNREVIEWED);
-                return new ArrayList<>();
             }
+            if (respone.getCode().equals(Const.ILLEFAL_AREA)) {
+                status = "审核失败";
+                remark = "审核失败：电信商户—" + respone.getMessage();
+            }
+            attached.setMcardStatus(Const.UNREVIEWED);
+            threeNetsOrderAttachedService.update(attached);
         }
         //特殊处理，需要先进入对应商户，然后进行成员添加
         if (attached.getMcardStatus() == 1) {
@@ -498,7 +499,12 @@ public class ThreeNetsAsyncService {
         for (int i = 0; i < list.size(); i++) {
             ThreenetsChildOrder childOrder = list.get(i);
             childOrder.setOperateId(attached.getMiguId());
-            childOrder.setStatus("待审核");
+            if (childOrder.getLinkmanTel().equals(order.getLinkmanTel())){
+                childOrder.setStatus(status);
+                childOrder.setRemark(remark);
+            }else {
+                childOrder.setStatus("待审核");
+            }
             list.set(i, childOrder);
         }
         return list;
@@ -518,16 +524,4 @@ public class ThreeNetsAsyncService {
      * 创建电信商户
      */
     private void createTelecomMerchant(){}
-
-    /**
-     *添加移动铃音
-     */
-    private void addAMobileRingTone(ThreenetsRing ring,String circleID){
-        try {
-
-
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-    }
 }

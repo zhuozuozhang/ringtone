@@ -2,7 +2,6 @@ package com.hrtxn.ringtone.common.utils;
 
 import com.hrtxn.ringtone.project.system.config.domain.SystemConfig;
 import com.hrtxn.ringtone.project.system.config.mapper.SystemConfigMapper;
-import com.sun.org.apache.xpath.internal.operations.Bool;
 
 import java.util.Arrays;
 import java.util.List;

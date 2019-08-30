@@ -4,6 +4,7 @@ import com.hrtxn.ringtone.common.constant.AjaxResult;
 import com.hrtxn.ringtone.common.domain.BaseRequest;
 import com.hrtxn.ringtone.common.domain.Page;
 import com.hrtxn.ringtone.common.exception.NoLoginException;
+import com.hrtxn.ringtone.common.utils.Const;
 import com.hrtxn.ringtone.common.utils.DateUtils;
 import com.hrtxn.ringtone.common.utils.ShiroUtils;
 import com.hrtxn.ringtone.common.utils.StringUtils;
@@ -106,7 +107,7 @@ public class ThreeNetsChildOrderService {
         }
         Boolean aBoolean = utils.normalBusinessInfo(order);
         if (aBoolean) {
-            attached.setMcardStatus(1);
+            attached.setMcardStatus(Const.REVIEWED);
             ThreenetsChildOrder param = new ThreenetsChildOrder();
             param.setParentOrderId(order.getId());
             param.setStatus("未审核");
@@ -216,7 +217,7 @@ public class ThreeNetsChildOrderService {
         List<ThreenetsChildOrder> list = formattedPhone(threenetsChildOrder.getMemberTels(), request.getParentOrderId());
         ThreeNetsOrderAttached attached = threeNetsOrderAttachedService.selectByParentOrderId(threenetsChildOrder.getParentOrderId());
         //克隆
-        BeanUtils.copyProperties(attached, request);
+        //BeanUtils.copyProperties(attached, request);
         if (StringUtils.isEmpty(attached.getMiguId())) {
             attached.setMiguPrice(threenetsChildOrder.getMiguPrice() != null ? threenetsChildOrder.getMiguPrice() : threenetsChildOrder.getSpecialPrice());
         }
