@@ -9,21 +9,13 @@ import com.hrtxn.ringtone.freemark.enums.OperatorLogType;
 import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreenetsChildOrder;
 import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreenetsOrder;
 import com.hrtxn.ringtone.project.threenets.threenet.service.ThreeNetsChildOrderService;
-import com.hrtxn.ringtone.project.threenets.threenet.service.ThreeNetsOrderAttachedService;
-import com.hrtxn.ringtone.project.threenets.threenet.service.ThreeNetsOrderService;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections.map.HashedMap;
-import org.aspectj.weaver.loadtime.Aj;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpSession;
-import java.io.IOException;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Author:lile
@@ -36,8 +28,6 @@ public class ThreeNetsChildOrderController {
 
     @Autowired
     private ThreeNetsChildOrderService threeNetsChildOrderService;
-    @Autowired
-    private ThreeNetsOrderService threeNetsOrderService;
 
     /**
      * 号码管理设置铃音

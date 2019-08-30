@@ -1173,7 +1173,8 @@ public class ApiUtils {
      * @throws IOException
      * @throws NoLoginException
      */
-    public boolean addRingByDx(ThreenetsRing ring) {
+    public boolean addRingByDx(ThreenetsRing ring,ThreeNetsOrderAttached attached) {
+        mcardApi.toUserList(attached.getMcardId(), attached.getMcardDistributorId());
         return mcardApi.uploadRing(ring);
     }
 
@@ -1217,12 +1218,13 @@ public class ApiUtils {
         List<ThreenetsChildOrder> newList = new ArrayList<>();
         mcardApi.toUserList(circleId, distributorId);
         for (int i = 0; i < orders.size(); i++) {
+            ThreenetsChildOrder childOrder = orders.get(i);
             if (unableToOpenArea.getInfo().indexOf(orders.get(i).getProvince()) > -1) {
                 continue;
             }
             McardAddPhoneRespone mcardAddPhoneRespone = mcardApi.addApersonnel(orders.get(i), distributorId);
+            childOrder.setRemark(mcardAddPhoneRespone.getMessage());
             if (mcardAddPhoneRespone.getCode().equals("0000")) {
-                ThreenetsChildOrder childOrder = orders.get(i);
                 childOrder.setStatus("审核成功");
                 newList.add(childOrder);
             }

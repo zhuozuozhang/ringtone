@@ -68,6 +68,7 @@ public class ThreeNetsChildOrderService {
     public ThreenetsOrder getOrderById(Integer id) throws Exception {
         ThreenetsOrder order = threenetsOrderMapper.selectByPrimaryKey(id);
         refreshDxInfo(order);
+        //threeNetsAsyncService.refreshTelecomMerchantInfo(order);
         return order;
     }
 
@@ -124,7 +125,7 @@ public class ThreeNetsChildOrderService {
                     }
                     ThreenetsRing ring = rings.get(i);
                     ring.setFile(new File(RingtoneConfig.getProfile() + ring.getRingWay()));
-                    utils.addRingByDx(rings.get(i));
+                    utils.addRingByDx(rings.get(i),attached);
                 }
                 for (int i = 0; i < childOrders.size(); i++) {
                     threenetsChildOrderMapper.updateThreeNetsChidOrder(childOrders.get(i));

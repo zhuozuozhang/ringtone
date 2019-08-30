@@ -5,7 +5,6 @@ import com.hrtxn.ringtone.common.domain.OrderRequest;
 import com.hrtxn.ringtone.common.exception.NoLoginException;
 import com.hrtxn.ringtone.common.utils.Const;
 import com.hrtxn.ringtone.common.utils.StringUtils;
-import com.hrtxn.ringtone.common.utils.json.JsonUtil;
 import com.hrtxn.ringtone.freemark.config.systemConfig.RingtoneConfig;
 import com.hrtxn.ringtone.project.system.File.service.FileService;
 import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreeNetsOrderAttached;
@@ -524,4 +523,49 @@ public class ThreeNetsAsyncService {
      * 创建电信商户
      */
     private void createTelecomMerchant(){}
+
+    /**
+     * 刷新电信商户信息，是否审核成功
+     *
+     * @param order
+     */
+    @Async
+    public void refreshTelecomMerchantInfo(ThreenetsOrder order){
+        ApiUtils utils = new ApiUtils();
+        ThreeNetsOrderAttached attached = threeNetsOrderAttachedService.selectByParentOrderId(order.getId());
+        if (attached == null){
+            return;
+        }
+        if (StringUtils.isEmpty(attached.getMcardId()) || attached.getMcardStatus().equals(Const.REVIEWED)) {
+            return;
+        }
+        Boolean aBoolean = apiUtils.normalBusinessInfo(order);
+        if (aBoolean) {
+            attached.setMcardStatus(Const.REVIEWED);
+            ThreenetsChildOrder param = new ThreenetsChildOrder();
+            param.setParentOrderId(order.getId());
+            param.setStatus("未审核");
+            try {
+                //保存成员
+                List<ThreenetsChildOrder> childOrders = threenetsChildOrderMapper.listByParamNoPage(param);
+                childOrders = utils.addPhoneByDx(childOrders, attached.getMcardId(),attached.getMcardDistributorId());
+                threeNetsOrderAttachedService.update(attached);
+                //保存铃音
+                List<ThreenetsRing> rings = threenetsRingMapper.selectByOrderId(order.getId());
+                for (int i = 0; i < rings.size(); i++) {
+                    if (rings.get(i).getOperate() != 2) {
+                        continue;
+                    }
+                    ThreenetsRing ring = rings.get(i);
+                    ring.setFile(new File(RingtoneConfig.getProfile() + ring.getRingWay()));
+                    utils.addRingByDx(rings.get(i),attached);
+                }
+                for (int i = 0; i < childOrders.size(); i++) {
+                    threenetsChildOrderMapper.updateThreeNetsChidOrder(childOrders.get(i));
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
 }

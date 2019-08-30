@@ -217,11 +217,11 @@ public class ThreeNetsRingService {
      * @throws IOException
      * @throws NoLoginException
      */
-    private void saveMcardRing(ThreenetsRing ring)throws IOException,NoLoginException{
+    private void saveMcardRing(ThreenetsRing ring){
         ring.setFile(new File(RingtoneConfig.getProfile() + ring.getRingWay()));
         ThreeNetsOrderAttached attached = threeNetsOrderAttachedService.selectByParentOrderId(ring.getOrderId());
         ring.setOperateId(attached.getMcardId());
-        boolean flag = apiUtils.addRingByDx(ring);
+        boolean flag = apiUtils.addRingByDx(ring,attached);
         if (flag) {
             threenetsRingMapper.updateByPrimaryKeySelective(ring);
             fileService.updateStatus(ring.getRingWay());
@@ -273,12 +273,16 @@ public class ThreeNetsRingService {
     public void cloneRing(Integer id) throws Exception {
         ThreenetsRing ring = threenetsRingMapper.selectByPrimaryKey(id);
         ring.setRingStatus(2);
+        ring.setRemark("");
         threenetsRingMapper.insertThreeNetsRing(ring);
         if (ring.getOperate() == 3) {
             saveSwxlRing(ring);
         }
         if (ring.getOperate() == 1) {
             saveMiguRing(ring);
+        }
+        if (ring.getOperate() == 2) {
+            saveMcardRing(ring);
         }
     }
 
