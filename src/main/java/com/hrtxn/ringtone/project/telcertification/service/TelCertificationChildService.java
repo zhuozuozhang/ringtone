@@ -5,19 +5,17 @@ import com.hrtxn.ringtone.common.domain.BaseRequest;
 import com.hrtxn.ringtone.common.domain.Page;
 import com.hrtxn.ringtone.common.utils.DateUtils;
 import com.hrtxn.ringtone.common.utils.StringUtils;
+import com.hrtxn.ringtone.project.system.consumelog.mapper.ConsumeLogMapper;
+import com.hrtxn.ringtone.project.system.consumelog.service.ConsumeLogService;
 import com.hrtxn.ringtone.project.telcertification.domain.CertificationChildOrder;
-import com.hrtxn.ringtone.project.telcertification.domain.CertificationConsumeLog;
 import com.hrtxn.ringtone.project.telcertification.mapper.CertificationChildOrderMapper;
-import com.hrtxn.ringtone.project.telcertification.mapper.CertificationConsumeLogMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.ModelMap;
 
 import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -29,8 +27,6 @@ import java.util.List;
 public class TelCertificationChildService {
     @Autowired
     private CertificationChildOrderMapper certificationChildOrderMapper;
-    @Autowired
-    private CertificationConsumeLogMapper certificationConsumeLogMapper;
 
     public int getCount() {
         return certificationChildOrderMapper.getCount();
@@ -62,23 +58,6 @@ public class TelCertificationChildService {
         return AjaxResult.success(theChildList,"获取失败",theChildList.size());
     }
 
-    /**
-     * 显示费用支出列表
-     * @param page
-     * @param request
-     * @return
-     */
-    public AjaxResult getTheTelCerCostLogList(Page page,BaseRequest request) {
-        page.setPage((page.getPage() - 1) * page.getPagesize());
-        List<CertificationConsumeLog> allCostLogList = certificationConsumeLogMapper.getAllCostLogList(page,request);
-        int totalcount = certificationConsumeLogMapper.getCount();
-        List<CertificationConsumeLog> theCostLogList = new ArrayList<CertificationConsumeLog>();
-        if(request.getPhoneNum() != null && request.getPhoneNum() != ""){
-            theCostLogList = certificationConsumeLogMapper.getTheTelCerCostLogList(page,request);
-            return AjaxResult.success(theCostLogList,"获取某条消费记录",theCostLogList.size());
-        }
-        return AjaxResult.success(allCostLogList,"获取全部消费记录",totalcount);
-    }
 
     /**
      * 获取即将到期的号码
@@ -174,6 +153,11 @@ public class TelCertificationChildService {
 
     }
 
+    /**
+     * 根据id删除号码认证
+     * @param id
+     * @return
+     */
     public AjaxResult deleteTelCerChild(Integer id) {
         if (StringUtils.isNotNull(id) && id != 0) {
             int count = certificationChildOrderMapper.deleteByPrimaryKey(id);
@@ -185,6 +169,11 @@ public class TelCertificationChildService {
         return AjaxResult.error("参数格式错误！");
     }
 
+    /**
+     * 修改号码认证子订单的状态
+     * @param certificationChildOrder
+     * @return
+     */
     public AjaxResult editChildStatus(CertificationChildOrder certificationChildOrder) {
         CertificationChildOrder childOrder = certificationChildOrder;
         if (StringUtils.isNotNull(certificationChildOrder) && StringUtils.isNotNull(certificationChildOrder.getId())  && certificationChildOrder.getId() != 0) {
@@ -197,6 +186,11 @@ public class TelCertificationChildService {
         return AjaxResult.error("参数格式错误！");
     }
 
+    /**
+     * 实时编辑业务反馈
+     * @param certificationChildOrder
+     * @return
+     */
     public AjaxResult editFeedBackById(CertificationChildOrder certificationChildOrder) {
         if (StringUtils.isNotNull(certificationChildOrder) && StringUtils.isNotNull(certificationChildOrder.getId())  && certificationChildOrder.getId() != 0) {
             int count = certificationChildOrderMapper.editFeedBackById(certificationChildOrder);
@@ -234,6 +228,11 @@ public class TelCertificationChildService {
         return AjaxResult.success(true, "保存成功");
     }
 
+    /**
+     * 根据电话号码获取号码认证子订单的父id
+     * @param phoneNum
+     * @return
+     */
     public int getTelcerChildParentIdByPhoneNum(String phoneNum) {
         return certificationChildOrderMapper.getTelcerChildParentIdByPhoneNum(phoneNum);
     }

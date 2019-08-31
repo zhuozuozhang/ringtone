@@ -25,4 +25,6 @@ public interface CertificationOrderMapper {
     CertificationOrder getTelCerOrderById(Integer id);
 
     int deleteByPrimaryKey(@Param("id") Integer id);
+
+    CertificationOrder getTelCerOrderByChildOrder(String userTel);
 }

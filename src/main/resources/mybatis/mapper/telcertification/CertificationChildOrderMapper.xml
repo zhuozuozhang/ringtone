@@ -37,7 +37,7 @@
             LIMIT #{page.page},#{page.pagesize}
         </if>
     </sql>
-
+<!--获取子订单总数-->
     <select id="getCount" resultType="int">
         select count(*) from tb_telcertification_child_order
     </select>
@@ -52,12 +52,12 @@
         ORDER BY tel_child_order_ctime DESC
         <include refid="page"/>
     </select>
-
+<!--根据父id获取成员数量-->
     <select id="getMemberCountByParentId" parameterType="int" resultType="int">
     select count(*) from tb_telcertification_child_order
     where parent_order_id = #{parent_order_id,jdbcType=INTEGER}
   </select>
-
+<!--根据id获取所有号码认证数据-->
     <select id="getTelCerChildById" parameterType="int" resultMap="BaseResultMap">
     SELECT * FROM tb_telcertification_child_order WHERE id = #{id}
   </select>
@@ -93,10 +93,30 @@
         </set>
         WHERE id = #{id,jdbcType=INTEGER}
     </update>
-
+<!--根据成员号码获取父订单id-->
     <select id="getTelcerChildParentIdByPhoneNum" parameterType="java.lang.String" resultType="int">
         SELECT parent_order_id
         FROM tb_telcertification_child_order
+        WHERE tel_child_order_phone = #{telChildOrderPhone,jdbcType=VARCHAR}
+    </select>
+
+    <!--修改成员状态、提交时间，开通时间-->
+    <update id="editChildAfterRenew" parameterType="com.hrtxn.ringtone.project.telcertification.domain.CertificationChildOrder">
+        UPDATE tb_telcertification_child_order
+        <set>
+            <if test="telChildOrderStatus != null">
+                tel_child_order_status = #{telChildOrderStatus,jdbcType=VARCHAR},
+            </if>
+            <if test="telChildOrderCtime != null">
+                tel_child_order_ctime = #{telChildOrderCtime,jdbcType=TIMESTAMP},
+            </if>
+                tel_child_order_open_time = #{telChildOrderOpenTime,jdbcType=TIMESTAMP},
+        </set>
+        WHERE id = #{id,jdbcType=INTEGER}
+    </update>
+<!--根据子订单电话号码获得全部列表-->
+    <select id="getTelcerChildByPhoneNum" parameterType="java.lang.String" resultMap="BaseResultMap">
+        SELECT * FROM tb_telcertification_child_order
         WHERE tel_child_order_phone = #{telChildOrderPhone,jdbcType=VARCHAR}
     </select>
 

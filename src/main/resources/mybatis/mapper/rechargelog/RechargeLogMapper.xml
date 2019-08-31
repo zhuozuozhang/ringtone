@@ -103,4 +103,8 @@
     <select id="getCount" resultType="java.lang.Integer">
         SELECT COUNT(*) FROM sys_recharge_log
     </select>
+<!--获取最新的充值记录-->
+    <select id="findTheNewestMoney" resultType="java.lang.Float">
+        SELECT recharge_money FROM sys_recharge_log ORDER BY recharge_time DESC LIMIT 1
+    </select>
 </mapper>

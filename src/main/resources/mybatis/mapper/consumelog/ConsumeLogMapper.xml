@@ -24,6 +24,15 @@
     tel_consume_log_expire_time, user_id,consume_remark
   </sql>
 
+  <sql id="parameters">
+<!--    <if test="param != null and param.id != null and param.id != ''">-->
+<!--      AND scl.id = #{param.id}-->
+<!--    </if>-->
+    <if test="param != null and param.phoneNum != null and param.phoneNum != ''">
+      AND scl.user_tel = #{param.phoneNum}
+    </if>
+  </sql>
+
   <sql id="page">
     <if test="page.page != null and page.pagesize != null and page.pagesize !=''">
       LIMIT #{page.page},#{page.pagesize}
@@ -49,6 +58,16 @@
     WHERE
         user_id = #{id}
     ORDER BY consume_time DESC
+  </select>
+<!--  根据成员号码获得消费记录-->
+  <select id="getTheTelCerCostLogList" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List"/>
+    FROM sys_consume_log scl
+    WHERE 1=1
+    <include refid="parameters"/>
+    ORDER BY consume_time DESC
+    <include refid="page"/>
   </select>
 
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" >

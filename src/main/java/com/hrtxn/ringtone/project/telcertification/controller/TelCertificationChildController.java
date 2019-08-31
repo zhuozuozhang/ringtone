@@ -3,17 +3,17 @@ package com.hrtxn.ringtone.project.telcertification.controller;
 import com.hrtxn.ringtone.common.constant.AjaxResult;
 import com.hrtxn.ringtone.common.domain.BaseRequest;
 import com.hrtxn.ringtone.common.domain.Page;
+import com.hrtxn.ringtone.common.utils.StringUtils;
 import com.hrtxn.ringtone.freemark.config.logConfig.Log;
 import com.hrtxn.ringtone.freemark.enums.BusinessType;
 import com.hrtxn.ringtone.freemark.enums.OperatorLogType;
+import com.hrtxn.ringtone.project.system.consumelog.domain.ConsumeLog;
+import com.hrtxn.ringtone.project.system.consumelog.service.ConsumeLogService;
 import com.hrtxn.ringtone.project.telcertification.domain.CertificationChildOrder;
-import com.hrtxn.ringtone.project.telcertification.domain.CertificationConsumeLog;
 import com.hrtxn.ringtone.project.telcertification.domain.CertificationOrder;
 import com.hrtxn.ringtone.project.telcertification.service.TelCertificationChildService;
 import com.hrtxn.ringtone.project.telcertification.service.TelCertificationService;
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.aspectj.weaver.loadtime.Aj;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -36,6 +36,8 @@ public class TelCertificationChildController {
     private TelCertificationChildService telCertificationChildService;
     @Autowired
     private TelCertificationService telCertificationService;
+    @Autowired
+    private ConsumeLogService consumeLogService;
 
     /**
      * 进入成员管理页面
@@ -126,9 +128,9 @@ public class TelCertificationChildController {
     @ResponseBody
     public AjaxResult getTheTelCerCostLogList(Page page,BaseRequest request){
         try{
-            return telCertificationChildService.getTheTelCerCostLogList(page,request);
+            return consumeLogService.getConsumeLogList(page,request);
         }catch (Exception e){
-            log.error("获取号码认证子订单消费记录列表数据 方法：getTelCerCostLogList 错误信息",e);
+            log.error("获取号码认证子订单消费记录列表数据 方法：getTheTelCerCostLogList 错误信息",e);
         }
         return AjaxResult.error("获取数据失败");
     }
@@ -160,9 +162,25 @@ public class TelCertificationChildController {
      */
     @GetMapping("/toRenewPage/{phoneNum}")
     public String toRenewPage(@PathVariable String phoneNum,ModelMap map){
-        String s = phoneNum;
+        map.put("phoneNum",phoneNum);
         int id = telCertificationChildService.getTelcerChildParentIdByPhoneNum(phoneNum);
         CertificationOrder certificationOrder = telCertificationService.getTelCerOrderById(id,map);
         return "telcertification/renew";
+    }
+
+    /**
+     * 添加续费记录
+     * @param consumeLog
+     * @return
+     */
+    @PostMapping("/addRenewConsumeLog")
+    @ResponseBody
+    @Log(title = "添加续费记录", businessType = BusinessType.INSERT, operatorLogType = OperatorLogType.TELCERTIFICATION)
+    public AjaxResult addRenewConsumeLog(ConsumeLog consumeLog,ModelMap map) {
+        if(StringUtils.isNotNull(consumeLog) && StringUtils.isNotEmpty(consumeLog.getUserTel())){
+            return consumeLogService.addRenewConsumeLog(consumeLog);
+        }
+        return AjaxResult.error("参数格式错误！");
+
     }
 }

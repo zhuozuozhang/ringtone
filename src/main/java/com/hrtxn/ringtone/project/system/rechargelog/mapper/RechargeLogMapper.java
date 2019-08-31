@@ -32,4 +32,10 @@ public interface RechargeLogMapper {
     List<RechargeLog> getRechargeLogList(@Param("page") Page page);
 
     int getCount();
+
+    /**
+     * 找到最新一条充值记录
+     * @return
+     */
+    Float findTheNewestMoney();
 }

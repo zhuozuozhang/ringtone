@@ -78,6 +78,19 @@
     WHERE id = #{id,jdbcType=INTEGER}
   </delete>
 
+  <select id="getTelCerOrderByChildOrder" parameterType="java.lang.String" resultMap="BaseResultMap">
+    SELECT
+     <include refid="Base_Column_List"/>
+     FROM tb_telcertification_order
+    WHERE id IN
+    (
+        SELECT parent_order_id
+        FROM tb_telcertification_child_order
+        WHERE
+        tel_child_order_phone = #{telChildOrderPhone,jdbcType=VARCHAR}
+    )
+  </select>
+
 
   <insert id="insertTelCertifyOrder" parameterType="com.hrtxn.ringtone.project.telcertification.domain.CertificationOrder" >
 

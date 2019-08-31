@@ -21,6 +21,7 @@
 <div>
     <div>
         <h4 class="h4s">
+            <input type="hidden" id="phoneNum" th:value="${phoneNum}">
             <span>已开通的业务</span></br>
             <tr th:each="s:${service}">
                 <td th:text="${s.name} + ','"></td>
@@ -28,7 +29,7 @@
                 <td th:text="${s.cost} + '元'"></td></br>
             </tr>
         </h4>
-        <p class="zhifu">共需支付：<span th:text="${telCerOrder.unitPrice}">0</span><span>元</span></p>
+        <p class="zhifu">共需支付：<span id="unitPrice" th:text="${telCerOrder.unitPrice}">0</span><span>元</span></p>
     </div>
     <div class="renew_div">
         <div>
@@ -47,7 +48,7 @@
 <script th:src="@{/public/layui/lay/modules/layer.js}"></script>
 <script type="text/javascript" th:src="@{/public/dataTables/jquery.dataTables.min.js}"></script>
 <script type="text/javascript" th:src="@{/public/js/datatables.js}"></script>
-<script th:src="@{/client/telcertification/js/members.js}"></script>
 <script type="text/javascript" th:src="@{/public/js/numASMD.js}"></script>
 <script type="text/javascript" th:src="@{/public/js/ajax.js}"></script>
+<script th:src="@{/client/telcertification/js/members.js}"></script>
 </html>

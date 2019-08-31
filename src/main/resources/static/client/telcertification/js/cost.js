@@ -3,13 +3,14 @@ function showTelCerCostTable() {
         "phoneNum": $("#phoneNum").val()
     }
     var columns = [
-        {"data": null},
+        {"data": "id"},
         {"data": "userTel"},
         {"data": "telConsumeLogType"},
         {"data": "telConsumeLogStatus"},
-        {"data": "telConsumeLogPrice"},
-        {"data": "telConsumeLogCtime"},
-        {"data": "telConsumeLogOpenTime"}
+        {"data": "consumePrice"},
+        {"data": "consumeTime"},
+        {"data": "telConsumeLogOpenTime"},
+        {"data": "telConsumeLogExpireTime"}
     ];
     var columnDefs = [{
         targets:[2],

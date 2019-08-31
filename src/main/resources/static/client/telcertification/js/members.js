@@ -101,6 +101,23 @@ function Renewal(phoneNum){
 }
 // 确认续费
 function confirmRenew() {
+    var phoneNum = $("#phoneNum").val();
+
+    AjaxPost("/telcertify/addRenewConsumeLog",{
+        userTel:phoneNum
+    },function (res) {
+        if (res.code == 200 && res.data){
+            //发异步，把数据提交给后台
+            layer.alert("续费成功", {icon: 6},function () {
+                // 获得frame索引
+                var index = parent.layer.getFrameIndex(window.name);
+                //关闭当前frame
+                parent.layer.close(index);
+            });
+        }else{
+            layer.msg("续费失败！", {icon: 5, time: 1000});
+        }
+    });
 
 }
 
