@@ -91,8 +91,7 @@ public class ShiroConfig {
         filterChainDefinitionMap.put("/**/login/**", "anon");
         filterChainDefinitionMap.put("/**/notice/**", "anon");
         filterChainDefinitionMap.put("/favicon.ico", "anon");
-//      设置不拦截公众号资源
-        filterChainDefinitionMap.put("/public/**", "anon");
+//        filterChainDefinitionMap.put("/public/**", "anon");
 //        /**设置拦截所有资源*/
         filterChainDefinitionMap.put("/**", "authc");
         shiroFilterFactoryBean.setFilterChainDefinitionMap(filterChainDefinitionMap);

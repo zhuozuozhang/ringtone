@@ -58,6 +58,7 @@ function page(obj,pagesize,dataJsonStr,url,columns,columnDefs){
                 url: url,
                 cache : false,  //禁用缓存
                 data: dataJsonStr,   //传入已封装的参数
+                timeout:20000,
                 beforeSend:function(){
                     layuiLoding = layer.load(0, { //icon支持传入0-2
                         time:false,

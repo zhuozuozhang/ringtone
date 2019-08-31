@@ -223,9 +223,9 @@ public class KedaApi {
                             for (int j = 0; j < kedaRefresRingInfos.size(); j++) {
                                 if (kedaRingList.get(i).getRingNum().equals(kedaRefresRingInfos.get(j).getId().toString())) {
                                     if (kedaRefresRingInfos.get(j).getStatus() == 0) { // 待审核
-                                        kedaRingList.get(i).setRingStatus(2);
+                                        kedaRingList.get(i).setRingStatus(3);
                                     } else if (kedaRefresRingInfos.get(j).getStatus() == 1) { // 审核中
-                                        kedaRingList.get(i).setRingStatus(2);
+                                        kedaRingList.get(i).setRingStatus(3);
                                     } else if (kedaRefresRingInfos.get(j).getStatus() == 2) { // 审核通过
                                         kedaRingList.get(i).setRingStatus(3);
                                     } else { // 审核失败

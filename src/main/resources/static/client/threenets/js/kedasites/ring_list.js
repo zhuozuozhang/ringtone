@@ -44,13 +44,9 @@ function showTable() {
         targets: [6],
         render: function (data, type, row, meta) {
             var id = row.id;
-            var ringStatus = row.ringStatus;
-            var setRing = "";
-            if(ringStatus == 3 ){
-                setRing = "<a href='/threenets/clcy/toRingListSet/"+id+"/"+$("#orderId").val()+"/"+$("#name").html()+"'><i class='layui-icon layui-icon-set' title='设置铃音'></i></a>";
-            }
             return "<i class='layui-icon' title='查看广告词' onclick='advertising(\"" + row.ringContent + "\");'><img src='/client/threenets/images/see.png'></i>"
-                + setRing + '<i class="layui-icon layui-icon-delete" title="删除" onclick="deleteRing(' + id + ')"></i>';
+                +"<a href='/threenets/clcy/toRingListSet/"+id+"/"+$("#orderId").val()+"/"+$("#name").html()+"'><i class='layui-icon layui-icon-set' title='设置铃音'></i></a>"
+                + '<i class="layui-icon layui-icon-delete" title="删除" onclick="deleteRing(' + id + ')"></i>';
         }
     }];
     page("#set", 10, params, "/threenets/clcy/getKedaRingList", columns, columnDefs);
