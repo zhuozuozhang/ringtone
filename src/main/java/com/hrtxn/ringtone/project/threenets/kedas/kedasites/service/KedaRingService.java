@@ -63,7 +63,6 @@ public class KedaRingService {
         int count = kedaRingMapper.getCount(baseRequest);
         return AjaxResult.success(kedaRingList, "获取数据成功！", count);
     }
-
     /**
      * 添加鈴音
      *
@@ -117,14 +116,7 @@ public class KedaRingService {
         File source = new File(path + File.separator + ringName + fileType);
         int length = Mp3Util.getMp3TrackLength(source);
         if (length > 60) {return AjaxResult.error("文件时长大于60S");}
-        // 添加文件纪录
-        Uploadfile u = new Uploadfile();
-        u.setPath(File.separator + "keda" + filePath + ringName + fileType);
-        u.setStatus(1);
-        u.setCreatetime(new Date());
-        u.setFilename(ringName);
-        int i = uploadfileMapper.insertSelective(u);
-        log.info("疑难杂单--添加铃音--添加文件纪录" + i);
+
         // 同步添加铃音信息
         // 上传文件，得到URL
         AjaxResult ajaxResult = kedaApi.uploadRing(source);
@@ -146,11 +138,18 @@ public class KedaRingService {
         int i1 = kedaRingMapper.isertKedaRingOrder(kedaRing);
         log.info("疑难杂单添加铃音信息" + i1);
         if (i1 > 0) {
+            // 添加文件纪录
+            Uploadfile u = new Uploadfile();
+            u.setPath(File.separator + "keda" + filePath + ringName + fileType);
+            u.setCreatetime(new Date());
+            u.setFilename(ringName);
+            u.setStatus(2);
+            int i = uploadfileMapper.insertSelective(u);
+            log.info("疑难杂单--添加铃音--添加文件纪录" + i);
             return AjaxResult.success(true, "添加铃音成功！");
         }
         return AjaxResult.error("添加铃音失败！");
     }
-
     /**
      * 删除铃音
      *
@@ -172,7 +171,6 @@ public class KedaRingService {
         return AjaxResult.error("删除失败！");
 
     }
-
     /**
      * 疑难杂单铃音设置用户
      *
@@ -230,7 +228,6 @@ public class KedaRingService {
         }
         return ajaxResult;
     }
-
     /**
      * 获取铃音设置铃音列表
      *

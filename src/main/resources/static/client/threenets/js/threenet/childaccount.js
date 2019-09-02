@@ -46,7 +46,7 @@ function AddUser() {
 //重置密码
 function editMerchants(id) {
     layer.confirm('确认要重置密码为‘sg123456’吗？',function(index){
-        AjaxPut("/admin/updateUserPassword/"+id,{},function (res) {
+        AjaxPut("/admins/updateUserPassword/"+id,{},function (res) {
             if (res.data) {
                 layer.msg('重置密码成功!',{icon:1,time:1000});
             }else{

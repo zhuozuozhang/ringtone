@@ -69,6 +69,6 @@ IP：42.159.204.235
 密码：13151231635
 
 欣能汇
-网址：http://xnh.sinontech.com/companyringweb/testUser/index?showtopjsp=xnh
+网址：http://xnh.xnhkfpt.com/
 账号：15383861826
 密码: z2779292

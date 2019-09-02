@@ -76,7 +76,7 @@ function showEcharts(data){
 // 代理商搜索
 function searchEnterprise() {
     var enterprisename = $("#enterprisename").val();
-    AjaxPost("/admin/findUserLikeName/", {"name": enterprisename}, function (result) {
+    AjaxPost("/admins/findUserLikeName/", {"name": enterprisename}, function (result) {
         var data = result.data;
         let html = '<li class="lists_li" onclick="Sel(this);"><span style="display: none">0</span><span >全部汇总</span></li>'
         for (var i = 0; i < data.length; i++) {

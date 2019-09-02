@@ -58,7 +58,7 @@ spring:
 # 是否开启springboot 调试模式
 #debug: true
 
-# Shiro
+# shiro
 shiro:
   session:
     # Session超时时间（默认30分钟）
@@ -70,7 +70,7 @@ shiro:
 http:
   maxTotal: 100
   defaultMaxPerRoute: 20
-  connectTimeout: 1000
-  connectionRequestTimeout : 500
+  connectTimeout: 10000
+  connectionRequestTimeout : 5000
   socketTimeout: 10000
   staleConnectionCheckEnabled: true

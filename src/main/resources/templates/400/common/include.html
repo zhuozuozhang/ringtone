@@ -1,0 +1,14 @@
+<div th:fragment="footer">
+    <script th:src="@{/public/js/jquery.min.js}"></script>
+    <script th:src="@{/public/js/regular.js}"></script>
+    <script th:src="@{/admin/lib/layui/layui.js}"></script>
+    <script th:src="@{/public/layui/lay/modules/layer.js}"></script>
+    <script th:src="@{/public/dataTables/jquery.dataTables.min.js}"></script>
+    <script th:src="@{/public/js/ajax.js}"></script>
+    <script th:src="@{/public/js/datatables.js}"></script>
+    <script th:src="@{/client/400/js/xadmin.js}"></script>
+
+    <script th:inline="javascript">
+        var ctx = [[@{/}]];
+    </script>
+</div>

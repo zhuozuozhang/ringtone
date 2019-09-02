@@ -32,9 +32,4 @@ public interface CertificationChildOrderMapper {
     int editFeedBackById(CertificationChildOrder certificationChildOrder);
 
     int getTelcerChildParentIdByPhoneNum(String phoneNum);
-
-
-    int editChildAfterRenew(CertificationChildOrder childOrder);
-
-    CertificationChildOrder getTelcerChildByPhoneNum(String userTel);
 }
