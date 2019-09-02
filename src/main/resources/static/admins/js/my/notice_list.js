@@ -50,18 +50,18 @@ function showNoticeTable() {
         targets: [7],
         render: function (data, type, row, meta) {
             var noticeId = row.noticeId;
-            return "<a title='查看' onclick='x_admin_show(\"详细信息\",admins"+noticeId+"",800,570);' href='javascript:;'><i class='layui-icon'>&#xe63c;</i></a>"
-                +"<a title='编辑' onclick='changeNotice(\"编辑\"admins"+noticeId+"\",800,570)' href='javascript:;'><i class=\"layui-icon\">&#xe642;</i></a>"
+            return "<a title='查看' onclick='x_admin_show(\"详细信息\",\"/admin/toNoticeDetaiPage/"+noticeId+"\",800,570);' href='javascript:;'><i class='layui-icon'>&#xe63c;</i></a>"
+                +"<a title='编辑' onclick='changeNotice(\"编辑\",\"/admin/toUpdateNoticePage/"+noticeId+"\",800,570)' href='javascript:;'><i class=\"layui-icon\">&#xe642;</i></a>"
                 +"<a title='删除' onclick='notice_del(this,"+noticeId+");' href='javascript:;'><i class='layui-icon'>&#xe640;</i></a>";
         }
     }];
-    page("#notice_table", 10, {}, "/admins/getNoticeList", columns, columnDefs);
+    page("#notice_table", 10, {}, "/admin/getNoticeList", columns, columnDefs);
 }
 // 状态设置
 function notice_status(obj, id) {
     if ($(obj).attr('title') == '是') {
         layer.confirm('确认要禁用吗？', function (index) {
-            AjaxPut("/admins/updataNotiecStatus/"+id,{
+            AjaxPut("/admin/updataNotiecStatus/"+id,{
                 noticeStatus:false
             },function (res) {
                 if (res.code == 200 && res.data){
@@ -74,7 +74,7 @@ function notice_status(obj, id) {
         });
     } else {
         layer.confirm('确认要启用吗？', function (index) {
-            AjaxPut("/admins/updataNotiecStatus/"+id,{
+            AjaxPut("/admin/updataNotiecStatus/"+id,{
                 noticeStatus:true
             },function (res) {
                 if (res.code == 200 && res.data){
@@ -106,7 +106,7 @@ function changeNotice(title, url, w, h) {
 /*公告-删除*/
 function notice_del(obj, id) {
     layer.confirm('确认要删除吗？', function (index) {
-        AjaxDelete("/admins/deleteNotice/"+id,'',function (res) {
+        AjaxDelete("/admin/deleteNotice/"+id,'',function (res) {
             if (res.code = 200 && res.data){
                 //发异步删除数据
                 $(obj).parents("tr").remove();

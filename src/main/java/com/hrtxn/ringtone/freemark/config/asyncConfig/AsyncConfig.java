@@ -75,17 +75,19 @@ public class AsyncConfig {
      */
     @Async(value = "logTaskExecutor")
     public void loginLogTask(User user , LoginLog loginLog){
-        if(StringUtils.isNotNull(user) && StringUtils.isNotNull(loginLog)){
+        if(StringUtils.isNotNull(loginLog)){
             try {
                 log.info(" 开始执行添加登录记录操作 -->");
-                // 1、修改用户登录时间、登录IP
-                System.out.println(user.toString());
-                User _user = new User();
-                _user.setLoginIp(loginLog.getIpAdress());
-                _user.setLoginTime(new Date());
-                _user.setId(user.getId());
-                int b1 = SpringUtils.getBean(UserMapper.class).updateUserById(_user);
-                log.info(" 执行修改登录时间、ip，结果：【{}】",b1);
+                if (StringUtils.isNotNull(user)){
+                    // 1、修改用户登录时间、登录IP
+                    System.out.println(user.toString());
+                    User _user = new User();
+                    _user.setLoginIp(loginLog.getIpAdress());
+                    _user.setLoginTime(new Date());
+                    _user.setId(user.getId());
+                    int b1 = SpringUtils.getBean(UserMapper.class).updateUserById(_user);
+                    log.info(" 执行修改登录时间、ip，结果：【{}】",b1);
+                }
                 // 2、添加登录记录
                 boolean b = SpringUtils.getBean(LoginLogService.class).insertLoginLog(loginLog);
                 log.info("添加登录记录,结果:【{}】 --> ",b);

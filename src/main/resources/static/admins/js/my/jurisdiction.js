@@ -41,16 +41,16 @@ function showTable() {
             render: function (data, type, row, meta) {
                 var id = row.id;
                 return "<a title=\"是否设置管理员\" onclick='updateUserStatus(" + id + ");' ><i class=\"layui-icon\">&#xe642;</i></a>"
-                    + "<a title=\"设置权限\" onclick=\"toSetJurisdictionPage('权限设置',adadmins+id+",600,500);\"><i class=\"layui-icon\">&#xe63c;</i></a>";
+                    + "<a title=\"设置权限\" onclick=\"toSetJurisdictionPage('权限设置','/admin/toSetJurisdictionPage/"+id+"',600,500);\"><i class=\"layui-icon\">&#xe63c;</i></a>";
             }
         }];
-    page("#user_table", 10, param, "/admin/getUserList", columadminsolumnDefs);
+    page("#user_table", 10, param, "/admin/getUserList", columns, columnDefs);
 }
 
 // 修改用户角色
 function updateUserStatus(id) {
     layer.confirm('确认要修改吗？', function (index) {
-        AjaxPut("/admin/updateUserStatus/" admins {}, function (res) {
+        AjaxPut("/admin/updateUserStatus/" + id, {}, function (res) {
             if (res.code == 200 && res.data) {
                 layer.msg(res.msg, {icon: 6, time: 1000});
                 $('#user_table').DataTable().ajax.reload(null, false);

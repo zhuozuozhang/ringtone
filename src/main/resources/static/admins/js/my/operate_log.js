@@ -77,9 +77,9 @@ function showTable() {
         targets:[10],
         render:function (data, type, row, meta) {
             var id = row.operateLogId;
-            return " <a title=\"查看\" onclick=\"x_admin_show('详细信息',adadmins+id+",800,700)\" href=\"javascript:;\">"
+            return " <a title=\"查看\" onclick=\"x_admin_show('详细信息','/admin/toOperateLogDetailPage/"+id+"',800,700)\" href=\"javascript:;\">"
                 + "<i class=\"layui-icon\">&#xe63c;</i></a>";
         }
     }];
-    page("#example", 16, {}, "/admin/findAllOperateLog", adminsns, columnDefs);
+    page("#example", 16, {}, "/admin/findAllOperateLog", columns, columnDefs);
 }

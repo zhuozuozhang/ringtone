@@ -8,5 +8,5 @@ function showTable() {
         {"data": "loginLogStatus"}
     ];
     var columnDefs = [];
-    page("#example", 16, {}, "/admins/findAllLoginLog", columns, columnDefs);
+    page("#example", 16, {}, "/admin/findAllLoginLog", columns, columnDefs);
 }

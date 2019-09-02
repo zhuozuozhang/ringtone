@@ -30,7 +30,7 @@ public class MyWebConfig implements WebMvcConfigurer {
         // 客户端首页
         registry.addViewController("/system/index").setViewName("system/home");
         // 跳转到权限设置页面
-        registry.addViewController("/admins/toJurisdictionPage").setViewName("admin/system/jurisdiction/jurisdiction");
+        registry.addViewController("/admin/toJurisdictionPage").setViewName("admin/system/jurisdiction/jurisdiction");
         // 三网 跳转到商户列表
         registry.addViewController("/threenets/threeNetsOrderList").setViewName("threenets/threenet/merchants/merchants");
         // 疑难杂单 跳转到商户列表
@@ -49,7 +49,7 @@ public class MyWebConfig implements WebMvcConfigurer {
         // 设置不被拦截资源
         interceptorRegistry.excludePathPatterns("/");
         interceptorRegistry.excludePathPatterns("/login");
-        interceptorRegistry.excludePathPatterns("/admins/**");
+        interceptorRegistry.excludePathPatterns("/admin/**");
         interceptorRegistry.excludePathPatterns("/public/**");
         interceptorRegistry.excludePathPatterns("/system/**");
         interceptorRegistry.excludePathPatterns("/client/**");
