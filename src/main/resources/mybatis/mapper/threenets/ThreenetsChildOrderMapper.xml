@@ -395,6 +395,9 @@
         <if test="param != null and param.noEqualsStatus != null and param.noEqualsStatus != ''">
             AND p.status	!= '审核失败'
         </if>
+        <if test="param != null and param.status != null and param.status != ''">
+            AND p.status = '${param.status}'
+        </if>
 
     </sql>
 

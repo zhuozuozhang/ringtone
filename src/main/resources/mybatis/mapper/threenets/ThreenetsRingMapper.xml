@@ -78,7 +78,7 @@
         where id = #{id,jdbcType=INTEGER}
     </delete>
     <!-- 添加三网铃音 -->
-    <insert id="insertThreeNetsRing" parameterType="ThreenetsRing" useGeneratedKeys="true" keyProperty="id" >
+    <insert id="insertThreeNetsRing" parameterType="ThreenetsRing" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO tb_threenets_ring
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="ringName != null">
@@ -98,6 +98,9 @@
             </if>
             <if test="operateRingId != null">
                 operate_ring_id,
+            </if>
+            <if test="operateId != null">
+                operate_id,
             </if>
             <if test="ringWay != null">
                 ring_way,
@@ -130,6 +133,9 @@
             </if>
             <if test="operateRingId != null">
                 #{operateRingId,jdbcType=VARCHAR},
+            </if>
+            <if test="operateId != null">
+                #{operateId,jdbcType=VARCHAR},
             </if>
             <if test="ringWay != null">
                 #{ringWay,jdbcType=LONGVARCHAR},
@@ -167,6 +173,9 @@
             <if test="operateRingId != null">
                 operate_ring_id = #{operateRingId,jdbcType=VARCHAR},
             </if>
+            <if test="operateId != null">
+                operate_id = #{operateId,jdbcType=VARCHAR},
+            </if>
             <if test="ringWay != null">
                 ring_way = #{ringWay,jdbcType=LONGVARCHAR},
             </if>
@@ -182,13 +191,13 @@
     <!-- 根据条件获取铃音信息 -->
     <select id="getRingList" resultMap="BaseResultMap">
         select
-            <include refid="Base_Column_List"/>
+        <include refid="Base_Column_List"/>
         from
-            tb_threenets_ring r
+        tb_threenets_ring r
         where 1=1
-            <include refid="parameters"/>
+        <include refid="parameters"/>
         ORDER BY id DESC
-            <include refid="page"/>
+        <include refid="page"/>
     </select>
     <!-- 根据条件获取铃音数量 -->
     <select id="getCount" resultType="java.lang.Integer">

@@ -155,8 +155,7 @@
                 </div>
             </div>
             <input type="hidden" id="parentOrderId" name="parentOrderId" th:value="${orderId}">
-            <input type="hidden" id="miguId" name="miguId" th:value="${miguId}">
-            <input type="hidden" id="swxlId" name="swxlId" th:value="${swxlId}">
+            <input type="hidden" id="folderName" name="folderName" th:value="${folderName}">
             <input type="hidden" id="dxCount" value="0">
             <input type="hidden" id="ltCount" value="0">
             <div id="tijiao" class="newBlocPage-button" lay-submit lay-filter="formDemo">确定提交</div>
@@ -216,19 +215,20 @@
 
         //验证手机号
         function matchingOperate(phones) {
-            AjaxPost('/threenets/getOperate', {"phone": phones}, function (result) {
+            var parentOrderId = $("#parentOrderId").val();
+            AjaxPost('/threenets/getOperate', {"phone": phones,"parentOrderId":parentOrderId}, function (result) {
                 if (result.code == 200) {
                     //移动
-                    if (result.data[0] > 0 && $("#miguId").val() == "") {
+                    if (result.data.mobile > 0 && result.data.mobileStatus) {
                         $("#fee").show();
                     }
                     //电信
-                    if (result.data[1] > 0) {
+                    if (result.data.telecom > 0 && result.data.telecomStatus) {
                         $("#dxCount").val(1);
                         $("#fee1,#qyzzdiv").show();
                     }
                     //联通
-                    if (result.data[2] > 0 && $("#swxlId").val() == "") {
+                    if (result.data.unicom > 0 && result.data.unicomStatus) {
                         $("#ltCount").val(1);
                         $("#fee2,#sfmd,#fee3").show();
                     }

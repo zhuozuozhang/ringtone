@@ -18,6 +18,7 @@ import com.hrtxn.ringtone.project.threenets.threenet.mapper.ThreeNetsOrderAttach
 import com.hrtxn.ringtone.project.threenets.threenet.mapper.ThreenetsChildOrderMapper;
 import com.hrtxn.ringtone.project.threenets.threenet.mapper.ThreenetsOrderMapper;
 import lombok.extern.slf4j.Slf4j;
+import net.sf.json.JSONObject;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -203,7 +204,7 @@ public class ThreeNetsService {
      * @param phones
      * @return
      */
-    public AjaxResult matchingOperate(String phones) throws Exception {
+    public AjaxResult matchingOperate(String phones,Integer parentOrderId) throws Exception {
         String regR = "\n\r";
         String regN = "\n";
         phones = phones.replace(regR, "br").replace(regN, "br");
@@ -228,8 +229,18 @@ public class ThreeNetsService {
                 dianxin++;
             }
         }
-        Integer[] count = {yidong, dianxin, liantong, sum};
-        return AjaxResult.success(count, "匹配成功");
+        ThreeNetsOrderAttached attached = threeNetsOrderAttachedMapper.selectByParentOrderId(parentOrderId);
+        JSONObject outData = new JSONObject();
+        outData.put("mobile",yidong);
+        outData.put("telecom",dianxin);
+        outData.put("unicom",liantong);
+        outData.put("total",sum);
+        if (attached != null){
+            outData.put("mobileStatus",StringUtils.isEmpty(attached.getMiguId()));
+            outData.put("telecomStatus",StringUtils.isEmpty(attached.getMcardId()));
+            outData.put("unicomStatus",StringUtils.isEmpty(attached.getSwxlId()));
+        }
+        return AjaxResult.success(outData, "匹配成功");
     }
 
     /**

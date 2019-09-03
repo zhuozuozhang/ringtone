@@ -64,7 +64,7 @@ public class ThreeNetsRingService {
      * @param ring
      * @return
      */
-    public Integer insert(ThreenetsRing ring){
+    public Integer insert(ThreenetsRing ring) {
         return threenetsRingMapper.insertThreeNetsRing(ring);
     }
 
@@ -143,12 +143,12 @@ public class ThreeNetsRingService {
             ring.setRingType(isVideo ? "视频" : "音频");
             ring.setRingStatus(2);
             ring.setCreateTime(new Date());
-            ring.setRingName(ring.getRingName() + extensionsName + DateUtils.getTimeRadom());
+            ring.setRingName(ring.getRingName() + DateUtils.getTimeRadom() + extensionsName);
             ring.setOperate(operator);
             if (ring.getRingType().equals("视频") && operator != 1) {
                 continue;
             }
-            if (num > 1){
+            if (num > 1) {
                 String path = fileService.cloneFile(ring);
                 ring.setRingWay(path);
             }
@@ -183,10 +183,10 @@ public class ThreeNetsRingService {
         if (ringRespone != null && ringRespone.isSuccess()) {
             //保存铃音
             ring.setOperateRingId(ringRespone.getRingId());
-            ring.setRemark("上传成功，铃音正在审核中");
-            threenetsRingMapper.updateByPrimaryKeySelective(ring);
             fileService.updateStatus(ring.getRingWay());
         }
+        ring.setRemark(ringRespone.getMsg());
+        threenetsRingMapper.updateByPrimaryKeySelective(ring);
         return ringRespone;
     }
 
@@ -204,7 +204,7 @@ public class ThreeNetsRingService {
         if (ringByLt) {
             threenetsRingMapper.updateByPrimaryKeySelective(ring);
             fileService.updateStatus(ring.getRingWay());
-        }else{
+        } else {
             delete(ring.getId());
             fileService.deleteFile(ring.getRingWay());
         }
@@ -217,16 +217,20 @@ public class ThreeNetsRingService {
      * @throws IOException
      * @throws NoLoginException
      */
-    private void saveMcardRing(ThreenetsRing ring){
+    private void saveMcardRing(ThreenetsRing ring) {
         ring.setFile(new File(RingtoneConfig.getProfile() + ring.getRingWay()));
         ThreeNetsOrderAttached attached = threeNetsOrderAttachedService.selectByParentOrderId(ring.getOrderId());
         ring.setOperateId(attached.getMcardId());
-        boolean flag = apiUtils.addRingByDx(ring,attached);
+        boolean flag = apiUtils.addRingByDx(ring, attached);
         if (flag) {
             threenetsRingMapper.updateByPrimaryKeySelective(ring);
             fileService.updateStatus(ring.getRingWay());
+        } else {
+            delete(ring.getId());
+            fileService.deleteFile(ring.getRingWay());
         }
     }
+
     /**
      * 保存铃音
      *

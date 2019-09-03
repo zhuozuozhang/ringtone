@@ -215,10 +215,9 @@ public class ThreeNetsChildOrderService {
         if (!StringUtils.isNotNull(threenetsChildOrder)) {
             return AjaxResult.error("参数格式不正确");
         }
-        List<ThreenetsChildOrder> list = formattedPhone(threenetsChildOrder.getMemberTels(), request.getParentOrderId());
+        List<ThreenetsChildOrder> list = formattedPhone(threenetsChildOrder.getMemberTels(), threenetsChildOrder.getParentOrderId());
         ThreeNetsOrderAttached attached = threeNetsOrderAttachedService.selectByParentOrderId(threenetsChildOrder.getParentOrderId());
         //克隆
-        //BeanUtils.copyProperties(attached, request);
         if (StringUtils.isEmpty(attached.getMiguId())) {
             attached.setMiguPrice(threenetsChildOrder.getMiguPrice() != null ? threenetsChildOrder.getMiguPrice() : threenetsChildOrder.getSpecialPrice());
         }
@@ -288,6 +287,8 @@ public class ThreeNetsChildOrderService {
         childOrder.setIsMonthly(1);
         //未回复短信
         childOrder.setIsReplyMessage(false);
+        //是否铃音用户
+        childOrder.setIsRingtoneUser(false);
         //手机号验证
         JuhePhone juhePhone = JuhePhoneUtils.getPhone(childOrder.getLinkmanTel());
         JuhePhoneResult result = (JuhePhoneResult) juhePhone.getResult();
@@ -298,7 +299,7 @@ public class ThreeNetsChildOrderService {
         //设置代理商
         childOrder.setUserId(ShiroUtils.getSysUser().getId());
         childOrder.setCreateDate(new Date());
-        childOrder.setStatus("审核通过");
+        childOrder.setStatus(Const.PENDING_REVIEW);
         return childOrder;
     }
 

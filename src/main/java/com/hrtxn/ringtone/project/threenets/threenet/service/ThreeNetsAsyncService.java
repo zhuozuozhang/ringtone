@@ -114,12 +114,13 @@ public class ThreeNetsAsyncService {
             for (int i = 0; i < childOrders.size(); i++) {
                 ThreenetsChildOrder childOrder = childOrders.get(i);
                 childOrder.setOperateId(attached.getMiguId());
-                childOrder.setStatus(attached.getMiguPrice() <= 5 ? "审核通过" : "未审核");
+                childOrder.setStatus(attached.getMiguPrice() <= 5 ? Const.SUCCESSFUL_REVIEW : Const.PENDING_REVIEW);
                 childOrders.set(i, childOrder);
-                if (attached.getMiguPrice() <= 5) {
+                //高资费成员没有直接上传
+                //if (attached.getMiguPrice() <= 5) {
                     MiguAddPhoneRespone respone = utils.addPhoneByYd(childOrder, attached.getMiguId());
                     childOrder.setRemark(respone.getMessage());
-                }
+                //}
                 threenetsChildOrderMapper.updateThreeNetsChidOrder(childOrder);
             }
             if (attached.getMiguPrice() <= 5) {
@@ -134,11 +135,10 @@ public class ThreeNetsAsyncService {
             MiguAddRingRespone ringRespone = utils.saveMiguRing(ring);
             if (ringRespone.isSuccess()) {
                 ring.setOperateRingId(ringRespone.getRingId());
-                threenetsRingMapper.updateByPrimaryKeySelective(ring);
-            } else {
-                threenetsRingMapper.deleteByPrimaryKey(ring.getId());
-                fileService.deleteFile(ring.getRingWay());
+                fileService.updateStatus(ring.getRingWay());
             }
+            ring.setRemark(ringRespone.getMsg());
+            threenetsRingMapper.updateByPrimaryKeySelective(ring);
         } else { //建立商户失败
             creationFailed(childOrders, childOrders.get(0).getRingId(), "移动商户—" + miguAddGroupRespone.getMsg());
         }
@@ -170,8 +170,14 @@ public class ThreeNetsAsyncService {
                 ThreenetsChildOrder childOrder = childOrders.get(i);
                 childOrder.setOperateId(attached.getSwxlId());
                 childOrders.set(i, childOrder);
-                SwxlBaseBackMessage result = utils.addPhoneByLt(childOrder, attached.getSwxlId());
-                childOrder.setRemark(result.getMessage());
+                if (childOrder.getLinkmanTel().equals(order.getLinkmanTel())) {
+                    childOrder.setRemark("成功");
+                    childOrder.setStatus(Const.SUCCESSFUL_REVIEW);
+                } else {
+                    SwxlBaseBackMessage result = utils.addPhoneByLt(childOrder, attached.getSwxlId());
+                    childOrder.setStatus(result.getRecode().equals("000000") ? Const.SUCCESSFUL_REVIEW : Const.FAILURE_REVIEW);
+                    childOrder.setRemark(result.getMessage());
+                }
                 threenetsChildOrderMapper.updateThreeNetsChidOrder(childOrder);
             }
             attached.setSwxlStatus(Const.REVIEWED);
@@ -208,28 +214,29 @@ public class ThreeNetsAsyncService {
         order.setLinkmanTel(childOrders.get(0).getLinkmanTel());
         order.setProvince(childOrders.get(0).getProvince());
         order.setCity(childOrders.get(0).getCity());
-        McardAddGroupRespone groupRespone = utils.addOrderByDx(order, attached);
-        if (groupRespone.getCode().equals(Const.ILLEFAL_AREA)) {
-            for (int i = 0; i < childOrders.size(); i++) {
-                ThreenetsChildOrder childOrder = childOrders.get(i);
-                childOrder.setRemark("审核失败：电信商户—" + groupRespone.getMessage());
-                childOrder.setStatus("审核失败");
-                childOrders.set(i, childOrder);
-            }
-            try {
-                ThreenetsRing ring = threenetsRingMapper.selectByPrimaryKey(childOrders.get(0).getRingId());
+        try {
+            McardAddGroupRespone groupRespone = utils.addOrderByDx(order, attached);
+            ThreenetsRing ring = threenetsRingMapper.selectByPrimaryKey(childOrders.get(0).getRingId());
+            if (groupRespone.getCode().equals(Const.ILLEFAL_AREA)) {
+                for (int i = 0; i < childOrders.size(); i++) {
+                    ThreenetsChildOrder childOrder = childOrders.get(i);
+                    childOrder.setRemark("审核失败：电信商户—" + groupRespone.getMessage());
+                    childOrder.setStatus("审核失败");
+                    childOrders.set(i, childOrder);
+                }
                 ring.setRemark("审核失败：电信商户—" + groupRespone.getMessage());
-                threenetsRingMapper.updateByPrimaryKeySelective(ring);
-            } catch (Exception e) {
-                e.printStackTrace();
             }
+            attached.setMcardId(groupRespone.getAuserId());
+            ring.setOperateId(groupRespone.getAuserId());
+            threenetsRingMapper.updateByPrimaryKeySelective(ring);
+        } catch (Exception e) {
+                e.printStackTrace();
         }
-        attached.setMcardId(groupRespone.getAuserId());
         //本地保存铃音和子表
         for (int i = 0; i < childOrders.size(); i++) {
             ThreenetsChildOrder childOrder = childOrders.get(i);
             childOrder.setOperateId(attached.getMcardId());
-            childOrder.setStatus("待审核");
+            childOrder.setStatus(Const.PENDING_REVIEW);
             childOrders.set(i, childOrder);
             threenetsChildOrderMapper.updateThreeNetsChidOrder(childOrder);
         }
@@ -250,7 +257,7 @@ public class ThreeNetsAsyncService {
             for (int i = 0; i < childOrders.size(); i++) {
                 ThreenetsChildOrder childOrder = childOrders.get(i);
                 childOrder.setRemark(prompt);
-                childOrder.setStatus("审核失败");
+                childOrder.setStatus(Const.FAILURE_REVIEW);
                 threenetsChildOrderMapper.updateThreeNetsChidOrder(childOrder);
             }
             ThreenetsRing ring = threenetsRingMapper.selectByPrimaryKey(ringId);
@@ -276,7 +283,7 @@ public class ThreeNetsAsyncService {
 
             ThreenetsChildOrder childOrder = new ThreenetsChildOrder();
             childOrder.setParentOrderId(order.getId());
-            childOrder.setNoEqualsStatus("审核失败");
+            childOrder.setStatus(Const.PENDING_REVIEW);
             List<ThreenetsChildOrder> childOrders = threenetsChildOrderMapper.listByParamNoPage(childOrder);
 
             Map<Integer, List<ThreenetsChildOrder>> map = childOrders.stream().collect(Collectors.groupingBy(ThreenetsChildOrder::getOperator));
@@ -286,10 +293,11 @@ public class ThreeNetsAsyncService {
                     ThreenetsRing threenetsRing = rings.get(0);
                     if (ringMap.get(1) == null) {
                         String path = fileService.cloneFile(threenetsRing);
+                        threenetsRing.setOperateId(attached.getMiguId());
                         threenetsRing.setRingWay(path);
                         threenetsRing.setOperate(1);
                         threenetsRing.setRingStatus(2);
-                        threenetsRing.setRingName(path.substring(path.lastIndexOf("\\")));
+                        threenetsRing.setRingName(path.substring(path.lastIndexOf("\\") + 1));
                         threenetsRing.setRemark("");
                         threenetsRingMapper.insertThreeNetsRing(threenetsRing);
                     }
@@ -301,14 +309,15 @@ public class ThreeNetsAsyncService {
                     ThreenetsRing threenetsRing = rings.get(0);
                     if (ringMap.get(2) == null) {
                         String path = fileService.cloneFile(threenetsRing);
+                        threenetsRing.setOperateId(attached.getMcardId());
                         threenetsRing.setRingWay(path);
                         threenetsRing.setOperate(2);
                         threenetsRing.setRingStatus(2);
                         threenetsRing.setRemark("");
-                        threenetsRing.setRingName(path.substring(path.lastIndexOf("\\")));
+                        threenetsRing.setRingName(path.substring(path.lastIndexOf("\\") + 1));
                         threenetsRingMapper.insertThreeNetsRing(threenetsRing);
                     }
-                    List<ThreenetsChildOrder> orders = addMcardByDx(order, attached, list, request);
+                    List<ThreenetsChildOrder> orders = addMcardByDx(order, attached, list, request,threenetsRing);
                     batchChindOrder(orders, threenetsRing);
                 }
                 if (operator == 3) {
@@ -319,11 +328,12 @@ public class ThreeNetsAsyncService {
                     ThreenetsRing threenetsRing = rings.get(0);
                     if (ringMap.get(3) == null) {
                         String path = fileService.cloneFile(threenetsRing);
+                        threenetsRing.setOperateId(attached.getSwxlId());
                         threenetsRing.setRingWay(path);
                         threenetsRing.setOperate(3);
                         threenetsRing.setRingStatus(2);
                         threenetsRing.setRemark("");
-                        threenetsRing.setRingName(path.substring(path.lastIndexOf("\\")));
+                        threenetsRing.setRingName(path.substring(path.lastIndexOf("\\") + 1));
                         threenetsRingMapper.insertThreeNetsRing(threenetsRing);
                     }
                     list = addMemberByLt(order, attached, list);
@@ -383,9 +393,10 @@ public class ThreeNetsAsyncService {
             MiguAddRingRespone ringRespone = apiUtils.saveMiguRing(ring);
             if (ringRespone.isSuccess()) {
                 ring.setOperateRingId(ringRespone.getRingId());
-                ring.setRemark(ringRespone.getMsg());
-                threenetsRingMapper.updateByPrimaryKeySelective(ring);
+                fileService.updateStatus(ring.getRingWay());
             }
+            ring.setRemark(ringRespone.getMsg());
+            threenetsRingMapper.updateByPrimaryKeySelective(ring);
         }
         MiguAddPhoneRespone addPhoneRespone = new MiguAddPhoneRespone();
         for (int i = 0; i < list.size(); i++) {
@@ -395,11 +406,14 @@ public class ThreeNetsAsyncService {
             addPhoneRespone = apiUtils.addPhoneByYd(childOrder, attached.getMiguId());
             if (addPhoneRespone.getSuccessCount().equals("0")) {
                 childOrder.setRemark(addPhoneRespone.getMessage());
+                childOrder.setStatus(Const.FAILURE_REVIEW);
             } else {
                 childOrder.setRemark("添加成功");
+                childOrder.setStatus(Const.SUCCESSFUL_REVIEW);
             }
-            if (!childOrder.getLinkmanTel().equals(order.getLinkmanTel())) {
+            if (childOrder.getLinkmanTel().equals(order.getLinkmanTel())) {
                 childOrder.setRemark("添加成功");
+                childOrder.setStatus(Const.SUCCESSFUL_REVIEW);
             }
             list.set(i, childOrder);
         }
@@ -416,6 +430,7 @@ public class ThreeNetsAsyncService {
      */
     private List<ThreenetsChildOrder> addMemberByLt(ThreenetsOrder order, ThreeNetsOrderAttached attached, List<ThreenetsChildOrder> list) throws IOException, NoLoginException {
         if (attached.getSwxlId() == null) {
+            ThreenetsRing ring = new ThreenetsRing();
             List<ThreenetsRing> rings = new ArrayList<>();
             try {
                 rings = threenetsRingMapper.selectByOrderId(attached.getParentOrderId());
@@ -429,6 +444,7 @@ public class ThreeNetsAsyncService {
             order.setLinkmanTel(list.get(0).getLinkmanTel());
             for (int i = 0; i < rings.size(); i++) {
                 if (rings.get(i).getOperate() == 3) {
+                    ring = rings.get(i);
                     String ringName = rings.get(i).getRingName();
                     order.setRingName(ringName.substring(0, ringName.indexOf(".")));
                 }
@@ -436,12 +452,14 @@ public class ThreeNetsAsyncService {
             SwxlGroupResponse swxlGroupResponse = apiUtils.addOrderByLt(order, attached);
             if (swxlGroupResponse.getStatus() == 0) {
                 attached.setSwxlId(swxlGroupResponse.getId());
+                ring.setOperateId(swxlGroupResponse.getId());
                 threeNetsOrderAttachedMapper.updateByPrimaryKeySelective(attached);
+                threenetsRingMapper.updateByPrimaryKeySelective(ring);
             } else {
                 for (int i = 0; i < list.size(); i++) {
                     ThreenetsChildOrder childOrder = list.get(i);
                     childOrder.setRemark("审核失败：联通商户—" + swxlGroupResponse.getRemark());
-                    childOrder.setStatus("审核失败");
+                    childOrder.setStatus(Const.FAILURE_REVIEW);
                     list.set(i, childOrder);
                 }
                 return list;
@@ -449,10 +467,11 @@ public class ThreeNetsAsyncService {
         }
         for (int i = 0; i < list.size(); i++) {
             ThreenetsChildOrder childOrder = list.get(i);
-            childOrder.setOperateId(attached.getMiguId());
+            childOrder.setOperateId(attached.getSwxlId());
             if (!childOrder.getLinkmanTel().equals(order.getLinkmanTel())) {
                 SwxlBaseBackMessage result = apiUtils.addPhoneByLt(childOrder, attached.getSwxlId());
                 childOrder.setRemark(result.getMessage());
+                childOrder.setStatus(Const.SUCCESSFUL_REVIEW);
             }
             list.set(i, childOrder);
         }
@@ -469,7 +488,7 @@ public class ThreeNetsAsyncService {
      * @throws IOException
      * @throws NoLoginException
      */
-    public List<ThreenetsChildOrder> addMcardByDx(ThreenetsOrder order, ThreeNetsOrderAttached attached, List<ThreenetsChildOrder> list, BaseRequest request) throws IOException, NoLoginException {
+    public List<ThreenetsChildOrder> addMcardByDx(ThreenetsOrder order, ThreeNetsOrderAttached attached, List<ThreenetsChildOrder> list, BaseRequest request,ThreenetsRing ring){
         String remark = "请等待电信商户审核完成！";
         String status = "待审核";
         if (StringUtils.isEmpty(attached.getMcardId())) {
@@ -493,6 +512,7 @@ public class ThreeNetsAsyncService {
             McardAddGroupRespone respone = apiUtils.addOrderByDx(order, attached);
             if (respone.getCode().equals("0000")) {
                 attached.setMcardId(respone.getAuserId());
+                ring.setOperateId(respone.getAuserId());
             }
             if (respone.getCode().equals(Const.ILLEFAL_AREA)) {
                 status = "审核失败";
@@ -500,6 +520,7 @@ public class ThreeNetsAsyncService {
             }
             attached.setMcardStatus(Const.UNREVIEWED);
             threeNetsOrderAttachedMapper.updateByPrimaryKeySelective(attached);
+            threenetsRingMapper.updateByPrimaryKeySelective(ring);
         }
         //特殊处理，需要先进入对应商户，然后进行成员添加
         if (attached.getMcardStatus() == 1) {
@@ -516,7 +537,7 @@ public class ThreeNetsAsyncService {
             }
             list.set(i, childOrder);
         }
-        //ringToneReUpload(order,list);
+        ringToneReUpload(order, list);
         return list;
     }
 
@@ -581,7 +602,7 @@ public class ThreeNetsAsyncService {
                 newRing.setId(null);
                 newRing.setRingWay(path);
                 newRing.setRemark("");
-                newRing.setRingName(path.substring(path.lastIndexOf("\\")));
+                newRing.setRingName(path.substring(path.lastIndexOf("\\") + 1));
                 threenetsRingMapper.insertThreeNetsRing(newRing);
                 ThreeNetsOrderAttached attached = threeNetsOrderAttachedMapper.selectByParentOrderId(order.getId());
                 apiUtils.addRingByDx(newRing, attached);

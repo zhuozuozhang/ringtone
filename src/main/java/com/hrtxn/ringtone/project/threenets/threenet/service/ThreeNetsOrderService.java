@@ -24,6 +24,7 @@ import com.hrtxn.ringtone.project.threenets.threenet.json.swxl.SwxlGroupResponse
 import com.hrtxn.ringtone.project.threenets.threenet.mapper.ThreenetsOrderMapper;
 import com.hrtxn.ringtone.project.threenets.threenet.utils.ApiUtils;
 import lombok.Synchronized;
+import net.sf.json.JSONObject;
 import org.apache.commons.beanutils.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
@@ -178,13 +179,16 @@ public class ThreeNetsOrderService {
      */
     public AjaxResult isRepetitionByName(String name) {
         boolean isItRedundant = false;
-        ThreenetsOrder order = new ThreenetsOrder();
         List<ThreenetsOrder> list = threenetsOrderMapper.isRepetitionByName(name);
         if (list != null && list.size() >= 1) {
             for (int i = 0; i < list.size(); i++) {
                 String cName = list.get(i).getCompanyName();
                 if (cName.length() <= 6) {
-                    continue;
+                    if (cName.equals(name)){
+                        return AjaxResult.error("商户名称不允许重复！");
+                    }else{
+                        continue;
+                    }
                 }
                 boolean result = cName.substring(cName.length() - 6).matches("[0-9]+");
                 if (result) {
@@ -197,9 +201,7 @@ public class ThreeNetsOrderService {
         if (isItRedundant) {
             return AjaxResult.error("商户名称不允许重复！");
         } else {
-            order.setCompanyName(name + DateUtils.getTimeRadom());
-            threenetsOrderMapper.insertThreenetsOrder(order);
-            return AjaxResult.success(order, "");
+            return AjaxResult.success(DateUtils.getTime(), "");
         }
     }
 
@@ -232,19 +234,18 @@ public class ThreeNetsOrderService {
      */
     @Transactional
     public AjaxResult save(OrderRequest order) throws Exception {
-        if (order.getId() == null) {
-            return AjaxResult.error("添加失败！");
-        }
-        //验证订单是否修改
-        ThreenetsOrder threenetsOrder = threenetsOrderMapper.selectByPrimaryKey(order.getId());
-        threenetsOrder.setCompanyName(order.getCompanyName());
+        //实体初始化
+        ThreenetsOrder threenetsOrder = new ThreenetsOrder();
+        ThreeNetsOrderAttached attached = new ThreeNetsOrderAttached();
+        //添加商户信息
+        threenetsOrder.setCompanyName(order.getCompanyName()+DateUtils.getTimeRadom());
         threenetsOrder.setCompanyLinkman(order.getCompanyLinkman());
         threenetsOrder.setLinkmanTel(order.getLinkmanTel());
+        threenetsOrder.setFolderName(order.getFolderName());
         threenetsOrder = init(threenetsOrder);
-        threenetsOrderMapper.updateByPrimaryKey(threenetsOrder);
-        //订单附表初始化
-        ThreeNetsOrderAttached attached = new ThreeNetsOrderAttached();
-        attached.setParentOrderId(order.getId());
+        threenetsOrderMapper.insertThreenetsOrder(threenetsOrder);
+        //添加附表信息
+        attached.setParentOrderId(threenetsOrder.getId());
         if (StringUtils.isNotEmpty(order.getCompanyUrl())) {
             attached.setBusinessLicense(order.getCompanyUrl());//企业资质
         }
@@ -258,7 +259,7 @@ public class ThreeNetsOrderService {
             attached.setAvoidShortAgreement(order.getProtocolUrl());//免短协议
         }
         //子订单手机号验证,以及子订单数据初始化
-        List<ThreenetsChildOrder> childOrderList = threeNetsChildOrderService.formattedPhone(order.getMemberTels(), order.getId());
+        List<ThreenetsChildOrder> childOrderList = threeNetsChildOrderService.formattedPhone(order.getMemberTels(), threenetsOrder.getId());
         List<ThreenetsChildOrder> childOrders = new ArrayList<>();
         //将子订单数据按照网段区分
         Map<Integer, List<ThreenetsChildOrder>> collect = childOrderList.stream().collect(Collectors.groupingBy(ThreenetsChildOrder::getOperator));
@@ -273,7 +274,7 @@ public class ThreeNetsOrderService {
             ThreenetsRing ring = new ThreenetsRing();
             ring.setRingWay(order.getRingUrl());
             ring.setOperate(order.getOperate());
-            ring.setOrderId(order.getId());
+            ring.setOrderId(threenetsOrder.getId());
             ring.setRingContent(order.getRingContent());
             ring.setRingName(order.getRingName() + DateUtils.getTimeRadom());
             ring.setOperate(operator);
@@ -294,6 +295,7 @@ public class ThreeNetsOrderService {
                     childOrder.setRemark("电信当前不提供" + childOrder.getProvince() + "地区的服务");
                     return AjaxResult.error("电信当前不提供" + childOrder.getProvince() + "地区的服务");
                 }
+                childOrder.setRingId(ring.getId());
                 childOrder.setPaymentType(Integer.parseInt(order.getPaymentType()));
                 childOrders.add(childOrder);
             }
@@ -302,6 +304,8 @@ public class ThreeNetsOrderService {
         //保存订单附表
         if (attached.getId() == null) {
             threeNetsOrderAttachedService.save(attached);
+        }else{
+            threeNetsOrderAttachedService.update(attached);
         }
         threeNetsChildOrderService.batchChindOrder(childOrders);
         //保存线上
