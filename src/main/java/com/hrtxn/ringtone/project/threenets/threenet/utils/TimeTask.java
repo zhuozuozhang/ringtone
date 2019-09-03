@@ -16,7 +16,7 @@ import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreenetsRing;
 import com.hrtxn.ringtone.project.threenets.threenet.mapper.ThreenetsChildOrderMapper;
 import com.hrtxn.ringtone.project.threenets.threenet.mapper.ThreenetsOrderMapper;
 import com.hrtxn.ringtone.project.threenets.threenet.mapper.ThreenetsRingMapper;
-import com.hrtxn.ringtone.project.threenets.threenet.service.ThreeNetsChildOrderService;
+import com.hrtxn.ringtone.project.threenets.threenet.service.ThreeNetsAsyncService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -131,7 +131,7 @@ public class TimeTask {
         request.setEnd(DateUtils.getFetureDate(1));
         List<ThreenetsOrder> list = SpringUtils.getBean(ThreenetsOrderMapper.class).getAllorderList(page,request);
         for (int i = 0; i < list.size(); i++) {
-            SpringUtils.getBean(ThreeNetsChildOrderService.class).refreshDxInfo(list.get(i));
+            SpringUtils.getBean(ThreeNetsAsyncService.class).refreshTelecomMerchantInfo(list.get(i));
         }
     }
 

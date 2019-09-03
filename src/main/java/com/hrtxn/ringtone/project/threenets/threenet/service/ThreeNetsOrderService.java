@@ -287,14 +287,6 @@ public class ThreeNetsOrderService {
             List<ThreenetsChildOrder> list = collect.get(operator);
             for (int i = 0; i < list.size(); i++) {
                 ThreenetsChildOrder childOrder = list.get(i);
-                boolean flag = false;
-                if (operator.equals(Const.OPERATORS_TELECOM)) {
-                    flag = ConfigUtil.getAreaArray("unable_to_open_area", childOrder.getProvince());
-                }
-                if (flag) {
-                    childOrder.setRemark("电信当前不提供" + childOrder.getProvince() + "地区的服务");
-                    return AjaxResult.error("电信当前不提供" + childOrder.getProvince() + "地区的服务");
-                }
                 childOrder.setRingId(ring.getId());
                 childOrder.setPaymentType(Integer.parseInt(order.getPaymentType()));
                 childOrders.add(childOrder);

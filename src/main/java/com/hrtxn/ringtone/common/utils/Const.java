@@ -53,7 +53,7 @@ public final class Const implements Serializable {
     /**
      * 电信主渠道商ID
      */
-    public static String parent_Distributor_ID_188 = "61203"; //主渠道商（18159093112）
+    public static String parent_Distributor_ID_188 = "61203"; //主渠道商（18859093112）
     public static String parent_Distributor_ID_177 = "1352066"; //主渠道商（17751937950）
 
     //子渠道商（17712033392）(四川)

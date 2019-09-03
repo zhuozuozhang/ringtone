@@ -14,16 +14,11 @@ import com.hrtxn.ringtone.project.system.File.service.FileService;
 import com.hrtxn.ringtone.project.system.json.JuhePhone;
 import com.hrtxn.ringtone.project.system.json.JuhePhoneResult;
 import com.hrtxn.ringtone.project.threenets.threenet.domain.*;
-import com.hrtxn.ringtone.project.threenets.threenet.json.mcard.McardAddGroupRespone;
-import com.hrtxn.ringtone.project.threenets.threenet.json.migu.MiguAddGroupRespone;
-import com.hrtxn.ringtone.project.threenets.threenet.json.migu.MiguAddPhoneRespone;
-import com.hrtxn.ringtone.project.threenets.threenet.json.swxl.SwxlGroupResponse;
 import com.hrtxn.ringtone.project.threenets.threenet.mapper.ThreenetsChildOrderMapper;
 import com.hrtxn.ringtone.project.threenets.threenet.mapper.ThreenetsOrderMapper;
 import com.hrtxn.ringtone.project.threenets.threenet.mapper.ThreenetsRingMapper;
 import com.hrtxn.ringtone.project.threenets.threenet.utils.ApiUtils;
 import lombok.Synchronized;
-import org.apache.commons.beanutils.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,7 +26,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * Author:lile
@@ -67,8 +61,7 @@ public class ThreeNetsChildOrderService {
      */
     public ThreenetsOrder getOrderById(Integer id) throws Exception {
         ThreenetsOrder order = threenetsOrderMapper.selectByPrimaryKey(id);
-        refreshDxInfo(order);
-        //threeNetsAsyncService.refreshTelecomMerchantInfo(order);
+        threeNetsAsyncService.refreshTelecomMerchantInfo(order);
         return order;
     }
 
@@ -90,50 +83,6 @@ public class ThreeNetsChildOrderService {
      */
     public Integer update(ThreenetsChildOrder childOrder){
         return threenetsChildOrderMapper.updateThreeNetsChidOrder(childOrder);
-    }
-    /**
-     * 刷新电信，查询是否审核通过
-     *
-     * @param order
-     */
-    @Synchronized
-    public void refreshDxInfo(ThreenetsOrder order) {
-        ApiUtils utils = new ApiUtils();
-        ThreeNetsOrderAttached attached = threeNetsOrderAttachedService.selectByParentOrderId(order.getId());
-        if (attached == null){
-            return;
-        }
-        if (StringUtils.isEmpty(attached.getMcardId()) || attached.getMcardStatus() == 1) {
-            return;
-        }
-        Boolean aBoolean = utils.normalBusinessInfo(order);
-        if (aBoolean) {
-            attached.setMcardStatus(Const.REVIEWED);
-            ThreenetsChildOrder param = new ThreenetsChildOrder();
-            param.setParentOrderId(order.getId());
-            param.setStatus("未审核");
-            try {
-                //保存成员
-                List<ThreenetsChildOrder> childOrders = threenetsChildOrderMapper.selectThreeNetsTaskList(new Page(), param);
-                childOrders = utils.addPhoneByDx(childOrders, attached.getMcardId(),attached.getMcardDistributorId());
-                threeNetsOrderAttachedService.update(attached);
-                //保存铃音
-                List<ThreenetsRing> rings = threenetsRingMapper.selectByOrderId(order.getId());
-                for (int i = 0; i < rings.size(); i++) {
-                    if (rings.get(i).getOperate() != 2) {
-                        continue;
-                    }
-                    ThreenetsRing ring = rings.get(i);
-                    ring.setFile(new File(RingtoneConfig.getProfile() + ring.getRingWay()));
-                    utils.addRingByDx(rings.get(i),attached);
-                }
-                for (int i = 0; i < childOrders.size(); i++) {
-                    threenetsChildOrderMapper.updateThreeNetsChidOrder(childOrders.get(i));
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
     }
 
     /**

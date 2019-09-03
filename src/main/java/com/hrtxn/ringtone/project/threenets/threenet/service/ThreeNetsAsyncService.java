@@ -3,6 +3,7 @@ package com.hrtxn.ringtone.project.threenets.threenet.service;
 import com.hrtxn.ringtone.common.domain.BaseRequest;
 import com.hrtxn.ringtone.common.domain.OrderRequest;
 import com.hrtxn.ringtone.common.exception.NoLoginException;
+import com.hrtxn.ringtone.common.utils.ConfigUtil;
 import com.hrtxn.ringtone.common.utils.Const;
 import com.hrtxn.ringtone.common.utils.DateUtils;
 import com.hrtxn.ringtone.common.utils.StringUtils;
@@ -211,9 +212,24 @@ public class ThreeNetsAsyncService {
             String path = utils.mcardUploadFile(new File(RingtoneConfig.getProfile() + orderRequest.getMainUrl()));
             attached.setSubjectProve(path);
         }
-        order.setLinkmanTel(childOrders.get(0).getLinkmanTel());
-        order.setProvince(childOrders.get(0).getProvince());
-        order.setCity(childOrders.get(0).getCity());
+        for (int i = 0; i < childOrders.size(); i++) {
+            ThreenetsChildOrder childOrder = childOrders.get(i);
+            boolean flag = ConfigUtil.getAreaArray("unable_to_open_area", childOrder.getProvince());
+            if (flag) {
+                childOrder.setRemark("电信当前不提供" + childOrder.getProvince() + "地区的服务");
+                childOrder.setStatus(Const.FAILURE_REVIEW);
+            }else{
+                childOrder.setStatus(Const.PENDING_REVIEW);
+                order.setLinkmanTel(childOrders.get(i).getLinkmanTel());
+                order.setProvince(childOrders.get(i).getProvince());
+                order.setCity(childOrders.get(i).getCity());
+            }
+        }
+        if (StringUtils.isEmpty(order.getLinkmanTel())){
+            order.setLinkmanTel(childOrders.get(0).getLinkmanTel());
+            order.setProvince(childOrders.get(0).getProvince());
+            order.setCity(childOrders.get(0).getCity());
+        }
         try {
             McardAddGroupRespone groupRespone = utils.addOrderByDx(order, attached);
             ThreenetsRing ring = threenetsRingMapper.selectByPrimaryKey(childOrders.get(0).getRingId());
@@ -505,10 +521,25 @@ public class ThreeNetsAsyncService {
                 String path = apiUtils.mcardUploadFile(new File(RingtoneConfig.getProfile() + request.getMainUrl()));
                 attached.setSubjectProve(path);
             }
+            for (int i = 0; i < list.size(); i++) {
+                ThreenetsChildOrder childOrder = list.get(i);
+                boolean flag = ConfigUtil.getAreaArray("unable_to_open_area", childOrder.getProvince());
+                if (flag) {
+                    childOrder.setRemark("电信当前不提供" + childOrder.getProvince() + "地区的服务");
+                    childOrder.setStatus(Const.FAILURE_REVIEW);
+                }else{
+                    childOrder.setStatus(Const.PENDING_REVIEW);
+                    order.setLinkmanTel(list.get(i).getLinkmanTel());
+                    order.setProvince(list.get(i).getProvince());
+                    order.setCity(list.get(i).getCity());
+                }
+            }
             //没有电信商户，先新增商户
-            order.setLinkmanTel(list.get(0).getLinkmanTel());
-            order.setProvince(list.get(0).getProvince());
-            order.setCity(list.get(0).getCity());
+            if (StringUtils.isEmpty(order.getLinkmanTel())){
+                order.setLinkmanTel(list.get(0).getLinkmanTel());
+                order.setProvince(list.get(0).getProvince());
+                order.setCity(list.get(0).getCity());
+            }
             McardAddGroupRespone respone = apiUtils.addOrderByDx(order, attached);
             if (respone.getCode().equals("0000")) {
                 attached.setMcardId(respone.getAuserId());
@@ -628,13 +659,14 @@ public class ThreeNetsAsyncService {
         if (StringUtils.isEmpty(attached.getMcardId()) || attached.getMcardStatus().equals(Const.REVIEWED)) {
             return;
         }
-        Boolean aBoolean = apiUtils.normalBusinessInfo(order);
-        if (aBoolean) {
-            attached.setMcardStatus(Const.REVIEWED);
-            ThreenetsChildOrder param = new ThreenetsChildOrder();
-            param.setParentOrderId(order.getId());
-            param.setStatus("未审核");
-            try {
+        try {
+            McardAddGroupRespone respone = apiUtils.normalBusinessInfo(order);
+            if (respone.getCode().equals("0000")) {
+                attached.setMcardStatus(Const.REVIEWED);
+                ThreenetsChildOrder param = new ThreenetsChildOrder();
+                param.setParentOrderId(order.getId());
+                param.setOperator(Const.OPERATORS_TELECOM);
+                param.setStatus("未审核");
                 //保存成员
                 List<ThreenetsChildOrder> childOrders = threenetsChildOrderMapper.listByParamNoPage(param);
                 childOrders = utils.addPhoneByDx(childOrders, attached.getMcardId(), attached.getMcardDistributorId());
@@ -652,9 +684,19 @@ public class ThreeNetsAsyncService {
                 for (int i = 0; i < childOrders.size(); i++) {
                     threenetsChildOrderMapper.updateThreeNetsChidOrder(childOrders.get(i));
                 }
-            } catch (Exception e) {
-                log.info("电信刷新信息上传用户失败" + e);
+            }else{
+                ThreenetsChildOrder param = new ThreenetsChildOrder();
+                param.setParentOrderId(order.getId());
+                param.setOperator(Const.OPERATORS_TELECOM);
+                List<ThreenetsChildOrder> childOrders = threenetsChildOrderMapper.listByParamNoPage(param);
+                for (int i = 0; i < childOrders.size(); i++) {
+                    ThreenetsChildOrder childOrder = childOrders.get(i);
+                    childOrder.setRemark(respone.getMessage());
+                    threenetsChildOrderMapper.updateThreeNetsChidOrder(childOrder);
+                }
             }
+        } catch (Exception e) {
+            log.info("电信刷新信息上传用户失败" + e);
         }
     }
 }
