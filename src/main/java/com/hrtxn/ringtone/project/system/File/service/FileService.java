@@ -36,12 +36,12 @@ public class FileService {
      *
      * @param file
      * @param fileName
-     * @param orderId
+     * @param folderName
      * @return
      */
-    public AjaxResult upload(MultipartFile file, String fileName, Integer orderId) {
+    public AjaxResult upload(MultipartFile file, String fileName, String folderName) {
         try {
-            String path = FileUtil.uploadFile(file, orderId, fileName);
+            String path = FileUtil.uploadFile(file, folderName, fileName);
             //保存到数据库
             Uploadfile uploadfile = new Uploadfile();
             uploadfile.setPath(path);
@@ -81,27 +81,29 @@ public class FileService {
     }
 
     /**
-     * 获取附件
+     * 铃音文件克隆
      *
+     * @param ring
      * @return
      */
-    public List<Uploadfile> listUploadfile(Integer orderId) {
-        String path = "\\" + orderId;
-        return uploadfileMapper.selectByPath(path);
-    }
-
     public String cloneFile(ThreenetsRing ring) {
         try {
             File file = new File(RingtoneConfig.getProfile() + ring.getRingWay());
             FileInputStream inputStream = new FileInputStream(file);
             MultipartFile multipartFile = new MockMultipartFile(file.getName(), inputStream);
             String fileName = "";
-            if (ring.getRingName().indexOf(".")>0){
-                fileName = ring.getRingName().substring(0, ring.getRingName().length() - 10) + DateUtils.getTimeRadom();
-            }else {
+            if (ring.getRingName().indexOf(".") > 0) {
+                boolean result = ring.getRingName().substring(ring.getRingName().length() - 6).matches("[0-9]+");
+                if (result){
+                    fileName = ring.getRingName().substring(0, ring.getRingName().length() - 10) + DateUtils.getTimeRadom();
+                }else{
+                    fileName = ring.getRingName().substring(0, ring.getRingName().length() - 4) + DateUtils.getTimeRadom();
+                }
+            } else {
                 fileName = ring.getRingName();
             }
-            return FileUtil.uploadFile(multipartFile, ring.getOrderId(), fileName);
+            String folderName = ring.getRingWay().substring(ring.getRingWay().indexOf("\\")+1, ring.getRingWay().lastIndexOf("\\"));
+            return FileUtil.uploadFile(multipartFile, folderName, fileName);
         } catch (Exception e) {
             return null;
         }

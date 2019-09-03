@@ -87,7 +87,7 @@ public class MiguApi implements Serializable {
 
 
     public String USER_NAME = "中高俊聪";// 帐号
-    public String PASSWORD = "zgjc@ZG330@";// 密码
+    public String PASSWORD = "zgjc@ZG330@@";// 密码
 
     private CookieStore miguCookie;//音乐名片登录cookie
     private Date connectTime;//最新连接时间

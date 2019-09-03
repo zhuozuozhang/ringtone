@@ -10,6 +10,7 @@ import com.hrtxn.ringtone.freemark.enums.BusinessType;
 import com.hrtxn.ringtone.freemark.enums.OperatorLogType;
 import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreenetsOrder;
 import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreenetsRing;
+import com.hrtxn.ringtone.project.threenets.threenet.mapper.ThreenetsOrderMapper;
 import com.hrtxn.ringtone.project.threenets.threenet.service.ThreeNetsRingService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +37,9 @@ public class ThreeNetsRingController {
 
     @Autowired
     private ThreeNetsRingService threeNetsRingService;
+
+    @Autowired
+    private ThreenetsOrderMapper threenetsOrderMapper;
 
     /**
      * 进入铃音列表
@@ -91,8 +95,14 @@ public class ThreeNetsRingController {
      */
     @GetMapping("/threenets/toAddMerchantsRingPage")
     public String toAddMerchantsRingPage(ModelMap map, BaseRequest request) {
-        map.put("orderId", request.getOrderId());
-        map.put("operate", request.getOperator());
+        try{
+            ThreenetsOrder order = threenetsOrderMapper.selectByPrimaryKey(request.getOrderId());
+            map.put("orderId", request.getOrderId());
+            map.put("operate", request.getOperator());
+            map.put("folderName", order.getFolderName());
+        }catch(Exception e) {
+            e.printStackTrace();
+        }
         return "threenets/threenet/merchants/addring";
     }
 

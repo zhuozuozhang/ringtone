@@ -25,6 +25,8 @@ public class OrderRequest {
     private String ringUrl;
     //铃音内容
     private String ringContent;
+    //文件上传文件夹地址
+    private String folderName;
 
     //-------------------移动----------------
     //移动资费

@@ -13,18 +13,18 @@ public class FileUtil {
      * 上传文件
      *
      * @param file     文件对应的byte数组流   使用file.getBytes()方法可以获取
-     * @param orderId  商户ID
+     * @param folderName  文件夹名称
      * @param fileName 上传文件名
      * @throws Exception
      */
-    public static String uploadFile(MultipartFile file, Integer orderId, String fileName) throws Exception {
+    public static String uploadFile(MultipartFile file, String folderName, String fileName) throws Exception {
         String extensionName = getExtensionName(file.getOriginalFilename());
         if (StringUtils.isEmpty(extensionName)){
             extensionName = getExtensionName(file.getName());
         }
-        String filePath = RingtoneConfig.getProfile() + File.separator + orderId;
-        String returnPath = File.separator + orderId + File.separator + fileName + "." + extensionName;
-        String path = RingtoneConfig.getProfile() + File.separator + orderId + File.separator + fileName + "." + extensionName;
+        String filePath = RingtoneConfig.getProfile() + File.separator + folderName;
+        String returnPath = File.separator + folderName + File.separator + fileName + "." + extensionName;
+        String path = RingtoneConfig.getProfile() + File.separator + folderName + File.separator + fileName + "." + extensionName;
         byte[] bytes = file.getBytes();
         File targetFile = new File(filePath);
         if (!targetFile.exists()) {

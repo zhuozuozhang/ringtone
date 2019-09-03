@@ -33,13 +33,13 @@ public class FileController {
      *
      * @param ringFile
      * @param ringName
-     * @param parentOrderId
+     * @param folderName
      * @return
      */
     @PostMapping("/system/upload/ringFile")
     @ResponseBody
     @Log(title = "上传文件", businessType = BusinessType.INSERT, operatorLogType = OperatorLogType.ADMIN)
-    public AjaxResult uploadRingFile(@RequestParam("ringFile") MultipartFile ringFile, String ringName, Integer parentOrderId) {
+    public AjaxResult uploadRingFile(@RequestParam("ringFile") MultipartFile ringFile, String ringName, String folderName) {
         ringName = ringName + DateUtils.getTimeRadom();
         String extensionName = FileUtil.getExtensionName(ringFile.getOriginalFilename());
         if (extensionName.equals("mp3") || extensionName.equals("wav")) {
@@ -54,7 +54,7 @@ public class FileController {
                 return AjaxResult.error("文件大小超限");
             }
         }
-        return fileService.upload(ringFile, ringName, parentOrderId);
+        return fileService.upload(ringFile, ringName, folderName);
     }
 
     //@PathVariable String apersonId
@@ -63,14 +63,14 @@ public class FileController {
      * 添加企业资质
      *
      * @param companyFile
-     * @param parentOrderId
+     * @param folderName
      * @return
      */
     @PostMapping("/system/upload/companyFile")
     @ResponseBody
     @Log(title = "上传文件", businessType = BusinessType.INSERT, operatorLogType = OperatorLogType.THREENETS)
-    public AjaxResult uploadCompanyFile(@RequestParam("companyFile") MultipartFile companyFile, Integer parentOrderId) {
-        return fileService.upload(companyFile, "企业资质", parentOrderId);
+    public AjaxResult uploadCompanyFile(@RequestParam("companyFile") MultipartFile companyFile, String folderName) {
+        return fileService.upload(companyFile, "企业资质", folderName);
     }
 
 
@@ -78,42 +78,42 @@ public class FileController {
      * 客户确认涵
      *
      * @param clientFile
-     * @param parentOrderId
+     * @param folderName
      * @return
      */
     @PostMapping("/system/upload/clientFile")
     @ResponseBody
     @Log(title = "上传文件", businessType = BusinessType.INSERT, operatorLogType = OperatorLogType.THREENETS)
-    public AjaxResult uploadClientFile(@RequestParam("clientFile") MultipartFile clientFile, Integer parentOrderId) {
-        return fileService.upload(clientFile, "客户确认函", parentOrderId);
+    public AjaxResult uploadClientFile(@RequestParam("clientFile") MultipartFile clientFile, String folderName) {
+        return fileService.upload(clientFile, "客户确认函", folderName);
     }
 
     /**
      * 免短协议
      *
      * @param protocolFile
-     * @param parentOrderId
+     * @param folderName
      * @return
      */
     @PostMapping("/system/upload/protocolFile")
     @ResponseBody
     @Log(title = "上传文件", businessType = BusinessType.INSERT, operatorLogType = OperatorLogType.THREENETS)
-    public AjaxResult uploadProtocolFile(@RequestParam("protocolFile") MultipartFile protocolFile, Integer parentOrderId) {
-        return fileService.upload(protocolFile, "免短协议", parentOrderId);
+    public AjaxResult uploadProtocolFile(@RequestParam("protocolFile") MultipartFile protocolFile, String folderName) {
+        return fileService.upload(protocolFile, "免短协议", folderName);
     }
 
     /**
      * 主题证明
      *
      * @param protocolFile
-     * @param parentOrderId
+     * @param folderName
      * @return
      */
     @PostMapping("/system/upload/mainFile")
     @ResponseBody
     @Log(title = "上传文件", businessType = BusinessType.INSERT, operatorLogType = OperatorLogType.THREENETS)
-    public AjaxResult uploadMainFile(@RequestParam("protocolFile") MultipartFile protocolFile, Integer parentOrderId) {
-        return fileService.upload(protocolFile, "主体证明", parentOrderId);
+    public AjaxResult uploadMainFile(@RequestParam("protocolFile") MultipartFile protocolFile, String folderName) {
+        return fileService.upload(protocolFile, "主体证明", folderName);
     }
 
     /**
@@ -130,9 +130,9 @@ public class FileController {
     public AjaxResult cardImage(@RequestParam("file") MultipartFile protocolFile, Integer flag, Integer radom) {
         if (StringUtils.isNotNull(protocolFile) && StringUtils.isNotNull(flag) && StringUtils.isNotNull(radom)) {
             if (flag == 1) { // 身份证正面照
-                return fileService.upload(protocolFile, "正面照", radom);
+                return fileService.upload(protocolFile, "正面照", radom.toString());
             } else { // 身份证反面照
-                return fileService.upload(protocolFile, "反面照", radom);
+                return fileService.upload(protocolFile, "反面照", radom.toString());
             }
         }
         return AjaxResult.error("参数格式不正确！");

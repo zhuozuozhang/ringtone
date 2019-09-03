@@ -35,7 +35,8 @@ public class ThreenetsOrder implements Serializable {
     private Integer userId;
     // 消息（1.无/2.有）移动专属
     private Integer message;
-
+    //文件夹地址
+    private String folderName;
     /**************************VO**********************************/
 
     private String userName;

@@ -15,6 +15,8 @@ import com.hrtxn.ringtone.project.system.user.service.UserService;
 import com.hrtxn.ringtone.project.threenets.threenet.domain.PlotBarPhone;
 import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreeNetsOrderAttached;
 import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreenetsChildOrder;
+import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreenetsOrder;
+import com.hrtxn.ringtone.project.threenets.threenet.mapper.ThreenetsOrderMapper;
 import com.hrtxn.ringtone.project.threenets.threenet.service.ThreeNetsChildOrderService;
 import com.hrtxn.ringtone.project.threenets.threenet.service.ThreeNetsOrderAttachedService;
 import com.hrtxn.ringtone.project.threenets.threenet.service.ThreeNetsService;
@@ -49,6 +51,8 @@ public class ThreeNetsController {
     private ThreeNetsChildOrderService threeNetsChildOrderService;// 子订单
     @Autowired
     private ThreeNetsOrderAttachedService threeNetsOrderAttachedService; //父订单附表
+    @Autowired
+    private ThreenetsOrderMapper threenetsOrderMapper;
 
     /**
      * 跳转到代办
@@ -104,10 +108,13 @@ public class ThreeNetsController {
      */
     @GetMapping("/threenets/toAddMerchantsPhonePage/{orderId}")
     public String toAddMerchantsPhonePage(ModelMap map,@PathVariable("orderId")Integer orderId) {
-        ThreeNetsOrderAttached attached = threeNetsService.getOrderAttached(orderId);
-        map.put("miguId",attached.getMiguId());
-        map.put("swxlId",attached.getSwxlId());
-        map.put("orderId",orderId);
+        try{
+            ThreenetsOrder order = threenetsOrderMapper.selectByPrimaryKey(orderId);
+            map.put("orderId",orderId);
+            map.put("folderName",order.getFolderName());
+        }catch(Exception e) {
+            e.printStackTrace();
+        }
         return "threenets/threenet/merchants/Addnumber";
     }
 
@@ -389,9 +396,9 @@ public class ThreeNetsController {
      */
     @PostMapping("/threenets/getOperate")
     @ResponseBody
-    public AjaxResult matchingOperate(String phone) {
+    public AjaxResult matchingOperate(String phone,Integer parentOrderId) {
         try {
-            return threeNetsService.matchingOperate(phone);
+            return threeNetsService.matchingOperate(phone,parentOrderId);
         } catch (Exception e) {
             return AjaxResult.error("验证手机运营商失败！");
         }

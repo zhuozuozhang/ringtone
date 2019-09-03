@@ -24,6 +24,14 @@ public final class Const implements Serializable {
     public final static Integer REVIEWED = 1;
 
     /**
+     * 审核状态
+     */
+    public final static String PENDING_REVIEW = "待审核";
+    public final static String SUCCESSFUL_REVIEW = "审核通过";
+    public final static String FAILURE_REVIEW = "审核失败";
+
+
+    /**
      * 电信新增失败状态码
      */
     public final static String ILLEFAL_AREA = "illegal_area";

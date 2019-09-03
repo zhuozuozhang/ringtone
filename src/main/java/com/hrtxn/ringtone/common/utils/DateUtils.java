@@ -376,6 +376,21 @@ public final class DateUtils {
         return Integer.parseInt(radom);
     }
 
+    /**
+     * 当前时间字符串
+     * @return
+     */
+    public static String getTime() {
+        Calendar ca = Calendar.getInstance();
+        Integer year = ca.get(Calendar.YEAR);//获取年份
+        Integer month = ca.get(Calendar.MONTH) + 1;//获取月份
+        Integer day = ca.get(Calendar.DATE);//获取日 
+        Integer minute = ca.get(Calendar.MINUTE);//分    
+        Integer hour = ca.get(Calendar.HOUR);//小时    
+        Integer second = ca.get(Calendar.SECOND);//秒    
+        return year.toString()+ month.toString() + day.toString() + minute.toString() + hour.toString()+ second.toString();
+    }
+
 
     /**
      * 通过时间秒毫秒数判断两个时间的间隔
