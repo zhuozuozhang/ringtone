@@ -57,8 +57,6 @@ public class ThreeNetsAsyncService {
     @Autowired
     private ThreeNetsOrderAttachedMapper threeNetsOrderAttachedMapper;
 
-    private ApiUtils apiUtils = new ApiUtils();
-
     /**
      * 异步保存三网订单
      *
@@ -387,6 +385,7 @@ public class ThreeNetsAsyncService {
      * @throws NoLoginException
      */
     private List<ThreenetsChildOrder> addMembersByYd(ThreenetsOrder order, ThreeNetsOrderAttached attached, List<ThreenetsChildOrder> list, ThreenetsRing ring) throws IOException, NoLoginException {
+        ApiUtils apiUtils = new ApiUtils();
         //无集团id则先进行集团新增
         if (attached.getMiguId() == null) {
             order.setLinkmanTel(list.get(0).getLinkmanTel());
@@ -445,6 +444,7 @@ public class ThreeNetsAsyncService {
      * @throws NoLoginException
      */
     private List<ThreenetsChildOrder> addMemberByLt(ThreenetsOrder order, ThreeNetsOrderAttached attached, List<ThreenetsChildOrder> list) throws IOException, NoLoginException {
+        ApiUtils apiUtils = new ApiUtils();
         if (attached.getSwxlId() == null) {
             ThreenetsRing ring = new ThreenetsRing();
             List<ThreenetsRing> rings = new ArrayList<>();
@@ -505,6 +505,7 @@ public class ThreeNetsAsyncService {
      * @throws NoLoginException
      */
     public List<ThreenetsChildOrder> addMcardByDx(ThreenetsOrder order, ThreeNetsOrderAttached attached, List<ThreenetsChildOrder> list, BaseRequest request,ThreenetsRing ring){
+        ApiUtils apiUtils = new ApiUtils();
         String remark = "请等待电信商户审核完成！";
         String status = "待审核";
         if (StringUtils.isEmpty(attached.getMcardId())) {
@@ -597,6 +598,7 @@ public class ThreeNetsAsyncService {
      * @param newChildOrders
      */
     public void ringToneReUpload(ThreenetsOrder order, List<ThreenetsChildOrder> newChildOrders) {
+        ApiUtils apiUtils = new ApiUtils();
         try {
             int days = DateUtils.differentDaysByMillisecond(order.getCreateTime(), new Date());
             if (days <= 2) {
@@ -651,7 +653,7 @@ public class ThreeNetsAsyncService {
      */
     @Async
     public void refreshTelecomMerchantInfo(ThreenetsOrder order) {
-        ApiUtils utils = new ApiUtils();
+        ApiUtils apiUtils = new ApiUtils();
         ThreeNetsOrderAttached attached = threeNetsOrderAttachedMapper.selectByParentOrderId(order.getId());
         if (attached == null) {
             return;
@@ -669,7 +671,7 @@ public class ThreeNetsAsyncService {
                 param.setStatus("未审核");
                 //保存成员
                 List<ThreenetsChildOrder> childOrders = threenetsChildOrderMapper.listByParamNoPage(param);
-                childOrders = utils.addPhoneByDx(childOrders, attached.getMcardId(), attached.getMcardDistributorId());
+                childOrders = apiUtils.addPhoneByDx(childOrders, attached.getMcardId(), attached.getMcardDistributorId());
                 threeNetsOrderAttachedMapper.updateByPrimaryKeySelective(attached);
                 //保存铃音
                 List<ThreenetsRing> rings = threenetsRingMapper.selectByOrderId(order.getId());
@@ -679,7 +681,7 @@ public class ThreeNetsAsyncService {
                     }
                     ThreenetsRing ring = rings.get(i);
                     ring.setFile(new File(RingtoneConfig.getProfile() + ring.getRingWay()));
-                    utils.addRingByDx(rings.get(i), attached);
+                    apiUtils.addRingByDx(rings.get(i), attached);
                 }
                 for (int i = 0; i < childOrders.size(); i++) {
                     threenetsChildOrderMapper.updateThreeNetsChidOrder(childOrders.get(i));
@@ -697,6 +699,92 @@ public class ThreeNetsAsyncService {
             }
         } catch (Exception e) {
             log.info("电信刷新信息上传用户失败" + e);
+        }
+    }
+
+
+    /**
+     * 移动上传铃音
+     *
+     * @param ring
+     * @return
+     */
+    @Async
+    public MiguAddRingRespone ringToneUploadByMobile(ThreenetsRing ring){
+        MiguAddRingRespone ringRespone = null;
+        try{
+            ApiUtils apiUtils = new ApiUtils();
+            ring.setFile(new File(RingtoneConfig.getProfile() + ring.getRingWay()));
+            ThreeNetsOrderAttached attached = threeNetsOrderAttachedMapper.selectByParentOrderId(ring.getOrderId());
+            ring.setOperateId(attached.getMiguId());
+            ringRespone = apiUtils.saveMiguRing(ring);
+            if (ringRespone != null && ringRespone.isSuccess()) {
+                //保存铃音
+                ring.setOperateRingId(ringRespone.getRingId());
+                fileService.updateStatus(ring.getRingWay());
+            }else{
+                threenetsRingMapper.deleteByPrimaryKey(ring.getId());
+                fileService.deleteFile(ring.getRingWay());
+            }
+            ring.setRemark(ringRespone.getMsg());
+            threenetsRingMapper.updateByPrimaryKeySelective(ring);
+        }catch(IOException e) {
+            log.info("移动铃音接口数据读写失败:"+e);
+        }catch (NoLoginException e){
+            log.info("移动铃音接口登录移动商户失败:"+e);
+        }
+        return ringRespone;
+    }
+
+    /**
+     * 联通上传铃音
+     *
+     * @param ring
+     */
+    @Async
+    public void ringToneUploadByUnicom(ThreenetsRing ring){
+        try{
+            ApiUtils apiUtils = new ApiUtils();
+            ring.setFile(new File(RingtoneConfig.getProfile() + ring.getRingWay()));
+            ThreeNetsOrderAttached attached = threeNetsOrderAttachedMapper.selectByParentOrderId(ring.getOrderId());
+            ring.setOperateId(attached.getSwxlId());
+            boolean ringByLt = apiUtils.addRingByLt(ring, attached.getSwxlId());
+            if (ringByLt) {
+                threenetsRingMapper.updateByPrimaryKeySelective(ring);
+                fileService.updateStatus(ring.getRingWay());
+            } else {
+                threenetsRingMapper.deleteByPrimaryKey(ring.getId());
+                fileService.deleteFile(ring.getRingWay());
+            }
+        }catch(IOException e) {
+            log.info("联通铃音接口数据读写失败:"+e);
+        }catch (NoLoginException e){
+            log.info("联通铃音接口登录移动商户失败:"+e);
+        }
+    }
+
+    /**
+     * 电信上传铃音
+     *
+     * @param ring
+     */
+    @Async
+    public void ringToneUploadByTelecom(ThreenetsRing ring){
+        try{
+            ApiUtils apiUtils = new ApiUtils();
+            ring.setFile(new File(RingtoneConfig.getProfile() + ring.getRingWay()));
+            ThreeNetsOrderAttached attached = threeNetsOrderAttachedMapper.selectByParentOrderId(ring.getOrderId());
+            ring.setOperateId(attached.getMcardId());
+            boolean flag = apiUtils.addRingByDx(ring, attached);
+            if (flag) {
+                threenetsRingMapper.updateByPrimaryKeySelective(ring);
+                fileService.updateStatus(ring.getRingWay());
+            } else {
+                threenetsRingMapper.deleteByPrimaryKey(ring.getId());
+                fileService.deleteFile(ring.getRingWay());
+            }
+        }catch(Exception e) {
+            log.info("电信上传铃音失败:"+e);
         }
     }
 }

@@ -6,24 +6,19 @@ import com.hrtxn.ringtone.common.domain.Page;
 import com.hrtxn.ringtone.common.exception.NoLoginException;
 import com.hrtxn.ringtone.common.utils.DateUtils;
 import com.hrtxn.ringtone.common.utils.StringUtils;
-import com.hrtxn.ringtone.freemark.config.systemConfig.RingtoneConfig;
 import com.hrtxn.ringtone.project.system.File.service.FileService;
-import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreeNetsOrderAttached;
 import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreenetsChildOrder;
 import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreenetsOrder;
 import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreenetsRing;
-import com.hrtxn.ringtone.project.threenets.threenet.json.migu.MiguAddRingRespone;
 import com.hrtxn.ringtone.project.threenets.threenet.mapper.ThreenetsChildOrderMapper;
 import com.hrtxn.ringtone.project.threenets.threenet.mapper.ThreenetsOrderMapper;
 import com.hrtxn.ringtone.project.threenets.threenet.mapper.ThreenetsRingMapper;
 import com.hrtxn.ringtone.project.threenets.threenet.utils.ApiUtils;
-import lombok.Synchronized;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Date;
@@ -51,10 +46,10 @@ public class ThreeNetsRingService {
     @Autowired
     private FileService fileService;
     @Autowired
-    private ThreeNetsOrderAttachedService threeNetsOrderAttachedService;
-    @Autowired
     private ThreenetsChildOrderMapper threenetsChildOrderMapper;
 
+    @Autowired
+    private ThreeNetsAsyncService threeNetsAsyncService;
 
     private ApiUtils apiUtils = new ApiUtils();
 
@@ -154,81 +149,19 @@ public class ThreeNetsRingService {
             }
             if (operator == 1) {
                 threenetsRingMapper.insertThreeNetsRing(ring);
-                saveMiguRing(ring);
+                threeNetsAsyncService.ringToneUploadByMobile(ring);
             }
             if (operator == 3) {
                 threenetsRingMapper.insertThreeNetsRing(ring);
-                saveSwxlRing(ring);
+                threeNetsAsyncService.ringToneUploadByUnicom(ring);
             }
             if (operator == 2) {
-                saveMcardRing(ring);
                 threenetsRingMapper.insertThreeNetsRing(ring);
+                threeNetsAsyncService.ringToneUploadByTelecom(ring);
             }
             num++;
         }
         return AjaxResult.success(ring, "保存成功");
-    }
-
-    /**
-     * 同步铃音到移动
-     *
-     * @param ring
-     */
-    @Synchronized
-    private MiguAddRingRespone saveMiguRing(ThreenetsRing ring) throws IOException, NoLoginException {
-        ring.setFile(new File(RingtoneConfig.getProfile() + ring.getRingWay()));
-        ThreeNetsOrderAttached attached = threeNetsOrderAttachedService.selectByParentOrderId(ring.getOrderId());
-        ring.setOperateId(attached.getMiguId());
-        MiguAddRingRespone ringRespone = apiUtils.saveMiguRing(ring);
-        if (ringRespone != null && ringRespone.isSuccess()) {
-            //保存铃音
-            ring.setOperateRingId(ringRespone.getRingId());
-            fileService.updateStatus(ring.getRingWay());
-        }
-        ring.setRemark(ringRespone.getMsg());
-        threenetsRingMapper.updateByPrimaryKeySelective(ring);
-        return ringRespone;
-    }
-
-    /**
-     * 保存联通铃音
-     *
-     * @param ring
-     */
-    @Synchronized
-    private void saveSwxlRing(ThreenetsRing ring) throws IOException, NoLoginException {
-        ring.setFile(new File(RingtoneConfig.getProfile() + ring.getRingWay()));
-        ThreeNetsOrderAttached attached = threeNetsOrderAttachedService.selectByParentOrderId(ring.getOrderId());
-        ring.setOperateId(attached.getSwxlId());
-        boolean ringByLt = apiUtils.addRingByLt(ring, attached.getSwxlId());
-        if (ringByLt) {
-            threenetsRingMapper.updateByPrimaryKeySelective(ring);
-            fileService.updateStatus(ring.getRingWay());
-        } else {
-            delete(ring.getId());
-            fileService.deleteFile(ring.getRingWay());
-        }
-    }
-
-    /**
-     * 保存电信铃音
-     *
-     * @param ring
-     * @throws IOException
-     * @throws NoLoginException
-     */
-    private void saveMcardRing(ThreenetsRing ring) {
-        ring.setFile(new File(RingtoneConfig.getProfile() + ring.getRingWay()));
-        ThreeNetsOrderAttached attached = threeNetsOrderAttachedService.selectByParentOrderId(ring.getOrderId());
-        ring.setOperateId(attached.getMcardId());
-        boolean flag = apiUtils.addRingByDx(ring, attached);
-        if (flag) {
-            threenetsRingMapper.updateByPrimaryKeySelective(ring);
-            fileService.updateStatus(ring.getRingWay());
-        } else {
-            delete(ring.getId());
-            fileService.deleteFile(ring.getRingWay());
-        }
     }
 
     /**
@@ -280,13 +213,13 @@ public class ThreeNetsRingService {
         ring.setRemark("");
         threenetsRingMapper.insertThreeNetsRing(ring);
         if (ring.getOperate() == 3) {
-            saveSwxlRing(ring);
+            threeNetsAsyncService.ringToneUploadByUnicom(ring);
         }
         if (ring.getOperate() == 1) {
-            saveMiguRing(ring);
+            threeNetsAsyncService.ringToneUploadByMobile(ring);
         }
         if (ring.getOperate() == 2) {
-            saveMcardRing(ring);
+            threeNetsAsyncService.ringToneUploadByTelecom(ring);
         }
     }
 

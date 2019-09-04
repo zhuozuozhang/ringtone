@@ -123,6 +123,10 @@ public class ApiUtils {
                 String result = mcardApi.getUserInfo(attached.getMcardDistributorId());
                 Document doc = Jsoup.parse(result);
                 Elements contents = doc.getElementsByTag("tbody");
+                if(contents.size() == 0){
+                    log.info("[" + threenetsChildOrder.getLinkmanTel() + "：获取信息失败！]");
+                    break;
+                }
                 Elements trs = contents.get(0).getElementsByTag("tr");
                 for (int i = 0; i < trs.size(); i++) {
                     Elements tds = trs.get(i).getElementsByTag("td");
@@ -303,6 +307,10 @@ public class ApiUtils {
                 String result = mcardApi.getUserInfo(attached.getMcardDistributorId());
                 Document doc = Jsoup.parse(result);
                 Elements contents = doc.getElementsByTag("tbody");
+                if(contents.size() == 0){
+                    log.info("[" + threenetsChildOrder.getLinkmanTel() + "：获取信息失败！]");
+                    break;
+                }
                 Elements trs = contents.get(0).getElementsByTag("tr");
                 for (int i = 0; i < trs.size(); i++) {
                     Elements tds = trs.get(i).getElementsByTag("td");
