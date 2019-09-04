@@ -94,7 +94,7 @@
                 </div>
                 <button onclick="showTelCerTable()">搜索</button>
 <!--                <button class="new_businesses" id="cause">新增商户</button>-->
-                 <div class="new_businesses" id="cause" onclick="addTelCerMerchant()">新增商户</div>
+                 <div class="new_businesses" id="cause" >新增商户</div>
             </div>
             <!-- 集团信息列表-->
             <div class="number_list">
@@ -292,7 +292,7 @@
             <div class="phonenum">
                 <div class="approvebk"><span><i>*</i>开通号码</span>
                     <input class="opennum" type="tel" placeholder="如果是座机号码务必加上区号">
-                    <em id="moreadd" onClick="addtel(this);"><img th:src="@{/client/telcertification/images/addphone.png}"></em>
+                    <em id="moreadd"><img th:src="@{/client/telcertification/images/addphone.png}"></em>
                 </div>
                 <!--                &lt;!&ndash;<div class="approvebk">-->
                 <!--                  <input type="tel" placeholder="如果是座机号码务必加上区号" style="margin-left:180px;">-->
@@ -302,11 +302,8 @@
                 <!--            </div>-->
                 <div class="imgbk"><span><i>*</i>上传营业执照</span>
                     <div class="tpscbk">
-                        <div class="tpimgbka">
-                            <img class="tpimga" border="0" th:src="@{/public/images/addimg.png}"
-                                                   test="111" style="margin:0px auto;max-height:140px;"></div>
-                        <input type="file" style="display: none;" name="businessLicense" class="tpdza"
-                               onclick="javascript:validate_img(this);" id="businessLicenseAdd">
+                        <div class="tpimgbka"><img class="tpimga" border="0" th:src="@{/public/images/addimg.png}" test="111" style="margin:0px auto;max-height:140px;"></div>
+                        <input type="file" style="display: none;" name="businessLicense" class="tpdza" onclick="javascript:validate_img(this);" id="businessLicenseAdd">
                     </div>
                 </div>
                 <div class="imgbk"><span><i>*</i>上传法人身份证正面</span>
@@ -469,4 +466,5 @@
 <script type="text/javascript" th:src="@{/public/js/ajax.js}"></script>
 <script th:src="@{/client/telcertification/js/merchants.js}"></script>
 <script th:src="@{/client/telcertification/js/charge.js}"></script>
+<script type="text/javascript" th:src="@{/public/js/ajaxfileupload.js}"></script>
 </html>

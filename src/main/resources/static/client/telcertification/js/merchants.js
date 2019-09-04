@@ -138,14 +138,7 @@ function showDueTable() {
     }];
     page("#due_table", 10, param, "/telcertify/getDueList", columns, columnDefs);
 }
-//
-// function addTelCerMerchant() {
-//     layer.open({
-//         type: 2,
-//         title: '业务订购',
-//         area: ['790px', '850px'],
-//         content: '/telcertify/toAddTelCerMerchantPage'
-//     });
+
 //修改商户信息
 function determine() {
     var url = "/telcertify/editTelCerOrderById";
@@ -665,20 +658,21 @@ function uploadFile(url) {
     //         layer.msg("上传文件失败！", {icon: 5, time: 3000});
     //     }
     // });
-    $.ajax({
-        url: '/system/upload/' + url,
-        type: 'POST',
-        cache: false,
-        data: {businessLicense: $('#businessLicenseAdd').val()},
-        processData: false,
-        contentType: false
-    }).done(function (res) {
-        layer.close(layuiLoding);
-        layer.msg("上传成功", {icon: 1, time: 6000});
-
-    }).fail(function (res) {
-        layer.msg(res.msg, {icon: 2, time: 6000});
-    });
+    $.ajaxFileUpload({
+            url: '/system/upload/'+url, //用于文件上传的服务器端请求地址
+            secureuri: false, //是否需要安全协议，一般设置为false
+            fileElementId:'businessLicenseAdd', //文件上传域的ID
+            dataType: 'json', //返回值类型 一般设置为json
+            success: function (data, status){
+                layer.close(layuiLoding);
+                layer.msg("上传成功", {icon: 1, time: 6000});
+            },
+            error: function (data, status, e){
+                layer.msg(res.msg, {icon: 2, time: 6000});
+            }
+        }
+    );
+    return false;
 }
 
 //填写信息弹窗
