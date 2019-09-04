@@ -1,14 +1,15 @@
 $(document).ready(function () {
     showTelCerTable();
 });
+
 // 获得订单列表-->我的订单
 function showTelCerTable() {
     var param = {
         "id": $("#id").val(),
         "rangetime" : $("#rangetime").val(),
-        "companyName": $("#companyName").val(),
-        "tel" : $("#tel").val(),
-        "phoneNum" : $("#membernum").val()
+        "telCompanyName": $("#companyName").val().trim(),
+        "telLinkPhone" : $("#tel").val().trim(),
+        "phoneNum" : $("#membernum").val().trim()
     }
     var columns = [
         {"data": null},
@@ -17,14 +18,14 @@ function showTelCerTable() {
         {"data": "telLinkName"},
         {"data": "telLinkPhone"},
         {"data": "memberNum"},
-        {"data": "statusName"},
+        // {"data": "statusName"},
         {"data": "unitPrice"},
         {"data": "telOrderTime"},
         {"data": "productName"},
         {"data": "remark"}
     ];
     var columnDefs = [{
-        targets:[9],
+        targets:[8],
         render: function (data, type, row, meta) {
             var productName = row.productName;
             var product = $.parseJSON(productName);
@@ -44,11 +45,10 @@ function showTelCerTable() {
             return str;
         }
     }, {
-        targets:[11],
+        targets:[10],
         render: function (data, type, row, meta) {
             var id = row.id;
-            var name = row.telCompanyName;
-            return "<i class='layui-icon layui-icon-edit' title='编辑' onclick='editTelCerOrder();'></i>"
+            return "<i class='layui-icon layui-icon-edit' title='编辑' onclick='editTelCerOrder("+id+");'></i>"
                 + "<i class='layui-icon layui-icon-log' title='详情' onclick='ckeckDetails("+id+");'></i>"
                 + "<a href='/telcertify/toTelMembersPage/"+id+"'><i class='layui-icon layui-icon-username' title='成员管理'></i></a>";
         }
@@ -68,7 +68,6 @@ function showTelCerTable() {
     }
     page("#merchants", 2, param, "/telcertify/getTelCerOrderList", columns, columnDefs);
 }
-
 // 获取订单列表-->即将到期列表
 function showFallDueTable() {
     var param = {
@@ -103,6 +102,7 @@ function showFallDueTable() {
     }];
     page("#fall_due_table", 10, param, "/telcertify/getFallDueList", columns, columnDefs);
 }
+
 //获取订单列表-->已经到期列表
 function showDueTable() {
     var param = {
@@ -138,32 +138,48 @@ function showDueTable() {
     }];
     page("#due_table", 10, param, "/telcertify/getDueList", columns, columnDefs);
 }
-
-function addTelCerMerchant() {
-    layer.open({
-        type: 2,
-        title: '业务订购',
-        area: ['790px', '850px'],
-        content: '/telcertify/toAddTelCerMerchantPage'
-    });
-}
-
+//
+// function addTelCerMerchant() {
+//     layer.open({
+//         type: 2,
+//         title: '业务订购',
+//         area: ['790px', '850px'],
+//         content: '/telcertify/toAddTelCerMerchantPage'
+//     });
+//修改商户信息
 function determine() {
-    var url = "/telcertify/insertTelCertifyOrder";
-    alert("提交");
-    // AjaxPost(url,{
-    //
-    // },function (res) {
-    //    if(res.code==200 && res.data){
-    //        alert(1);
-    //    }else {
-    //        layer.msg(res.msg, {icon: 5, time: 3000});
-    //    }
-    // });
+    var url = "/telcertify/editTelCerOrderById";
+    alert(sendId);
+    AjaxPost(url,{
+        id:sendId,
+        telCompanyName : $("#telCompanyName").val(),
+        telLinkName : $("#telLinkName").val(),
+        telLinkPhone : $("#telLinkPhone").val(),
+        telContent : $("#telContent").val(),
+    // businessLicense:$("#businessLicense").val(),
+    // legalPersonCardZhen:
+    // legalPersonCardFan:
+    // logo:
+    // authorization:
+    // numberProve:
+    // unitPrice:
+    // userId:
+    // telOrderStatus:
+    // telOrderTime:
+    // productName:
+        remark:$("#remark").val()
+    },function (res) {
+       if(res.code==200 && res.data){
+           alert(res.data);
+       }else {
+           layer.msg(res.msg, {icon: 5, time: 3000});
+       }
+    });
 }
 
 //tab切换
 //我的订单
+
 function myorder() {
     showTelCerTable();
     $('#myorder').addClass('active').siblings().removeClass('active');
@@ -171,7 +187,6 @@ function myorder() {
     document.getElementsByClassName('net_middle')[0].style.display = "none";
     document.getElementsByClassName('net_middle2')[0].style.display = "none";
 }
-
 //即将到期号码
 function surplusOrder() {
     showFallDueTable();
@@ -219,6 +234,70 @@ function ckeckDetailsOne(id) {
     });
 }
 
+function addTelCerMerchants(){
+    // $(".btn-calculate").click(function () {
+    //    if($(this).hasClass("active")){
+    //
+    //    }
+    // });
+    if ($("#taidix").hasClass("active")) {
+        var teddy = $("#taidix").val();
+        alert(teddy);
+    }
+    if($(".year .btn-calculate").hasClass("active")){
+        var year = $(".year .btn-calculate").val();
+        alert(year);
+    }
+    if ($("#dhb").hasClass("active")) {
+        var dhb = $("#dhb").val();
+    }
+    if($(".dhbyear .btn-calculate").hasClass("active")){
+        var dhbyear = $(".dhbyear .btn-calculate").val();
+        alert(dhbyear);
+    }
+    if ($("#caiyin").hasClass("active")) {
+        var caiyin = $("#caiyin").val();
+    }
+    if ($("#gjdx").hasClass("active")) {
+        var gjdx = $("#gjdx").val();
+    }
+    if($(".note .btn-calculate").hasClass("active")){
+        var note = $(".note .btn-calculate").val();
+        alert("note  "+note);
+    }
+    var dxsrk = $("#dxsrk").val();
+    var businessLicense = $("businessLicenseAdd").val();
+    alert(businessLicense);
+
+
+        AjaxPost("/telcertify/addTelCertifyOrder",{
+        telCompanyName: $("#telCompanyNameAdd").val(),
+        telLinkName : $("#telLinkNameAdd").val(),
+        telLinkPhone : $("#telLinkPhoneAdd").val(),
+        telContent : $("#telContentAdd").val(),
+        businessLicense : $("businessLicenseAdd").val(),
+        remark : $("#remarkAdd").val(),
+
+        teddy : teddy,
+        year : year,
+        telBond : dhb,
+        telBondYear : dhbyear,
+        colorPrint : caiyin,
+        hangUpMessage : gjdx,
+        //挂机短信条数
+        itemPerMonth : note,
+        //挂机短信费用
+        hangUpMessagePrice : $("#dxsrk").val(),
+        unitPrice : price
+    },function (res) {
+        if(res.code==200 && res.data){
+            alert(res.data);
+        }else {
+            layer.msg("失败", {icon: 5, time: 3000});
+        }
+    });
+}
+
 //支付费用
 function checkNum(obj) {
     //所输入的号码集合
@@ -235,18 +314,36 @@ function checkNum(obj) {
     }
 }
 
+var sendId = null;
 //打开修改订单弹窗
-function editTelCerOrder() {
-    // layer.open({
-    //     type : 2,
-    //     title : "更改业务",
-    //     content : "/telcertify/toTelEditPage",
-    //     area : ['680px','680']
-    // });
-    $("#editor").removeClass("display")
+function editTelCerOrder(id) {
+    sendId = id;
+    AjaxPost("/telcertify/toTelEditPage",{
+        id:id
+    },function (res) {
+        if (res.code = 200 && res.data) {
+            var telCerOrder = res.data;
+            $("#telCompanyName").val(telCerOrder.telCompanyName);
+            $("#telLinkName").val(telCerOrder.telLinkName);
+            $("#telLinkPhone").val(telCerOrder.telLinkPhone);
+            $("#telContent").val(telCerOrder.telContent);
+            // $("#businessLicense").val(telCerOrder.businessLicense);
+            // $("#legalPersonCardZhen").val(telCerOrder.legalPersonCardZhen);
+            // $("#").val(telCerOrder.);
+            // $("#").val(telCerOrder.);
+            // $("#").val(telCerOrder.);
+            // $("#").val(telCerOrder.);
+            $("#remark").val(telCerOrder.remark);
+        }else{
+            layer.msg("弹出修改弹窗失败！", {icon: 5, time: 3000});
+        }
+    });
+    $("#editor").removeClass("display");
 }
 
 
+
+var teddyPriceOut = 0;
 var price = 80;
 $(function () {
     //多选
@@ -258,12 +355,89 @@ $(function () {
         }
     });
     //年份单选
-    $(".year	.btn-calculate").click(function () {
+    $(".year .btn-calculate").click(function () {
+        if($(".year .btn-calculate").hasClass("active")){
+            if($(this).val() == 1){
+                $(".dhbyear").find('button[value^="1"]').addClass("active");
+                $(".dhbyear").find('button[value^="2"]').removeClass("active");
+                $(".dhbyear").find('button[value^="3"]').removeClass("active");
+                $(".dhbyear").find('button[value^="4"]').removeClass("active");
+                $(".dhbyear").find('button[value^="5"]').removeClass("active");
+            }
+            if($(this).val() == 2){
+                $(".dhbyear").find('button[value^="2"]').addClass("active");
+                $(".dhbyear").find('button[value^="1"]').removeClass("active");
+                $(".dhbyear").find('button[value^="3"]').removeClass("active");
+                $(".dhbyear").find('button[value^="4"]').removeClass("active");
+                $(".dhbyear").find('button[value^="5"]').removeClass("active");
+            }
+            if($(this).val() == 3){
+                $(".dhbyear").find('button[value^="3"]').addClass("active");
+                $(".dhbyear").find('button[value^="2"]').removeClass("active");
+                $(".dhbyear").find('button[value^="1"]').removeClass("active");
+                $(".dhbyear").find('button[value^="4"]').removeClass("active");
+                $(".dhbyear").find('button[value^="5"]').removeClass("active");
+            }
+            if($(this).val() == 4){
+                $(".dhbyear").find('button[value^="4"]').addClass("active");
+                $(".dhbyear").find('button[value^="2"]').removeClass("active");
+                $(".dhbyear").find('button[value^="3"]').removeClass("active");
+                $(".dhbyear").find('button[value^="1"]').removeClass("active");
+                $(".dhbyear").find('button[value^="5"]').removeClass("active");
+            }
+            if($(this).val() == 5){
+                $(".dhbyear").find('button[value^="5"]').addClass("active");
+                $(".dhbyear").find('button[value^="2"]').removeClass("active");
+                $(".dhbyear").find('button[value^="3"]').removeClass("active");
+                $(".dhbyear").find('button[value^="4"]').removeClass("active");
+                $(".dhbyear").find('button[value^="1"]').removeClass("active");
+            }
+        }
         $(".year .btn-calculate").removeClass("active");
         $(this).addClass("active");
     });
+
+
+
     //电话邦年份单选
     $(".dhbyear	.btn-calculate").click(function () {
+        if($(".year .btn-calculate").hasClass("active")) {
+            if ($(this).val() == 1) {
+                $(".year").find('button[value^="1"]').addClass("active");
+                $(".year").find('button[value^="2"]').removeClass("active");
+                $(".year").find('button[value^="3"]').removeClass("active");
+                $(".year").find('button[value^="4"]').removeClass("active");
+                $(".year").find('button[value^="5"]').removeClass("active");
+            }
+            if ($(this).val() == 2) {
+                $(".year").find('button[value^="2"]').addClass("active");
+                $(".year").find('button[value^="1"]').removeClass("active");
+                $(".year").find('button[value^="3"]').removeClass("active");
+                $(".year").find('button[value^="4"]').removeClass("active");
+                $(".year").find('button[value^="5"]').removeClass("active");
+            }
+            if ($(this).val() == 3) {
+                $(".year").find('button[value^="3"]').addClass("active");
+                $(".year").find('button[value^="2"]').removeClass("active");
+                $(".year").find('button[value^="1"]').removeClass("active");
+                $(".year").find('button[value^="4"]').removeClass("active");
+                $(".year").find('button[value^="5"]').removeClass("active");
+            }
+            if ($(this).val() == 4) {
+                $(".year").find('button[value^="4"]').addClass("active");
+                $(".year").find('button[value^="2"]').removeClass("active");
+                $(".year").find('button[value^="3"]').removeClass("active");
+                $(".year").find('button[value^="1"]').removeClass("active");
+                $(".year").find('button[value^="5"]').removeClass("active");
+            }
+            if ($(this).val() == 5) {
+                $(".year").find('button[value^="5"]').addClass("active");
+                $(".year").find('button[value^="2"]').removeClass("active");
+                $(".year").find('button[value^="3"]').removeClass("active");
+                $(".year").find('button[value^="4"]').removeClass("active");
+                $(".year").find('button[value^="1"]').removeClass("active");
+            }
+        }
         $(".dhbyear .btn-calculate").removeClass("active");
         $(this).addClass("active");
     });
@@ -333,27 +507,45 @@ $(function () {
         var total = 0;
         var year = $(".year	.btn-calculate.active").val();
         var dhbyear = $(".dhbyear	.btn-calculate.active").val();
-        //计算泰迪熊金额
-        if ($("#taidix").hasClass("active")) {
-            total += Number(year) * 80;
-
-        }
-        //计算电话邦金额
-        if ($("#dhb").hasClass("active")) {
-            total += Number(dhbyear) * 80;
-        }
-        //计算挂机短信金额
-        if ($("#gjdx").hasClass("active")) {
-            total += Number($("#dxsrk").val());
-        }
-        price = total;
-        $("#yfje").html(total);
+        var teddyPrice = 0;
+        var telBondPrice = 0;
+        AjaxPost("/telcertify/getAllConfig",{},function (res) {
+            if(res.code==200 && res.data){
+                var config = res.data;
+                var configJson = JSON.stringify(config);
+                for (let i = 0; i < config.length; i++) {
+                    if(config[i].type == 1){
+                        teddyPrice = config[i].price;
+                        teddyPriceOut = teddyPrice;
+                    }
+                    if(config[i].type == 2){
+                        telBondPrice = config[i].price;
+                    }
+                }
+                //计算泰迪熊金额
+                if ($("#taidix").hasClass("active")) {
+                    total += Number(year) * teddyPrice;
+                }
+                //计算电话邦金额
+                if ($("#dhb").hasClass("active")) {
+                    total += Number(dhbyear) * telBondPrice;
+                }
+                //计算挂机短信金额
+                if ($("#gjdx").hasClass("active")) {
+                    total += Number($("#dxsrk").val());
+                }
+                price = total;
+                $("#yfje").html(total);
+            }else {
+                layer.msg("未获取到", {icon: 5, time: 3000});
+            }
+        });
         jiSuan();
     }
 
 
 });
-
+// }
 //计算业务订购中支付金额
 //$("body").on('blur','.opennum',function(){
 //var num=0;
@@ -386,7 +578,6 @@ $("body").on('click', '.tpimgbka', function () {
         if (this.files[0] != null && this.files[0] != "" && this.files[0] != undefined) {
             var objUrl = getObjectURL(this.files[0]); //获取图片的路径，该路径不是图片在本地的路径
             if (objUrl) {
-
                 ts.children().attr("src", objUrl); //将图片路径存入src中，显示出图片
             }
         } else {
@@ -415,6 +606,12 @@ function getObjectURL(file) {
 function validate_img(ele) {
     // 返回 KB，保留小数点后两位
     var file = ele.value;
+    // var fileName = document.getElementById("businessLicenseAdd").value;
+    //     // var fileType = fileName.slice(fileName.lastIndexOf(".")+1).toLowerCase();
+    //     // if(fileType != "jpg" && fileType != "jpeg" && fileType != "png" && fileType != "JPG" && fileType != "bmp"){
+    //     //     layer.msg("图片类型必须是jpeg,jpg,png,bmp中的一种!");
+    //     //     return ;
+    //     // }
     if (file != null && file != '' && file != undefined) {
         if (!/.(jpg|jpeg|png|JPG|bmp)$/.test(file)) {
             api.toast({
@@ -433,6 +630,55 @@ function validate_img(ele) {
             return false;
         }
     }
+}
+
+//上传营业执照
+$("body").on('change', '#businessLicenseAdd', function (e) {
+    uploadFile("businessLicense")
+});
+//上传法人身份证正面
+//上传法人身份证反面
+//上传LOGO
+//上传授权书
+//上传号码证明
+
+//上传文件
+function uploadFile(url) {
+    alert("url "+url);
+    var layuiLoding = layer.load(0, { //icon支持传入0-2
+        time:false,
+        shade: [0.5, '#9c9c9c'], //0.5透明度的灰色背景
+        content: '文件上传中...',
+        success: function (layero) {
+            layero.find('.layui-layer-content').css({
+                'padding': '39px 10px',
+                'width': '100px'
+            });
+        }
+    });
+    // AjaxPost("/system/upload/"+url,{},function (res) {
+    //     if (res.code == 200 && res.data){
+    //         if (url === "businessLicense") {
+    //             alert("查看营业执照的上传地址");
+    //         }
+    //     }else{
+    //         layer.msg("上传文件失败！", {icon: 5, time: 3000});
+    //     }
+    // });
+    $.ajax({
+        url: '/system/upload/' + url,
+        type: 'POST',
+        cache: false,
+        data: {businessLicense: $('#businessLicenseAdd').val()},
+        processData: false,
+        contentType: false
+    }).done(function (res) {
+        layer.close(layuiLoding);
+        layer.msg("上传成功", {icon: 1, time: 6000});
+
+    }).fail(function (res) {
+        layer.msg(res.msg, {icon: 2, time: 6000});
+    });
 }
 
 //填写信息弹窗

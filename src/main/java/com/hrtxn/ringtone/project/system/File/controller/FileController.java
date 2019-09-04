@@ -137,4 +137,17 @@ public class FileController {
         }
         return AjaxResult.error("参数格式不正确！");
     }
+
+    /**
+     * 上传营业执照
+     * @param businessLicense
+     * @param parentOrderId
+     * @return
+     */
+    @PostMapping("/system/upload/businessLicense")
+    @ResponseBody
+    @Log(title = "上传营业执照", businessType = BusinessType.INSERT, operatorLogType = OperatorLogType.TELCERTIFICATION)
+    public AjaxResult businessLicense(@RequestParam("businessLicense") MultipartFile businessLicense, String parentOrderId) {
+        return fileService.upload(businessLicense, "营业执照", parentOrderId);
+    }
 }

@@ -33,9 +33,6 @@
     <if test="param.id != null and param.id != ''">
       AND tco.id = #{param.id}
     </if>
-    <if test="param.telOrderNum != null and param.telOrderNum != ''">
-      AND tco.tel_order_num = #{param.telOrderNum}
-    </if>
     <if test="param.telCompanyName != null and param.telCompanyName !=''">
       AND tco.tel_company_name like '%${param.telCompanyName}%'
     </if>
@@ -59,14 +56,16 @@
         <include refid="Base_Column_List"/>
     FROM
         tb_telcertification_order tco
-    WHERE 1 = 1
-    <include refid="parameters"></include>
+    WHERE 1 = 1 and id is not null
+    <include refid="parameters"/>
     ORDER BY tel_order_time DESC
     <include refid="page"/>
   </select>
 <!--  查询号码认证订单列表总数-->
   <select id="getCount" resultType="int">
-    select count(*) from tb_telcertification_order
+    select count(*) from tb_telcertification_order tco
+    where 1 = 1 and id is not null
+    <include refid="parameters"/>
   </select>
 
   <select id="getTelCerOrderById" parameterType="int" resultMap="BaseResultMap">
@@ -89,6 +88,12 @@
         WHERE
         tel_child_order_phone = #{telChildOrderPhone,jdbcType=VARCHAR}
     )
+  </select>
+
+  <select id="findAllTelCer" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"/>
+    from tb_telcertification_order
   </select>
 
 
@@ -314,22 +319,56 @@
   <update id="updateByPrimaryKey" parameterType="com.hrtxn.ringtone.project.telcertification.domain.CertificationOrder" >
 
     update tb_telcertification_order
-    set tel_order_num = #{telOrderNum,jdbcType=VARCHAR},
-      tel_company_name = #{telCompanyName,jdbcType=VARCHAR},
-      tel_link_name = #{telLinkName,jdbcType=VARCHAR},
-      tel_link_phone = #{telLinkPhone,jdbcType=VARCHAR},
-      tel_content = #{telContent,jdbcType=VARCHAR},
-      business_license = #{businessLicense,jdbcType=VARCHAR},
-      legal_person_card_zhen = #{legalPersonCardZhen,jdbcType=VARCHAR},
-      legal_person_card_fan = #{legalPersonCardFan,jdbcType=VARCHAR},
-      logo = #{logo,jdbcType=VARCHAR},
-      authorization = #{authorization,jdbcType=VARCHAR},
-      number_prove = #{numberProve,jdbcType=VARCHAR},
-      unit_price = #{unitPrice,jdbcType=REAL},
-      user_id = #{userId,jdbcType=INTEGER},
-      tel_order_status = #{telOrderStatus,jdbcType=INTEGER},
-      tel_order_time = #{telOrderTime,jdbcType=TIMESTAMP},
-      product_name = #{productName,jdbcType=VARCHAR}
+    <set>
+        <if test="telOrderNum != null">
+          tel_order_num = #{telOrderNum,jdbcType=VARCHAR},
+        </if>
+        <if test="telCompanyName != null">
+          tel_company_name = #{telCompanyName,jdbcType=VARCHAR},
+        </if>
+      <if test="telLinkName != null">
+        tel_link_name = #{telLinkName,jdbcType=VARCHAR},
+      </if>
+      <if test="telLinkPhone != null">
+        tel_link_phone = #{telLinkPhone,jdbcType=VARCHAR},
+      </if>
+      <if test="telContent != null">
+        tel_content = #{telContent,jdbcType=VARCHAR},
+      </if>
+      <if test="businessLicense != null">
+        business_license = #{businessLicense,jdbcType=VARCHAR},
+      </if>
+      <if test="legalPersonCardZhen != null">
+        legal_person_card_zhen = #{legalPersonCardZhen,jdbcType=VARCHAR},
+      </if>
+      <if test="legalPersonCardFan != null">
+        legal_person_card_fan = #{legalPersonCardFan,jdbcType=VARCHAR},
+      </if>
+      <if test="logo != null">
+        logo = #{logo,jdbcType=VARCHAR},
+      </if>
+      <if test="authorization != null">
+        authorization = #{authorization,jdbcType=VARCHAR},
+      </if>
+      <if test="numberProve != null">
+        number_prove = #{numberProve,jdbcType=VARCHAR},
+      </if>
+      <if test="unitPrice != null">
+        unit_price = #{unitPrice,jdbcType=REAL},
+      </if>
+      <if test="userId != null">
+        user_id = #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="telOrderStatus != null">
+        tel_order_status = #{telOrderStatus,jdbcType=INTEGER},
+      </if>
+      <if test="telOrderTime != null">
+        tel_order_time = #{telOrderTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="productName != null">
+        product_name = #{productName,jdbcType=VARCHAR}
+      </if>
+    </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
 </mapper>

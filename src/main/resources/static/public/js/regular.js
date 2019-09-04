@@ -39,6 +39,21 @@ function isTel(tel) {
     ///^(13[0-9]|14[0-9]|15[0-9]|16[0-9]|17[0-9]|18[0-9]|19[0-9])[0-9]{8}$/
     return reg.test(tel);
 }
+
+/**
+ * 验证座机号码格式 没有-
+ * @param phoneNum
+ * @returns {boolean}
+ */
+function isPhone(phoneNum) {
+    var telregex = /^0(([1-9]\d)|([3-9]\d{2}))\d{8}$/; //没有中间那段 -的 座机格式是 01098909899
+    return telregex.test(phoneNum);
+}
+
+function is_Phone(phoneNum) {
+    var tel_regex = /^(\d{3,4}\-)?\d{7,8}$/i;   //座机格式是 010-98909899 010-86551122
+    return tel_regex.test(phoneNum);
+}
 /**
  * 验证邮箱格式
  */

@@ -16,7 +16,7 @@ import java.util.List;
 @Repository
 public interface CertificationChildOrderMapper {
 
-    int getCount();
+    int getCount(@Param("param") BaseRequest request);
 
     List<CertificationChildOrder> findTheChildOrder(@Param("page") Page page, @Param("param") BaseRequest request);
 
@@ -32,4 +32,13 @@ public interface CertificationChildOrderMapper {
     int editFeedBackById(CertificationChildOrder certificationChildOrder);
 
     int getTelcerChildParentIdByPhoneNum(String phoneNum);
+
+
+    int editChildAfterRenew(CertificationChildOrder childOrder);
+
+    CertificationChildOrder getTelcerChildByPhoneNum(String userTel);
+
+    int insert(CertificationChildOrder certificationChildOrder);
+
+    int batchInsertChildOrder(@Param("list") List<CertificationChildOrder> list);
 }

@@ -43,5 +43,9 @@ public class CertificationChildOrder implements Serializable {
     private int due;
     //状态名称
     private String statusName;
+    //批量添加的号码
+    private String[] phoneNumberArray;
+    //订购的业务
+    private String product;
 
 }

@@ -39,7 +39,9 @@
     </sql>
 <!--获取子订单总数-->
     <select id="getCount" resultType="int">
-        select count(*) from tb_telcertification_child_order
+        select count(*) from tb_telcertification_child_order tcc
+        where 1=1
+         <include refid="parameters"/>
     </select>
 
     <!--根据条件获取子订单-->
@@ -121,17 +123,33 @@
     </select>
 
     <insert id="insert" parameterType="com.hrtxn.ringtone.project.telcertification.domain.CertificationChildOrder">
-    insert into tb_telcertification_child_order (id, tel_child_order_num, years, 
+    insert into tb_telcertification_child_order (id, tel_child_order_num,tel_child_order_phone,years,
       price, tel_child_order_status, business_feedback, 
       tel_child_order_ctime, tel_child_order_open_time, 
       tel_child_order_expire_time, parent_order_id, 
       consume_log_id)
-    values (#{id,jdbcType=INTEGER}, #{telChildOrderNum,jdbcType=VARCHAR}, #{years,jdbcType=INTEGER}, 
+    values (#{id,jdbcType=INTEGER}, #{telChildOrderNum,jdbcType=VARCHAR},#{telChildOrderPhone,jdbcType=VARCHAR},#{years,jdbcType=INTEGER},
       #{price,jdbcType=REAL}, #{telChildOrderStatus,jdbcType=INTEGER}, #{businessFeedback,jdbcType=VARCHAR}, 
       #{telChildOrderCtime,jdbcType=TIMESTAMP}, #{telChildOrderOpenTime,jdbcType=TIMESTAMP}, 
       #{telChildOrderExpireTime,jdbcType=TIMESTAMP}, #{parentOrderId,jdbcType=INTEGER}, 
       #{consumeLogId,jdbcType=INTEGER})
   </insert>
+
+    <insert id="batchInsertChildOrder">
+        insert into tb_telcertification_child_order (tel_child_order_num,tel_child_order_phone,years,
+        price, tel_child_order_status, business_feedback,tel_child_order_ctime, tel_child_order_open_time,
+        tel_child_order_expire_time,parent_order_id,consume_log_id)
+      values
+      <foreach collection="list" item="child" index="index" separator=",">
+          (
+          #{child.telChildOrderNum,jdbcType=VARCHAR},#{child.telChildOrderPhone,jdbcType=VARCHAR},#{child.years,jdbcType=INTEGER},
+          #{child.price,jdbcType=REAL}, #{child.telChildOrderStatus,jdbcType=INTEGER}, #{child.businessFeedback,jdbcType=VARCHAR},
+          #{child.telChildOrderCtime,jdbcType=TIMESTAMP}, #{child.telChildOrderOpenTime,jdbcType=TIMESTAMP},
+          #{child.telChildOrderExpireTime,jdbcType=TIMESTAMP}, #{child.parentOrderId,jdbcType=INTEGER},
+          #{child.consumeLogId,jdbcType=INTEGER}
+          )
+      </foreach>
+    </insert>
     <insert id="insertSelective"
             parameterType="com.hrtxn.ringtone.project.telcertification.domain.CertificationChildOrder">
         insert into tb_telcertification_child_order

@@ -98,7 +98,7 @@
             </div>
             <!-- 集团信息列表-->
             <div class="number_list">
-                <input type="hidden" id="id" th:value="${id}">
+<!--                <input type="hidden" id="id" th:value="${id}">-->
                 <table class="layui-table" id='merchants' style="width:1200px!important;">
                     <thead>
                     <tr>
@@ -108,7 +108,7 @@
                         <th>联系人</th>
                         <th>联系电话</th>
                         <th>成员数</th>
-                        <th>状态</th>
+<!--                        <th>状态</th>-->
                         <th>总价(元)</th>
                         <th>创建时间</th>
                         <th>订购的产品</th>
@@ -208,7 +208,8 @@
     <div class="pop_content">
         <div class="approve_title">
             <h3>业务订购</h3>
-            <h4>共需支付：<span id="yfje">80</span>元</h4>
+            <h4>共需支付：<span th:each="c:${configList}"><span th:if="${c.type}==1"><span id="yfje" th:text="${c.price}">80</span></span></span>元</h4>
+<!--            <h4>共需支付：<span>80</span>元</h4>-->
             <div class="gban" id="cancel"><img th:src="@{/client/telcertification/images/close.png}"></div>
         </div>
         <div class="rz_y">
@@ -219,10 +220,10 @@
             <div class="ywxz">
                 <div class="tswz">选择业务</div>
                 <div class="choosebk">
-                    <button id="taidix" class="btn-calculate active">泰迪熊</button>
-                    <button id="dhb" class="btn-calculate">电话邦</button>
-                    <button id="caiyin" class="btn-calculate">彩印</button>
-                    <button id="gjdx" class="btn-calculate">挂机短信</button>
+                    <button id="taidix" class="btn-calculate active" value="泰迪熊">泰迪熊</button>
+                    <button id="dhb" class="btn-calculate" value="电话邦">电话邦</button>
+                    <button id="caiyin" class="btn-calculate" value="彩印">彩印</button>
+                    <button id="gjdx" class="btn-calculate" value="挂机短信">挂机短信</button>
                 </div>
                 <div class="zsy"></div>
             </div>
@@ -263,11 +264,11 @@
                 <div class="dxsx">
                     <div class="tswz">挂机短信上限</div>
                     <div class="choosebk note">
-                        <button class="btn-calculate active">100条/月</button>
-                        <button class="btn-calculate">200条/月</button>
-                        <button class="btn-calculate">300条/月</button>
-                        <button class="btn-calculate">500条/月</button>
-                        <button class="btn-calculate">700条/月</button>
+                        <button class="btn-calculate active" value="100">100条/月</button>
+                        <button class="btn-calculate" value="200">200条/月</button>
+                        <button class="btn-calculate" value="300">300条/月</button>
+                        <button class="btn-calculate" value="500">500条/月</button>
+                        <button class="btn-calculate" value="700">700条/月</button>
                     </div>
                     <div class="zsy"></div>
                 </div>
@@ -275,17 +276,18 @@
         </div>
         <div class="approvecon">
             <div class="approvebk"><span><i>*</i>集团名称</span>
-                <input type="text" placeholder="需跟营业执照名称一致" required lay-verify="required" name="companyName" id="companyName"
-                       maxlength="32" autocomplete="off" onblur="verificationName()">
+                <input type="text" placeholder="需跟营业执照名称一致" required lay-verify="required" name="telCompanyNameAdd" id="telCompanyNameAdd"
+                       maxlength="32" autocomplete="off" >
+<!--                onblur="verificationName()"-->
             </div>
             <div class="approvebk"><span><i>*</i>联系人姓名</span>
-                <input type="text">
+                <input type="text" id="telLinkNameAdd" maxlength="32" autocomplete="off" name="telLinkNameAdd">
             </div>
             <div class="approvebk"><span><i>*</i>联系人电话</span>
-                <input type="tel">
+                <input type="tel" id="telLinkPhoneAdd" maxlength="12" autocomplete="off" name="telLinkPhoneAdd">
             </div>
             <div class="approvebk"><span><i>*</i>认证展示内容</span>
-                <input type="text" placeholder="请跟营业执照主体一致">
+                <input type="text" placeholder="请跟营业执照主体一致" id="telContentAdd" autocomplete="off" name="telContentAdd">
             </div>
             <div class="phonenum">
                 <div class="approvebk"><span><i>*</i>开通号码</span>
@@ -300,18 +302,20 @@
                 <!--            </div>-->
                 <div class="imgbk"><span><i>*</i>上传营业执照</span>
                     <div class="tpscbk">
-                        <div class="tpimgbka"><img class="tpimga" border="0" th:src="@{/public/images/addimg.png}"
+                        <div class="tpimgbka">
+                            <img class="tpimga" border="0" th:src="@{/public/images/addimg.png}"
                                                    test="111" style="margin:0px auto;max-height:140px;"></div>
-                        <input type="file" style="display: none;" name="file" class="tpdza"
-                               onclick="javascript:validate_img(this);">
+                        <input type="file" style="display: none;" name="businessLicense" class="tpdza"
+                               onclick="javascript:validate_img(this);" id="businessLicenseAdd">
                     </div>
                 </div>
                 <div class="imgbk"><span><i>*</i>上传法人身份证正面</span>
                     <div class="tpscbk">
-                        <div class="tpimgbka"><img class="tpimga" border="0" th:src="@{/public/images/addimg.png}"
+                        <div class="tpimgbka">
+                            <img class="tpimga" border="0" th:src="@{/public/images/addimg.png}"
                                                    test="111" style="margin:0px auto;max-height:140px;"></div>
                         <input type="file" style="display: none;" name="file" class="tpdza"
-                               onclick="javascript:validate_img(this);">
+                               onclick="javascript:validate_img(this);" id="legalPersonCardZhenAdd">
                     </div>
                 </div>
                 <div class="imgbk"><span><i>*</i>上传法人身份证反面</span>
@@ -319,7 +323,7 @@
                         <div class="tpimgbka"><img class="tpimga" border="0" th:src="@{/public/images/addimg.png}"
                                                    test="111" style="margin:0px auto;max-height:140px;"></div>
                         <input type="file" style="display: none;" name="file" class="tpdza"
-                               onclick="javascript:validate_img(this);">
+                               onclick="javascript:validate_img(this);" id="legalPersonCardFanAdd">
                     </div>
                 </div>
                 <div class="imgbk"><span><i>*</i>上传LOGO</span>
@@ -327,25 +331,25 @@
                         <div class="tpimgbka"><img class="tpimga" border="0" th:src="@{/public/images/addimg.png}"
                                                    test="111" style="margin:0px auto;max-height:140px;"></div>
                         <input type="file" style="display: none;" name="file" class="tpdza"
-                               onclick="javascript:validate_img(this);">
+                               onclick="javascript:validate_img(this);" id="logoAdd">
                     </div>
                 </div>
                 <div class="approvebk"><span><i>*</i>上传授权书</span>
-                    <input class="scwj" type="file" placeholder="选填">
+                    <input class="scwj" type="file" placeholder="选填" id="authorizationAdd" name="authorizationAdd">
                 </div>
                 <div class="ckalbk">
                     <div class="ckan opencase">查看案例</div>
                     <div class="mbxz"><a href="http://v.130.xyz/api/auth/uploadModel?type=3">授权书模板下载</a></div>
                 </div>
                 <div class="approvebk"><span><i>*</i>上传号码证明</span>
-                    <input class="scwj" type="file" placeholder="选填">
+                    <input class="scwj" type="file" placeholder="选填" id="numberProveAdd" name="numberProveAdd">
                 </div>
                 <div class="ckalbk">
                     <div class="ckan opencase">查看案例</div>
                     <div class="mbxz"><a href="http://v.130.xyz/api/auth/uploadModel?type=2">号码证明模板下载</a></div>
                 </div>
                 <div class="bzbk"><span>备注</span>
-                    <textarea placeholder="添加商户的成员，请在商户的信息显示在订单页面后，进入操作栏中的成员管理界面中添加"></textarea>
+                    <textarea placeholder="" id="remarkAdd" autocomplete="off"></textarea>
                 </div>
                 <div class="approvebk"><span><i>*</i>订购协议</span>
                     <div class="dgxy">
@@ -353,13 +357,82 @@
                         <span>我同意此<i class="openagreement">订购协议</i></span></div>
                 </div>
 <!--                <div class="xgan" onClick="determine()">确认添加</div>-->
-                            <div class="xgan" lay-submit lay-filter="addform">确认添加</div>
+                            <div class="xgan" lay-submit lay-filter="addform" onclick="addTelCerMerchants()">确认添加</div>
             </div>
         </div>
     </div>
 </div>
+
 <!--修改订单 -->
-<div th:replace="telcertification/common/edit :: edit"></div>
+<div class="back display" id="editor">
+    <div class="pop_content">
+        <div class="approve_title">
+            <h3>更改业务</h3>
+            <div class="gban" id="gbxg"><img src="../../client/telcertification/images/close.png"></div>
+        </div>
+        <div class="approvecon" style="padding-top:100px;">
+            <div class="approvebk"><span><i>*</i>集团名称</span>
+                <input type="text" id="telCompanyName" placeholder="需跟营业执照名称一致">
+            </div>
+            <div class="approvebk"><span><i>*</i>联系人姓名</span>
+                <input type="text" id="telLinkName">
+            </div>
+            <div class="approvebk"><span><i>*</i>联系人电话</span>
+                <input type="tel" id="telLinkPhone">
+            </div>
+            <div class="approvebk"><span><i>*</i>认证展示内容</span>
+                <input type="text" id="telContent" placeholder="请跟营业执照主体一致">
+            </div>
+            <div class="imgbk"><span><i>*</i>上传营业执照</span>
+                <div class="tpscbk">
+                    <div class="tpimgbka"><img class="tpimga" border="0" src="../../public/images/addimg.png" test="111" style="margin:0px auto;max-height:140px;"></div>
+                    <input type="file" id="businessLicense" style="display: none;" name="file" class="tpdza" onclick="javascript:validate_img(this);">
+                </div>
+            </div>
+            <div class="imgbk"><span><i>*</i>上传法人身份证正面</span>
+                <div class="tpscbk">
+                    <div class="tpimgbka"><img class="tpimga" border="0" src="../../public/images/addimg.png" test="111" style="margin:0px auto;max-height:140px;"></div>
+                    <input type="file" id="legalPersonCardZhen" style="display: none;" name="file" class="tpdza" onclick="javascript:validate_img(this);">
+                </div>
+            </div>
+            <div class="imgbk"><span><i>*</i>上传法人身份证反面</span>
+                <div class="tpscbk">
+                    <div class="tpimgbka"><img class="tpimga" border="0" src="../../public/images/addimg.png" test="111" style="margin:0px auto;max-height:140px;"></div>
+                    <input type="file" id="legalPersonCardFan" style="display: none;" name="file" class="tpdza" onclick="javascript:validate_img(this);">
+                </div>
+            </div>
+            <div class="imgbk"><span><i>*</i>上传LOGO</span>
+                <div class="tpscbk">
+                    <div class="tpimgbka"><img class="tpimga" border="0" src="../../public/images/addimg.png" test="111" style="margin:0px auto;max-height:140px;"></div>
+                    <input type="file" id="logo" style="display: none;" name="file" class="tpdza" onclick="javascript:validate_img(this);">
+                </div>
+            </div>
+            <div class="approvebk"><span><i>*</i>上传授权书</span>
+                <input class="scwj" type="file" id="authorization" placeholder="选填">
+            </div>
+            <div class="ckalbk">
+                <div class="ckan opencase">查看案例</div>
+                <div class="mbxz"><a href="http://v.130.xyz/api/auth/uploadModel?type=3">授权书模板下载</a></div>
+            </div>
+            <div class="approvebk"><span><i>*</i>号码证明</span>
+                <input class="scwj" type="file"  id="numberProve" placeholder="选填">
+            </div>
+            <div class="ckalbk">
+                <div class="ckan opencase">查看案例</div>
+                <div class="mbxz"><a href="http://v.130.xyz/api/auth/uploadModel?type=3">授权书模板下载</a></div>
+            </div>
+            <div class="bzbk"><span>备注</span>
+                <textarea id="remark" placeholder="请输入内容"></textarea>
+            </div>
+            <div class="approvebk"><span><i>*</i>订购协议</span>
+                <div class="dgxy">
+                    <input type="radio" checked="checked" >
+                    <span>我同意此<i class="openagreement">订购协议</i></span></div>
+            </div>
+            <div class="xgan" onClick="determine()">确认修改</div>
+        </div>
+    </div>
+</div>
 <!--查看示例-->
 <div class="back display" id="case">
     <div class="pop_content">

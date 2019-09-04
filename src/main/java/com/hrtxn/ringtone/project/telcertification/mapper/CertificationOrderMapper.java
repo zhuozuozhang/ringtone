@@ -16,13 +16,19 @@ import java.util.List;
 @Repository
 public interface CertificationOrderMapper {
 
-    int insertTelCertifyOrder(CertificationOrder certificationOrder);
-
     List<CertificationOrder> findAllTelCertification(@Param("page") Page page, @Param("param") BaseRequest request);
 
-    int getCount();
+    int getCount(@Param("param")BaseRequest request);
 
     CertificationOrder getTelCerOrderById(Integer id);
 
     int deleteByPrimaryKey(@Param("id") Integer id);
+
+    CertificationOrder getTelCerOrderByChildOrder(String userTel);
+
+    List<CertificationOrder> findAllTelCer();
+
+    int updateByPrimaryKey(CertificationOrder certificationOrder);
+
+    int insertTelCertifyOrder(CertificationOrder certificationOrder);
 }

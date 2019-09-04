@@ -9,8 +9,8 @@ import com.hrtxn.ringtone.freemark.enums.OperatorLogType;
 import com.hrtxn.ringtone.project.system.notice.domain.Notice;
 import com.hrtxn.ringtone.project.system.notice.service.NoticeService;
 import com.hrtxn.ringtone.project.telcertification.domain.CertificationChildOrder;
-import com.hrtxn.ringtone.project.telcertification.domain.CertificationConfig;
 import com.hrtxn.ringtone.project.telcertification.domain.CertificationOrder;
+import com.hrtxn.ringtone.project.telcertification.domain.CertificationRequest;
 import com.hrtxn.ringtone.project.telcertification.service.TelCertificationChildService;
 import com.hrtxn.ringtone.project.telcertification.service.TelCertificationConfigService;
 import com.hrtxn.ringtone.project.telcertification.service.TelCertificationService;
@@ -20,9 +20,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Author:lile
@@ -111,10 +109,9 @@ public class TelCertificationController {
     @PostMapping("/getTelCerOrderList")
     @ResponseBody
     @Log(title = "获取号码认证订单",operatorLogType = OperatorLogType.TELCERTIFICATION)
-    public AjaxResult getTelCerOrderList(Page page, BaseRequest request){
-        List<CertificationOrder> list = new ArrayList<CertificationOrder>();
+    public AjaxResult getTelCerOrderList(Page page, BaseRequest request,ModelMap map){
         try{
-            return telCertificationService.findAllTelCertification(page,request);
+            return telCertificationService.findAllTelCertification(page,request,map);
         }catch (Exception e){
             log.error("获取号码认证订单列表数据 方法：getTelCerOrderList 错误信息",e);
         }
@@ -156,19 +153,61 @@ public class TelCertificationController {
     }
 
     /**
-     * 新增商户
+     * 进入修改商户页面
+     * @param id
+     * @param map
+     * @return
+     */
+    @ResponseBody
+    @PostMapping("/toTelEditPage")
+    public AjaxResult toTelEditPage(Integer id,ModelMap map){
+        map.put("id",id);
+        CertificationOrder certificationOrder = telCertificationService.getTelCerOrderById(id,map);
+        return AjaxResult.success(certificationOrder,"商户信息回显");
+    }
+
+    /**
+     * 修改商户信息
      * @param certificationOrder
      * @return
      */
-    @PostMapping("/insertTelCertifyOrder")
+    @PostMapping("/editTelCerOrderById")
+    @ResponseBody
+    @Log(title = "修改商户信息", businessType = BusinessType.UPDATE, operatorLogType = OperatorLogType.TELCERTIFICATION)
+    public AjaxResult editTelCerOrderById(CertificationOrder certificationOrder) {
+        return telCertificationService.update(certificationOrder);
+    }
+
+    /**
+     * 获取号码认证配置全部信息
+     * @param page
+     * @param map
+     * @return
+     */
+    @PostMapping("/getAllConfig")
+    @ResponseBody
+    public AjaxResult getAllConfig(Page page, ModelMap map){
+        page = new Page();
+        page.setPage(1);
+        page.setPagesize(10);
+        return telCertificationConfigService.getAllConfig(page,map);
+    }
+
+    /**
+     * 新增商户
+     * @param certificationProduct
+     * @return
+     */
+    @PostMapping("/addTelCertifyOrder")
     @ResponseBody
     @Log(title = "新增商户", businessType = BusinessType.INSERT, operatorLogType = OperatorLogType.TELCERTIFICATION)
-    public AjaxResult insertTelCertifyOrder(CertificationOrder certificationOrder){
+    public AjaxResult addTelCertifyOrder(CertificationRequest certificationProduct){
         try{
-            return telCertificationService.insertTelCertifyOrder(certificationOrder);
+            return telCertificationService.addTelCertifyOrder(certificationProduct);
         }catch (Exception e){
-           log.error("保存商户（号码认证订单） 方法：insertTelCertifyOrder 错误信息", e);
-           return AjaxResult.error("保存失败");
+            log.error("保存商户（号码认证订单） 方法：addTelCertifyOrder 错误信息", e);
+            return AjaxResult.error("保存失败");
         }
     }
+
 }

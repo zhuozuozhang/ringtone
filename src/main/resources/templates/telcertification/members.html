@@ -65,9 +65,9 @@
     <div class="order_middle">
         <!-- 我的订单 -->
         <div class="myorder">
-            成员号码：<input type="text" name="phoneNum" id="phoneNum" autocomplete="off" maxlength="11" style="margin:0 10px;width: 180px;height: 36px;border: 1px solid #ddd;">
+            成员号码：<input type="text" name="phoneNum" id="phoneNum" autocomplete="off" maxlength="12" style="margin:0 10px;width: 180px;height: 36px;border: 1px solid #ddd;">
             <div class="number_search">
-                <button class="layui-btn layui-btn-normal" onclick="search()">搜索</button>
+                <button class="layui-btn layui-btn-normal" onclick="showTelCerMemberTable()">搜索</button>
                 <button class="new_busi" onclick="Edits();">添加号码</button>
             </div>
             <div class="number_list">
@@ -77,6 +77,7 @@
                     <tr>
                         <th>#</th>
                         <th>成员号码</th>
+<!--                        <th>订购的产品</th>-->
                         <th>订购年份</th>
                         <th>价格(元)</th>
                         <th>业务状态</th>
@@ -139,7 +140,7 @@
             <div class="layui-input-block" style="line-height: 36px;" th:text="${childList.telCompanyName}">池州市贵池区缘份驿站婚恋交友服务中心</div>
         </div>
         <div>
-            <button type="button" class="subs" lay-submit lay-filter="formDemo">提交</button>
+            <button type="button" class="subs" lay-submit lay-filter="formDemo" onclick="addPhoneNumList();">提交</button>
         </div>
     </div>
 </div>
@@ -151,13 +152,10 @@
 <script type="text/javascript" th:src="@{/public/dataTables/jquery.dataTables.min.js}"></script>
 
 <script type="text/javascript" th:src="@{/public/js/datatables.js}"></script>
+<script type="text/javascript" th:src="@{/public/js/regular.js}"></script>
 <script th:src="@{/client/telcertification/js/members.js}"></script>
 <script type="text/javascript" th:src="@{/public/js/numASMD.js}"></script>
 <script type="text/javascript" th:src="@{/public/js/ajax.js}"></script>
-<script>
-    $(document).ready(function(){
-        showTelCerMemberTable();
-    });
-</script>
+
 </html>
 

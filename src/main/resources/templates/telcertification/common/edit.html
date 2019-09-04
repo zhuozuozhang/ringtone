@@ -1,13 +1,65 @@
+<!DOCTYPE>
 <html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>商户管理</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" th:href="@{/public/layui/css/layui.css}">
+    <link rel="stylesheet" th:href="@{/public/layui/css/modules/layer/default/layer.css}">
+    <link rel="stylesheet" th:href="@{/public/layui/css/modules/laydate/default/laydate.css}">
+    <link rel="stylesheet" th:href="@{/public/css/commer.css}">
+    <link rel="stylesheet" th:href="@{/client/telcertification/css/boxstyle.css}">
+    <link rel="stylesheet" th:href="@{/client/telcertification/css/msgbox.css}">
+    <link rel="stylesheet" th:href="@{/client/telcertification/css/webandwxxcx.css}">
+    <link rel="stylesheet" th:href="@{/client/telcertification/css/orderform.css}">
+    <link rel="stylesheet" th:href="@{/client/telcertification/css/order.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/client/telcertification/css/choose.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/client/telcertification/css/header.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/public/dataTables/jquery.dataTables.min.css}">
+    <style>
+        .rz_y .active {
+            background-color: #0569FD !important;
+            color: #fff !important;
+        }
+
+        .scwj {
+            margin-top: 5px;
+            line-height: 28px !important;
+            height: 28px !important;
+            padding-left: 2px !important;
+        }
+
+        .dataTables_wrapper .dataTables_paginate .paginate_button.current, .dataTables_wrapper .dataTables_paginate .paginate_button.current:hover {
+            color: #fff !important;
+            border: 1px solid #17a9ff !important;
+            background-color: #17a9ff !important;
+        }
+
+        .new_businesses {
+            width: 80px !important;
+            margin-bottom: 0px !important;
+            padding-left: 20px !important;
+            height: 34px !important;
+            line-height: 34px !important;
+            background-color: #17a9ff !important;
+        }
+    </style>
+</head>
+
+<body>
 
 <!--修改订单 -->
-<div class="back display" id="editor" th:fragment="edit">
+<div class="back" id="editor">
     <div class="pop_content">
         <div class="approve_title">
             <h3>更改业务</h3>
             <div class="gban" id="gbxg"><img src="../../client/telcertification/images/close.png"></div>
         </div>
         <div class="approvecon" style="padding-top:100px;">
+            <div th:text="${telCerOrder}">
+
+            </div>
             <div class="approvebk"><span><i>*</i>集团名称</span>
                 <input type="text" placeholder="需跟营业执照名称一致">
             </div>
@@ -70,3 +122,27 @@
         </div>
     </div>
 </div>
+<!--查看示例-->
+<div class="back display" id="case">
+    <div class="pop_content">
+        <div class="approve_title">
+            <h5>查看示例</h5>
+            <div class="gban" id="closecase"><img th:src="@{/client/telcertification/images/close.png}"></div>
+        </div>
+        <div class="casecon"><img th:src="@{/client/telcertification/images/sqs.jpg}"></div>
+    </div>
+</div>
+<!--订购协议-->
+<div th:replace="telcertification/common/agreement :: agreement"></div>
+</body>
+<script th:src="@{/public/js/jquery-2.1.4.min.js}"></script>
+<script th:src="@{/public/layui/layui.js}"></script>
+<script th:src="@{/public/layui/lay/modules/laydate.js}"></script>
+<script th:src="@{/public/layui/lay/modules/layer.js}"></script>
+<script th:src="@{/public/js/regular.js}"></script>
+<script type="text/javascript" th:src="@{/public/dataTables/jquery.dataTables.min.js}"></script>
+<script type="text/javascript" th:src="@{/public/js/datatables.js}"></script>
+<script type="text/javascript" th:src="@{/public/js/ajax.js}"></script>
+<script th:src="@{/client/telcertification/js/merchants.js}"></script>
+<script th:src="@{/client/telcertification/js/charge.js}"></script>
+</html>

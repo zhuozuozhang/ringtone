@@ -5,9 +5,11 @@ import com.alibaba.fastjson.JSONObject;
 import com.hrtxn.ringtone.common.constant.AjaxResult;
 import com.hrtxn.ringtone.common.domain.BaseRequest;
 import com.hrtxn.ringtone.common.domain.Page;
+import com.hrtxn.ringtone.common.utils.ShiroUtils;
 import com.hrtxn.ringtone.common.utils.StringUtils;
 import com.hrtxn.ringtone.project.telcertification.domain.CertificationChildOrder;
 import com.hrtxn.ringtone.project.telcertification.domain.CertificationOrder;
+import com.hrtxn.ringtone.project.telcertification.domain.CertificationRequest;
 import com.hrtxn.ringtone.project.telcertification.mapper.CertificationChildOrderMapper;
 import com.hrtxn.ringtone.project.telcertification.mapper.CertificationOrderMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,28 +40,18 @@ public class TelCertificationService {
 
 
     /**
-     * 添加号码认证商户订单
+     * 获得号码认证商户订单数量
      *
-     * @param certificationOrder
      * @return
      */
-    public AjaxResult insertTelCertifyOrder(CertificationOrder certificationOrder) {
-        if (!StringUtils.isNotNull(certificationOrder)) {
-            return AjaxResult.error("参数不正确！");
+    public int getCount(BaseRequest request) {
+        // 是否是管理员 是则统计所有数据
+        Integer userRole = ShiroUtils.getSysUser().getUserRole();
+        if (userRole != 1) {
+            request.setUserId(ShiroUtils.getSysUser().getId());
         }
-        int count = certificationOrderMapper.insertTelCertifyOrder(certificationOrder);
-        return null;
+        return certificationOrderMapper.getCount(request);
     }
-
-    /**
-     * 获得商户订单数量
-     *
-     * @return
-     */
-    public int getCount() {
-        return certificationOrderMapper.getCount();
-    }
-
 
     /**
      * 获得所有商户订单（可通过各种条件查找）
@@ -68,22 +60,34 @@ public class TelCertificationService {
      * @param request
      * @return
      */
-    public AjaxResult findAllTelCertification(Page page, BaseRequest request) throws ParseException {
+    public AjaxResult findAllTelCertification(Page page, BaseRequest request,ModelMap map) throws ParseException {
         page.setPage((page.getPage() - 1) * page.getPagesize());
-        List<CertificationOrder> allTelCer = certificationOrderMapper.findAllTelCertification(page, request);
-        int totalCount = certificationOrderMapper.getCount();
         List<CertificationOrder> theTelCer = new ArrayList<CertificationOrder>();
-        for (CertificationOrder c : allTelCer) {
-            formatParamFromDatabase(c);
-            int member = certificationChildOrderMapper.getMemberCountByParentId(c.getId());
-            c.setMemberNum(member);
-        }
         //通过时间段、集团名称、联系人电话、成员号码查到商户信息
         String rangeTime = request.getRangetime();
-        String companyName = request.getCompanyName().trim();
-        String tel = request.getTel().trim();
-        String phoneNum = request.getPhoneNum().trim();
-        if ((rangeTime != null && rangeTime != "") || (companyName != null && companyName != "") || (tel != null && tel != "") || (phoneNum != null && phoneNum != "")) {
+        String phoneNum = request.getPhoneNum();
+
+        if ((phoneNum != null && phoneNum != "") || (rangeTime != null && rangeTime != "")) {
+
+            if (phoneNum != null && phoneNum != "") {
+                //对联系人电话的处理
+                String regex = "^((13[0-9])|(14[5,7,9])|(15([0-3]|[5-9]))|(166)|(17[0,1,3,5,6,7,8])|(18[0-9])|(19[8|9]))\\d{8}$";
+                Pattern p = Pattern.compile(regex);
+                //成员电话号码
+                int len2 = phoneNum.length();
+                if (len2 == 11) {
+                    Matcher m = p.matcher(phoneNum);
+                    boolean isMatch = m.matches();
+                    if (!isMatch) {
+                        return AjaxResult.success(theTelCer, "手机号不正确");
+                    }
+                    //根据成员电话号查找
+                    List<CertificationChildOrder> ccList = certificationChildOrderMapper.findTheChildOrder(page, request);
+                    for (CertificationChildOrder cc : ccList) {
+                        request.setId(cc.getParentOrderId());
+                    }
+                }
+            }
             if (rangeTime != null && rangeTime != "") {
                 //对时间段的处理
                 String[] s = rangeTime.split("-");
@@ -94,68 +98,21 @@ public class TelCertificationService {
                 Date dateEnd = sdf.parse(end);
                 request.setStart(start);
                 request.setEnd(end);
-                for (CertificationOrder c : allTelCer) {
-                    Date telOrderTime = c.getTelOrderTime();
-                    long telCreateTime = telOrderTime.getTime();
-                    long longStart = dateStart.getTime();
-                    long longEnd = dateEnd.getTime();
-                    if (longStart <= telCreateTime && longEnd >= telCreateTime) {
-                        theTelCer.add(c);
-                    }
-                }
             }
-            //如果商户名称可以不唯一 且 考虑模糊查询
-            for (CertificationOrder c : allTelCer) {
-                if (c.getTelCompanyName().indexOf(companyName) != -1 && companyName != "") {
-                    theTelCer.add(c);
-                }
-            }
-            //对联系人电话的处理
-            String regex = "^((13[0-9])|(14[5,7,9])|(15([0-3]|[5-9]))|(166)|(17[0,1,3,5,6,7,8])|(18[0-9])|(19[8|9]))\\d{8}$";
-            Pattern p = Pattern.compile(regex);
-            int len = tel.length();
-            if (len == 11) {
-                Matcher m = p.matcher(tel);
-                boolean isMatch = m.matches();
-                if (!isMatch) {
-                    return AjaxResult.success(theTelCer, "手机号不正确");
-                }
-                for (CertificationOrder c : allTelCer) {
-                    if (c.getTelLinkPhone().equals(tel)) {
-                        theTelCer.add(c);
-                    }
-                }
-            }
-            //成员电话号码
-            int len2 = phoneNum.length();
-            if (len2 == 11) {
-                Matcher m = p.matcher(phoneNum);
-                boolean isMatch = m.matches();
-                if (!isMatch) {
-                    return AjaxResult.success(theTelCer, "手机号不正确");
-                }
-                //根据成员电话号查找
-                List<CertificationChildOrder> ccList = certificationChildOrderMapper.findTheChildOrder(page, request);
-                for (CertificationChildOrder cc : ccList) {
-                    request.setId(cc.getParentOrderId());
-                    //根据id查找
-                    for (CertificationOrder c : allTelCer) {
-                        if (cc.getParentOrderId().equals(c.getId())) {
-                            theTelCer.add(c);
-                        }
-                    }
-                }
-            }
-            if (theTelCer != null && theTelCer.size() > 0) {
-                int count = theTelCer.size();
-                return AjaxResult.success(theTelCer, "获取到了", count);
-            }
-            return AjaxResult.success(theTelCer, "未获取到");
+        }
+
+        List<CertificationOrder> allTelCer = certificationOrderMapper.findAllTelCertification(page, request);
+        int totalCount = certificationOrderMapper.getCount(request);
+
+        for (CertificationOrder c : allTelCer) {
+            formatParamFromDatabase(c);
+            int member = certificationChildOrderMapper.getMemberCountByParentId(c.getId());
+            c.setMemberNum(member);
         }
         if (allTelCer.size() > 0 && allTelCer != null) {
             return AjaxResult.success(allTelCer, "获取到了", totalCount);
         }
-        return AjaxResult.success("没有从数据库获取到数据");
+        return AjaxResult.success(theTelCer, "未获取到");
     }
 
     /**
@@ -193,7 +150,7 @@ public class TelCertificationService {
      */
     private void formatParamFromDatabase(CertificationOrder c) {
 
-        if(StringUtils.isNotNull(c) && c != null){
+        if (StringUtils.isNotNull(c) && c != null) {
             //号码认证订单状态（1.开通中/2.开通成功/3.开通失败/4.续费中/5.续费成功/6.续费失败）
             if (c.getTelOrderStatus() == 1) {
                 c.setStatusName("开通中");
@@ -215,11 +172,16 @@ public class TelCertificationService {
             if (c.getRemark() == "" || c.getRemark() == null) {
                 c.setRemark("无");
             }
-        }else {
+        } else {
             return;
         }
     }
 
+    /**
+     * 删除商户信息
+     * @param id
+     * @return
+     */
     public AjaxResult deleteTelCer(Integer id) {
         if (StringUtils.isNotNull(id) && id != 0) {
             int count = certificationOrderMapper.deleteByPrimaryKey(id);
@@ -231,4 +193,33 @@ public class TelCertificationService {
         return AjaxResult.error("参数格式错误！");
     }
 
+    /**
+     * 修改商户信息
+     * @param certificationOrder
+     * @return
+     */
+    public AjaxResult update(CertificationOrder certificationOrder) {
+        CertificationOrder certificationOrder1 = certificationOrder;
+        int i = certificationOrderMapper.updateByPrimaryKey(certificationOrder);
+        if (i > 0) {
+            return AjaxResult.success(i, "修改成功");
+        } else {
+            return AjaxResult.error("修改失败");
+        }
+    }
+
+    /**
+     * 添加号码认证商户订单
+     *
+     * @param certificationProduct
+     * @return
+     */
+    public AjaxResult addTelCertifyOrder(CertificationRequest certificationProduct) {
+        if (!StringUtils.isNotNull(certificationProduct)) {
+            return AjaxResult.error("参数不正确！");
+        }
+        CertificationRequest certificationProduct1 = certificationProduct;
+//        int count = certificationOrderMapper.insertTelCertifyOrder(certificationOrder);
+        return null;
+    }
 }

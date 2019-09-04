@@ -23,6 +23,12 @@ public class TelCertificationConfigService {
     @Autowired
     private CertificationConfigMapper certificationConfigMapper;
 
+    /**
+     * 获得全部配置信息
+     * @param page
+     * @param map
+     * @return
+     */
     public AjaxResult getAllConfig(Page page, ModelMap map) {
         page.setPage((page.getPage() - 1) * page.getPagesize());
         int count = certificationConfigMapper.getCount();
@@ -43,6 +49,11 @@ public class TelCertificationConfigService {
         return AjaxResult.success(list,"获取到全部配置信息",count);
     }
 
+    /**
+     * 修改号码认证业务费用配置
+     * @param certificationConfig
+     * @return
+     */
     public AjaxResult editTelCerConfig(CertificationConfig certificationConfig) {
         if(StringUtils.isNotNull(certificationConfig) && StringUtils.isNotNull(certificationConfig.getId()) && certificationConfig.getId() != 0){
             int count = certificationConfigMapper.updateTelCerConfig(certificationConfig);

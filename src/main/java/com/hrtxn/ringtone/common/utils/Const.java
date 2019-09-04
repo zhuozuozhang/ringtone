@@ -59,4 +59,28 @@ public final class Const implements Serializable {
     //子渠道商（17712033392）(四川)
     //private static String child_Distributor_ID_177 = "594095";
     //private static String test_id = "1673882";
+
+    //充值记录类型--号码认证
+    public static Integer SYS_RECHARGE_LOG_TYPE_TEL_CER = 1;
+    //充值记录类型--三网
+    public static Integer SYS_RECHARGE_LOG_TYPE_THREE_NET = 2;
+
+    //消费记录类型--号码认证
+    public static Integer SYS_CONSUME_LOG_TYPE_TEL_CER = 1;
+    //消费记录类型--三网
+    public static Integer SYS_CONSUME_LOG_TYPE_THREE_NET = 2;
+
+    //号码认证状态
+    //开通中
+    public static Integer TEL_CER_STATUS_OPENING = 1;
+    //开通成功
+    public static Integer TEL_CER_STATUS_SUCCESS_OPENING = 2;
+    //开通失败
+    public static Integer TEL_CER_STATUS_DEFAULT_OPENING = 3;
+    //续费中
+    public static Integer TEL_CER_STATUS_RENEWAL = 4;
+    //续费成功
+    public static Integer TEL_CER_STATUS_SUCCESS_RENEWAL = 5;
+    //续费失败
+    public static Integer TEL_CER_STATUS_DEFAULT_RENEWAL= 6;
 }

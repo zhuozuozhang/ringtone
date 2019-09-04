@@ -1,12 +1,19 @@
+//获取号码认证子订单列表
+$(document).ready(function(){
+    showTelCerMemberTable();
+});
 
-
+var sendPrice = null;
+var parentId = null;
 function showTelCerMemberTable() {
     var param = {
         "parentId": $("#id").val(),
+        "phoneNum": $("#phoneNum").val()
     }
     var columns = [
         {"data": null},
         {"data": "telChildOrderPhone"},
+        // {"data": "product"},
         {"data": "years"},
         {"data": "price"},
         {"data": "telChildOrderStatus"},
@@ -15,7 +22,31 @@ function showTelCerMemberTable() {
         {"data": "telChildOrderOpenTime"},
         {"data": "telChildOrderExpireTime"}
     ];
-    var columnDefs = [{
+    var columnDefs = [
+    //     {
+    //     targets:[2],
+    //     render: function(data, type, row, meta){
+    //         var serviceStr = $.parseJSON(data);
+    //         var service = serviceStr.service;
+    //         var str = "";
+    //         for (var i = 0; i < service.length; i++) {
+    //             str += "<tr>";
+    //             str += "<td>" + service[i].name + ",</td>";
+    //             str += "<td>" + service[i].period0fValidity + ",</td>";
+    //             str += "<td>" + service[i].cost + "元</td></br>";
+    //             str += "</tr>";
+    //         }
+    //         return str;
+    //     }
+    // },
+        {
+        targets:[3],
+        render: function(data, type, row, meta){
+            sendPrice = data;
+            parentId = row.parentOrderId;
+            return "<div>"+data+"</div>"
+        }
+    },{
         targets:[4],
         render: function(data, type, row, meta){
             var status = row.telChildOrderStatus;
@@ -54,8 +85,20 @@ function showTelCerMemberTable() {
                 + "<a href='/telcertify/toTelCostPage/"+phoneNum+"'><i class='layui-icon layui-icon-form' title='费用支出记录'></i></a>"
         }
     }];
+
+    var phoneNum = param.phoneNum.trim();
+    if(phoneNum != null && phoneNum != ""){
+        if(!isTel(phoneNum)){
+            if(!isPhone(phoneNum)){
+                if(!is_Phone(phoneNum)){
+                    layer.msg("请输入正确的手机号或者座机号，座机号请务必添加区号！",{icon: 5, time: 3000});
+                }
+            }
+        }
+    }
+
     var url = "/telcertify/getTelCerMembersList";
-    page("#members", 2, param, url, columns, columnDefs);
+    page("#members", 15, param, url, columns, columnDefs);
 }
 
 function addMember(){
@@ -85,13 +128,6 @@ function closePanel(){
 }
 //续费
 function Renewal(phoneNum){
-    var str = '<div><div>' +
-        '<h4 class="h4s"><span>小米号码认证-小米（查看下方开通注意事项）</span></h4> ' +
-        '<p class="zhifu">共需支付：<span>80</span><span>元</span></p></div> ' +
-        '<div class="renew_div"><div><p>订购年份:</p>' +
-        '<div><a class="btnactive">1年</a></div></div><div style="margin-top: 0px;">' +
-        '<button onclick="confirmRenew()" class="btnactive">确认续费</button></div> ' +
-        '<p>支付后，制作商会在2小时内主动联系您</p></div></div>';
     layer.open({
         type: 2,
         title: '续费',
@@ -115,7 +151,8 @@ function confirmRenew() {
                 parent.layer.close(index);
             });
         }else{
-            layer.msg("续费失败！", {icon: 5, time: 1000});
+            layer.msg(res.msg,{icon: 5, time: 1000});
+            // layer.msg("续费失败！", {icon: 5, time: 1000});
         }
     });
 
@@ -150,7 +187,7 @@ function checkNum(obj) {
     if(checkData.length == 0){
         $("#allPrice").html(0);
     }else{
-        $("#allPrice").html(checkData.length*80);
+        $("#allPrice").html(checkData.length*sendPrice);
     }
 }
 //添加号码
@@ -188,31 +225,69 @@ function delLandline(obj) {
     checkNum(obj);
 }
 
-
-
-layui.use('form',function () {
-    var form = layui.form;
-    //添加号码
-    form.on('submit(formDemo)',function () {
-        var checkData = [];
-        for (var i = 0; i < document.getElementsByClassName('numlists').length; i++) {
-            if (document.getElementsByClassName('numlists')[i].value.length == 0) {
-                layui.use('layer', function () {
-                    layer.msg("请输入号码！");
-                });
-                return;
-            }
-            if (document.getElementsByClassName('numlists')[i].value.length != 0) {
-                checkData.push(document.getElementsByClassName('numlists')[i].value)
-            }
+//添加多个号码
+function addPhoneNumList(){
+    var checkData = [];
+    for (var i = 0; i < document.getElementsByClassName('numlists').length; i++) {
+        if (document.getElementsByClassName('numlists')[i].value.length == 0) {
+            layui.use('layer', function () {
+                layer.msg("请输入号码！");
+            });
+            return;
         }
-        alert("lala");
-        alert("checkData");
-        $("#Form").submit();
-        // let index = parent.layer.getFrameIndex(window.name); //获取窗口索引
-        // parent.layer.close(index);
-        // window.parent.location.reload();//刷新父页面
-        // return false;
+        if (document.getElementsByClassName('numlists')[i].value.length != 0) {
+            checkData.push(document.getElementsByClassName('numlists')[i].value)
+        }
+    }
+    alert(checkData);
+
+    AjaxPost("/telcertify/insertTelCerChild",{
+        phoneNumberArray:JSON.stringify(checkData),
+        parentOrderId:parentId
+    },function (res) {
+        if (res.code == 200 && res.data){
+            //发异步，把数据提交给后台
+            layer.alert("批量添加号码成功", {icon: 6,time:3000},
+                // 获得frame索引
+                // var index = parent.layer.getFrameIndex(window.name);
+                //关闭当前frame
+                // parent.layer.close(index);
+            );
+            let index = parent.layer.getFrameIndex(window.name); //获取窗口索引
+            parent.layer.close(index);
+            window.parent.location.reload();//刷新父页面
+            return false;
+        }else{
+            layer.msg("批量添加号码失败！", {icon: 5, time: 3000});
+        }
     });
 
-});
+}
+
+
+// layui.use('form',function () {
+//     var form = layui.form;
+//     //添加号码
+//     form.on('submit(formDemo)',function () {
+//         var checkData = [];
+//         for (var i = 0; i < document.getElementsByClassName('numlists').length; i++) {
+//             if (document.getElementsByClassName('numlists')[i].value.length == 0) {
+//                 layui.use('layer', function () {
+//                     layer.msg("请输入号码！");
+//                 });
+//                 return;
+//             }
+//             if (document.getElementsByClassName('numlists')[i].value.length != 0) {
+//                 checkData.push(document.getElementsByClassName('numlists')[i].value)
+//             }
+//         }
+//         alert("lala");
+//         alert("checkData");
+//         $("#Form").submit();
+//         // let index = parent.layer.getFrameIndex(window.name); //获取窗口索引
+//         // parent.layer.close(index);
+//         // window.parent.location.reload();//刷新父页面
+//         // return false;
+//     });
+//
+// });
