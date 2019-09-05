@@ -29,6 +29,7 @@ public final class Const implements Serializable {
     public final static String PENDING_REVIEW = "待审核";
     public final static String SUCCESSFUL_REVIEW = "审核通过";
     public final static String FAILURE_REVIEW = "审核失败";
+    public final static String UNDER_REVIEW = "正在审核";
 
 
     /**

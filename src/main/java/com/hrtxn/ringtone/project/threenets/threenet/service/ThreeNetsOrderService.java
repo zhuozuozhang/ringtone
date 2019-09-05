@@ -193,6 +193,7 @@ public class ThreeNetsOrderService {
                 boolean result = cName.substring(cName.length() - 6).matches("[0-9]+");
                 if (result) {
                     isItRedundant = cName.substring(0, cName.length() - 6).equals(name);
+                    break;
                 } else {
                     isItRedundant = cName.equals(name);
                 }

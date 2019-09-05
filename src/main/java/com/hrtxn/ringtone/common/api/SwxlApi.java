@@ -508,7 +508,7 @@ public class SwxlApi implements Serializable {
                 log.debug("服务器正常响应.....");
                 HttpEntity resEntity = response1.getEntity();
                 String res = EntityUtils.toString(resEntity);
-                log.debug(res);
+                log.info("联通商户建立=>" + res);
                 //res{"recode":"000000","message":"成功","data":{"groupId":"2e33a3e9c0e1452d83a6fa3e5a8ad2e2"},"success":true}
                 ObjectMapper mapper = new ObjectMapper();
                 if (res.contains("000000")) {
@@ -521,16 +521,7 @@ public class SwxlApi implements Serializable {
                         }
                     }
                     this.setSwxlCookie(httpclient.getCookieStore());
-                }
-//                else if (res.contains("企业联系号码已存在,请更换其他号码") && res.contains("100027")) {
-//                    for (int i = 0; i < 3; i++) {
-//                        swxlAddGroupRespone = getGRoupInfo(ringOrder);
-//                        if (swxlAddGroupRespone != null) {
-//                            break;
-//                        }
-//                    }
-//                }
-                else {
+                } else {
                     SwxlBaseBackMessage<SwxlAddPhoneNewResult> createGroupInfo = mapper.readValue(res, new TypeReference<SwxlBaseBackMessage<SwxlAddPhoneNewResult>>() {
                     });
                     swxlAddGroupRespone = new SwxlGroupResponse();

@@ -167,10 +167,10 @@ public class MiguApi implements Serializable {
     public boolean loginAuto() throws NoLoginException, IOException {
         Subject currentUser = org.apache.shiro.SecurityUtils.getSubject();
         String userId = currentUser.getPrincipal().toString();
-        String code =getCodeString();
-        int i=0;
-        boolean flag =login(code,userId);
-        if(!flag&&i<3){
+        String code = getCodeString();
+        int i = 0;
+        boolean flag = login(code, userId);
+        if (!flag && i < 3) {
             i++;
             this.loginAuto();
         }
@@ -179,7 +179,7 @@ public class MiguApi implements Serializable {
 
     public boolean loginAutoParam(String userId) throws NoLoginException, IOException {
         String code = getCodeString();
-        boolean flag = login(code,userId);
+        boolean flag = login(code, userId);
         return flag;
     }
 
@@ -259,17 +259,17 @@ public class MiguApi implements Serializable {
             HttpUtils.downloadNet(ins1);
             String codestr = ChaoJiYing.PostPic("wwewwe", "wyc19931224", "899622", "4004", "4", in2b);
             //{"err_no":0,"err_str":"OK","pic_id":"3068410332412700001","pic_str":"0572","md5":"9f847dfdb63ca1ddf9d5beb86a4c8594"}
-            System.out.println("验证码识别："+codestr);
-            JSONArray jsonStr = JSONArray.fromObject("["+codestr+"]");
+            System.out.println("验证码识别：" + codestr);
+            JSONArray jsonStr = JSONArray.fromObject("[" + codestr + "]");
             for (int i = 0; i < jsonStr.size(); i++) {
                 JSONObject json = jsonStr.getJSONObject(i);
                 Integer err_no = Integer.parseInt(json.getString("err_no"));
                 code = json.getString("pic_str");
                 if (err_no == 0) {
-                    if(code!= null && code.length() == 4){
+                    if (code != null && code.length() == 4) {
                         code = json.getString("pic_str");
                         break;
-                    }else {
+                    } else {
                         getCodeString();
                     }
                 } else {
@@ -293,7 +293,7 @@ public class MiguApi implements Serializable {
      * @throws NoLoginException
      * @throws IOException
      */
-    public boolean login(String vcode,String userName) throws NoLoginException, IOException {
+    public boolean login(String vcode, String userName) throws NoLoginException, IOException {
         boolean isSuccess = false;
         CloseableHttpClient httpclient = HttpClients.custom()
                 .setDefaultCookieStore(this.getCookieStore())
@@ -492,7 +492,7 @@ public class MiguApi implements Serializable {
         try {
             HttpEntity resEntity = response.getEntity();
             result = EntityUtils.toString(resEntity);
-            log.info("移动 设置铃音 参数：{},{},{} 结果：{}",phones,ringId,circleId,result);
+            log.info("移动 设置铃音 参数：{},{},{} 结果：{}", phones, ringId, circleId, result);
             this.setMiguCookie(this.getCookieStore());
         } catch (Exception e) {
             log.error("移动 设置铃音 错误信息", e);
@@ -584,14 +584,14 @@ public class MiguApi implements Serializable {
      * @throws IOException
      * @throws NoLoginException
      */
-    public MiguAddGroupRespone add1(ThreenetsOrder ringOrder,ThreeNetsOrderAttached attached)throws IOException, NoLoginException {
+    public MiguAddGroupRespone add1(ThreenetsOrder ringOrder, ThreeNetsOrderAttached attached) throws IOException, NoLoginException {
         MiguAddGroupRespone addGroupRespone = null;
         User user = ShiroUtils.getSysUser();
         CloseableHttpClient httpclient = HttpClients.custom().setDefaultCookieStore(this.getCookieStore()).build();
         HttpPost httppost = new HttpPost(addGroup_url);
         MultipartEntityBuilder builder = MultipartEntityBuilder.create();
         builder.addTextBody("vcode", getCreateSHCodeString(), ContentType.TEXT_PLAIN.withCharset("UTF-8"));
-        builder.addTextBody("circle.ID","");
+        builder.addTextBody("circle.ID", "");
         builder.addTextBody("circle.name", ringOrder.getCompanyName(), ContentType.TEXT_PLAIN.withCharset("UTF-8"));
         builder.addTextBody("circle.cmName", user.getUserName(), ContentType.TEXT_PLAIN.withCharset("UTF-8"));
         builder.addTextBody("circle.cmMsisdn", user.getUserTel());
@@ -599,7 +599,7 @@ public class MiguApi implements Serializable {
         builder.addTextBody("circle.owner.msisdn", ringOrder.getLinkmanTel(), ContentType.TEXT_PLAIN.withCharset("UTF-8"));
         builder.addTextBody("manager.password", ringOrder.getLinkmanTel(), ContentType.TEXT_PLAIN.withCharset("UTF-8"));
         builder.addTextBody("manager.status", "1");
-        builder.addTextBody("province","福建省", ContentType.TEXT_PLAIN.withCharset("UTF-8"));
+        builder.addTextBody("province", "福建省", ContentType.TEXT_PLAIN.withCharset("UTF-8"));
         builder.addTextBody("city", "福州市", ContentType.TEXT_PLAIN.withCharset("UTF-8"));
         builder.addTextBody("county", "鼓楼区", ContentType.TEXT_PLAIN.withCharset("UTF-8"));
         builder.addTextBody("groupStreet", "六一北路92号", ContentType.TEXT_PLAIN.withCharset("UTF-8"));
@@ -622,6 +622,7 @@ public class MiguApi implements Serializable {
         try {
             HttpEntity resEntity = response.getEntity();
             String result = EntityUtils.toString(resEntity);
+            log.info("移动商户建立=>" + result);
             this.setMiguCookie(this.getCookieStore());
             int statusCode = response.getStatusLine().getStatusCode();
             if (statusCode == HttpStatus.SC_OK) {
@@ -637,17 +638,19 @@ public class MiguApi implements Serializable {
         }
         return addGroupRespone;
     }
+
     /**
-     * 上传铃音，还要添加商户登录
+     * 上传铃音
+     *
      * @param ring
      * @param trade
      * @return
      * @throws IOException
      * @throws NoLoginException
      */
-    public MiguAddRingRespone saveRing(ThreenetsRing ring, String trade) throws IOException,NoLoginException {
+    public MiguAddRingRespone saveRing(ThreenetsRing ring, String trade) throws IOException, NoLoginException {
         MiguAddRingRespone miguAddRingRespone = new MiguAddRingRespone();
-        String ringName = ring.getRingName().substring(0,ring.getRingName().indexOf("."));
+        String ringName = ring.getRingName().substring(0, ring.getRingName().indexOf("."));
         String result = null;
         CloseableHttpClient httpclient = HttpClients.custom().setDefaultCookieStore(this.getCookieStore()).build();
         HttpPost httppost = new HttpPost(importRing_url);
@@ -676,10 +679,10 @@ public class MiguApi implements Serializable {
                 if (result.contains("铃音名称已经存在，请修改")) {
                     miguAddRingRespone.setMsg("铃音名称已经存在，请修改");
                     miguAddRingRespone.setSuccess(false);
-                }else if (result.contains("集团还有铃音正在分发中，不能上传铃音")) {
+                } else if (result.contains("集团还有铃音正在分发中，不能上传铃音")) {
                     miguAddRingRespone.setMsg("集团还有铃音正在分发中，不能上传铃音");
                     miguAddRingRespone.setSuccess(false);
-                }else {
+                } else {
                     miguAddRingRespone.setMsg("激活中");
                     miguAddRingRespone.setSuccess(true);
                 }
@@ -701,7 +704,7 @@ public class MiguApi implements Serializable {
      * @return
      * @throws
      */
-    public MiguAddPhoneRespone addPhone(String data, String circleID) throws IOException,NoLoginException{
+    public MiguAddPhoneRespone addPhone(String data, String circleID) throws IOException, NoLoginException {
         MiguAddPhoneRespone miguAddPhoneRespone = new MiguAddPhoneRespone();
         DefaultHttpClient httpclient = new DefaultHttpClient();
         HttpPost httppost = new HttpPost(ADD_PHONE_URL);
@@ -734,6 +737,7 @@ public class MiguApi implements Serializable {
         }
         return miguAddPhoneRespone;
     }
+
     public static void main(String[] args) throws NoLoginException, IOException {
 //        MiguApi miguApi = new MiguApi();
 //        String s = miguApi.getRingPage("c9a7ffb7-876c-40aa-88ef-14185f79930b");
@@ -742,6 +746,7 @@ public class MiguApi implements Serializable {
 
     /**
      * 移动工具箱-->用户信息
+     *
      * @param msisdn
      * @return
      * @throws NoLoginException
@@ -749,14 +754,15 @@ public class MiguApi implements Serializable {
      */
     public String getUserInfoByRingMsisdn(String msisdn) throws NoLoginException, IOException {
         HashMap map = new HashMap();
-        map.put("msisdn",msisdn);
-        String result = sendPost(map,toolbox_userInfo_url);
-        log.info("移动工具箱-->用户信息 参数：{} 结果：{}",msisdn,result);
+        map.put("msisdn", msisdn);
+        String result = sendPost(map, toolbox_userInfo_url);
+        log.info("移动工具箱-->用户信息 参数：{} 结果：{}", msisdn, result);
         return result;
     }
 
     /**
      * 工具箱-->删除铃音-->取得个人铃音设置列表
+     *
      * @param msisdn
      * @return
      * @throws NoLoginException
@@ -764,14 +770,15 @@ public class MiguApi implements Serializable {
      */
     public String getRingSettingListByMsisdn(String msisdn) throws NoLoginException, IOException {
         HashMap map = new HashMap();
-        map.put("msisdn",msisdn);
-        String result = sendPost(map,getRingSettingListByMsisdn_url);
-        log.info("移动工具箱-->删除铃音-->取得个人铃音设置列表 参数：{} 结果：{}",msisdn,result);
+        map.put("msisdn", msisdn);
+        String result = sendPost(map, getRingSettingListByMsisdn_url);
+        log.info("移动工具箱-->删除铃音-->取得个人铃音设置列表 参数：{} 结果：{}", msisdn, result);
         return result;
     }
 
     /**
      * 工具箱-->删除铃音-->删除个人铃音设置列表
+     *
      * @param data
      * @param msisdn
      * @return
@@ -780,15 +787,16 @@ public class MiguApi implements Serializable {
      */
     public String delRingSetting(String data, String msisdn) throws NoLoginException, IOException {
         HashMap map = new HashMap();
-        map.put("data",data);
-        map.put("msisdn",msisdn);
-        String result = sendPost(map,delRingSetting_url);
-        log.info("移动工具箱-->用户信息-->删除个人铃音设置列表 参数：{} 结果：{}",data,msisdn,result);
+        map.put("data", data);
+        map.put("msisdn", msisdn);
+        String result = sendPost(map, delRingSetting_url);
+        log.info("移动工具箱-->用户信息-->删除个人铃音设置列表 参数：{} 结果：{}", data, msisdn, result);
         return result;
     }
 
     /**
      * 个人铃音库列表
+     *
      * @param msisdn
      * @return
      * @throws NoLoginException
@@ -796,31 +804,33 @@ public class MiguApi implements Serializable {
      */
     public String getRingListByMsisdn(String msisdn) throws NoLoginException, IOException {
         HashMap map = new HashMap();
-        map.put("msisdn",msisdn);
-        String result = sendPost(map,getRingListByMsisdn_url);
-        log.info("移动工具箱-->用户信息-->获得个人铃音库列表 参数：{} 结果：{}",msisdn,result);
+        map.put("msisdn", msisdn);
+        String result = sendPost(map, getRingListByMsisdn_url);
+        log.info("移动工具箱-->用户信息-->获得个人铃音库列表 参数：{} 结果：{}", msisdn, result);
         return result;
     }
 
     /**
      * 小工具，删除多余铃音
+     *
      * @param toneIds 铃音id
-     * @param msisdn 号码
+     * @param msisdn  号码
      * @return
      * @throws NoLoginException
      * @throws IOException
      */
     public String delOtherRing(String toneIds, String msisdn) throws NoLoginException, IOException {
         HashMap map = new HashMap();
-        map.put("toneIds",toneIds);
-        map.put("msisdn",msisdn);
-        String result = sendPost(map,delOtherRing_url);
-        log.info("移动工具箱-->删除铃音-->删除多余铃音 参数：{} 结果：{}",toneIds,msisdn,result);
+        map.put("toneIds", toneIds);
+        map.put("msisdn", msisdn);
+        String result = sendPost(map, delOtherRing_url);
+        log.info("移动工具箱-->删除铃音-->删除多余铃音 参数：{} 结果：{}", toneIds, msisdn, result);
         return result;
     }
 
     /**
      * 商户列表-->信息处理
+     *
      * @param migu_id
      * @return
      * @throws IOException
@@ -828,9 +838,9 @@ public class MiguApi implements Serializable {
      */
     public String findCricleMsgList(String migu_id) throws IOException, NoLoginException {
         HashMap map = new HashMap();
-        map.put("circleId",migu_id);
-        String result = sendPost(map,findCircleMsgList);
-        log.info("商户列表-->处理信息 参数：{} 结果：{}",migu_id,result);
+        map.put("circleId", migu_id);
+        String result = sendPost(map, findCircleMsgList);
+        log.info("商户列表-->处理信息 参数：{} 结果：{}", migu_id, result);
         return result;
     }
 }
