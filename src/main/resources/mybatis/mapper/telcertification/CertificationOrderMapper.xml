@@ -114,11 +114,16 @@
       #{telOrderTime,jdbcType=TIMESTAMP}, #{productName,jdbcType=VARCHAR}
       )
   </insert>
+<!--获取最新的id-->
+    <select id="getLastInsertId" resultType="java.lang.Integer">
+        SELECT MAX(id) FROM tb_telcertification_order;
+    </select>
 <!--  查询名称是否重复-->
   <select id="isRepetitionByName" resultMap="BaseResultMap" parameterType="java.lang.String">
     select * from tb_telcertification_order
         where tel_company_name like '%${telCompanyName}%'
   </select>
+
 
 
   <insert id="insertSelective" parameterType="com.hrtxn.ringtone.project.telcertification.domain.CertificationOrder" >

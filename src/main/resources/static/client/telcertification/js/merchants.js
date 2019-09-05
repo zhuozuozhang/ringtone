@@ -279,7 +279,7 @@ function addTelCerMerchants(){
     if ($("#taidix").hasClass("active")) {
         var teddy = $("#taidix").val();
     }
-    if($(".year .btn-calculate").hasClass("active")){
+    if($(".year ").hasClass("active")){
         var year = $(".year .btn-calculate").val();
     }
     if ($("#dhb").hasClass("active")) {
@@ -628,20 +628,28 @@ function jiSuan() {
 
 <!--上传图片 -->
 $("body").on('click', '.tpimgbka', function () {
-    var ts = $(this);
-    $(this).next().click(); //隐藏了input:file样式后，点击头像就可以本地上传
-    $(this).next().on("change", function () {
-        if (this.files[0] != null && this.files[0] != "" && this.files[0] != undefined) {
-            var objUrl = getObjectURL(this.files[0]); //获取图片的路径，该路径不是图片在本地的路径
-            if (objUrl) {
-                ts.children().attr("src", objUrl); //将图片路径存入src中，显示出图片
+    var telCompanyName = $("#telCompanyNameAdd").val();
+    if(telCompanyName == "" || telCompanyName == null){
+        layer.msg("请先输入集团名称！");
+    }else{
+        var ts = $(this);
+        $(this).next().click(); //隐藏了input:file样式后，点击头像就可以本地上传
+        $(this).next().on("change", function () {
+            if (this.files[0] != null && this.files[0] != "" && this.files[0] != undefined) {
+                var objUrl = getObjectURL(this.files[0]); //获取图片的路径，该路径不是图片在本地的路径
+                alert(objUrl);
+                if (objUrl) {
+                    ts.children().attr("src", objUrl); //将图片路径存入src中，显示出图片
+                }
+            } else {
+                $(this).attr("src", "../image/photo_icon1.png");
+                $(this).next().val("");
             }
-        } else {
-            $(this).attr("src", "../image/photo_icon1.png");
-            $(this).next().val("");
-        }
-    });
+        });
+    }
 });
+
+
 /*上传图片预览*/
 //建立一個可存取到該file的url
 function getObjectURL(file) {
@@ -688,60 +696,9 @@ function validate_img(ele) {
     }
 }
 
-//上传营业执照
-$("body").on('change', '#businessLicenseAdd', function (e) {
-    uploadFile("businessLicense")
-});
-//上传法人身份证正面
-//上传法人身份证反面
-//上传LOGO
-//上传授权书
-//上传号码证明
-
-//上传文件
-function uploadFile(url) {
-    alert("url "+url);
-    var layuiLoding = layer.load(0, { //icon支持传入0-2
-        time:false,
-        shade: [0.5, '#9c9c9c'], //0.5透明度的灰色背景
-        content: '文件上传中...',
-        success: function (layero) {
-            layero.find('.layui-layer-content').css({
-                'padding': '39px 10px',
-                'width': '100px'
-            });
-        }
-    });
-    // AjaxPost("/system/upload/"+url,{},function (res) {
-    //     if (res.code == 200 && res.data){
-    //         if (url === "businessLicense") {
-    //             alert("查看营业执照的上传地址");
-    //         }
-    //     }else{
-    //         layer.msg("上传文件失败！", {icon: 5, time: 3000});
-    //     }
-    // });
-    $.ajaxFileUpload({
-            url: '/system/upload/'+url, //用于文件上传的服务器端请求地址
-            secureuri: false, //是否需要安全协议，一般设置为false
-            fileElementId:'businessLicenseAdd', //文件上传域的ID
-            dataType: 'json', //返回值类型 一般设置为json
-            success: function (data, status){
-                layer.close(layuiLoding);
-                layer.msg("上传成功", {icon: 1, time: 6000});
-            },
-            error: function (data, status, e){
-                layer.msg(res.msg, {icon: 2, time: 6000});
-            }
-        }
-    );
-    return false;
-}
-
 //填写信息弹窗
 $('#cause').on('click', function () { //点击按钮显示弹窗
     $("#pop").removeClass("display")
-
     $("#orderamount").html(price);
 })
 $("#cancel").on('click', function () { //点击取消隐藏弹窗
@@ -882,3 +839,107 @@ function addPhoneNumList(){
     });
 
 }
+
+
+//上传营业执照
+$("body").on('change', '#businessLicenseAdd', function (e) {
+    var telCompanyName = $("#telCompanyNameAdd").val();
+    uploadPicture("businessLicense","businessLicenseAdd",telCompanyName);
+    alert(telCompanyName);
+});
+//上传法人身份证正面
+$("body").on('change', '#legalPersonCardZhenAdd', function (e) {
+    var telCompanyName = $("#telCompanyNameAdd").val();
+    uploadPicture("legalPersonCardZhen","legalPersonCardZhenAdd",telCompanyName)
+});
+//上传法人身份证反面
+$("body").on('change', '#legalPersonCardFanAdd', function (e) {
+    var telCompanyName = $("#telCompanyNameAdd").val();
+    uploadPicture("legalPersonCardFan","legalPersonCardFanAdd",telCompanyName)
+});
+//上传LOGO
+$("body").on('change', '#logoAdd', function (e) {
+    var telCompanyName = $("#telCompanyNameAdd").val();
+    uploadPicture("logo","logoAdd",telCompanyName)
+});
+
+
+//上传图片
+function uploadPicture(url,fileId,folderName) {
+    var layuiLoding = layer.load(0, { //icon支持传入0-2
+        time:false,
+        shade: [0.5, '#9c9c9c'], //0.5透明度的灰色背景
+        content: '文件上传中...',
+        success: function (layero) {
+            layero.find('.layui-layer-content').css({
+                'padding': '39px 10px',
+                'width': '100px'
+            });
+        }
+    });
+    alert("url "+url+"\n"+"fileId  " + fileId +"\n" +"folderName "+folderName);
+
+    $.ajaxFileUpload({
+            url: '/system/upload/'+url, //用于文件上传的服务器端请求地址
+            type: 'post',
+            data: {
+                folderName:folderName
+            },
+            secureuri: false, //是否需要安全协议，一般设置为false
+            fileElementId: fileId, //文件上传域的ID
+            dataType:"text/html",
+            success: function (data, status){
+                layer.close(layuiLoding);
+                layer.msg("上传成功！", {icon: 1, time: 6000});
+            },
+            error: function (data, status, e){
+                layer.msg("上传失败！", {icon: 2, time: 6000});
+            }
+        }
+    );
+    return false;
+}
+
+//上传授权书
+$("body").on('change', '#authorizationAdd', function (e) {
+    uploadFile("authorization","authorizationAdd")
+});
+//上传号码证明
+$("body").on('change', '#numberProveAdd', function (e) {
+    uploadFile("numberProve","numberProveAdd")
+});
+//
+// //上传文件
+// function uploadFile(url) {
+//     var layuiLoding = layer.load(0, { //icon支持传入0-2
+//         time:false,
+//         shade: [0.5, '#9c9c9c'], //0.5透明度的灰色背景
+//         content: '文件上传中...',
+//         success: function (layero) {
+//             layero.find('.layui-layer-content').css({
+//                 'padding': '39px 10px',
+//                 'width': '100px'
+//             });
+//         }
+//     });
+//     var formData = new FormData();
+//     var name = $("#authorizationAdd").val();
+//     formData.append("file",$("#authorizationAdd")[0].files[0]);
+//     formData.append("name",name);
+//     alert(formData);
+//     $.ajax({
+//         url: '/system/upload/' + url,
+//         type: 'POST',
+//         cache: false,
+//         data: formData,
+//         processData: false,
+//         contentType: false
+//     }).done(function (res) {
+//         layer.close(layuiLoding);
+//         layer.msg(res.msg, {icon: 1, time: 1000});
+//
+//     }).fail(function (res) {
+//         layer.msg(res.msg, {icon: 2, time: 1000});
+//     });
+// }
+

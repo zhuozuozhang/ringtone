@@ -3,6 +3,7 @@ package com.hrtxn.ringtone.project.system.consumelog.service;
 import com.hrtxn.ringtone.common.constant.AjaxResult;
 import com.hrtxn.ringtone.common.domain.BaseRequest;
 import com.hrtxn.ringtone.common.domain.Page;
+import com.hrtxn.ringtone.common.utils.Const;
 import com.hrtxn.ringtone.common.utils.ShiroUtils;
 import com.hrtxn.ringtone.common.utils.StringUtils;
 import com.hrtxn.ringtone.project.system.consumelog.domain.ConsumeLog;
@@ -98,6 +99,9 @@ public class ConsumeLogService {
         if(StringUtils.isNotNull(consumeLog) && StringUtils.isNotEmpty(consumeLog.getUserTel())){
             CertificationOrder certificationOrder = certificationOrderMapper.getTelCerOrderByChildOrder(consumeLog.getUserTel());
             CertificationChildOrder certificationChildOrder = certificationChildOrderMapper.getTelcerChildByPhoneNum(consumeLog.getUserTel());
+            if(!Const.TEL_CER_STATUS_SUCCESS_OPENING.equals(certificationChildOrder.getTelChildOrderStatus())){
+                return AjaxResult.error("当前业务在管理端开通后才可以再续费");
+            }
             Float price = certificationOrder.getUnitPrice();
             Float money = ShiroUtils.getSysUser().getTelcertificationAccount();
             Float theRestMoney = money - price;
