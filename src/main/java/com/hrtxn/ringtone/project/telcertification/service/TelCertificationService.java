@@ -272,17 +272,6 @@ public class TelCertificationService {
             certificationConfig.setItemPerMonth(certificationProduct.getItemPerMonth());
             newConfig.add(certificationConfig);
         }
-//        {
-////            "service": [{
-////            "name": "泰迪熊",
-////                    "period0fValidity": "1年",
-////                    "cost": "80"
-////        }, {
-////            "name": "电话邦",
-////                    "period0fValidity": "1年",
-////                    "cost": "80"
-////        }]
-////        }
         JSONArray jsonArray = JSONArray.fromObject(newConfig);
         String service = "{\"service\":"+jsonArray.toString()+"}";
         certificationProduct.setUserId(ShiroUtils.getSysUser().getId());
@@ -291,6 +280,8 @@ public class TelCertificationService {
         System.out.println(service);
         certificationProduct.setProductName(service);
 
+        int count = certificationOrderMapper.insertTelCertifyOrder(certificationProduct);
+        int lastInsertId = certificationOrderMapper.getLastInsertId();
 
         List<CertificationChildOrder> list = new ArrayList<CertificationChildOrder>();
         for (int i = 0; i < phoneNumberArray.length; i++) {
@@ -306,15 +297,14 @@ public class TelCertificationService {
                 childOrder.setTelChildOrderCtime(new Date());
                 childOrder.setTelChildOrderOpenTime(null);
                 childOrder.setTelChildOrderExpireTime(null);
-                childOrder.setParentOrderId(16);
+                childOrder.setParentOrderId(lastInsertId);
                 childOrder.setConsumeLogId(1);
             }
             list.add(childOrder);
         }
         int childCount = certificationChildOrderMapper.batchInsertChildOrder(list);
-        int count = certificationOrderMapper.insertTelCertifyOrder(certificationProduct);
         if(count > 0 || childCount > 0){
-            return AjaxResult.success(true,"添加成功商户订单或成员订单成功！");
+            return AjaxResult.success(true,"添加成功！");
         }
         return AjaxResult.error("添加失败");
     }
