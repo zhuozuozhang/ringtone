@@ -143,13 +143,78 @@ public class FileController {
     /**
      * 上传营业执照
      * @param businessLicense
-     * @param parentOrderId
+     * @param folderName
      * @return
      */
     @PostMapping("/system/upload/businessLicense")
     @ResponseBody
     @Log(title = "上传营业执照", businessType = BusinessType.INSERT, operatorLogType = OperatorLogType.TELCERTIFICATION)
-    public AjaxResult businessLicense(@RequestParam("businessLicense") MultipartFile businessLicense, String parentOrderId) {
-        return fileService.upload(businessLicense, "营业执照", parentOrderId);
+    public AjaxResult businessLicense(@RequestParam("businessLicense") MultipartFile businessLicense, String folderName) {
+        return fileService.upload(businessLicense, "营业执照12", folderName);
+    }
+
+    /**
+     * 上传法人身份证正面
+     * @param legalPersonCardZhen
+     * @param folderName
+     * @return
+     */
+    @PostMapping("/system/upload/legalPersonCardZhen")
+    @ResponseBody
+    @Log(title = "上传法人身份证正面", businessType = BusinessType.INSERT, operatorLogType = OperatorLogType.TELCERTIFICATION)
+    public AjaxResult legalPersonCardZhen(@RequestParam("legalPersonCardZhen") MultipartFile legalPersonCardZhen, String folderName) {
+        return fileService.upload(legalPersonCardZhen, "法人身份证正面", folderName);
+    }
+
+    /**
+     * 上传法人身份证反面
+     * @param legalPersonCardFan
+     * @param folderName
+     * @return
+     */
+    @PostMapping("/system/upload/legalPersonCardFan")
+    @ResponseBody
+    @Log(title = "上传法人身份证反面", businessType = BusinessType.INSERT, operatorLogType = OperatorLogType.TELCERTIFICATION)
+    public AjaxResult legalPersonCardFan(@RequestParam("legalPersonCardFan") MultipartFile legalPersonCardFan, String folderName) {
+        return fileService.upload(legalPersonCardFan, "法人身份证反面", folderName);
+    }
+
+    /**
+     * 上传LOGO
+     * @param logo
+     * @param folderName
+     * @return
+     */
+    @PostMapping("/system/upload/logo")
+    @ResponseBody
+    @Log(title = "上传LOGO", businessType = BusinessType.INSERT, operatorLogType = OperatorLogType.TELCERTIFICATION)
+    public AjaxResult logo(@RequestParam("logo") MultipartFile logo, String folderName) {
+        return fileService.upload(logo, "logo", folderName);
+    }
+
+    /**
+     * 上传授权书
+     * @param authorization
+     * @param
+     * @return
+     */
+    @PostMapping("/system/upload/authorization")
+    @ResponseBody
+    @Log(title = "上传授权书", businessType = BusinessType.INSERT, operatorLogType = OperatorLogType.TELCERTIFICATION)
+    public AjaxResult authorization(@RequestParam("authorization") MultipartFile authorization, String folderName) {
+        return fileService.upload(authorization, "营业执照", folderName);
+    }
+
+    /**
+     * 上传号码证明
+     * @param numberProve
+     * @param folderName
+     * @return
+     */
+    @PostMapping("/system/upload/numberProve")
+    @ResponseBody
+    @Log(title = "上传号码证明", businessType = BusinessType.INSERT, operatorLogType = OperatorLogType.TELCERTIFICATION)
+    public AjaxResult numberProve(@RequestParam("numberProve") MultipartFile numberProve, String folderName) {
+        return fileService.upload(numberProve, "营业执照", folderName);
     }
 }

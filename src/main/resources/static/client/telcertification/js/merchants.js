@@ -279,28 +279,19 @@ function addTelCerMerchants(){
     if ($("#taidix").hasClass("active")) {
         var teddy = $("#taidix").val();
     }
-    if($(".year ").hasClass("active")){
-        var year = $(".year .btn-calculate").val();
-    }
+    var year = $(".year .active").val();
     if ($("#dhb").hasClass("active")) {
         var dhb = $("#dhb").val();
     }
-    if($(".dhbyear .btn-calculate").hasClass("active")){
-        var dhbyear = $(".dhbyear .btn-calculate").val();
-        alert(dhbyear);
-    }
+
+    var dhbyear = $(".dhbyear .active").val();
     if ($("#caiyin").hasClass("active")) {
         var caiyin = $("#caiyin").val();
     }
     if ($("#gjdx").hasClass("active")) {
         var gjdx = $("#gjdx").val();
     }
-    if($(".note .btn-calculate").hasClass("active")){
-        var note = $(".note .btn-calculate").val();
-        // var note = document.getElementsByClassName("note btn-calculate active")[0].valueOf();
-        alert("每月上限条数  " + note);
-    }
-    // document.getElementsByClassName("btn-calculate active")[0].value
+    var note = $(".note .active").val();
     var businessLicense = $("businessLicenseAdd").val();
     console.log(businessLicense);
     alert(businessLicense);
