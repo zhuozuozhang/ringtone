@@ -3,6 +3,7 @@ package com.hrtxn.ringtone.project.telcertification.mapper;
 import com.hrtxn.ringtone.common.domain.BaseRequest;
 import com.hrtxn.ringtone.common.domain.Page;
 import com.hrtxn.ringtone.project.telcertification.domain.CertificationOrder;
+import com.hrtxn.ringtone.project.telcertification.domain.CertificationRequest;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
@@ -30,5 +31,12 @@ public interface CertificationOrderMapper {
 
     int updateByPrimaryKey(CertificationOrder certificationOrder);
 
-    int insertTelCertifyOrder(CertificationOrder certificationOrder);
+    int insertTelCertifyOrder(CertificationRequest certificationRequest);
+
+    /**
+     * 查询集团名称是否重复
+     * @param telCompanyName
+     * @return
+     */
+    List<CertificationOrder> isRepetitionByName(@Param("telCompanyName")String telCompanyName);
 }

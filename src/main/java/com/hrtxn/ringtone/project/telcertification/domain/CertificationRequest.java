@@ -51,19 +51,26 @@ public class CertificationRequest implements Serializable{
     //产品业务名称
     private String productName;
 
+
+    // 泰迪熊
     private String teddy;
-
+    // 泰迪熊年份
     private Integer year;
-
+    // 电话邦
     private String telBond;
-
+    // 电话邦年份
     private Integer telBondYear;
-
+    // 彩印
     private String colorPrint;
-
+    // 挂机短信
     private String hangUpMessage;
-
+    // 挂机短信每月条数
     private Integer itemPerMonth;
-
+    // 挂机短信价格
     private Float hangUpMessagePrice;
+
+    //添加号码
+    private String[] phoneNumberArray;
+    //父id
+    private Integer parentOrderId;
 }

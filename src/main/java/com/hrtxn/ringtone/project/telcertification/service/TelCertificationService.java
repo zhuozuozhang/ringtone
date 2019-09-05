@@ -5,13 +5,18 @@ import com.alibaba.fastjson.JSONObject;
 import com.hrtxn.ringtone.common.constant.AjaxResult;
 import com.hrtxn.ringtone.common.domain.BaseRequest;
 import com.hrtxn.ringtone.common.domain.Page;
+import com.hrtxn.ringtone.common.utils.Const;
+import com.hrtxn.ringtone.common.utils.DateUtils;
 import com.hrtxn.ringtone.common.utils.ShiroUtils;
 import com.hrtxn.ringtone.common.utils.StringUtils;
 import com.hrtxn.ringtone.project.telcertification.domain.CertificationChildOrder;
+import com.hrtxn.ringtone.project.telcertification.domain.CertificationConfig;
 import com.hrtxn.ringtone.project.telcertification.domain.CertificationOrder;
 import com.hrtxn.ringtone.project.telcertification.domain.CertificationRequest;
 import com.hrtxn.ringtone.project.telcertification.mapper.CertificationChildOrderMapper;
+import com.hrtxn.ringtone.project.telcertification.mapper.CertificationConfigMapper;
 import com.hrtxn.ringtone.project.telcertification.mapper.CertificationOrderMapper;
+import net.sf.json.JSONArray;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.ModelMap;
@@ -37,6 +42,8 @@ public class TelCertificationService {
     private CertificationOrderMapper certificationOrderMapper;
     @Autowired
     private CertificationChildOrderMapper certificationChildOrderMapper;
+    @Autowired
+    private CertificationConfigMapper certificationConfigMapper;
 
 
     /**
@@ -218,8 +225,130 @@ public class TelCertificationService {
         if (!StringUtils.isNotNull(certificationProduct)) {
             return AjaxResult.error("参数不正确！");
         }
-        CertificationRequest certificationProduct1 = certificationProduct;
-//        int count = certificationOrderMapper.insertTelCertifyOrder(certificationOrder);
-        return null;
+        String[] phoneNumberArray = new String[0];
+        if(certificationProduct.getPhoneNumberArray() != null){
+            phoneNumberArray = certificationProduct.getPhoneNumberArray();
+        }
+        Page page = new Page();
+        page.setPage(0);
+        page.setPagesize(10);
+        List<CertificationConfig> allConfig = certificationConfigMapper.getAllConfig(page);
+        List<CertificationConfig> newConfig = new ArrayList<CertificationConfig>();
+        if(certificationProduct.getTeddy() != null && certificationProduct.getTeddy() != ""){
+            CertificationConfig certificationConfig = new CertificationConfig();
+            certificationConfig.setName(certificationProduct.getTeddy());
+            String year = String.valueOf(certificationProduct.getYear());
+            certificationConfig.setPeriodOfValidity(year + "年");
+            for (CertificationConfig config : allConfig) {
+                if(config.getType().equals(Const.TEL_CER_CONFIG_TYPE_TEDDY)){
+                    certificationConfig.setCost(config.getPrice());
+                }
+            }
+            newConfig.add(certificationConfig);
+        }
+        if(certificationProduct.getTelBond() != null && certificationProduct.getTelBond() != ""){
+            CertificationConfig certificationConfig = new CertificationConfig();
+            certificationConfig.setName(certificationProduct.getTelBond());
+            String year = String.valueOf(certificationProduct.getYear());
+            certificationConfig.setPeriodOfValidity(year + "年");
+            for (CertificationConfig config : allConfig) {
+                if(config.getType().equals(Const.TEL_CER_CONFIG_TYPE_TELBOND)){
+                    certificationConfig.setCost(config.getPrice());
+                }
+            }
+            newConfig.add(certificationConfig);
+        }
+        if(certificationProduct.getColorPrint() != null && certificationProduct.getColorPrint() != ""){
+            CertificationConfig certificationConfig = new CertificationConfig();
+            certificationConfig.setName(certificationProduct.getColorPrint());
+            certificationConfig.setPeriodOfValidity(Const.TEL_CER_COLORPRINT_ETERNAL);
+            certificationConfig.setCost(Const.TEL_CER_COLORPRINT_COST);
+            newConfig.add(certificationConfig);
+        }
+        if(certificationProduct.getHangUpMessage() != null && certificationProduct.getHangUpMessage() != ""){
+            CertificationConfig certificationConfig = new CertificationConfig();
+            certificationConfig.setName(certificationProduct.getHangUpMessage());
+            certificationConfig.setCost(certificationProduct.getHangUpMessagePrice());
+            certificationConfig.setItemPerMonth(certificationProduct.getItemPerMonth());
+            newConfig.add(certificationConfig);
+        }
+//        {
+////            "service": [{
+////            "name": "泰迪熊",
+////                    "period0fValidity": "1年",
+////                    "cost": "80"
+////        }, {
+////            "name": "电话邦",
+////                    "period0fValidity": "1年",
+////                    "cost": "80"
+////        }]
+////        }
+        JSONArray jsonArray = JSONArray.fromObject(newConfig);
+        String service = "{\"service\":"+jsonArray.toString()+"}";
+        certificationProduct.setUserId(ShiroUtils.getSysUser().getId());
+        certificationProduct.setTelOrderStatus(Const.TEL_CER_STATUS_OPENING);
+        certificationProduct.setTelOrderTime(new Date());
+        System.out.println(service);
+        certificationProduct.setProductName(service);
+
+
+        List<CertificationChildOrder> list = new ArrayList<CertificationChildOrder>();
+        for (int i = 0; i < phoneNumberArray.length; i++) {
+            String[] phoneNum = phoneNumberArray[i].split("\"");
+            CertificationChildOrder childOrder = new CertificationChildOrder();
+            for (int j = 0; j < 1; j++) {
+                childOrder.setTelChildOrderNum(phoneNum[1]);
+                childOrder.setTelChildOrderPhone(phoneNum[1]);
+                childOrder.setYears(certificationProduct.getYear());
+                childOrder.setPrice(certificationProduct.getUnitPrice());
+                childOrder.setTelChildOrderStatus(1);
+                childOrder.setBusinessFeedback("暂无");
+                childOrder.setTelChildOrderCtime(new Date());
+                childOrder.setTelChildOrderOpenTime(null);
+                childOrder.setTelChildOrderExpireTime(null);
+                childOrder.setParentOrderId(16);
+                childOrder.setConsumeLogId(1);
+            }
+            list.add(childOrder);
+        }
+        int childCount = certificationChildOrderMapper.batchInsertChildOrder(list);
+        int count = certificationOrderMapper.insertTelCertifyOrder(certificationProduct);
+        if(count > 0 || childCount > 0){
+            return AjaxResult.success(true,"添加成功商户订单或成员订单成功！");
+        }
+        return AjaxResult.error("添加失败");
+    }
+
+    /**
+     * 验证商户名称是否重复
+     * @param telCompanyName
+     * @return
+     */
+    public AjaxResult isRepetitionByName(String telCompanyName) {
+        boolean isItRedundant = false;
+        List<CertificationOrder> list = certificationOrderMapper.isRepetitionByName(telCompanyName);
+        if (list != null && list.size() >= 1) {
+            for (int i = 0; i < list.size(); i++) {
+                String cName = list.get(i).getTelCompanyName();
+                if (cName.length() <= 6) {
+                    if (cName.equals(telCompanyName)){
+                        return AjaxResult.error("商户名称不允许重复！");
+                    }else{
+                        continue;
+                    }
+                }
+                boolean result = cName.substring(cName.length() - 6).matches("[0-9]+");
+                if (result) {
+                    isItRedundant = cName.substring(0, cName.length() - 6).equals(telCompanyName);
+                } else {
+                    isItRedundant = cName.equals(telCompanyName);
+                }
+            }
+        }
+        if (isItRedundant) {
+            return AjaxResult.error("商户名称不允许重复！");
+        } else {
+            return AjaxResult.success(DateUtils.getTime());
+        }
     }
 }

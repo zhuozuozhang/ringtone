@@ -210,4 +210,16 @@ public class TelCertificationController {
         }
     }
 
+    /**
+     * 验证商户名称是否重复
+     *
+     * @param telCompanyName
+     * @return
+     */
+    @PostMapping("/verificationName")
+    @ResponseBody
+    public AjaxResult verificationName(String telCompanyName){
+        return telCertificationService.isRepetitionByName(telCompanyName);
+    }
+
 }

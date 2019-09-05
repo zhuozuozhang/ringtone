@@ -83,4 +83,21 @@ public final class Const implements Serializable {
     public static Integer TEL_CER_STATUS_SUCCESS_RENEWAL = 5;
     //续费失败
     public static Integer TEL_CER_STATUS_DEFAULT_RENEWAL= 6;
+
+    //号码认证配置类型
+    //泰迪熊
+    public static Integer TEL_CER_CONFIG_TYPE_TEDDY = 1;
+    //电话邦
+    public static Integer TEL_CER_CONFIG_TYPE_TELBOND = 2;
+    //彩印
+    public static Integer TEL_CER_CONFIG_TYPE_COLORPRINT = 3;
+    //挂机短信
+    public static Integer TEL_CER_CONFIG_TYPE_HANGUPMESSAGE = 4;
+
+    // 彩印永久有效
+    public static String TEL_CER_COLORPRINT_ETERNAL = "永久有效";
+    // 彩印免费
+    public static Float TEL_CER_COLORPRINT_COST = Float.valueOf(0);
+
+
 }

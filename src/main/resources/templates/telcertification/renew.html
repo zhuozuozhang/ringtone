@@ -25,7 +25,7 @@
             <span>已开通的业务</span></br>
             <tr th:each="s:${service}">
                 <td th:text="${s.name} + ','"></td>
-                <td th:text="${s.period0fValidity} + ','"></td>
+                <td th:text="${s.periodOfValidity} + ','"></td>
                 <td th:text="${s.cost} + '元'"></td></br>
             </tr>
         </h4>

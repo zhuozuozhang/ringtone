@@ -94,7 +94,7 @@
                 </div>
                 <button onclick="showTelCerTable()">搜索</button>
 <!--                <button class="new_businesses" id="cause">新增商户</button>-->
-                 <div class="new_businesses" id="cause" >新增商户</div>
+                 <div class="new_businesses" id="cause">新增商户</div>
             </div>
             <!-- 集团信息列表-->
             <div class="number_list">
@@ -277,29 +277,40 @@
         <div class="approvecon">
             <div class="approvebk"><span><i>*</i>集团名称</span>
                 <input type="text" placeholder="需跟营业执照名称一致" required lay-verify="required" name="telCompanyNameAdd" id="telCompanyNameAdd"
-                       maxlength="32" autocomplete="off" >
-<!--                onblur="verificationName()"-->
+                       maxlength="32" autocomplete="off" onblur="verificationName()">
             </div>
             <div class="approvebk"><span><i>*</i>联系人姓名</span>
                 <input type="text" id="telLinkNameAdd" maxlength="32" autocomplete="off" name="telLinkNameAdd">
             </div>
             <div class="approvebk"><span><i>*</i>联系人电话</span>
-                <input type="tel" id="telLinkPhoneAdd" maxlength="12" autocomplete="off" name="telLinkPhoneAdd">
+                <input type="tel" id="telLinkPhoneAdd" maxlength="12" autocomplete="off" name="telLinkPhoneAdd" onblur="vertifyTelLinkPhone()">
             </div>
             <div class="approvebk"><span><i>*</i>认证展示内容</span>
                 <input type="text" placeholder="请跟营业执照主体一致" id="telContentAdd" autocomplete="off" name="telContentAdd">
             </div>
             <div class="phonenum">
                 <div class="approvebk"><span><i>*</i>开通号码</span>
-                    <input class="opennum" type="tel" placeholder="如果是座机号码务必加上区号">
-                    <em id="moreadd"><img th:src="@{/client/telcertification/images/addphone.png}"></em>
+                    <input type="text" name="phoneNum" class="layui-input numlists" value=""
+                           placeholder="如果是座机号码务必加上区号" autocomplete="off" onblur="checkNum(this)">
+<!--                    <input class="opennum" type="tel" placeholder="如果是座机号码务必加上区号">-->
+                    <em id="moreadd"><img th:src="@{/client/telcertification/images/addphone.png}" alt="" onclick="addLandline();"></em>
+
+                    <div id="num"></div>
                 </div>
-                <!--                &lt;!&ndash;<div class="approvebk">-->
-                <!--                  <input type="tel" placeholder="如果是座机号码务必加上区号" style="margin-left:180px;">-->
-                <!--                  <em onClick="remove(this)"><img th:src="@{/client/telcertification/images/del.png}"></em>-->
-                <!--                </div> &ndash;&gt;-->
-                <!--                <div class="zsy" id="before"></div>-->
-                <!--            </div>-->
+<!--                <div class="layui-form-item"  style="position: relative;margin-top:30px;">-->
+<!--                    <label class="layui-form-label">新增号码</label>-->
+<!--                    <div class="layui-input-block">-->
+<!--                        <input type="text" name="phoneNum" class="layui-input numlists" value=""-->
+<!--                               placeholder="如果是座机号码务必加上区号" autocomplete="off" onblur="checkNum(this)">-->
+<!--                    </div>-->
+<!--                    <img th:src="@{/client/telcertification/images/addphone.png}" alt="" class="add_phone" onclick="addLandline();" width="25px">-->
+<!--                </div>-->
+
+<!--                                  <input type="tel" placeholder="如果是座机号码务必加上区号" style="margin-left:180px;">-->
+<!--                                  <em onClick="remove(this)"><img th:src="@{/client/telcertification/images/del.png}"></em>-->
+<!--                                </div> -->
+<!--                                <div class="zsy" id="before"></div>-->
+
                 <div class="imgbk"><span><i>*</i>上传营业执照</span>
                     <div class="tpscbk">
                         <div class="tpimgbka"><img class="tpimga" border="0" th:src="@{/public/images/addimg.png}" test="111" style="margin:0px auto;max-height:140px;"></div>
@@ -309,26 +320,20 @@
                 <div class="imgbk"><span><i>*</i>上传法人身份证正面</span>
                     <div class="tpscbk">
                         <div class="tpimgbka">
-                            <img class="tpimga" border="0" th:src="@{/public/images/addimg.png}"
-                                                   test="111" style="margin:0px auto;max-height:140px;"></div>
-                        <input type="file" style="display: none;" name="file" class="tpdza"
-                               onclick="javascript:validate_img(this);" id="legalPersonCardZhenAdd">
+                            <img class="tpimga" border="0" th:src="@{/public/images/addimg.png}" test="111" style="margin:0px auto;max-height:140px;"></div>
+                        <input type="file" style="display: none;" name="file" class="tpdza" onclick="javascript:validate_img(this);" id="legalPersonCardZhenAdd">
                     </div>
                 </div>
                 <div class="imgbk"><span><i>*</i>上传法人身份证反面</span>
                     <div class="tpscbk">
-                        <div class="tpimgbka"><img class="tpimga" border="0" th:src="@{/public/images/addimg.png}"
-                                                   test="111" style="margin:0px auto;max-height:140px;"></div>
-                        <input type="file" style="display: none;" name="file" class="tpdza"
-                               onclick="javascript:validate_img(this);" id="legalPersonCardFanAdd">
+                        <div class="tpimgbka"><img class="tpimga" border="0" th:src="@{/public/images/addimg.png}" test="111" style="margin:0px auto;max-height:140px;"></div>
+                        <input type="file" style="display: none;" name="file" class="tpdza" onclick="javascript:validate_img(this);" id="legalPersonCardFanAdd">
                     </div>
                 </div>
                 <div class="imgbk"><span><i>*</i>上传LOGO</span>
                     <div class="tpscbk">
-                        <div class="tpimgbka"><img class="tpimga" border="0" th:src="@{/public/images/addimg.png}"
-                                                   test="111" style="margin:0px auto;max-height:140px;"></div>
-                        <input type="file" style="display: none;" name="file" class="tpdza"
-                               onclick="javascript:validate_img(this);" id="logoAdd">
+                        <div class="tpimgbka"><img class="tpimga" border="0" th:src="@{/public/images/addimg.png}" test="111" style="margin:0px auto;max-height:140px;"></div>
+                        <input type="file" style="display: none;" name="file" class="tpdza" onclick="javascript:validate_img(this);" id="logoAdd">
                     </div>
                 </div>
                 <div class="approvebk"><span><i>*</i>上传授权书</span>

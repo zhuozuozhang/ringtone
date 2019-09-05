@@ -37,7 +37,7 @@ function showTelcertification_table() {
             for (var i = 0; i < service.length; i++) {
                 str += "<tr>";
                 str += "<td>" + service[i].name + ",</td>";
-                str += "<td>" + service[i].period0fValidity + ",</td>";
+                str += "<td>" + service[i].periodOfValidity + ",</td>";
                 str += "<td>" + service[i].cost + "元</td></br>";
                 str += "</tr>";
             }

@@ -97,16 +97,16 @@
   </select>
 
 
-  <insert id="insertTelCertifyOrder" parameterType="com.hrtxn.ringtone.project.telcertification.domain.CertificationOrder" >
+  <insert id="insertTelCertifyOrder" parameterType="com.hrtxn.ringtone.project.telcertification.domain.CertificationRequest" >
 
-    insert into tb_telcertification_order (id, tel_order_num, tel_company_name,
+    insert into tb_telcertification_order (tel_order_num, tel_company_name,
       tel_link_name, tel_link_phone, tel_content,
       business_license, legal_person_card_zhen, legal_person_card_fan,
       logo, authorization, number_prove, remark,
       unit_price, user_id, tel_order_status,
       tel_order_time, product_name
       )
-    values (#{id,jdbcType=INTEGER}, #{telOrderNum,jdbcType=VARCHAR}, #{telCompanyName,jdbcType=VARCHAR},
+    values (#{telOrderNum,jdbcType=VARCHAR}, #{telCompanyName,jdbcType=VARCHAR},
       #{telLinkName,jdbcType=VARCHAR}, #{telLinkPhone,jdbcType=VARCHAR}, #{telContent,jdbcType=VARCHAR},
       #{businessLicense,jdbcType=VARCHAR}, #{legalPersonCardZhen,jdbcType=VARCHAR}, #{legalPersonCardFan,jdbcType=VARCHAR},
       #{logo,jdbcType=VARCHAR}, #{authorization,jdbcType=VARCHAR}, #{numberProve,jdbcType=VARCHAR}, #{remark,jdbcType=LONGVARCHAR},
@@ -114,6 +114,11 @@
       #{telOrderTime,jdbcType=TIMESTAMP}, #{productName,jdbcType=VARCHAR}
       )
   </insert>
+<!--  查询名称是否重复-->
+  <select id="isRepetitionByName" resultMap="BaseResultMap" parameterType="java.lang.String">
+    select * from tb_telcertification_order
+        where tel_company_name like '%${telCompanyName}%'
+  </select>
 
 
   <insert id="insertSelective" parameterType="com.hrtxn.ringtone.project.telcertification.domain.CertificationOrder" >
