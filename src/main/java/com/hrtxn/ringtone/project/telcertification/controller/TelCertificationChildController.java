@@ -81,7 +81,7 @@ public class TelCertificationChildController {
         List<CertificationChildOrder> list = null;
         try{
             list = telCertificationChildService.getFallDueList(page,request);
-            int fallDueCount = telCertificationChildService.getCount(request);
+//            int fallDueCount = telCertificationChildService.getCount(request);
             return AjaxResult.success(list,"查询成功",list.size());
         }catch (Exception e){
             log.error("获取即将到期号码 方法：getFallDueList 错误信息",e);
