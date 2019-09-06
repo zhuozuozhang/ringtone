@@ -622,6 +622,10 @@ public class MiguApi implements Serializable {
         try {
             HttpEntity resEntity = response.getEntity();
             String result = EntityUtils.toString(resEntity);
+            if (result.contains("loginForm")){
+                loginAuto();
+                add1(ringOrder,attached);
+            }
             log.info("移动商户建立=>" + result);
             this.setMiguCookie(this.getCookieStore());
             int statusCode = response.getStatusLine().getStatusCode();
@@ -670,6 +674,10 @@ public class MiguApi implements Serializable {
         try {
             HttpEntity resEntity = response.getEntity();
             result = EntityUtils.toString(resEntity);
+            if (result.contains("loginForm")){
+                loginAuto();
+                saveRing(ring,trade);
+            }
             //log.info("移动 设置铃音 参数：{},{},{} 结果：{}",phones,ringId,circleId,result);
             this.setMiguCookie(this.getCookieStore());
             int statusCode = response.getStatusLine().getStatusCode();
@@ -720,6 +728,10 @@ public class MiguApi implements Serializable {
             HttpResponse response = httpclient.execute(httppost);
             HttpEntity resEntity = response.getEntity();
             String result = EntityUtils.toString(resEntity);
+            if (result.contains("loginForm")){
+                loginAuto();
+                addPhone(data,circleID);
+            }
             miguAddPhoneRespone = (MiguAddPhoneRespone) JsonUtil.getObject4JsonString(result, MiguAddPhoneRespone.class);
             JSONObject jsonObject = JSONObject.fromObject(result);
             JSONArray jsonArray = jsonObject.getJSONArray("list");
