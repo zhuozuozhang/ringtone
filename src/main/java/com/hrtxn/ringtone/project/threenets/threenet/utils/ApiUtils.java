@@ -1148,6 +1148,9 @@ public class ApiUtils {
             if (swxlGroupResponse != null && 0 == swxlGroupResponse.getStatus()) {
                 break;
             }
+            if (swxlGroupResponse != null && swxlGroupResponse.getRemark().equals("企业联系号码已存在,请更换其他号码")){
+                break;
+            }
         }
         return swxlGroupResponse;
     }
