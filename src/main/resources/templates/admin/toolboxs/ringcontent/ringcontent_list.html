@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head th:include="admin/common/include :: header"></head>
+<body class="layui-anim layui-anim-up">
+<div class="x-nav">
+		<span class="layui-breadcrumb">
+			<a href="">首页</a>
+			<a href="">工具箱</a>
+			<a>
+				<cite>铃音内容</cite>
+			</a>
+		</span>
+    <a class="layui-btn layui-btn-primary layui-btn-small" style="line-height:1.6em;margin-top:3px;float:right"
+       href="javascript:location.replace(location.href);" title="刷新">
+        <i class="layui-icon" style="line-height:38px">ဂ</i>
+    </a>
+</div>
+<div class="x-body">
+    <xblock>
+        <button class="layui-btn" onclick="changeRingContent('添加铃音内容','/admin/toRingcontentAddPage',800,670)">
+            <i class="layui-icon"></i>添加
+        </button>
+    </xblock>
+    <table class="layui-table" id="user_table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>内容</th>
+                <th>创建时间</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+    </table>
+</div>
+</body>
+<div th:include="admin/common/include :: footer"></div>
+<script th:src="@{/admins/js/my/ringcontent_list.js}"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        showRingTable();
+    });
+</script>
+</html>

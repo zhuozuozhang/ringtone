@@ -1,0 +1,6 @@
+.toolLibrary{width: 1024px;margin: 0 auto;padding-top: 144px;}
+.toolLibrary h2{font-size: 22px;color: #666666;padding: 25px 0 20px 0;text-align: left;border-bottom:1px solid #cccccc;margin-bottom: 50px;}
+.toolLibrary ul{width: 900px;margin-left: 30px;}
+.toolLibrary ul>li{margin: 0 0 60px 60px;}
+.toolLibrary ul>li>a{display:block;position: relative;height: 240px;width: 100%;color: #333;font-size: 18px;}
+.toolLibrary ul>li span{position: absolute;width: 100%;top:36px;left: 0;}
