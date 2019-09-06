@@ -37,6 +37,7 @@ public class TelCertificationChildService {
     private CertificationOrderMapper certificationOrderMapper;
 
     public int getCount(BaseRequest request) {
+
         return certificationChildOrderMapper.getCount(request);
     }
 

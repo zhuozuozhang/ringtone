@@ -293,7 +293,6 @@ function addTelCerMerchants(){
     }
     var note = $(".note .active").val();
     var businessLicense = $("businessLicenseAdd").val();
-    console.log(businessLicense);
     alert(businessLicense);
 
     var checkData = [];
@@ -308,9 +307,6 @@ function addTelCerMerchants(){
             checkData.push(document.getElementsByClassName('numlists')[i].value)
         }
     }
-    alert(checkData);
-
-
 
     AjaxPost("/telcertify/addTelCertifyOrder",{
         telCompanyName: $("#telCompanyNameAdd").val(),
@@ -836,7 +832,6 @@ function addPhoneNumList(){
 $("body").on('change', '#businessLicenseAdd', function (e) {
     var telCompanyName = $("#telCompanyNameAdd").val();
     uploadPicture("businessLicense","businessLicenseAdd",telCompanyName);
-    alert(telCompanyName);
 });
 //上传法人身份证正面
 $("body").on('change', '#legalPersonCardZhenAdd', function (e) {
@@ -868,8 +863,6 @@ function uploadPicture(url,fileId,folderName) {
             });
         }
     });
-    alert("url "+url+"\n"+"fileId  " + fileId +"\n" +"folderName "+folderName);
-
     $.ajaxFileUpload({
             url: '/system/upload/'+url, //用于文件上传的服务器端请求地址
             type: 'post',
@@ -890,47 +883,54 @@ function uploadPicture(url,fileId,folderName) {
     );
     return false;
 }
+$("body").on('click', '.scwj', function (e) {
+    var telCompanyName = $("#telCompanyNameAdd").val();
+    if(telCompanyName == "" || telCompanyName == null){
+        layer.msg("请先输入集团名称！");
+        return;
+    }else{
+
+    }
+});
 
 //上传授权书
-$("body").on('change', '#authorizationAdd', function (e) {
-    uploadFile("authorization","authorizationAdd")
+$(".scwj").on('change', '#authorizationAdd', function (e) {
+    uploadPicture("authorization","authorizationAdd",$("#telCompanyNameAdd").val())
 });
 //上传号码证明
-$("body").on('change', '#numberProveAdd', function (e) {
-    uploadFile("numberProve","numberProveAdd")
+$(".scwj").on('change', '#numberProveAdd', function (e) {
+    uploadPicture("numberProve","numberProveAdd",$("#telCompanyNameAdd").val())
 });
-//
-// //上传文件
-// function uploadFile(url) {
-//     var layuiLoding = layer.load(0, { //icon支持传入0-2
-//         time:false,
-//         shade: [0.5, '#9c9c9c'], //0.5透明度的灰色背景
-//         content: '文件上传中...',
-//         success: function (layero) {
-//             layero.find('.layui-layer-content').css({
-//                 'padding': '39px 10px',
-//                 'width': '100px'
-//             });
-//         }
-//     });
-//     var formData = new FormData();
-//     var name = $("#authorizationAdd").val();
-//     formData.append("file",$("#authorizationAdd")[0].files[0]);
-//     formData.append("name",name);
-//     alert(formData);
-//     $.ajax({
-//         url: '/system/upload/' + url,
-//         type: 'POST',
-//         cache: false,
-//         data: formData,
-//         processData: false,
-//         contentType: false
-//     }).done(function (res) {
-//         layer.close(layuiLoding);
-//         layer.msg(res.msg, {icon: 1, time: 1000});
-//
-//     }).fail(function (res) {
-//         layer.msg(res.msg, {icon: 2, time: 1000});
-//     });
-// }
+
+//上传文件
+function uploadFile(url,fileId,folderName) {
+    var layuiLoding = layer.load(0, { //icon支持传入0-2
+        time:false,
+        shade: [0.5, '#9c9c9c'], //0.5透明度的灰色背景
+        content: '文件上传中...',
+        success: function (layero) {
+            layero.find('.layui-layer-content').css({
+                'padding': '39px 10px',
+                'width': '100px'
+            });
+        }
+    });
+    var formData = new FormData();
+    formData.append(url,$("#"+fileId)[0].files[0]);
+    formData.append("folderName",folderName);
+    $.ajax({
+        url: '/system/upload/' + url,
+        type: 'POST',
+        cache: false,
+        data: formData,
+        processData: false,
+        contentType: false
+    }).done(function (res) {
+        layer.close(layuiLoding);
+        layer.msg(res.msg, {icon: 1, time: 1000});
+
+    }).fail(function (res) {
+        layer.msg(res.msg, {icon: 2, time: 1000});
+    });
+}
 

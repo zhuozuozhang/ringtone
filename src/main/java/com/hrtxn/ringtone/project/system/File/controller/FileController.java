@@ -8,6 +8,7 @@ import com.hrtxn.ringtone.freemark.config.logConfig.Log;
 import com.hrtxn.ringtone.freemark.enums.BusinessType;
 import com.hrtxn.ringtone.freemark.enums.OperatorLogType;
 import com.hrtxn.ringtone.project.system.File.service.FileService;
+import com.hrtxn.ringtone.project.telcertification.service.TelCertificationService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -28,6 +29,8 @@ public class FileController {
 
     @Autowired
     private FileService fileService;
+    @Autowired
+    private TelCertificationService telCertificationService;
 
     /**
      * 铃音
@@ -202,7 +205,7 @@ public class FileController {
     @ResponseBody
     @Log(title = "上传授权书", businessType = BusinessType.INSERT, operatorLogType = OperatorLogType.TELCERTIFICATION)
     public AjaxResult authorization(@RequestParam("authorization") MultipartFile authorization, String folderName) {
-        return fileService.upload(authorization, "营业执照", folderName);
+        return fileService.upload(authorization, "授权书", folderName);
     }
 
     /**
@@ -215,6 +218,6 @@ public class FileController {
     @ResponseBody
     @Log(title = "上传号码证明", businessType = BusinessType.INSERT, operatorLogType = OperatorLogType.TELCERTIFICATION)
     public AjaxResult numberProve(@RequestParam("numberProve") MultipartFile numberProve, String folderName) {
-        return fileService.upload(numberProve, "营业执照", folderName);
+        return fileService.upload(numberProve, "号码证明", folderName);
     }
 }

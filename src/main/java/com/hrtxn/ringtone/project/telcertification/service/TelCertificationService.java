@@ -231,7 +231,7 @@ public class TelCertificationService {
         }
         Page page = new Page();
         page.setPage(0);
-        page.setPagesize(10);
+        page.setPagesize(5);
         List<CertificationConfig> allConfig = certificationConfigMapper.getAllConfig(page);
         List<CertificationConfig> newConfig = new ArrayList<CertificationConfig>();
         if(certificationProduct.getTeddy() != null && certificationProduct.getTeddy() != ""){
@@ -241,7 +241,8 @@ public class TelCertificationService {
             certificationConfig.setPeriodOfValidity(year + "年");
             for (CertificationConfig config : allConfig) {
                 if(config.getType().equals(Const.TEL_CER_CONFIG_TYPE_TEDDY)){
-                    certificationConfig.setCost(config.getPrice());
+                    Float years = Float.parseFloat(year);
+                    certificationConfig.setCost(config.getPrice()*years);
                 }
             }
             newConfig.add(certificationConfig);
@@ -253,7 +254,8 @@ public class TelCertificationService {
             certificationConfig.setPeriodOfValidity(year + "年");
             for (CertificationConfig config : allConfig) {
                 if(config.getType().equals(Const.TEL_CER_CONFIG_TYPE_TELBOND)){
-                    certificationConfig.setCost(config.getPrice());
+                    Float years = Float.parseFloat(year);
+                    certificationConfig.setCost(config.getPrice()*years);
                 }
             }
             newConfig.add(certificationConfig);
