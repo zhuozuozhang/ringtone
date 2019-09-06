@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hrtxn.ringtone.project.system.toolboxs.ringContent.mapper.RingContentMapper">
+
+    <resultMap id="BaseResultMap" type="com.hrtxn.ringtone.project.system.toolboxs.ringContent.domain.RingContent">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="ring_content" property="ringContent" jdbcType="LONGVARCHAR"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, create_time,ring_content
+    </sql>
+
+    <select id="selectRingContent" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from tb_ring_content
+        where 1 = 1
+        <include refid="parameters"/>
+        order by create_time desc
+        <include refid="page"/>
+    </select>
+
+    <select id="getCount" resultType="java.lang.Integer">
+        SELECT COUNT(*) FROM tb_ring_content
+        WHERE 1=1
+        <include refid="parameters"/>
+    </select>
+
+    <delete id="deleteRingContent" parameterType="java.lang.Integer">
+        delete from tb_ring_content
+        where id = #{id,jdbcType=INTEGER}
+    </delete>
+
+    <insert id="insertRingContent" parameterType="com.hrtxn.ringtone.project.system.toolboxs.ringContent.domain.RingContent">
+        insert into
+            tb_ring_content (create_time, ring_content)
+        values
+            (#{createTime,jdbcType=TIMESTAMP}, #{ringContent,jdbcType=LONGVARCHAR})
+    </insert>
+
+
+    <update id="updateRingContent" parameterType="com.hrtxn.ringtone.project.system.toolboxs.ringContent.domain.RingContent">
+        update tb_ring_content
+        set ring_content = #{ringContent,jdbcType=LONGVARCHAR}
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+    <!--条件-->
+    <sql id="parameters">
+        <if test="param != null and param.id != null">
+            AND id = #{param.id}
+        </if>
+        <if test="param != null and param.name != null and param.name != '' ">
+            AND ring_content like CONCAT('%',#{param.name},'%')
+        </if>
+    </sql>
+    <!--分页-->
+    <sql id="page">
+        <if test="page != null and page.page != null and page.pagesize != null">
+            LIMIT #{page.page},#{page.pagesize}
+        </if>
+    </sql>
+
+</mapper>

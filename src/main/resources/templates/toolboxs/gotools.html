@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>工具库</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/system/toolboxs/ringcontent/css/ThunderBase.css}"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/system/toolboxs/ringcontent/css/index.css}"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/system/toolboxs/ringcontent/css/ringtone.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/system/toolboxs/ringcontent/css/toolLibrary.css}"/>
+    <div class="publicTopAll">
+        <div class="publicTop">
+            <div class="w1024 clearfix">
+                <img id="publicTopimg" th:src="@{/public/images/logo.png}" alt="" style="cursor: pointer;"/>
+                <div class="clearfix">
+					<span class="icon_sp">
+						<a>[[${session.username}]]</a>
+					</span>
+                    <a th:href="@{/loginout}" style="margin-left: 24px;">退出登录</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</head>
+<body>
+<div class="toolLibrary">
+    <h2>工具库</h2>
+    <ul class="w1024 clearfix">
+        <li class="fl" style="cursor: pointer;">
+            <a th:href="@{/toolboxs/toRingContentList}" class="w1024title tools"><img th:src="@{/system/toolboxs/ringcontent/images/pengPic17.png}" alt=""><span>铃音内容库</span></a>
+        </li>
+        <li class="fl" style="cursor: pointer;">
+            <a class="w1024title tools" dir=""><img th:src="@{/system/toolboxs/ringcontent/images/pengPic21.png}" alt=""><span>更多请期待</span></a>
+        </li>
+    </ul>
+</div>
+</body>
+</html>

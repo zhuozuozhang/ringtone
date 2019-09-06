@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head th:include="admin/common/include :: header"></head>
+<style type="text/css">
+    .layui-input-inline{
+        width: 490px!important;
+    }
+</style>
+<body>
+    <div class="x-body layui-anim layui-anim-up">
+        <form class="layui-form">
+            <div class="layui-form-item">
+                <label for="ringContent" class="layui-form-label">
+                    <span class="x-red">*</span>内容
+                </label>
+                <div class="layui-input-inline">
+                    <textarea id="ringContent" name="ringContent" required lay-verify="ringContent" autocomplete="off" placeholder="请输入" class="layui-textarea" style="height: 240px;"></textarea>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label"></label>
+                <button class="layui-btn" lay-filter="add" lay-submit="">增加</button>
+            </div>
+        </form>
+    </div>
+</body>
+<div th:include="admin/common/include :: footer"></div>
+<script type="text/javascript">
+    layui.use(['form','layer'], function(){
+        $ = layui.jquery;
+        var form = layui.form,layer = layui.layer;
+        //自定义验证规则
+        form.verify({
+            ringContent: function(value){
+                if(value.length <= 0 || value.length > 300){
+                    return '内容在100位以内';
+                }
+            }
+        });
+        //监听提交
+        form.on('submit(add)', function(data){
+            AjaxPost("/admin/insertRingContent",data.field,function (res) {
+                if (res.code == 200 && res.data){
+                    //发异步，把数据提交给后台
+                    layer.alert("增加成功", {icon: 6},function () {
+                        // 获得frame索引
+                        var index = parent.layer.getFrameIndex(window.name);
+                        //关闭当前frame
+                        parent.layer.close(index);
+                    });
+                }else{
+                    layer.msg("添加出错", {icon: 5, time: 1000});
+                }
+            });
+            return false;
+        });
+    });
+</script>
+</html>
