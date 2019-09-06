@@ -67,7 +67,7 @@ public class KedaOrderService {
             }
             return AjaxResult.success(kedaOrderList, "获取数据成功！", count);
         }
-        return AjaxResult.error("无数据！");
+        return AjaxResult.success(false,"无数据！");
     }
 
     /**
