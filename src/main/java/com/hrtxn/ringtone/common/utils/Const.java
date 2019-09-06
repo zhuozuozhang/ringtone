@@ -36,6 +36,7 @@ public final class Const implements Serializable {
      * 电信新增失败状态码
      */
     public final static String ILLEFAL_AREA = "illegal_area";
+    public final static String NUMBER_REPEAT = "number_repeat";
 
     /**
      * 电信资费
