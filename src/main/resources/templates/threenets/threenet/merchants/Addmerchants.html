@@ -309,8 +309,8 @@
         if (name == '' || name == null) {
             $("#companyName").focus();
             layer.msg("集团名称不能为空！");
-            return
-        }
+        return
+    }
         AjaxPost("/threenets/verificationName", {
             "companyName": name,
         }, function (result) {

@@ -151,7 +151,7 @@ function confirmRenew() {
                 parent.layer.close(index);
             });
         }else{
-            layer.msg(res.msg,{icon: 5, time: 1000});
+            layer.msg(res.msg,{icon: 5, time: 3000});
             // layer.msg("续费失败！", {icon: 5, time: 1000});
         }
     });
@@ -199,6 +199,7 @@ function addLandline() {
             layui.use('layer', function () {
                 layer.msg("新增号码不能为空！");
             });
+            return;
             return;
         }
         if (document.getElementsByClassName('numlists')[i].value.length != 0) {

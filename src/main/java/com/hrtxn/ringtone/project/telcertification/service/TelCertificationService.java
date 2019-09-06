@@ -6,9 +6,13 @@ import com.hrtxn.ringtone.common.constant.AjaxResult;
 import com.hrtxn.ringtone.common.domain.BaseRequest;
 import com.hrtxn.ringtone.common.domain.Page;
 import com.hrtxn.ringtone.common.utils.Const;
-import com.hrtxn.ringtone.common.utils.DateUtils;
 import com.hrtxn.ringtone.common.utils.ShiroUtils;
+import com.hrtxn.ringtone.common.utils.SpringUtils;
 import com.hrtxn.ringtone.common.utils.StringUtils;
+import com.hrtxn.ringtone.freemark.config.systemConfig.RingtoneConfig;
+import com.hrtxn.ringtone.project.system.File.domain.Uploadfile;
+import com.hrtxn.ringtone.project.system.File.mapper.UploadfileMapper;
+import com.hrtxn.ringtone.project.system.File.service.FileService;
 import com.hrtxn.ringtone.project.telcertification.domain.CertificationChildOrder;
 import com.hrtxn.ringtone.project.telcertification.domain.CertificationConfig;
 import com.hrtxn.ringtone.project.telcertification.domain.CertificationOrder;
@@ -44,6 +48,8 @@ public class TelCertificationService {
     private CertificationChildOrderMapper certificationChildOrderMapper;
     @Autowired
     private CertificationConfigMapper certificationConfigMapper;
+    @Autowired
+    private UploadfileMapper uploadfileMapper;
 
 
     /**
@@ -130,11 +136,11 @@ public class TelCertificationService {
      */
     public CertificationOrder getTelCerOrderById(Integer id, ModelMap map) {
         if (StringUtils.isNotNull(id)) {
-            CertificationOrder c = certificationOrderMapper.getTelCerOrderById(id);
+            CertificationOrder certificationOrder = certificationOrderMapper.getTelCerOrderById(id);
 
-            formatParamFromDatabase(c);
+            formatParamFromDatabase(certificationOrder);
 
-            String json = c.getProductName();
+            String json = certificationOrder.getProductName();
             JSONObject js = JSON.parseObject(json);
             Map<String, Object> product = js;
             Object service = null;
@@ -142,10 +148,14 @@ public class TelCertificationService {
                 service = entry.getValue();
             }
             int num = certificationChildOrderMapper.getMemberCountByParentId(id);
-            c.setMemberNum(num);
+            certificationOrder.setMemberNum(num);
+            if(StringUtils.isNotEmpty(certificationOrder.getBusinessLicense())){
+                certificationOrder.setBusinessLicense(RingtoneConfig.getProfile()+certificationOrder.getBusinessLicense());
+            }
+
             map.put("service", service);
-            map.put("telCerOrder", c);
-            return c;
+            map.put("telCerOrder", certificationOrder);
+            return certificationOrder;
         }
         return null;
     }
@@ -225,10 +235,7 @@ public class TelCertificationService {
         if (!StringUtils.isNotNull(certificationProduct)) {
             return AjaxResult.error("参数不正确！");
         }
-        String[] phoneNumberArray = new String[0];
-        if(certificationProduct.getPhoneNumberArray() != null){
-            phoneNumberArray = certificationProduct.getPhoneNumberArray();
-        }
+
         Page page = new Page();
         page.setPage(0);
         page.setPagesize(5);
@@ -242,6 +249,9 @@ public class TelCertificationService {
             for (CertificationConfig config : allConfig) {
                 if(config.getType().equals(Const.TEL_CER_CONFIG_TYPE_TEDDY)){
                     Float years = Float.parseFloat(year);
+                    if(certificationProduct.getUnitPrice() == 0){
+                        certificationProduct.setUnitPrice(config.getPrice());
+                    }
                     certificationConfig.setCost(config.getPrice()*years);
                 }
             }
@@ -274,39 +284,58 @@ public class TelCertificationService {
             certificationConfig.setItemPerMonth(certificationProduct.getItemPerMonth());
             newConfig.add(certificationConfig);
         }
+
         JSONArray jsonArray = JSONArray.fromObject(newConfig);
         String service = "{\"service\":"+jsonArray.toString()+"}";
         certificationProduct.setUserId(ShiroUtils.getSysUser().getId());
         certificationProduct.setTelOrderStatus(Const.TEL_CER_STATUS_OPENING);
         certificationProduct.setTelOrderTime(new Date());
-        System.out.println(service);
         certificationProduct.setProductName(service);
 
         int count = certificationOrderMapper.insertTelCertifyOrder(certificationProduct);
         int lastInsertId = certificationOrderMapper.getLastInsertId();
 
-        List<CertificationChildOrder> list = new ArrayList<CertificationChildOrder>();
-        for (int i = 0; i < phoneNumberArray.length; i++) {
-            String[] phoneNum = phoneNumberArray[i].split("\"");
-            CertificationChildOrder childOrder = new CertificationChildOrder();
-            for (int j = 0; j < 1; j++) {
-                childOrder.setTelChildOrderNum(phoneNum[1]);
-                childOrder.setTelChildOrderPhone(phoneNum[1]);
-                childOrder.setYears(certificationProduct.getYear());
-                childOrder.setPrice(certificationProduct.getUnitPrice());
-                childOrder.setTelChildOrderStatus(1);
-                childOrder.setBusinessFeedback("暂无");
-                childOrder.setTelChildOrderCtime(new Date());
-                childOrder.setTelChildOrderOpenTime(null);
-                childOrder.setTelChildOrderExpireTime(null);
-                childOrder.setParentOrderId(lastInsertId);
-                childOrder.setConsumeLogId(1);
+        String[] phoneNumberArray = new String[0];
+        int childCount = 0;
+        if(certificationProduct.getPhoneNumberArray()[0] != "") {
+            phoneNumberArray = certificationProduct.getPhoneNumberArray();
+            List<CertificationChildOrder> list = new ArrayList<CertificationChildOrder>();
+            for (int i = 0; i < phoneNumberArray.length; i++) {
+                String[] phoneNum = phoneNumberArray[i].split("\"");
+                CertificationChildOrder childOrder = new CertificationChildOrder();
+                if(phoneNum.length > 1){
+                    for (int j = 0; j < 1; j++) {
+                        childOrder.setTelChildOrderNum(phoneNum[1]);
+                        childOrder.setTelChildOrderPhone(phoneNum[1]);
+                        childOrder.setYears(certificationProduct.getYear());
+                        childOrder.setPrice(certificationProduct.getUnitPrice());
+                        childOrder.setTelChildOrderStatus(1);
+                        childOrder.setBusinessFeedback("暂无");
+                        childOrder.setTelChildOrderCtime(new Date());
+                        childOrder.setTelChildOrderOpenTime(null);
+                        childOrder.setTelChildOrderExpireTime(null);
+                        childOrder.setParentOrderId(lastInsertId);
+                        childOrder.setConsumeLogId(1);
+                    }
+                    list.add(childOrder);
+                }
             }
-            list.add(childOrder);
+            if(list.size() > 0){
+                childCount = certificationChildOrderMapper.batchInsertChildOrder(list);
+            }
         }
-        int childCount = certificationChildOrderMapper.batchInsertChildOrder(list);
-        if(count > 0 || childCount > 0){
-            return AjaxResult.success(true,"添加成功！");
+
+        if(count > 0){
+            if(childCount > 0){
+                return AjaxResult.success(true,"添加商户信息和成员号码成功！");
+            }
+            SpringUtils.getBean(FileService.class).updateStatus(certificationProduct.getBusinessLicense());
+            SpringUtils.getBean(FileService.class).updateStatus(certificationProduct.getLegalPersonCardZhen());
+            SpringUtils.getBean(FileService.class).updateStatus(certificationProduct.getLegalPersonCardFan());
+            SpringUtils.getBean(FileService.class).updateStatus(certificationProduct.getLogo());
+            SpringUtils.getBean(FileService.class).updateStatus(certificationProduct.getAuthorization());
+            SpringUtils.getBean(FileService.class).updateStatus(certificationProduct.getNumberProve());
+            return AjaxResult.success(true,"添加商户成功！");
         }
         return AjaxResult.error("添加失败");
     }
@@ -340,7 +369,7 @@ public class TelCertificationService {
         if (isItRedundant) {
             return AjaxResult.error("商户名称不允许重复！");
         } else {
-            return AjaxResult.success(DateUtils.getTime());
+            return AjaxResult.success("商户名称可用！");
         }
     }
 }

@@ -153,7 +153,7 @@ public class FileController {
     @ResponseBody
     @Log(title = "上传营业执照", businessType = BusinessType.INSERT, operatorLogType = OperatorLogType.TELCERTIFICATION)
     public AjaxResult businessLicense(@RequestParam("businessLicense") MultipartFile businessLicense, String folderName) {
-        return fileService.upload(businessLicense, "营业执照12", folderName);
+        return fileService.upload(businessLicense, "营业执照", folderName);
     }
 
     /**
