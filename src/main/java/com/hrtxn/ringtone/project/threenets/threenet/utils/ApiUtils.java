@@ -172,6 +172,7 @@ public class ApiUtils {
                         for (SwxlPhoneInfoResult infoResult : swxlPhoneInfoResultList) {
                             // 判断与当前刷新号码是否一至
                             if (infoResult.getMsisdn().equals(threenetsChildOrder.getLinkmanTel().trim()) && infoResult.getGroupId().equals(threenetsChildOrder.getOperateId())) {
+                                threenetsChildOrder.setOperateOrderId(infoResult.getId());
                                 // 如为彩铃用户且已包月，则设置铃音名称
                                 if (threenetsChildOrder.getIsRingtoneUser() && threenetsChildOrder.getIsMonthly() == 2) {
                                     log.info("联通  getPhoneInfo 备注 --->" + infoResult.getRemark());
@@ -356,6 +357,7 @@ public class ApiUtils {
                         for (SwxlPhoneInfoResult infoResult : swxlPhoneInfoResultList) {
                             // 判断与当前刷新号码是否一至
                             if (infoResult.getMsisdn().equals(threenetsChildOrder.getLinkmanTel().trim()) && infoResult.getGroupId().equals(threenetsChildOrder.getOperateId())) {
+                                threenetsChildOrder.setOperateOrderId(infoResult.getId());
                                 // 如为彩铃用户且已包月，则设置铃音名称
                                 if (threenetsChildOrder.getIsRingtoneUser() && threenetsChildOrder.getIsMonthly() == 2) {
                                     log.info("联通  getPhoneInfo 备注 --->" + infoResult.getRemark());
@@ -1288,6 +1290,7 @@ public class ApiUtils {
             childOrder.setRemark(mcardAddPhoneRespone.getMessage());
             if (mcardAddPhoneRespone.getCode().equals("0000")) {
                 childOrder.setStatus("审核成功");
+                childOrder.setRemark("添加成功");
                 newList.add(childOrder);
             }
         }
@@ -1374,22 +1377,6 @@ public class ApiUtils {
         }
     }
 
-    //    String userInfo =null;
-//		try {
-//        MiguApi miguApi = null;
-//        Object obj2 = session.getAttribute("miguApiLT");
-//        if (obj2 instanceof MiguApiLT) {
-//            miguApi = (MiguApiLT) obj2;
-//        }
-//        if (miguApi == null) {
-//            miguApi = new MiguApiLT();
-//            session.setAttribute("miguApiLT", miguApi);
-//        }
-//        userInfo = miguApi.getUserInfo(msisdn);
-//    } catch (MiguNologinException e) {
-//        System.out.println("工具箱--》用户信息出错{["+e.getMessage()+"]}");
-//    }
-//		return userInfo;
 
     /**
      * 移动工具箱-->删除铃音-->搜索
@@ -1443,19 +1430,6 @@ public class ApiUtils {
      * @return
      */
     public AjaxResult singleDeleteRing(String msisdn, String toneIds, String type) throws NoLoginException, IOException {
-//        MiguApi miguApi = null;
-//        Object obj2 = session.getAttribute("miguApiLT");
-//        if (obj2 instanceof MiguApiLT) {
-//            miguApi = (MiguApiLT) obj2;
-//        }
-//        if (miguApi == null) {
-//            miguApi = new MiguApiLT();
-//            session.setAttribute("miguApiLT", miguApi);
-//        }
-//        String delRing = miguApi.delOtherRing(toneIds+"|"+type, msisdn);
-//        if (delRing.contains("true")) {
-//            return true;
-//        }
         if (StringUtils.isNotNull(msisdn) && StringUtils.isNotNull(toneIds) && StringUtils.isNotNull(type)) {
             Map<String, String> map = new HashMap<String, String>();
             map.put("delRing", miguApi.delOtherRing(toneIds + "|" + type, msisdn));
