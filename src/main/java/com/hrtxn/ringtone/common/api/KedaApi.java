@@ -185,7 +185,7 @@ public class KedaApi {
         KedaRingBaseResult<KedaSaveRingBase> kedaRingBaseResult = SpringUtils.getBean(ObjectMapper.class).readValue(s, KedaRingBaseResult.class);
         if ("000000".equals(kedaRingBaseResult.getRetCode())) {
             Map<String, KedaSaveRingBase> data = kedaRingBaseResult.getData();
-            Object obj = data.get("RingContentController");
+            Object obj = data.get("ringContent");
             JSONObject jsonObject = JSONObject.fromObject(obj); // 将数据转成json字符串
             KedaSaveRing kedaSaveRing = (KedaSaveRing) JSONObject.toBean(jsonObject, KedaSaveRing.class);
             if (StringUtils.isNotNull(kedaSaveRing)) {
