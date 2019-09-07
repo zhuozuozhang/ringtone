@@ -56,11 +56,11 @@ spring:
       max-file-size: 40MB
       max-request-size: 40MB
   #（虚拟路径）
-  mvc:
-    static-path-pattern: /**
-  resources:
-    #（图片所在的位置）
-    static-locations: file:D:/profile
+#  mvc:
+#    static-path-pattern: images/**
+#  resources:
+#    #（图片所在的位置）
+#    static-locations: file:D:/profile
 # 是否开启springboot 调试模式
 #debug: true
 

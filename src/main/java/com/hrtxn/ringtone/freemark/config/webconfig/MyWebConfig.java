@@ -3,10 +3,7 @@ package com.hrtxn.ringtone.freemark.config.webconfig;
 import com.hrtxn.ringtone.freemark.config.webconfig.lnterceptor.LoginInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.servlet.config.annotation.InterceptorRegistration;
-import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
-import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.web.servlet.config.annotation.*;
 
 /**
  * Author:zcy
@@ -59,4 +56,11 @@ public class MyWebConfig implements WebMvcConfigurer {
         // 设置拦截资源
         interceptorRegistry.addPathPatterns("/**");
     }
+
+    @Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        registry.addResourceHandler("/statics/**").addResourceLocations("classpath:/statics/");
+        registry.addResourceHandler("/profile/**").addResourceLocations("file:D:/profile/");
+    }
+
 }
