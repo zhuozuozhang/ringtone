@@ -149,10 +149,10 @@ public class TelCertificationService {
             }
             int num = certificationChildOrderMapper.getMemberCountByParentId(id);
             certificationOrder.setMemberNum(num);
-            if(StringUtils.isNotEmpty(certificationOrder.getBusinessLicense())){
-                certificationOrder.setBusinessLicense(RingtoneConfig.getProfile()+certificationOrder.getBusinessLicense());
-            }
-
+            certificationOrder.setBusinessLicense("/profile"+certificationOrder.getBusinessLicense());
+            certificationOrder.setLegalPersonCardZhen("/profile"+certificationOrder.getLegalPersonCardZhen());
+            certificationOrder.setLegalPersonCardFan("/profile"+certificationOrder.getLegalPersonCardFan());
+            certificationOrder.setLogo("/profile"+certificationOrder.getLogo());
             map.put("service", service);
             map.put("telCerOrder", certificationOrder);
             return certificationOrder;
@@ -216,12 +216,12 @@ public class TelCertificationService {
      * @return
      */
     public AjaxResult update(CertificationOrder certificationOrder) {
-        CertificationOrder certificationOrder1 = certificationOrder;
+        certificationOrder.setTelOrderTime(new Date());
         int i = certificationOrderMapper.updateByPrimaryKey(certificationOrder);
         if (i > 0) {
-            return AjaxResult.success(i, "修改成功");
+            return AjaxResult.success(i, "修改商户信息成功");
         } else {
-            return AjaxResult.error("修改失败");
+            return AjaxResult.error("修改商户信息失败");
         }
     }
 

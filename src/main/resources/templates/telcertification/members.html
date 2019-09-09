@@ -134,6 +134,7 @@
                 <span style="font: 400 16px/34px &quot;MicrosoftYaHei [Regular]&quot;; color: rgb(51, 51, 51);">元</span>
                 (号码新增费用<span th:text="${childList.unitPrice}">80</span>元/个，请确保号码正确)
             </div>
+            <input type="hidden" id="sendPrice" th:value="${childList.unitPrice}">
         </div>
         <div class="layui-form-item">
             <label class="layui-form-label">公司名称</label>

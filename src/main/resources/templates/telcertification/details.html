@@ -99,11 +99,10 @@
         </div>
 
         <div class="contents">
-            <p><img th:src="@{/profile\12\营业执照.jpg}"  alt=""></p>
-            <p></p>
-            <p><img th:src="@{D:/profile/12/营业执照.jpg}" alt=""></p>
-            <p><img src="../../client/telcertification/images/6286f08c-d5b4-47c5-a04c-3f28cc3fd338.jpg" alt=""></p>
-            <p><img src="../../client/telcertification/images/6286f08c-d5b4-47c5-a04c-3f28cc3fd338.jpg" alt=""></p>
+            <p>营业执照<img th:src="${telCerOrder.businessLicense}"  alt=""></p>
+            <p>法人身份证正面<img th:src="${telCerOrder.legalPersonCardZhen}" alt=""></p>
+            <p>法人身份证反面<img th:src="${telCerOrder.legalPersonCardFan}" alt=""></p>
+            <p>logo<img th:src="${telCerOrder.logo}" alt=""></p>
         </div>
     </div>
 </body>

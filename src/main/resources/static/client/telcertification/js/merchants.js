@@ -189,37 +189,6 @@ function matchingOperate(phones) {
 }
 var price = 0;
 
-//修改商户信息
-function determine() {
-    var url = "/telcertify/editTelCerOrderById";
-    alert(sendId);
-    AjaxPost(url,{
-        id : sendId,
-        telCompanyName : $("#telCompanyName").val(),
-        telLinkName : $("#telLinkName").val(),
-        telLinkPhone : $("#telLinkPhone").val(),
-        telContent : $("#telContent").val(),
-    // businessLicense:$("#businessLicense").val(),
-    // legalPersonCardZhen:
-    // legalPersonCardFan:
-    // logo:
-    // authorization:
-    // numberProve:
-    // unitPrice:
-    // userId:
-    // telOrderStatus:
-    // telOrderTime:
-    // productName:
-        remark:$("#remark").val()
-    },function (res) {
-       if(res.code==200 && res.data){
-           alert(res.data);
-       }else {
-           layer.msg(res.msg, {icon: 5, time: 3000});
-       }
-    });
-}
-
 //tab切换
 //我的订单
 
@@ -277,7 +246,7 @@ function ckeckDetailsOne(id) {
     });
 }
 
-
+// ---------------------------------------------------修改弹窗--回显-----------------------------------------------------
 var sendId = null;
 //打开修改订单弹窗--回显
 function editTelCerOrder(id) {
@@ -306,7 +275,7 @@ function editTelCerOrder(id) {
 }
 
 
-
+// --------------------------------------------------------计算---------------------------------------------------------
 var teddyPriceOut = 0;
 
 $(function () {
@@ -505,19 +474,7 @@ $(function () {
         jiSuan();
     }
 });
-// }
-//计算业务订购中支付金额
-//$("body").on('blur','.opennum',function(){
-//var num=0;
-//$(".opennum").each(function() {
-// if($(this).val()!=""){
-//num++;
-//}
-//});
-//console.log(num);
-//console.log(price);
-//$("#yfje").html(price*num);
-//})
+
 function jiSuan() {
     var num = 1;
     $(".opennum").each(function () {
@@ -527,77 +484,6 @@ function jiSuan() {
     });
     if (num > 1) {
         $("#yfje").html(price * (num - 1));
-    }
-}
-
-<!--上传图片 -->
-$("body").on('click', '.tpimgbka', function () {
-    var telCompanyName = $("#telCompanyNameAdd").val();
-    if(telCompanyName == "" || telCompanyName == null){
-        $("#telCompanyNameAdd").focus();
-        layer.msg("请先输入集团名称！");
-    }else{
-        var ts = $(this);
-        $(this).next().click(); //隐藏了input:file样式后，点击头像就可以本地上传
-        $(this).next().on("change", function () {
-            if (this.files[0] != null && this.files[0] != "" && this.files[0] != undefined) {
-                var objUrl = getObjectURL(this.files[0]); //获取图片的路径，该路径不是图片在本地的路径
-                alert(objUrl);
-                if (objUrl) {
-                    ts.children().attr("src", objUrl); //将图片路径存入src中，显示出图片
-                }
-            } else {
-                $(this).attr("src", "../image/photo_icon1.png");
-                $(this).next().val("");
-            }
-        });
-    }
-});
-
-
-/*上传图片预览*/
-//建立一個可存取到該file的url
-function getObjectURL(file) {
-    if (file != null && file != "" && file != undefined) {
-        var url = null;
-        if (window.createObjectURL != undefined) { // basic
-            url = window.createObjectURL(file);
-        } else if (window.URL != undefined) { // mozilla(firefox)
-            url = window.URL.createObjectURL(file);
-        } else if (window.webkitURL != undefined) { // webkit or chrome
-            url = window.webkitURL.createObjectURL(file);
-        }
-        return url;
-    }
-}
-
-//限制上传文件的类型和大小
-function validate_img(ele) {
-    // 返回 KB，保留小数点后两位
-    var file = ele.value;
-    // var fileName = document.getElementById("businessLicenseAdd").value;
-    //     // var fileType = fileName.slice(fileName.lastIndexOf(".")+1).toLowerCase();
-    //     // if(fileType != "jpg" && fileType != "jpeg" && fileType != "png" && fileType != "JPG" && fileType != "bmp"){
-    //     //     layer.msg("图片类型必须是jpeg,jpg,png,bmp中的一种!");
-    //     //     return ;
-    //     // }
-    if (file != null && file != '' && file != undefined) {
-        if (!/.(jpg|jpeg|png|JPG|bmp)$/.test(file)) {
-            api.toast({
-                msg: '图片类型必须是jpeg,jpg,png,bmp中的一种!',
-                duration: 3000,
-                location: 'top'
-            });
-            return false;
-        } else if (((ele.files[0].size).toFixed(2)) >= (4 * 1024 * 1024)) {
-            //返回Byte(B),保留小数点后两位
-            api.toast({
-                msg: '请上传小于4M的图片!',
-                duration: 5000,
-                location: 'top'
-            });
-            return false;
-        }
     }
 }
 
@@ -648,6 +534,7 @@ function vertifyTelLinkPhone() {
     }
 }
 
+//----------------------------------------------成员号码的验证和批量添加---------------------------------------------------
 //验证成员号码
 function checkNum(obj) {
 
@@ -660,8 +547,6 @@ function checkNum(obj) {
             var phoneregex = /^[1][3,4,5,7,8,9][0-9]{9}$/; //手机号码
             var tel_regex = /^(\d{3,4}\-)?\d{7,8}$/i;   //座机格式是 010-98909899 010-86551122
             var telregex = /^0(([1-9]\d)|([3-9]\d{2}))\d{8}$/; //没有中间那段 -的 座机格式是 01098909899
-
-            alert("phones "+phones);
             if (!phoneregex.test(phones)) {
                 if (!tel_regex.test(phones)) {
                     if(!telregex.test(phones)){
@@ -672,13 +557,54 @@ function checkNum(obj) {
             }
         }
     }
-    if(checkData.length == 0){
-        $("#allPrice").html(0);
-    }else{
-        $("#allPrice").html(checkData.length*price);
+}
+
+//添加号码
+function addLandline() {
+    //所输入的号码集合
+    var checkData = [];
+    for (var i = 0; i < document.getElementsByClassName('numlists').length; i++) {
+        if (document.getElementsByClassName('numlists')[i].value.length == 0) {
+            layui.use('layer', function () {
+                layer.msg("新增号码不能为空！");
+            });
+            return;
+        }
+        if (document.getElementsByClassName('numlists')[i].value.length != 0) {
+            checkData.push(document.getElementsByClassName('numlists')[i].value)
+        }
+    }
+    $("#num").append(
+        '<div class="approvebk"><span><i>*</i></span>\n' +
+        '                    <input type="text" name="phoneNum" class="layui-input numlists" value=""' +
+        '                           placeholder="如果是座机号码务必加上区号" autocomplete="off" onblur="checkNum(this)">\n' +
+        '                    <img style="display:block;float:left;width:27px;height:27px;margin-top:8px;margin-left:19px;" src="../../client/telcertification/images/del.png" alt="" onclick="delLandline(this);">\n' +
+        '</div>'
+    );
+}
+//删除号码
+function delLandline(obj) {
+    $(obj).parent().remove();
+    checkNum(obj);
+}
+
+//添加多个号码
+function addPhoneNumList(){
+    var checkData = [];
+    for (var i = 0; i < document.getElementsByClassName('numlists').length; i++) {
+        if (document.getElementsByClassName('numlists')[i].value.length == 0) {
+            layui.use('layer', function () {
+                layer.msg("请输入号码！");
+            });
+            return;
+        }
+        if (document.getElementsByClassName('numlists')[i].value.length != 0) {
+            checkData.push(document.getElementsByClassName('numlists')[i].value)
+        }
     }
 }
 
+// --------------------------------------------------------添加---------------------------------------------------------
 //添加商户订单
 function addTelCerMerchants(){
     if ($("#taidix").hasClass("active")) {
@@ -775,125 +701,16 @@ function addTelCerMerchants(){
         phoneNumberArray:JSON.stringify(checkData),
     },function (res) {
         if(res.code == 200 && res.data){
-            layer.msg(res.msg, {icon: 6},function () {
-                let index = parent.layer.getFrameIndex(window.name); //获取窗口索引
-                parent.layer.close(index);
+            layer.confirm(res.msg,{
+                btn:'确定'
+            },function () {
+                window.parent.location.reload();//刷新父页面
             });
-            window.parent.location.reload();//刷新父页面
-            return false;
         }else {
             layer.msg(res.msg, {icon: 5, time: 3000});
         }
     });
 }
-
-//验证成员号码
-function checkNum(obj) {
-    //所输入的号码集合
-    var checkData = [];
-    for (var i = 0; i < document.getElementsByClassName('numlists').length; i++) {
-        if (document.getElementsByClassName('numlists')[i].value.length != 0) {
-            checkData.push(document.getElementsByClassName('numlists')[i].value);
-        }
-    }
-    if (checkData.length == 0) {
-        $("#allPrice").html(0);
-    } else {
-        $("#allPrice").html(checkData.length * price);
-    }
-}
-//添加号码
-function addLandline() {
-    //所输入的号码集合
-    var checkData = [];
-    for (var i = 0; i < document.getElementsByClassName('numlists').length; i++) {
-        if (document.getElementsByClassName('numlists')[i].value.length == 0) {
-            layui.use('layer', function () {
-                layer.msg("新增号码不能为空！");
-            });
-            return;
-        }
-        if (document.getElementsByClassName('numlists')[i].value.length != 0) {
-            checkData.push(document.getElementsByClassName('numlists')[i].value)
-        }
-    }
-    $("#num").append(
-        '<div class="layui-form-item" style="position: relative;">' +
-        '<div class="layui-input-block" style="margin-left: 156px;">' +
-        '<input type="text" style="width:81%;" name="content" class="layui-input numlists" ' +
-        'value="" placeholder="如果是座机号码务必加上区号" autocomplete="off" onblur="checkNum(this)">' +
-        '</div>' +
-        '<img src="../../client/telcertification/images/del.png" alt="" class="add_phone" onclick="delLandline(this);" width="28px"></div>'
-    );
-}
-//删除号码
-function delLandline(obj) {
-    $(obj).parent().remove();
-    checkNum(obj);
-}
-
-//添加多个号码
-function addPhoneNumList(){
-    var checkData = [];
-    for (var i = 0; i < document.getElementsByClassName('numlists').length; i++) {
-        if (document.getElementsByClassName('numlists')[i].value.length == 0) {
-            layui.use('layer', function () {
-                layer.msg("请输入号码！");
-            });
-            return;
-        }
-        if (document.getElementsByClassName('numlists')[i].value.length != 0) {
-            checkData.push(document.getElementsByClassName('numlists')[i].value)
-        }
-    }
-}
-
-
-//上传营业执照
-$("body").on('change', '#businessLicenseAdd', function (e) {
-    var telCompanyName = $("#telCompanyNameAdd").val();
-    uploadFile("businessLicense","businessLicenseAdd",telCompanyName);
-});
-//上传法人身份证正面
-$("body").on('change', '#legalPersonCardZhenAdd', function (e) {
-    var telCompanyName = $("#telCompanyNameAdd").val();
-    uploadFile("legalPersonCardZhen","legalPersonCardZhenAdd",telCompanyName)
-});
-//上传法人身份证反面
-$("body").on('change', '#legalPersonCardFanAdd', function (e) {
-    var telCompanyName = $("#telCompanyNameAdd").val();
-    uploadFile("legalPersonCardFan","legalPersonCardFanAdd",telCompanyName)
-});
-//上传LOGO
-$("body").on('change', '#logoAdd', function (e) {
-    var telCompanyName = $("#telCompanyNameAdd").val();
-    uploadFile("logo","logoAdd",telCompanyName)
-});
-//上传授权书
-$('#authorizationAdd').on('change', function (e) {
-    //判断有没有填写用户名
-    //没有，给出提示信息 ，清空文件选择   给用户输入框聚焦 return false
-    var telCompanyName = $("#telCompanyNameAdd").val();
-    if(telCompanyName == "" || telCompanyName == null){
-        $("#telCompanyNameAdd").focus();
-        $("#authorizationAdd").val("");
-        layer.msg("请先输入集团名称！");
-        return
-    }
-    uploadFile("authorization","authorizationAdd",$("#telCompanyNameAdd").val())
-});
-//上传号码证明
-$("#numberProveAdd").on('change', function (e) {
-    var telCompanyName = $("#telCompanyNameAdd").val();
-    if(telCompanyName == "" || telCompanyName == null){
-        $("#telCompanyNameAdd").focus();
-        $("#numberProveAdd").val("");
-        layer.msg("请先输入集团名称！");
-        return
-    }
-    uploadFile("numberProve","numberProveAdd",$("#telCompanyNameAdd").val())
-});
-
 //上传文件
 function uploadFile(url,fileId,folderName) {
     var layuiLoding = layer.load(0, { //icon支持传入0-2
@@ -943,4 +760,262 @@ function uploadFile(url,fileId,folderName) {
         }
     );
     return false;
+}
+
+//上传营业执照
+$("body").on('change', '#businessLicenseAdd', function (e) {
+    var telCompanyName = $("#telCompanyNameAdd").val();
+    uploadFile("businessLicense","businessLicenseAdd",telCompanyName);
+});
+//上传法人身份证正面
+$("body").on('change', '#legalPersonCardZhenAdd', function (e) {
+    var telCompanyName = $("#telCompanyNameAdd").val();
+    uploadFile("legalPersonCardZhen","legalPersonCardZhenAdd",telCompanyName)
+});
+//上传法人身份证反面
+$("body").on('change', '#legalPersonCardFanAdd', function (e) {
+    var telCompanyName = $("#telCompanyNameAdd").val();
+    uploadFile("legalPersonCardFan","legalPersonCardFanAdd",telCompanyName)
+});
+//上传LOGO
+$("body").on('change', '#logoAdd', function (e) {
+    var telCompanyName = $("#telCompanyNameAdd").val();
+    uploadFile("logo","logoAdd",telCompanyName)
+});
+//上传授权书
+$('#authorizationAdd').on('change', function (e) {
+    //判断有没有填写用户名
+    //没有，给出提示信息 ，清空文件选择   给用户输入框聚焦 return false
+    var telCompanyName = $("#telCompanyNameAdd").val();
+    if(telCompanyName == "" || telCompanyName == null){
+        $("#telCompanyNameAdd").focus();
+        $("#authorizationAdd").val("");
+        layer.msg("请先输入集团名称！");
+        return
+    }
+    uploadFile("authorization","authorizationAdd",$("#telCompanyNameAdd").val())
+});
+//上传号码证明
+$("#numberProveAdd").on('change', function (e) {
+    var telCompanyName = $("#telCompanyNameAdd").val();
+    if(telCompanyName == "" || telCompanyName == null){
+        $("#telCompanyNameAdd").focus();
+        $("#numberProveAdd").val("");
+        layer.msg("请先输入集团名称！");
+        return
+    }
+    uploadFile("numberProve","numberProveAdd",$("#telCompanyNameAdd").val())
+});
+
+<!--上传文件 -->
+$("body").on('click', '.tpimgbka', function () {
+    var telCompanyName = $("#telCompanyNameAdd").val();
+    if(telCompanyName == "" || telCompanyName == null){
+        $("#telCompanyNameAdd").focus();
+        layer.msg("请先输入集团名称！");
+    }else{
+        var ts = $(this);
+        $(this).next().click(); //隐藏了input:file样式后，点击头像就可以本地上传
+        $(this).next().on("change", function () {
+            if (this.files[0] != null && this.files[0] != "" && this.files[0] != undefined) {
+                var objUrl = getObjectURL(this.files[0]); //获取图片的路径，该路径不是图片在本地的路径
+                if (objUrl) {
+                    ts.children().attr("src", objUrl); //将图片路径存入src中，显示出图片
+                }
+            } else {
+                $(this).attr("src", "../image/photo_icon1.png");
+                $(this).next().val("");
+            }
+        });
+    }
+});
+
+/*上传图片预览*/
+//建立一個可存取到該file的url
+function getObjectURL(file) {
+    if (file != null && file != "" && file != undefined) {
+        var url = null;
+        if (window.createObjectURL != undefined) { // basic
+            url = window.createObjectURL(file);
+        } else if (window.URL != undefined) { // mozilla(firefox)
+            url = window.URL.createObjectURL(file);
+        } else if (window.webkitURL != undefined) { // webkit or chrome
+            url = window.webkitURL.createObjectURL(file);
+        }
+        return url;
+    }
+}
+
+//限制上传文件的类型和大小
+function validate_img(ele) {
+    // 返回 KB，保留小数点后两位
+    var file = ele.value;
+    // var fileName = document.getElementById("businessLicenseAdd").value;
+    //     // var fileType = fileName.slice(fileName.lastIndexOf(".")+1).toLowerCase();
+    //     // if(fileType != "jpg" && fileType != "jpeg" && fileType != "png" && fileType != "JPG" && fileType != "bmp"){
+    //     //     layer.msg("图片类型必须是jpeg,jpg,png,bmp中的一种!");
+    //     //     return ;
+    //     // }
+    if (file != null && file != '' && file != undefined) {
+        if (!/.(jpg|jpeg|png|JPG|bmp)$/.test(file)) {
+            api.toast({
+                msg: '图片类型必须是jpeg,jpg,png,bmp中的一种!',
+                duration: 3000,
+                location: 'top'
+            });
+            return false;
+        } else if (((ele.files[0].size).toFixed(2)) >= (4 * 1024 * 1024)) {
+            //返回Byte(B),保留小数点后两位
+            api.toast({
+                msg: '请上传小于4M的图片!',
+                duration: 5000,
+                location: 'top'
+            });
+            return false;
+        }
+    }
+}
+
+
+// --------------------------------------------------------修改---------------------------------------------------------
+<!--上传文件 -->
+$("body").on('click', '.tpimgbkaedit', function () {
+    var telCompanyName = $("#telCompanyName").val();
+    if(telCompanyName == "" || telCompanyName == null){
+        $("#telCompanyName").focus();
+        layer.msg("请先输入集团名称！");
+    }else{
+        var ts = $(this);
+        $(this).next().click(); //隐藏了input:file样式后，点击头像就可以本地上传
+        $(this).next().on("change", function () {
+            if (this.files[0] != null && this.files[0] != "" && this.files[0] != undefined) {
+                var objUrl = getObjectURL(this.files[0]); //获取图片的路径，该路径不是图片在本地的路径
+                alert(objUrl);
+                if (objUrl) {
+                    ts.children().attr("src", objUrl); //将图片路径存入src中，显示出图片
+                }
+            } else {
+                $(this).attr("src", "../image/photo_icon1.png");
+                $(this).next().val("");
+            }
+        });
+    }
+});
+
+//上传营业执照
+$("body").on('change', '#businessLicense', function (e) {
+    var telCompanyName = $("#telCompanyName").val();
+    uploadFile("businessLicense","businessLicense",telCompanyName);
+});
+//上传法人身份证正面
+$("body").on('change', '#legalPersonCardZhen', function (e) {
+    var telCompanyName = $("#telCompanyName").val();
+    uploadFile("legalPersonCardZhen","legalPersonCardZhen",telCompanyName)
+});
+//上传法人身份证反面
+$("body").on('change', '#legalPersonCardFan', function (e) {
+    var telCompanyName = $("#telCompanyName").val();
+    uploadFile("legalPersonCardFan","legalPersonCardFan",telCompanyName)
+});
+//上传LOGO
+$("body").on('change', '#logo', function (e) {
+    var telCompanyName = $("#telCompanyName").val();
+    uploadFile("logo","logo",telCompanyName)
+});
+//上传授权书
+$('#authorization').on('change', function (e) {
+    var telCompanyName = $("#telCompanyName").val();
+    if(telCompanyName == "" || telCompanyName == null){
+        $("#telCompanyName").focus();
+        $("#authorization").val("");
+        layer.msg("请先输入集团名称！");
+        return
+    }
+    uploadFile("authorization","authorization",$("#telCompanyName").val())
+});
+//上传号码证明
+$("#numberProve").on('change', function (e) {
+    var telCompanyName = $("#telCompanyName").val();
+    if(telCompanyName == "" || telCompanyName == null){
+        $("#telCompanyName").focus();
+        $("#numberProve").val("");
+        layer.msg("请先输入集团名称！");
+        return
+    }
+    uploadFile("numberProve","numberProve",$("#telCompanyName").val())
+});
+
+//修改商户信息
+function determine() {
+    if($("#telCompanyName").html() > 0 || $("#telCompanyName").val() == ""){
+        $("#telCompanyName").focus();
+        layer.msg("请填写集团名称");
+        return;
+    }
+    if($("#telLinkName").html() > 0 || $("#telLinkName").val() == ""){
+        $("#telLinkName").focus();
+        layer.msg("请填写联系人姓名");
+        return;
+    }
+    if($("#telLinkPhone").html() > 0 || $("#telLinkPhone").val() == ""){
+        $("#telLinkPhone").focus();
+        layer.msg("请填写联系人电话");
+        return;
+    }
+    if($("#telContent").html() > 0 || $("#telContent").val() == ""){
+        $("#telContent").focus();
+        layer.msg("请填写认证展示内容");
+        return;
+    }
+    if($("#businessLicense").html() > 0 || $("#businessLicenseHidden").val() == ""){
+        layer.msg("您需要上传营业执照");
+        return;
+    }
+    if($("#legalPersonCardZhen").html() > 0 || $("#legalPersonCardZhenHidden").val() == ""){
+        layer.msg("您需要上传法人身份证正面");
+        return;
+    }
+    if($("#legalPersonCardFan").html() > 0 || $("#legalPersonCardFanHidden").val() == ""){
+        layer.msg("您需要上传法人身份证反面");
+        return;
+    }
+    if($("#logo").html() > 0 || $("#logoHidden").val() == ""){
+        layer.msg("您需要上传LOGO");
+        return;
+    }
+    if($("#authorization").html() > 0 || $("#authorizationHidden").val() == ""){
+        layer.msg("请上传授权书");
+        return;
+    }
+    if($("#numberProve").html() > 0 || $("#numberProveHidden").val() == ""){
+        layer.msg("请上传号码证明");
+        return;
+    }
+    var url = "/telcertify/editTelCerOrderById";
+    AjaxPost(url,{
+        id : sendId,
+        telCompanyName : $("#telCompanyName").val(),
+        telLinkName : $("#telLinkName").val(),
+        telLinkPhone : $("#telLinkPhone").val(),
+        telContent : $("#telContent").val(),
+
+        businessLicense : $("#businessLicenseHidden").val(),
+        legalPersonCardZhen : $("#legalPersonCardZhenHidden").val(),
+        legalPersonCardFan : $("#legalPersonCardFanHidden").val(),
+        logo : $("#logoHidden").val(),
+        authorization : $("#authorizationHidden").val(),
+        numberProve : $("#numberProveHidden").val(),
+
+        remark : $("#remark").val()
+    },function (res) {
+        if(res.code==200 && res.data){
+            layer.confirm(res.msg,{
+                btn:'确定'
+            },function () {
+                window.parent.location.reload();//刷新父页面
+            });
+        }else {
+            layer.msg(res.msg, {icon: 5, time: 3000});
+        }
+    });
 }

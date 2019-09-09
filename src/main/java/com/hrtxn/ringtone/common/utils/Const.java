@@ -72,6 +72,10 @@ public final class Const implements Serializable {
     //消费记录类型--三网
     public static Integer SYS_CONSUME_LOG_TYPE_THREE_NET = 2;
 
+    //号码认证消费记录类型（1.首次/2.续费）
+    public static Integer TEL_CER_CONSUME_LOG_TYPE_FIRST = 1;
+    public static Integer TEL_CER_CONSUME_LOG_TYPE_RENEW = 2;
+
     //号码认证状态
     //开通中
     public static Integer TEL_CER_STATUS_OPENING = 1;

@@ -20,25 +20,21 @@ public interface CertificationChildOrderMapper {
 
     List<CertificationChildOrder> findTheChildOrder(@Param("page") Page page, @Param("param") BaseRequest request);
 
-
     int getMemberCountByParentId(int i);
 
     CertificationChildOrder getTelCerChildById(Integer id);
 
     int deleteByPrimaryKey(@Param("id") Integer id);
 
-    int editChildStatus(CertificationChildOrder certificationChildOrder);
-
     int editFeedBackById(CertificationChildOrder certificationChildOrder);
 
     int getTelcerChildParentIdByPhoneNum(String phoneNum);
-
-
-    int editChildAfterRenew(CertificationChildOrder childOrder);
 
     CertificationChildOrder getTelcerChildByPhoneNum(String userTel);
 
     int insert(CertificationChildOrder certificationChildOrder);
 
     int batchInsertChildOrder(@Param("list") List<CertificationChildOrder> list);
+
+    int editChildOrderIfStatusChanged(CertificationChildOrder certificationChildOrder);
 }

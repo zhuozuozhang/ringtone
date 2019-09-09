@@ -154,17 +154,17 @@ function telCertification_del(id) {
         });
     });
 }
-
-// 批量删除号码认证订单
-function delAll() {
-    var data = tableCheck.getData();
-    if (isNotEmpty(data)) {
-        layer.confirm('确认要删除吗？' + data, function (index) {
-            //捉到所有被选中的，发异步进行删除
-            layer.msg('删除成功', {icon: 1});
-            $(".layui-form-checked").not('.header').parents('tr').remove();
-        });
-    } else {
-        layer.msg('至少选择一条数据', {icon: 7});
-    }
-}
+//
+// // 批量删除号码认证订单
+// function delAll() {
+//     var data = tableCheck.getData();
+//     if (isNotEmpty(data)) {
+//         layer.confirm('确认要删除吗？' + data, function (index) {
+//             //捉到所有被选中的，发异步进行删除
+//             layer.msg('删除成功', {icon: 1});
+//             $(".layui-form-checked").not('.header').parents('tr').remove();
+//         });
+//     } else {
+//         layer.msg('至少选择一条数据', {icon: 7});
+//     }
+// }

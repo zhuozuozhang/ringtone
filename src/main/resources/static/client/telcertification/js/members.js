@@ -3,7 +3,6 @@ $(document).ready(function(){
     showTelCerMemberTable();
 });
 
-var sendPrice = null;
 var parentId = null;
 function showTelCerMemberTable() {
     var param = {
@@ -22,31 +21,7 @@ function showTelCerMemberTable() {
         {"data": "telChildOrderOpenTime"},
         {"data": "telChildOrderExpireTime"}
     ];
-    var columnDefs = [
-    //     {
-    //     targets:[2],
-    //     render: function(data, type, row, meta){
-    //         var serviceStr = $.parseJSON(data);
-    //         var service = serviceStr.service;
-    //         var str = "";
-    //         for (var i = 0; i < service.length; i++) {
-    //             str += "<tr>";
-    //             str += "<td>" + service[i].name + ",</td>";
-    //             str += "<td>" + service[i].period0fValidity + ",</td>";
-    //             str += "<td>" + service[i].cost + "元</td></br>";
-    //             str += "</tr>";
-    //         }
-    //         return str;
-    //     }
-    // },
-        {
-        targets:[3],
-        render: function(data, type, row, meta){
-            sendPrice = data;
-            parentId = row.parentOrderId;
-            return "<div>"+data+"</div>"
-        }
-    },{
+    var columnDefs = [{
         targets:[4],
         render: function(data, type, row, meta){
             var status = row.telChildOrderStatus;
@@ -143,12 +118,10 @@ function confirmRenew() {
         userTel:phoneNum
     },function (res) {
         if (res.code == 200 && res.data){
-            //发异步，把数据提交给后台
-            layer.alert("续费成功", {icon: 6},function () {
-                // 获得frame索引
-                var index = parent.layer.getFrameIndex(window.name);
-                //关闭当前frame
-                parent.layer.close(index);
+            layer.confirm(res.msg,{
+                btn:'确定'
+            },function () {
+                window.parent.location.reload();//刷新父页面
             });
         }else{
             layer.msg(res.msg,{icon: 5, time: 3000});
@@ -171,8 +144,6 @@ function checkNum(obj) {
             var phoneregex = /^[1][3,4,5,7,8,9][0-9]{9}$/; //手机号码
             var tel_regex = /^(\d{3,4}\-)?\d{7,8}$/i;   //座机格式是 010-98909899 010-86551122
             var telregex = /^0(([1-9]\d)|([3-9]\d{2}))\d{8}$/; //没有中间那段 -的 座机格式是 01098909899
-
-            alert("phones "+phones);
             if (!phoneregex.test(phones)) {
                 if (!tel_regex.test(phones)) {
                     if(!telregex.test(phones)){
@@ -187,7 +158,7 @@ function checkNum(obj) {
     if(checkData.length == 0){
         $("#allPrice").html(0);
     }else{
-        $("#allPrice").html(checkData.length*sendPrice);
+        $("#allPrice").html(checkData.length*$("#sendPrice").val());
     }
 }
 //添加号码
@@ -199,7 +170,6 @@ function addLandline() {
             layui.use('layer', function () {
                 layer.msg("新增号码不能为空！");
             });
-            return;
             return;
         }
         if (document.getElementsByClassName('numlists')[i].value.length != 0) {
@@ -240,55 +210,21 @@ function addPhoneNumList(){
             checkData.push(document.getElementsByClassName('numlists')[i].value)
         }
     }
-    alert(checkData);
 
     AjaxPost("/telcertify/insertTelCerChild",{
-        phoneNumberArray:JSON.stringify(checkData),
-        parentOrderId:parentId
+        phoneNumberArray : JSON.stringify(checkData),
+        parentOrderId : $("#id").val()
     },function (res) {
+        alert($("#id").val());
         if (res.code == 200 && res.data){
-            //发异步，把数据提交给后台
-            layer.alert("批量添加号码成功", {icon: 6,time:3000},
-                // 获得frame索引
-                // var index = parent.layer.getFrameIndex(window.name);
-                //关闭当前frame
-                // parent.layer.close(index);
-            );
-            let index = parent.layer.getFrameIndex(window.name); //获取窗口索引
-            parent.layer.close(index);
-            window.parent.location.reload();//刷新父页面
-            return false;
+            layer.confirm(res.msg,{
+                btn:'确定'
+            },function () {
+                window.parent.location.reload();//刷新父页面
+            });
         }else{
-            layer.msg("批量添加号码失败！", {icon: 5, time: 3000});
+            layer.msg(res.msg, {icon: 5, time: 3000});
         }
     });
 
 }
-
-
-// layui.use('form',function () {
-//     var form = layui.form;
-//     //添加号码
-//     form.on('submit(formDemo)',function () {
-//         var checkData = [];
-//         for (var i = 0; i < document.getElementsByClassName('numlists').length; i++) {
-//             if (document.getElementsByClassName('numlists')[i].value.length == 0) {
-//                 layui.use('layer', function () {
-//                     layer.msg("请输入号码！");
-//                 });
-//                 return;
-//             }
-//             if (document.getElementsByClassName('numlists')[i].value.length != 0) {
-//                 checkData.push(document.getElementsByClassName('numlists')[i].value)
-//             }
-//         }
-//         alert("lala");
-//         alert("checkData");
-//         $("#Form").submit();
-//         // let index = parent.layer.getFrameIndex(window.name); //获取窗口索引
-//         // parent.layer.close(index);
-//         // window.parent.location.reload();//刷新父页面
-//         // return false;
-//     });
-//
-// });

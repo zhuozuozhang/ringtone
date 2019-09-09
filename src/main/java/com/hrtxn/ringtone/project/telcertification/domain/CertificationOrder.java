@@ -57,5 +57,4 @@ public class CertificationOrder implements Serializable {
     private String statusName;
     //成员电话号
     private String phoneNum;
-
 }

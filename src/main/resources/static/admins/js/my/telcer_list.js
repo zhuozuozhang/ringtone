@@ -17,14 +17,13 @@ function showTelcertification_table() {
         {"data": "telLinkName"},
         {"data": "telLinkPhone"},
         {"data": "memberNum"},
-        {"data": "statusName"},
         {"data": "unitPrice"},
         {"data": "telOrderTime"},
         {"data": "productName"},
         {"data": "remark"}
     ];
     var columnDefs = [{
-        targets:[8],
+        targets:[7],
         render: function (data, type, row, meta) {
             var productName = row.productName;
             var product = $.parseJSON(productName);
@@ -44,11 +43,11 @@ function showTelcertification_table() {
             return str;
         }
     }, {
-        targets:[10],
+        targets:[9],
         render: function (data, type, row, meta) {
             var id = row.id;
-            return "<a title='查看' onclick='x_admin_show(\"详细信息\",\"/admin/telcertificationDetail/"+id+"\",\"\",\"\")' href='javascript:;'><i class='layui-icon layui-icon-survey'>&emsp;</i></a>" +
-                "<a title='成员管理' onclick='x_admin_show(\"成员管理\",\"/admin/telcertificationChildList/"+id+"\",\"\",\"\")' href='javascript:;'><i class='layui-icon layui-icon-user'>&emsp;</i></a>" +
+            return "<a title='查看' onclick='x_admin_show(\"详细信息\",\"/admin/telcertificationDetail/"+id+"\",\"\",\"\")' href='javascript:;'><i class='layui-icon layui-icon-survey'></i></a>" +
+                "<a title='成员管理' onclick='x_admin_show(\"成员管理\",\"/admin/telcertificationChildList/"+id+"\",\"\",\"\")' href='javascript:;'><i class='layui-icon layui-icon-user'></i></a>" +
                 "<a title='删除' onclick='telCertification_del(\""+id+"\")' href='javascript:;'><i class='layui-icon layui-icon-delete'></i></a>";
          }
     }];
@@ -90,54 +89,54 @@ function showTelcertification_table() {
 //         });
 //     }
 // });
+//
+// $('#checkAll').on('click', function () {
+//     if (this.checked) {
+//         $(this).attr('checked','checked')
+//         $("i[name='ckb-jobid']").each(function () {
+//             this.checked = true;
+//         });
+//     } else {
+//         $(this).removeAttr('checked')
+//         $("i[name='ckb-jobid']").each(function () {
+//             this.checked = false;
+//         });
+//     }
+// });
 
-$('#checkAll').on('click', function () {
-    if (this.checked) {
-        $(this).attr('checked','checked')
-        $("i[name='ckb-jobid']").each(function () {
-            this.checked = true;
-        });
-    } else {
-        $(this).removeAttr('checked')
-        $("i[name='ckb-jobid']").each(function () {
-            this.checked = false;
-        });
-    }
-});
-
-function childclick(){
-    if ($(this).is(":checked") == false) {
-        $("#checkAll").prop("checked", false);
-    }
-}
-
-var a=0;
-function synFile (syso) {
-    a=a+1;
-    var i =  syso.getElementsByTagName("i")[0];
-    var data = syso.getAttribute('data');
-    alert(data);
-    //i.className += ' selectCss';
-    if(a%2==1){
-        lookColor(i);
-    }else{
-        disColor(i);
-    }
-}
-//显示
-function lookColor(i){
-    i.style.borderColor="#0dc316";
-    i.style.backgroundColor="#0dc316";
-    i.style.color="#fff";
-    return;
-}
-//消失
-function disColor(i){
-    i.style.borderColor="";
-    i.style.backgroundColor="";
-    i.style.color="";
-    return;
-}
+// function childclick(){
+//     if ($(this).is(":checked") == false) {
+//         $("#checkAll").prop("checked", false);
+//     }
+// }
+//
+// var a=0;
+// function synFile (syso) {
+//     a=a+1;
+//     var i =  syso.getElementsByTagName("i")[0];
+//     var data = syso.getAttribute('data');
+//     alert(data);
+//     //i.className += ' selectCss';
+//     if(a%2==1){
+//         lookColor(i);
+//     }else{
+//         disColor(i);
+//     }
+// }
+// //显示
+// function lookColor(i){
+//     i.style.borderColor="#0dc316";
+//     i.style.backgroundColor="#0dc316";
+//     i.style.color="#fff";
+//     return;
+// }
+// //消失
+// function disColor(i){
+//     i.style.borderColor="";
+//     i.style.backgroundColor="";
+//     i.style.color="";
+//     return;
+// }
 
 
 /*用户-删除*/
@@ -157,23 +156,23 @@ function telCertification_del(id){
     });
 }
 // 批量删除号码认证订单
-function delAll () {
-    var data = tableCheck.getData();
-    if (isNotEmpty(data)) {
-        layer.confirm('确认要删除吗？'+data,function(index){
-            //捉到所有被选中的，发异步进行删除
-            // AjaxDelete("/admin/deleteTelCer/"+id,{},function (res) {
-            //     if (res.code == 200 && res.data) {
-            //         layer.msg(res.msg, {icon: 6, time: 2000});
-            //         $('#telcertification_table').DataTable().ajax.reload();
-            //     } else {
-            //         layer.msg(res.msg, {icon: 5, time: 2000});
-            //     }
-            // });
-            layer.msg('删除成功', {icon: 1});
-            $(".layui-form-checked").not('.header').parents('tr').remove();
-        });
-    }else{
-        layer.msg('至少选择一条数据', {icon: 7});
-    }
-}
+// function delAll () {
+//     var data = tableCheck.getData();
+//     if (isNotEmpty(data)) {
+//         layer.confirm('确认要删除吗？'+data,function(index){
+//             //捉到所有被选中的，发异步进行删除
+//             // AjaxDelete("/admin/deleteTelCer/"+id,{},function (res) {
+//             //     if (res.code == 200 && res.data) {
+//             //         layer.msg(res.msg, {icon: 6, time: 2000});
+//             //         $('#telcertification_table').DataTable().ajax.reload();
+//             //     } else {
+//             //         layer.msg(res.msg, {icon: 5, time: 2000});
+//             //     }
+//             // });
+//             layer.msg('删除成功', {icon: 1});
+//             $(".layui-form-checked").not('.header').parents('tr').remove();
+//         });
+//     }else{
+//         layer.msg('至少选择一条数据', {icon: 7});
+//     }
+// }

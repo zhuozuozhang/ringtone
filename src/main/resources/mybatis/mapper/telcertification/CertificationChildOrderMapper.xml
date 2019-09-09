@@ -75,16 +75,6 @@
     delete from tb_telcertification_child_order
     where id = #{id,jdbcType=INTEGER}
   </delete>
-<!--修改成员状态-->
-    <update id="editChildStatus" parameterType="com.hrtxn.ringtone.project.telcertification.domain.CertificationChildOrder">
-        UPDATE tb_telcertification_child_order
-        <set>
-            <if test="telChildOrderStatus != null">
-                tel_child_order_status = #{telChildOrderStatus,jdbcType=VARCHAR},
-            </if>
-        </set>
-        WHERE id = #{id,jdbcType=INTEGER}
-    </update>
 <!--修改业务反馈-->
     <update id="editFeedBackById" parameterType="com.hrtxn.ringtone.project.telcertification.domain.CertificationChildOrder">
         UPDATE tb_telcertification_child_order
@@ -102,17 +92,16 @@
         WHERE tel_child_order_phone = #{telChildOrderPhone,jdbcType=VARCHAR}
     </select>
 
-    <!--修改成员状态、提交时间，开通时间-->
-    <update id="editChildAfterRenew" parameterType="com.hrtxn.ringtone.project.telcertification.domain.CertificationChildOrder">
+    <!--修改成员状态、提交时间，开通时间，到期时间-->
+    <update id="editChildOrderIfStatusChanged" parameterType="com.hrtxn.ringtone.project.telcertification.domain.CertificationChildOrder">
         UPDATE tb_telcertification_child_order
         <set>
             <if test="telChildOrderStatus != null">
                 tel_child_order_status = #{telChildOrderStatus,jdbcType=VARCHAR},
             </if>
-            <if test="telChildOrderCtime != null">
                 tel_child_order_ctime = #{telChildOrderCtime,jdbcType=TIMESTAMP},
-            </if>
                 tel_child_order_open_time = #{telChildOrderOpenTime,jdbcType=TIMESTAMP},
+                tel_child_order_expire_time = #{telChildOrderExpireTime,jdbcType=TIMESTAMP},
         </set>
         WHERE id = #{id,jdbcType=INTEGER}
     </update>
@@ -150,6 +139,7 @@
           )
       </foreach>
     </insert>
+
     <insert id="insertSelective"
             parameterType="com.hrtxn.ringtone.project.telcertification.domain.CertificationChildOrder">
         insert into tb_telcertification_child_order

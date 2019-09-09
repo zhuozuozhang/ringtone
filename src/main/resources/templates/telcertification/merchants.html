@@ -294,10 +294,9 @@
                            placeholder="如果是座机号码务必加上区号" autocomplete="off" onblur="checkNum(this)">
 <!--                    <input class="opennum" type="tel" placeholder="如果是座机号码务必加上区号">-->
                     <em id="moreadd"><img th:src="@{/client/telcertification/images/addphone.png}" alt="" onclick="addLandline();"></em>
-
-                    <div id="num"></div>
                 </div>
-<!--                                  <input type="tel" placeholder="如果是座机号码务必加上区号" style="margin-left:180px;">-->
+                <div id="num"></div>
+                <!--                                  <input type="tel" placeholder="如果是座机号码务必加上区号" style="margin-left:180px;">-->
 <!--                                  <em onClick="remove(this)"><img th:src="@{/client/telcertification/images/del.png}"></em>-->
 <!--                                </div> -->
 <!--                                <div class="zsy" id="before"></div>-->
@@ -384,37 +383,37 @@
             </div>
             <div class="imgbk"><span><i>*</i>上传营业执照</span>
                 <div class="tpscbk">
-                    <div class="tpimgbka"><img class="tpimga" border="0" src="../../public/images/addimg.png" test="111" style="margin:0px auto;max-height:140px;"></div>
-                    <input type="file" id="businessLicense" style="display: none;" name="file" class="tpdza" onclick="javascript:validate_img(this);">
+                    <div class="tpimgbkaedit"><img class="tpimga" border="0" src="../../public/images/addimg.png" test="111" style="margin:0px auto;max-height:140px;"></div>
+                    <input type="file" id="businessLicense" style="display: none;" name="businessLicense" class="tpdza" onclick="javascript:validate_img(this);">
                 </div>
             </div>
             <div class="imgbk"><span><i>*</i>上传法人身份证正面</span>
                 <div class="tpscbk">
-                    <div class="tpimgbka"><img class="tpimga" border="0" src="../../public/images/addimg.png" test="111" style="margin:0px auto;max-height:140px;"></div>
-                    <input type="file" id="legalPersonCardZhen" style="display: none;" name="file" class="tpdza" onclick="javascript:validate_img(this);">
+                    <div class="tpimgbkaedit"><img class="tpimga" border="0" src="../../public/images/addimg.png" test="111" style="margin:0px auto;max-height:140px;"></div>
+                    <input type="file" id="legalPersonCardZhen" style="display: none;" name="legalPersonCardZhen" class="tpdza" onclick="javascript:validate_img(this);">
                 </div>
             </div>
             <div class="imgbk"><span><i>*</i>上传法人身份证反面</span>
                 <div class="tpscbk">
-                    <div class="tpimgbka"><img class="tpimga" border="0" src="../../public/images/addimg.png" test="111" style="margin:0px auto;max-height:140px;"></div>
-                    <input type="file" id="legalPersonCardFan" style="display: none;" name="file" class="tpdza" onclick="javascript:validate_img(this);">
+                    <div class="tpimgbkaedit"><img class="tpimga" border="0" src="../../public/images/addimg.png" test="111" style="margin:0px auto;max-height:140px;"></div>
+                    <input type="file" id="legalPersonCardFan" style="display: none;" name="legalPersonCardFan" class="tpdza" onclick="javascript:validate_img(this);">
                 </div>
             </div>
             <div class="imgbk"><span><i>*</i>上传LOGO</span>
                 <div class="tpscbk">
-                    <div class="tpimgbka"><img class="tpimga" border="0" src="../../public/images/addimg.png" test="111" style="margin:0px auto;max-height:140px;"></div>
-                    <input type="file" id="logo" style="display: none;" name="file" class="tpdza" onclick="javascript:validate_img(this);">
+                    <div class="tpimgbkaedit"><img class="tpimga" border="0" src="../../public/images/addimg.png" test="111" style="margin:0px auto;max-height:140px;"></div>
+                    <input type="file" id="logo" style="display: none;" name="logo" class="tpdza" onclick="javascript:validate_img(this);">
                 </div>
             </div>
             <div class="approvebk"><span><i>*</i>上传授权书</span>
-                <input class="scwj" type="file" id="authorization" placeholder="选填">
+                <input class="scwj" type="file" id="authorization" placeholder="选填" name="authorization">
             </div>
             <div class="ckalbk">
                 <div class="ckan opencase">查看案例</div>
                 <div class="mbxz"><a href="http://v.130.xyz/api/auth/uploadModel?type=3">授权书模板下载</a></div>
             </div>
             <div class="approvebk"><span><i>*</i>号码证明</span>
-                <input class="scwj" type="file"  id="numberProve" placeholder="选填">
+                <input class="scwj" type="file"  id="numberProve" placeholder="选填" name="numberProve">
             </div>
             <div class="ckalbk">
                 <div class="ckan opencase">查看案例</div>
