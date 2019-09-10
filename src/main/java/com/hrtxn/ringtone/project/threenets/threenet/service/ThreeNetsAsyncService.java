@@ -216,7 +216,7 @@ public class ThreeNetsAsyncService {
             ThreenetsChildOrder childOrder = childOrders.get(i);
             boolean flag = ConfigUtil.getAreaArray("unable_to_open_area", childOrder.getProvince());
             if (flag) {
-                childOrder.setRemark("电信当前不提供" + childOrder.getProvince() + "地区的服务");
+                childOrder.setRemark(childOrder.getProvince() + "电信暂停业务");
                 childOrder.setStatus(Const.FAILURE_REVIEW);
             } else {
                 childOrder.setStatus(Const.PENDING_REVIEW);
@@ -655,7 +655,7 @@ public class ThreeNetsAsyncService {
                 ThreenetsChildOrder childOrder = childOrders.get(i);
                 boolean flag = ConfigUtil.getAreaArray("unable_to_open_area", childOrder.getProvince());
                 if (flag) {
-                    childOrder.setRemark("电信当前不提供" + childOrder.getProvince() + "地区的服务");
+                    childOrder.setRemark(childOrder.getProvince() + "电信暂停业务");
                     childOrder.setStatus(Const.FAILURE_REVIEW);
                     threenetsChildOrderMapper.updateThreeNetsChidOrder(childOrder);
                     childOrders.remove(i);
