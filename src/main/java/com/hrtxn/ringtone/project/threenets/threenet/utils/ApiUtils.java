@@ -1172,7 +1172,7 @@ public class ApiUtils {
         if (flag) {
             mcardAddGroupRespone = new McardAddGroupRespone();
             mcardAddGroupRespone.setCode(Const.ILLEFAL_AREA);
-            mcardAddGroupRespone.setMessage("电信当前不提供" + order.getProvince() + "地区的服务");
+            mcardAddGroupRespone.setMessage(order.getProvince() + "电信暂停业务");
             return mcardAddGroupRespone;
         }
         //获取商户所属地区
@@ -1282,7 +1282,7 @@ public class ApiUtils {
             ThreenetsChildOrder childOrder = orders.get(i);
             if (ConfigUtil.getAreaArray("unable_to_open_area", childOrder.getProvince())) {
                 childOrder.setStatus(Const.FAILURE_REVIEW);
-                childOrder.setRemark("电信当前不提供" + childOrder.getProvince() + "地区的服务");
+                childOrder.setRemark(childOrder.getProvince() + "电信暂停业务");
                 newList.add(childOrder);
                 continue;
             }
