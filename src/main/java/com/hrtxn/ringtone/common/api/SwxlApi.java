@@ -113,7 +113,8 @@ public class SwxlApi implements Serializable {
         // 为空的话，先去取
         if (this.swxlCookie == null) {
             // 重新登录获取
-            boolean flag = loginAuto();
+         //   boolean flag = loginAuto();
+            boolean flag = loginAutoParam(ShiroUtils.getSysUser().getUserName());
             if (!flag) {
                 throw new NoLoginException("未登录！");
             }
@@ -121,12 +122,25 @@ public class SwxlApi implements Serializable {
         // cookie超时，使用时间判断，这样去链接验证，会造成服务器决绝。
         if (!this.isValidCookieStore()) {
             // 重新登录获取，调用远程验证码接口。
-            boolean flag = loginAuto();
+         //   boolean flag = loginAuto();
+            boolean flag = loginAutoParam(ShiroUtils.getSysUser().getUserName());
             if (!flag) {
                 throw new NoLoginException("未登录！");
             }
         }
         return this.swxlCookie;
+    }
+
+    public boolean loginAutoParam(String userName) {
+        int i = 0;
+        boolean flag = loginParam(getCodeString(),userName);
+        if (!flag) {
+            i++;
+            if (i < 3) {
+                flag = loginParam(getCodeString(),userName);
+            }
+        }
+        return flag;
     }
 
     /**
@@ -255,6 +269,40 @@ public class SwxlApi implements Serializable {
         return isSucess;
     }
 
+
+    @Synchronized
+    public boolean loginParam(String vcode,String userName) {
+        boolean isSucess = false;
+        DefaultHttpClient httpclient = WebClientDevWrapper.wrapClient(new DefaultHttpClient());
+        HttpPost httppost = new HttpPost(SwxlApi.LOGIN_URL);
+        List<NameValuePair> formparams = new ArrayList<NameValuePair>();
+        formparams.add(new BasicNameValuePair("username", userName));
+        formparams.add(new BasicNameValuePair("password", PASSWORD2));
+        formparams.add(new BasicNameValuePair("vcode", vcode));
+        if (this.swxlCookie == null) {
+            return false;
+        }
+        httpclient.setCookieStore(this.swxlCookie);
+        try {
+            UrlEncodedFormEntity entity = new UrlEncodedFormEntity(formparams, "utf-8");
+            httppost.setEntity(entity);
+            HttpResponse response = httpclient.execute(httppost);
+            HttpEntity resEntity = response.getEntity();
+            String s = EntityUtils.toString(resEntity);
+            System.out.println("s" + s);
+            isSucess = !s.contains("验证码输入错误");
+            // 获取登录cookie
+            if (isSucess) {
+                this.setSwxlCookie(httpclient.getCookieStore());
+            }
+        } catch (Exception e) {
+            System.out.println(e);
+        } finally {
+            httppost.abort();
+            httpclient.getConnectionManager().shutdown();
+        }
+        return isSucess;
+    }
     /**
      * 获取铃音信息
      *

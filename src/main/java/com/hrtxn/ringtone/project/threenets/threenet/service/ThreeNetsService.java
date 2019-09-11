@@ -214,8 +214,10 @@ public class ThreeNetsService {
         int liantong = 0;
         int sum = 0;
         for (String p : phone) {
+            //首先验证是固定电话还是手机号
             boolean mobileNO = isMobileNO(p);
-            if (!mobileNO) {
+            boolean fixedPhone = isFixedPhone(p);
+            if (!mobileNO && !fixedPhone) {
                 return AjaxResult.error("#号码" + p + "不正确！");
             }
             sum++;
@@ -257,4 +259,9 @@ public class ThreeNetsService {
         return m.matches();
     }
 
+    public static boolean isFixedPhone(String fixedPhone) {
+        String reg = "(?:(\\(\\+?86\\))(0[0-9]{2,3}\\-?)?([2-9][0-9]{6,7})+(\\-[0-9]{1,4})?)|" +
+                "(?:(86-?)?(0[0-9]{2,3}\\-?)?([2-9][0-9]{6,7})+(\\-[0-9]{1,4})?)";
+        return Pattern.matches(reg, fixedPhone);
+    }
 }
