@@ -2,12 +2,10 @@
 $(document).ready(function(){
     showTelCerMemberTable();
 });
-
-var parentId = null;
 function showTelCerMemberTable() {
     var param = {
         "parentId": $("#id").val(),
-        "phoneNum": $("#phoneNum").val()
+        "phoneNum": $("#phoneNum").val().trim()
     }
     var columns = [
         {"data": null},
@@ -61,26 +59,19 @@ function showTelCerMemberTable() {
         }
     }];
 
-    var phoneNum = param.phoneNum.trim();
-    if(phoneNum != null && phoneNum != ""){
-        if(!isTel(phoneNum)){
-            if(!isPhone(phoneNum)){
-                if(!is_Phone(phoneNum)){
+    if(param.phoneNum != "" && param.phoneNum != null){
+        if(!isTel(param.phoneNum.trim())){
+            if(!isPhone(param.phoneNum.trim())){
+                if(!is_Phone(param.phoneNum).trim()){
                     layer.msg("请输入正确的手机号或者座机号，座机号请务必添加区号！",{icon: 5, time: 3000});
+                    return;
                 }
             }
         }
     }
-
     var url = "/telcertify/getTelCerMembersList";
     page("#members", 15, param, url, columns, columnDefs);
 }
-
-function addMember(){
-
-}
-
-
 
 //打开添加号码弹窗
 function Edits(){
@@ -121,17 +112,15 @@ function confirmRenew() {
             layer.confirm(res.msg,{
                 btn:'确定'
             },function () {
-                window.parent.location.reload();//刷新父页面
+                window.parent.location.reload();
             });
         }else{
             layer.msg(res.msg,{icon: 5, time: 3000});
-            // layer.msg("续费失败！", {icon: 5, time: 1000});
         }
     });
 
 }
 
-var falseNum = 0;
 //验证成员号码
 function checkNum(obj) {
 
@@ -148,7 +137,6 @@ function checkNum(obj) {
                 if (!tel_regex.test(phones)) {
                     if(!telregex.test(phones)){
                         layer.msg('号码"' + phones + '"不正确!');
-                        falseNum++;
                         break;
                     }
                 }
@@ -176,26 +164,15 @@ function addLandline() {
             checkData.push(document.getElementsByClassName('numlists')[i].value)
         }
     }
-    // if(falseNum == 0){
-    //     $("#num").append(
-    //         '<div class="layui-form-item" style="position: relative;"><div class="layui-input-block" style="margin-left: 156px;"><input type="text" style="width:81%;" name="content" class="layui-input numlists" value="" placeholder="如果是座机号码务必加上区号" autocomplete="off" onblur="checkNum(this)"></div><img src="../../client/telcertification/images/del.png" alt="" class="add_phone" onclick="delLandline(this);" width="28px"></div>'
-    //     );
-    // }else{
-    //     layer.msg("请修改错误号码");
-    // }
-
     $("#num").append(
         '<div class="layui-form-item" style="position: relative;"><div class="layui-input-block" style="margin-left: 156px;"><input type="text" style="width:81%;" name="content" class="layui-input numlists" value="" placeholder="如果是座机号码务必加上区号" autocomplete="off" onblur="checkNum(this)"></div><img src="../../client/telcertification/images/del.png" alt="" class="add_phone" onclick="delLandline(this);" width="28px"></div>'
     );
-
-
 }
 //删除号码
 function delLandline(obj) {
     $(obj).parent().remove();
     checkNum(obj);
 }
-
 //添加多个号码
 function addPhoneNumList(){
     var checkData = [];
@@ -215,7 +192,6 @@ function addPhoneNumList(){
         phoneNumberArray : JSON.stringify(checkData),
         parentOrderId : $("#id").val()
     },function (res) {
-        alert($("#id").val());
         if (res.code == 200 && res.data){
             layer.confirm(res.msg,{
                 btn:'确定'
@@ -226,5 +202,4 @@ function addPhoneNumList(){
             layer.msg(res.msg, {icon: 5, time: 3000});
         }
     });
-
 }

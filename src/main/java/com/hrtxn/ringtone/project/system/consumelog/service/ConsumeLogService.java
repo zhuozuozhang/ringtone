@@ -97,18 +97,19 @@ public class ConsumeLogService {
      * @param consumeLog
      * @return
      */
-    public AjaxResult addRenewConsumeLog(ConsumeLog consumeLog) {
+    public AjaxResult addRenewConsumeLog(ConsumeLog consumeLog) throws Exception {
         if(StringUtils.isNotNull(consumeLog) && StringUtils.isNotEmpty(consumeLog.getUserTel())){
             CertificationOrder certificationOrder = certificationOrderMapper.getTelCerOrderByChildOrder(consumeLog.getUserTel());
             CertificationChildOrder certificationChildOrder = certificationChildOrderMapper.getTelcerChildByPhoneNum(consumeLog.getUserTel());
-            if(Const.TEL_CER_STATUS_OPENING.equals(certificationChildOrder.getTelChildOrderStatus())){
+            if(Const.TEL_CER_STATUS_OPENING.equals(certificationChildOrder.getTelChildOrderStatus()) ||
+                    Const.TEL_CER_STATUS_DEFAULT_OPENING.equals(certificationChildOrder.getTelChildOrderStatus())){
                 return AjaxResult.error("当前业务需要在管理端开通后才可以再续费");
             }
             Float price = certificationOrder.getUnitPrice();
-            Float money = ShiroUtils.getSysUser().getTelcertificationAccount();
+            User user = userMapper.findUserById(ShiroUtils.getSysUser().getId());
+            Float money = user.getTelcertificationAccount();
             Float theRestMoney = money - price;
             if(theRestMoney >= 0){
-                User user = new User();
                 user.setId(ShiroUtils.getSysUser().getId());
                 user.setTelcertificationAccount(theRestMoney);
                 int updateUserById = userMapper.updateUserById(user);

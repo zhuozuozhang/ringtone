@@ -34,33 +34,5 @@
 </div>
 </body>
 <div th:include="admin/common/include :: footer"></div>
-<script type="text/javascript">
-    layui.use(['form','layer'], function(){
-        $ = layui.jquery;
-        var form = layui.form,layer = layui.layer;
-        //监听提交
-        form.on('submit(add)', function(data){
-            var type = $("#type").val();
-            var price = $("#price").val();
-            AjaxPut("/admin/editTelCerConfig",{
-                type:type,
-                price:price,
-                id:$("#configId").val()
-            },function (res) {
-                if (res.code == 200 && res.data){
-                    //发异步，把数据提交给后台
-                    layer.alert("修改成功", {icon: 6},function () {
-                        // 获得frame索引
-                        var index = parent.layer.getFrameIndex(window.name);
-                        //关闭当前frame
-                        parent.layer.close(index);
-                    });
-                }else{
-                    layer.msg("修改配置出错！", {icon: 5, time: 1000});
-                }
-            });
-            return false;
-        });
-    });
-</script>
+<script type="text/javascript" th:src="@{/admins/js/my/telcer_config.js}"></script>
 </html>

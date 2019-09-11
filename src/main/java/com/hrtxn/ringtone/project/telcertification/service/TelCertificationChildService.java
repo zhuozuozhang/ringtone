@@ -197,48 +197,77 @@ public class TelCertificationChildService {
      * @param certificationChildOrder
      * @return
      */
-    public AjaxResult editChildStatus(CertificationChildOrder certificationChildOrder) {
+    public AjaxResult editChildStatus(CertificationChildOrder certificationChildOrder) throws Exception {
         CertificationChildOrder childOrder = certificationChildOrder;
         if (StringUtils.isNotNull(certificationChildOrder) && StringUtils.isNotNull(certificationChildOrder.getId()) && certificationChildOrder.getId() != 0) {
             SimpleDateFormat sdf = new SimpleDateFormat(DateUtils.FORMAT_DEFAULT);
-            Integer serviceYear = certificationChildOrderMapper.getTelCerChildById(certificationChildOrder.getId()).getYears();
+            CertificationChildOrder theTelCer = certificationChildOrderMapper.getTelCerChildById(certificationChildOrder.getId());
+            Integer serviceYear = theTelCer.getYears();
             String nowYear = sdf.format(new Date()).split("-")[0];
             Integer expireYear = Integer.parseInt(nowYear) + serviceYear;
             String expireStr = expireYear.toString() + sdf.format(new Date()).split(nowYear)[1];
             Date expireTime = DateUtils.getDate(expireStr,DateUtils.FORMAT_DEFAULT);
             int changeCount = 0;
             int changeAccount = 0;
-            if(Const.TEL_CER_STATUS_OPENING.equals(certificationChildOrder.getTelChildOrderStatus())){
-                certificationChildOrder.setTelChildOrderCtime(new Date());
-                certificationChildOrder.setTelChildOrderOpenTime(null);
-                certificationChildOrder.setTelChildOrderExpireTime(null);
-                changeCount = -1;
+            if(Const.TEL_CER_STATUS_OPENING.equals(certificationChildOrder.getTelChildOrderStatus())) {
+                if (Const.TEL_CER_STATUS_DEFAULT_OPENING.equals(theTelCer.getTelChildOrderStatus())) {
+                    certificationChildOrder.setTelChildOrderCtime(new Date());
+                    certificationChildOrder.setTelChildOrderOpenTime(null);
+                    certificationChildOrder.setTelChildOrderExpireTime(null);
+                    changeCount = -1;
+                } else {
+                    return AjaxResult.error("当业务开通失败时，才可以设置重新开通");
+                }
             }
             if(Const.TEL_CER_STATUS_SUCCESS_OPENING.equals(certificationChildOrder.getTelChildOrderStatus())){
-                certificationChildOrder.setTelChildOrderCtime(new Date());
-                changeAccount = 1;
+                if(Const.TEL_CER_STATUS_OPENING.equals(theTelCer.getTelChildOrderStatus())){
+                    certificationChildOrder.setTelChildOrderCtime(new Date());
+                    changeAccount = 1;
+                }else {
+                    return AjaxResult.error("当业务是开通中时，才可以设置开通成功");
+                }
             }
             if(Const.TEL_CER_STATUS_DEFAULT_OPENING.equals(certificationChildOrder.getTelChildOrderStatus())){
-                certificationChildOrder.setTelChildOrderCtime(new Date());
-                certificationChildOrder.setTelChildOrderOpenTime(null);
-                certificationChildOrder.setTelChildOrderExpireTime(null);
-                changeCount = -1;
+                if(Const.TEL_CER_STATUS_OPENING.equals(theTelCer.getTelChildOrderStatus())){
+                    certificationChildOrder.setTelChildOrderCtime(new Date());
+                    certificationChildOrder.setTelChildOrderOpenTime(null);
+                    certificationChildOrder.setTelChildOrderExpireTime(null);
+                    changeCount = -1;
+                }else {
+                    return AjaxResult.error("当业务是开通中时，才可以设置开通失败");
+                }
             }
             if(Const.TEL_CER_STATUS_RENEWAL.equals(certificationChildOrder.getTelChildOrderStatus())){
-                certificationChildOrder.setTelChildOrderCtime(new Date());
-                certificationChildOrder.setTelChildOrderOpenTime(null);
-                certificationChildOrder.setTelChildOrderExpireTime(null);
-                changeCount = -1;
+                if(Const.TEL_CER_STATUS_OPENING.equals(theTelCer.getTelChildOrderStatus())){
+                    return AjaxResult.error("业务开通中不可设置为续费中");
+                }else if(Const.TEL_CER_STATUS_DEFAULT_OPENING.equals(theTelCer.getTelChildOrderStatus())){
+                    return AjaxResult.error("业务开通失败不可设置为续费中");
+                }else {
+                    certificationChildOrder.setTelChildOrderCtime(new Date());
+                    certificationChildOrder.setTelChildOrderOpenTime(theTelCer.getTelChildOrderOpenTime());
+                    certificationChildOrder.setTelChildOrderExpireTime(theTelCer.getTelChildOrderExpireTime());
+                    changeCount = -1;
+                }
             }
             if(Const.TEL_CER_STATUS_SUCCESS_RENEWAL.equals(certificationChildOrder.getTelChildOrderStatus())){
-                certificationChildOrder.setTelChildOrderCtime(new Date());
-                changeAccount = 2;
+                if(Const.TEL_CER_STATUS_OPENING.equals(theTelCer.getTelChildOrderStatus())){
+                    return AjaxResult.error("业务开通中不可直接续费");
+                }else if(Const.TEL_CER_STATUS_DEFAULT_OPENING.equals(theTelCer.getTelChildOrderStatus())){
+                    return AjaxResult.error("业务开通失败不可直接续费");
+                }else {
+                    certificationChildOrder.setTelChildOrderCtime(new Date());
+                    changeAccount = 2;
+                }
             }
             if(Const.TEL_CER_STATUS_DEFAULT_RENEWAL.equals(certificationChildOrder.getTelChildOrderStatus())){
-                certificationChildOrder.setTelChildOrderCtime(new Date());
-                certificationChildOrder.setTelChildOrderOpenTime(null);
-                certificationChildOrder.setTelChildOrderExpireTime(null);
-                changeCount = -1;
+                if(Const.TEL_CER_STATUS_RENEWAL.equals(theTelCer.getTelChildOrderStatus())){
+                    certificationChildOrder.setTelChildOrderCtime(new Date());
+                    certificationChildOrder.setTelChildOrderOpenTime(null);
+                    certificationChildOrder.setTelChildOrderExpireTime(null);
+                    changeCount = -1;
+                }else{
+                    return AjaxResult.error("当业务是续费中时，才可以设置续费失败");
+                }
             }
             if(changeCount < 0){
                 changeCount = certificationChildOrderMapper.editChildOrderIfStatusChanged(certificationChildOrder);
@@ -248,21 +277,23 @@ public class TelCertificationChildService {
                 return AjaxResult.error("操作失败！");
             }
 
+            //开通和续费消费
             if(changeAccount > 0){
-                User user = new User();
-                user.setId(ShiroUtils.getSysUser().getId());
-                Float restMoney = ShiroUtils.getSysUser().getTelcertificationAccount() - certificationChildOrder.getPrice();
+                User user = userMapper.findUserById(ShiroUtils.getSysUser().getId());
+                Float price = theTelCer.getPrice().floatValue();
+                Float money = user.getTelcertificationAccount();
+                Float restMoney = money - price;
                 if(restMoney >= 0){
                     user.setTelcertificationAccount(restMoney);
                     int updateUserAccountById = userMapper.updateUserById(user);
                     if(updateUserAccountById > 0){
                         ConsumeLog consumeLog = new ConsumeLog();
-                        consumeLog.setConsumePrice(certificationChildOrder.getPrice());
+                        consumeLog.setConsumePrice(theTelCer.getPrice());
                         consumeLog.setConsumeTime(new Date());
                         consumeLog.setConsumeMoney(restMoney);
                         consumeLog.setConsumeOperator(ShiroUtils.getSysUser().getUserName());
                         consumeLog.setUserName(ShiroUtils.getSysUser().getUserName());
-                        consumeLog.setUserTel(certificationChildOrder.getTelChildOrderPhone());
+                        consumeLog.setUserTel(theTelCer.getTelChildOrderPhone());
                         consumeLog.setConsumeType(Const.SYS_CONSUME_LOG_TYPE_TEL_CER);
                         consumeLog.setUserId(ShiroUtils.getSysUser().getId());
                         consumeLog.setConsumeRemark("");
@@ -277,7 +308,7 @@ public class TelCertificationChildService {
                         }
                         if(StringUtils.isNotNull(certificationChildOrder.getTelChildOrderExpireTime())){
                             long now = (new Date()).getTime();
-                            long exprie = (certificationChildOrder.getTelChildOrderExpireTime()).getTime();
+                            long exprie = (theTelCer.getTelChildOrderExpireTime()).getTime();
 
                             if(now > exprie){
                                 childOrder.setTelChildOrderOpenTime(new Date());
@@ -286,11 +317,11 @@ public class TelCertificationChildService {
                                 consumeLog.setTelConsumeLogExpireTime(expireTime);
                             }
 
-                            String ifLess = sdf.format(certificationChildOrder.getTelChildOrderExpireTime()).split("-")[0];
+                            String ifLess = sdf.format(theTelCer.getTelChildOrderExpireTime()).split("-")[0];
                             Integer expireYearIfLess = Integer.parseInt(ifLess) + serviceYear;
-                            String expireStrIfLess = expireYearIfLess.toString() + sdf.format(certificationChildOrder.getTelChildOrderExpireTime()).split(ifLess)[1];
+                            String expireStrIfLess = expireYearIfLess.toString() + sdf.format(theTelCer.getTelChildOrderExpireTime()).split(ifLess)[1];
                             Date expireTimeIfLess = DateUtils.getDate(expireStrIfLess,DateUtils.FORMAT_DEFAULT);
-                            consumeLog.setTelConsumeLogOpenTime(certificationChildOrder.getTelChildOrderOpenTime());
+                            consumeLog.setTelConsumeLogOpenTime(theTelCer.getTelChildOrderOpenTime());
                             consumeLog.setTelConsumeLogExpireTime(expireTimeIfLess);
                             childOrder.setTelChildOrderExpireTime(expireTimeIfLess);
                         } else {
@@ -303,9 +334,9 @@ public class TelCertificationChildService {
                         if(insertConsumeLog > 0){
                             int afterSuccess = certificationChildOrderMapper.editChildOrderIfStatusChanged(childOrder);
                             if(afterSuccess > 0){
-                                return AjaxResult.success(true,"操作成功！");
+                                return AjaxResult.success("操作成功！");
                             }
-                            return AjaxResult.error("操作失败");
+                            return AjaxResult.error("操作失败!");
                         }
                         return AjaxResult.error("添加消费日志失败！");
                     }
@@ -315,7 +346,7 @@ public class TelCertificationChildService {
             }
             int count = certificationChildOrderMapper.editChildOrderIfStatusChanged(certificationChildOrder);
             if (count > 0) {
-                return AjaxResult.success(true, "操作成功！");
+                return AjaxResult.success( "操作成功！");
             }
             return AjaxResult.error("操作失败！");
         }

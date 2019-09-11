@@ -1,3 +1,6 @@
+$(document).ready(function() {
+    showTelCerCostTable();
+});
 function showTelCerCostTable() {
     var param = {
         "phoneNum": $("#phoneNum").val()

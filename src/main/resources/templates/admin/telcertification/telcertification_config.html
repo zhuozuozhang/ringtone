@@ -47,43 +47,5 @@
 </div>
 </body>
 <div th:include="admin/common/include :: footer"></div>
-<script type="text/javascript">
-    $(document).ready(function () {
-        showTelCerConfigTable();
-    });
-    function showTelCerConfigTable(){
-        var columns = [
-            {"data": null},
-            {"data": "name"},
-            {"data": "price"}
-        ];
-        var columnDefs = [
-            {
-                targets: [3],
-                render: function (data, type, row, meta) {
-                    var id = row.id;
-                    return "<a title='修改' onclick=\"editConfig('修改配置信息','/admin/toEditTelCerConfig/"+id+"',800,500);\" ><i class=\"layui-icon\">&#xe642;</i></a>";
-                }
-            }];
-        page("#config_table", 10, {}, "/admin/getAllConfig", columns, columnDefs);
-    }
-
-    // 修改配置信息
-    function editConfig(title, url, w, h) {
-        layer.open({
-            type: 2,
-            area: [w + 'px', h + 'px'],
-            fix: false,
-            maxmin: true,
-            shadeClose: true,
-            shade: 0.4,
-            title: title,
-            content: url,
-            end: function () {
-                $('#config_table').DataTable().ajax.reload(null, false);
-            }
-        });
-    }
-
-</script>
+<script type="text/javascript" th:src="@{/admins/js/my/telcer_config.js}"></script>
 </html>

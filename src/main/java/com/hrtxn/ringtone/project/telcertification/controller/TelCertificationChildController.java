@@ -173,7 +173,7 @@ public class TelCertificationChildController {
     @PostMapping("/addRenewConsumeLog")
     @ResponseBody
     @Log(title = "添加续费记录", businessType = BusinessType.INSERT, operatorLogType = OperatorLogType.TELCERTIFICATION)
-    public AjaxResult addRenewConsumeLog(ConsumeLog consumeLog,ModelMap map) {
+    public AjaxResult addRenewConsumeLog(ConsumeLog consumeLog,ModelMap map) throws Exception {
         if(StringUtils.isNotNull(consumeLog) && StringUtils.isNotEmpty(consumeLog.getUserTel())){
             return consumeLogService.addRenewConsumeLog(consumeLog);
         }

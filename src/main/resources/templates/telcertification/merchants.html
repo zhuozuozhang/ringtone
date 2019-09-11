@@ -93,7 +93,6 @@
                     <input type="text" id="membernum" name="membernum">
                 </div>
                 <button onclick="showTelCerTable()">搜索</button>
-<!--                <button class="new_businesses" id="cause">新增商户</button>-->
                  <div class="new_businesses" id="cause">新增商户</div>
             </div>
             <!-- 集团信息列表-->
@@ -108,7 +107,6 @@
                         <th>联系人</th>
                         <th>联系电话</th>
                         <th>成员数</th>
-<!--                        <th>状态</th>-->
                         <th>总价(元)</th>
                         <th>创建时间</th>
                         <th>订购的产品</th>
@@ -148,20 +146,6 @@
                             <th>操作</th>
                         </tr>
                         </thead>
-                        <!--                        <tbody>-->
-                        <!--                        <tr>-->
-                        <!--                            <td>12345678912</td>-->
-                        <!--                            <td>2018-05-26</td>-->
-                        <!--                            <td>260</td>-->
-                        <!--                            <td>开通中</td>-->
-                        <!--                            <td>aaaaaaa</td>-->
-                        <!--                            <td>2018-05-26 03:15:30</td>-->
-                        <!--                            <td>2018-06-26 03:15:30</td>-->
-                        <!--                            <td>aaaaaaaa</td>-->
-                        <!--                            <td><p><i class="layui-icon layui-icon-log" title="查看详情" onclick="ckeckDetails();"></i></p>-->
-                        <!--                            </td>-->
-                        <!--                        </tr>-->
-                        <!--                        </tbody>-->
                     </table>
                 </div>
             </div>
@@ -203,13 +187,11 @@
     <div class="zsy"></div>
 </div>
 <!--订购弹窗 -->
-<!--<div th:replace="telcertification/common/charge :: charge"></div>-->
 <div id="pop" class="back display">
     <div class="pop_content">
         <div class="approve_title">
             <h3>业务订购</h3>
             <h4>共需支付：<span th:each="c:${configList}"><span th:if="${c.type}==1"><span id="yfje" th:text="${c.price}">80</span></span></span>元</h4>
-<!--            <h4>共需支付：<span>80</span>元</h4>-->
             <div class="gban" id="cancel"><img th:src="@{/client/telcertification/images/close.png}"></div>
         </div>
         <div class="rz_y">
@@ -280,7 +262,7 @@
                        maxlength="32" autocomplete="off" onblur="verificationName()">
             </div>
             <div class="approvebk"><span><i>*</i>联系人姓名</span>
-                <input type="text" id="telLinkNameAdd" maxlength="32" autocomplete="off" name="telLinkNameAdd">
+                <input type="text" id="telLinkNameAdd" maxlength="10" autocomplete="off" name="telLinkNameAdd">
             </div>
             <div class="approvebk"><span><i>*</i>联系人电话</span>
                 <input type="tel" id="telLinkPhoneAdd" maxlength="12" autocomplete="off" name="telLinkPhoneAdd" onblur="vertifyTelLinkPhone()">
@@ -466,6 +448,5 @@
 <script type="text/javascript" th:src="@{/public/js/datatables.js}"></script>
 <script type="text/javascript" th:src="@{/public/js/ajax.js}"></script>
 <script th:src="@{/client/telcertification/js/merchants.js}"></script>
-<script th:src="@{/client/telcertification/js/charge.js}"></script>
 <script type="text/javascript" th:src="@{/public/js/ajaxfileupload.js}"></script>
 </html>

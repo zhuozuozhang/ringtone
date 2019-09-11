@@ -5,7 +5,7 @@ $(document).ready(function(){
 function showTelcertification_child_table() {
     var param = {
         "parentId": $("#id").val(),
-        "phoneNum": $("#phoneNum").val()
+        "phoneNum": $("#phoneNum").val().trim()
     }
     var columns = [
         {"data": "id"},
@@ -84,11 +84,14 @@ function showTelcertification_child_table() {
                 "<a title='删除' onclick='telCertification_del(\""+id+"\")' href='javascript:;\'><i class='layui-icon'>&#xe640;</i></a>";
         }
     }];
-
     if(param.phoneNum != "" && param.phoneNum != null){
-        if(!isTel(param.phoneNum.trim())){
-            layer.msg("请输入正确的成员手机号码！",{icon: 0, time: 3000});
-            return;
+        if(!isTel(param.phoneNum)){
+            if(!isPhone(param.phoneNum)){
+                if(!is_Phone(param.phoneNum)){
+                    layer.msg("请输入正确的成员手机号码！",{icon: 0, time: 3000});
+                    return;
+                }
+            }
         }
     }
     var url = "/admin/getTelcertificationChildList";
@@ -115,11 +118,9 @@ function editFeedBackWhenMyKeyUp(id,feedBack){
 
     });
 }
-
 var a = $("#selector option:selected").val();
-
 // 修改状态
-function updateTelCertificationStatus(selObj,id) {
+function updateTelCertificationStatus(selObj,id,data) {
     layer.confirm('确认要修改吗？', {
         btn: ['确定', '取消']
     }, function () {
@@ -133,6 +134,7 @@ function updateTelCertificationStatus(selObj,id) {
                 $('#telcertification_child_table').DataTable().ajax.reload();
             } else {
                 layer.msg(res.msg, {icon: 5, time: 2000});
+                $('#telcertification_child_table').DataTable().ajax.reload();
             }
         });
     }, function () {
@@ -154,17 +156,3 @@ function telCertification_del(id) {
         });
     });
 }
-//
-// // 批量删除号码认证订单
-// function delAll() {
-//     var data = tableCheck.getData();
-//     if (isNotEmpty(data)) {
-//         layer.confirm('确认要删除吗？' + data, function (index) {
-//             //捉到所有被选中的，发异步进行删除
-//             layer.msg('删除成功', {icon: 1});
-//             $(".layui-form-checked").not('.header').parents('tr').remove();
-//         });
-//     } else {
-//         layer.msg('至少选择一条数据', {icon: 7});
-//     }
-// }

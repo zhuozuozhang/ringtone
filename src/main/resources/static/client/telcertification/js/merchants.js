@@ -54,17 +54,24 @@ function showTelCerTable() {
                 + "<a href='/telcertify/toTelMembersPage/"+id+"'><i class='layui-icon layui-icon-username' title='成员管理'></i></a>";
         }
     }];
-
     if(param.phoneNum != "" && param.phoneNum != null){
-        if(!isTel(param.phoneNum.trim())){
-            layer.msg("请输入正确的成员手机号码！",{icon: 0, time: 3000});
-            return;
+        if(!isTel(param.phoneNum)){
+            if(!isPhone(param.phoneNum)){
+                if(!is_Phone(param.phoneNum)){
+                    layer.msg("请输入正确的成员手机号码！",{icon: 0, time: 3000});
+                    return;
+                }
+            }
         }
     }
-    if(param.tel != "" && param.tel != null){
-        if(!isTel(param.tel.trim())){
-            layer.msg("请输入正确的商户联系电话！",{icon: 0, time: 3000});
-            return;
+    if(param.telLinkPhone != "" && param.telLinkPhone != null){
+        if(!isTel(param.telLinkPhone)){
+            if(!isPhone(param.telLinkPhone)){
+                if(!is_Phone(param.telLinkPhone)){
+                    layer.msg("请输入正确的商户联系电话！",{icon: 0, time: 3000});
+                    return;
+                }
+            }
         }
     }
     page("#merchants", 10, param, "/telcertify/getTelCerOrderList", columns, columnDefs);
@@ -101,13 +108,23 @@ function showFallDueTable() {
             return "<p><i class='layui-icon layui-icon-log' title='查看详情' onclick='ckeckDetailsOne("+id+");'></i></p>";
         }
     }];
+    if(param.phoneNum != "" && param.phoneNum != null){
+        if(!isTel(param.phoneNum)){
+            if(!isPhone(param.phoneNum)){
+                if(!is_Phone(param.phoneNum)){
+                    layer.msg("请输入正确的成员手机号码！",{icon: 0, time: 3000});
+                    return;
+                }
+            }
+        }
+    }
     page("#fall_due_table", 10, param, "/telcertify/getFallDueList", columns, columnDefs);
 }
 
 //获取订单列表-->已经到期列表
 function showDueTable() {
     var param = {
-        "phoneNum": $("#number2").val()
+        "phoneNum": $("#number2").val().trim()
     }
     var columns = [
         {"data": null},
@@ -137,6 +154,17 @@ function showDueTable() {
             return "<p><i class='layui-icon layui-icon-log' title='查看详情' onclick='ckeckDetailsOne("+id+");'></i></p>";
         }
     }];
+    if(param.phoneNum != "" && param.phoneNum != null){
+        if(!isTel(param.phoneNum)){
+            if(!isPhone(param.phoneNum)){
+                if(!is_Phone(param.phoneNum)){
+                    $("#membernum").val(null).focus();
+                    layer.msg("请输入正确的成员手机号码！",{icon: 0, time: 3000});
+                    return;
+                }
+            }
+        }
+    }
     page("#due_table", 10, param, "/telcertify/getDueList", columns, columnDefs);
 }
 
@@ -144,7 +172,7 @@ function showDueTable() {
 function verificationName() {
     var name = $("#telCompanyNameAdd").val();
     if (name == '' || name == null) {
-        $("#companyName").focus();
+        $("#telCompanyNameAdd").focus();
         layer.msg("集团名称不能为空！");
         return
     }
@@ -152,40 +180,29 @@ function verificationName() {
         "telCompanyName": name,
     }, function (result) {
         if (result.code == 500) {
-            layer.msg(result.msg);
             $("#telCompanyNameAdd").focus();
+            layer.msg(result.msg);
         } else {
-            // $("#folderName").val(result.data);
             layer.msg(result.msg);
         }
     });
 }
-//验证手机号
-function matchingOperate(phones) {
-    AjaxPost('/threenets/getOperate', {"phone": phones}, function (result) {
-        if (result.code == 200) {
-            $("#fee,#fee1,#qyzzdiv,#fee2,#sfmd,#fee3,#fee4,#rsmy").hide();
-            //移动
-            if (result.data.mobile > 0) {
-                $("#fee").show();
+
+//验证联系人电话
+function vertifyTelLinkPhone() {
+    var phones = $("#telLinkPhoneAdd").val();
+    var phoneregex = /^[1][3,4,5,7,8,9][0-9]{9}$/; //手机号码
+    var tel_regex = /^(\d{3,4}\-)?\d{7,8}$/i;   //座机格式是 010-98909899 010-86551122
+    var telregex = /^0(([1-9]\d)|([3-9]\d{2}))\d{8}$/; //没有中间那段 -的 座机格式是 01098909899
+
+    if (!phoneregex.test(phones)) {
+        if (!tel_regex.test(phones)) {
+            if(!telregex.test(phones)){
+                $("#telLinkPhoneAdd").focus();
+                layer.msg('联系人号码"' + phones + '"不正确!');
             }
-            //电信
-            if (result.data.telecom > 0) {
-                $("#fee1,#qyzzdiv").show();
-            }
-            //联通
-            if (result.data.unicom > 0) {
-                $("#fee2,#sfmd,#fee3,#fee4").show();
-            }
-            $("#rsmy").show();
-            $("#phone_yidong").html(result.data.mobile)
-            $("#phone_dianxin").html(result.data.telecom)
-            $("#phone_liantong").html(result.data.unicom)
-            $("#phone_sum").html(result.data.total)
-        } else {
-            layer.msg(result.msg);
         }
-    })
+    }
 }
 var price = 0;
 
@@ -517,23 +534,6 @@ $("#closeagreement").on('click', function () { //点击取消隐藏弹窗
     $("#agreement").addClass("display")
 })
 
-
-//验证联系人电话
-function vertifyTelLinkPhone() {
-    var phones = $("#telLinkPhoneAdd").val();
-    var phoneregex = /^[1][3,4,5,7,8,9][0-9]{9}$/; //手机号码
-    var tel_regex = /^(\d{3,4}\-)?\d{7,8}$/i;   //座机格式是 010-98909899 010-86551122
-    var telregex = /^0(([1-9]\d)|([3-9]\d{2}))\d{8}$/; //没有中间那段 -的 座机格式是 01098909899
-
-    if (!phoneregex.test(phones)) {
-        if (!tel_regex.test(phones)) {
-            if(!telregex.test(phones)){
-                layer.msg('联系人号码"' + phones + '"不正确!');
-            }
-        }
-    }
-}
-
 //----------------------------------------------成员号码的验证和批量添加---------------------------------------------------
 //验证成员号码
 function checkNum(obj) {
@@ -550,6 +550,7 @@ function checkNum(obj) {
             if (!phoneregex.test(phones)) {
                 if (!tel_regex.test(phones)) {
                     if(!telregex.test(phones)){
+                        document.getElementsByClassName("numlists")[i].
                         layer.msg('号码"' + phones + '"不正确!');
                         break;
                     }
@@ -576,9 +577,10 @@ function addLandline() {
     }
     $("#num").append(
         '<div class="approvebk"><span><i>*</i></span>\n' +
-        '                    <input type="text" name="phoneNum" class="layui-input numlists" value=""' +
-        '                           placeholder="如果是座机号码务必加上区号" autocomplete="off" onblur="checkNum(this)">\n' +
-        '                    <img style="display:block;float:left;width:27px;height:27px;margin-top:8px;margin-left:19px;" src="../../client/telcertification/images/del.png" alt="" onclick="delLandline(this);">\n' +
+        '<input type="text" name="phoneNum" class="layui-input numlists" value=""' +
+        'placeholder="如果是座机号码务必加上区号" autocomplete="off" onblur="checkNum(this)">\n' +
+        '<img style="display:block;float:left;width:27px;height:27px;margin-top:8px;margin-left:19px;" ' +
+        'src="../../client/telcertification/images/del.png" alt="" onclick="delLandline(this);">\n' +
         '</div>'
     );
 }
