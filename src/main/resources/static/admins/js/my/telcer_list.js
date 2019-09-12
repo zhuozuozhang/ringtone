@@ -7,8 +7,8 @@ function showTelcertification_table() {
     var param = {
         "id": $("#id").val(),
         "rangetime" : $("#rangetime").val(),
-        "companyName": $("#companyName").val().trim(),
-        "tel" : $("#tel").val().trim(),
+        "telCompanyName": $("#companyName").val().trim(),
+        "telLinkPhone" : $("#tel").val().trim(),
         "phoneNum" : $("#membernum").val().trim()
     }
     var columns = [
@@ -48,10 +48,10 @@ function showTelcertification_table() {
          }
     }];
 
-    if(param.tel != "" && param.tel != null){
-        if(!isTel(param.tel)){
-            if(!isPhone(param.tel)){
-                if(!is_Phone(param.tel)){
+    if(param.telLinkPhone != "" && param.telLinkPhone != null){
+        if(!isTel(param.telLinkPhone)){
+            if(!isPhone(param.telLinkPhone)){
+                if(!is_Phone(param.telLinkPhone)){
                     layer.msg("请输入正确的成员手机号码！",{icon: 0, time: 3000});
                     return;
                 }

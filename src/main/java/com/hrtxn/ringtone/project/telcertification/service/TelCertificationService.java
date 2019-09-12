@@ -125,7 +125,7 @@ public class TelCertificationService {
         if (allTelCer.size() > 0 && allTelCer != null) {
             return AjaxResult.success(allTelCer, "获取到了", totalCount);
         }
-        return AjaxResult.success(theTelCer, "未获取到");
+        return AjaxResult.success(theTelCer, "未获取到",totalCount);
     }
 
     /**
@@ -153,6 +153,8 @@ public class TelCertificationService {
             certificationOrder.setLegalPersonCardZhen("/profile"+certificationOrder.getLegalPersonCardZhen());
             certificationOrder.setLegalPersonCardFan("/profile"+certificationOrder.getLegalPersonCardFan());
             certificationOrder.setLogo("/profile"+certificationOrder.getLogo());
+            certificationOrder.setAuthorization("/profile"+certificationOrder.getAuthorization());
+            certificationOrder.setNumberProve("/profile"+certificationOrder.getNumberProve());
             map.put("service", service);
             map.put("telCerOrder", certificationOrder);
             return certificationOrder;

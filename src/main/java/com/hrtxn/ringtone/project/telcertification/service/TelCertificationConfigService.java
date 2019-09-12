@@ -2,6 +2,7 @@ package com.hrtxn.ringtone.project.telcertification.service;
 
 import com.hrtxn.ringtone.common.constant.AjaxResult;
 import com.hrtxn.ringtone.common.domain.Page;
+import com.hrtxn.ringtone.common.utils.Const;
 import com.hrtxn.ringtone.common.utils.StringUtils;
 import com.hrtxn.ringtone.project.telcertification.domain.CertificationConfig;
 import com.hrtxn.ringtone.project.telcertification.mapper.CertificationConfigMapper;
@@ -66,6 +67,19 @@ public class TelCertificationConfigService {
     }
 
     public CertificationConfig getTelCerConfigById(Integer id) {
-        return certificationConfigMapper.selectByPrimaryKey(id);
+        CertificationConfig certificationConfig = certificationConfigMapper.selectByPrimaryKey(id);
+        if(Const.TEL_CER_CONFIG_TYPE_TEDDY.equals(certificationConfig.getType())){
+            certificationConfig.setName(Const.TEDDY);
+        }
+        if(Const.TEL_CER_CONFIG_TYPE_TELBOND.equals(certificationConfig.getType())){
+            certificationConfig.setName(Const.TELBOND);
+        }
+        if(Const.TEL_CER_CONFIG_TYPE_COLORPRINT.equals(certificationConfig.getType())){
+            certificationConfig.setName(Const.COLORPRINT);
+        }
+        if(Const.TEL_CER_CONFIG_TYPE_HANGUPMESSAGE.equals(certificationConfig.getType())){
+            certificationConfig.setName(Const.HANGUPMESSAGE);
+        }
+        return certificationConfig;
     }
 }

@@ -2,7 +2,33 @@ $(document).ready(function () {
     showTelCerTable();
 });
 
-var sendPrice = null;
+//tab切换
+//我的订单
+
+function telCerTable() {
+    showTelCerTable();
+    $('#myorder').addClass('active').siblings().removeClass('active');
+    document.getElementsByClassName('myorder')[0].style.display = "block";
+    document.getElementsByClassName('net_middle')[0].style.display = "none";
+    document.getElementsByClassName('net_middle2')[0].style.display = "none";
+}
+//即将到期号码
+function fallDueTable() {
+    showFallDueTable();
+    $('#myorder2').addClass('active').siblings().removeClass('active');
+    document.getElementsByClassName('myorder')[0].style.display = "none";
+    document.getElementsByClassName('net_middle')[0].style.display = "block";
+    document.getElementsByClassName('net_middle2')[0].style.display = "none";
+}
+
+//到期号码
+function dueTable() {
+    showDueTable();
+    $('#myorder3').addClass('active').siblings().removeClass('active');
+    document.getElementsByClassName('myorder')[0].style.display = "none";
+    document.getElementsByClassName('net_middle')[0].style.display = "none";
+    document.getElementsByClassName('net_middle2')[0].style.display = "block";
+}
 // 获得订单列表-->我的订单
 function showTelCerTable() {
     var param = {
@@ -31,10 +57,6 @@ function showTelCerTable() {
             var productName = row.productName;
             var product = $.parseJSON(productName);
             var service = product.service;
-            var obj = JSON.stringify(service);
-            var serviceJson = $.parseJSON(obj);
-
-            var totalCost = product.totalCost;
             var str = "";
             for (var i = 0; i < service.length; i++) {
                 str += "<tr>";
@@ -187,6 +209,25 @@ function verificationName() {
         }
     });
 }
+//修改订单中的验证集团号码
+function verificationNameEdit() {
+    var name = $("#telCompanyName").val();
+    if (name == '' || name == null) {
+        $("#telCompanyName").focus();
+        layer.msg("集团名称不能为空！");
+        return
+    }
+    AjaxPost("/telcertify/verificationName", {
+        "telCompanyName": name,
+    }, function (result) {
+        if (result.code == 500) {
+            $("#telCompanyName").focus();
+            layer.msg(result.msg);
+        } else {
+            layer.msg(result.msg);
+        }
+    });
+}
 
 //验证联系人电话
 function vertifyTelLinkPhone() {
@@ -204,35 +245,23 @@ function vertifyTelLinkPhone() {
         }
     }
 }
+
+function vertifyTelLinkPhoneEdit() {
+    var phones = $("#telLinkPhone").val();
+    var phoneregex = /^[1][3,4,5,7,8,9][0-9]{9}$/; //手机号码
+    var tel_regex = /^(\d{3,4}\-)?\d{7,8}$/i;   //座机格式是 010-98909899 010-86551122
+    var telregex = /^0(([1-9]\d)|([3-9]\d{2}))\d{8}$/; //没有中间那段 -的 座机格式是 01098909899
+
+    if (!phoneregex.test(phones)) {
+        if (!tel_regex.test(phones)) {
+            if(!telregex.test(phones)){
+                $("#telLinkPhone").focus();
+                layer.msg('联系人号码"' + phones + '"不正确!');
+            }
+        }
+    }
+}
 var price = 0;
-
-//tab切换
-//我的订单
-
-function myorder() {
-    showTelCerTable();
-    $('#myorder').addClass('active').siblings().removeClass('active');
-    document.getElementsByClassName('myorder')[0].style.display = "block";
-    document.getElementsByClassName('net_middle')[0].style.display = "none";
-    document.getElementsByClassName('net_middle2')[0].style.display = "none";
-}
-//即将到期号码
-function surplusOrder() {
-    showFallDueTable();
-    $('#myorder2').addClass('active').siblings().removeClass('active');
-    document.getElementsByClassName('myorder')[0].style.display = "none";
-    document.getElementsByClassName('net_middle')[0].style.display = "block";
-    document.getElementsByClassName('net_middle2')[0].style.display = "none";
-}
-
-//到期号码
-function overOrder() {
-    showDueTable();
-    $('#myorder3').addClass('active').siblings().removeClass('active');
-    document.getElementsByClassName('myorder')[0].style.display = "none";
-    document.getElementsByClassName('net_middle')[0].style.display = "none";
-    document.getElementsByClassName('net_middle2')[0].style.display = "block";
-}
 
 //日期时间范围
 layui.use('laydate', function () {
@@ -544,13 +573,10 @@ function checkNum(obj) {
         if (document.getElementsByClassName('numlists')[i].value.length != 0) {
             checkData.push(document.getElementsByClassName('numlists')[i].value);
             var phones = checkData[i];
-            var phoneregex = /^[1][3,4,5,7,8,9][0-9]{9}$/; //手机号码
-            var tel_regex = /^(\d{3,4}\-)?\d{7,8}$/i;   //座机格式是 010-98909899 010-86551122
-            var telregex = /^0(([1-9]\d)|([3-9]\d{2}))\d{8}$/; //没有中间那段 -的 座机格式是 01098909899
-            if (!phoneregex.test(phones)) {
-                if (!tel_regex.test(phones)) {
-                    if(!telregex.test(phones)){
-                        document.getElementsByClassName("numlists")[i].
+            if(!isTel(phones)){
+                if(!isPhone(phones)){
+                    if(!is_Phone(phones)){
+                        $(document.getElementsByClassName("numlists")[i]).focus();
                         layer.msg('号码"' + phones + '"不正确!');
                         break;
                     }
@@ -724,44 +750,56 @@ function uploadFile(url,fileId,folderName) {
                 'padding': '39px 10px',
                 'width': '100px'
             });
+        },
+        error: function (data, status, e){
+            layer.msg("上传失败！", {icon: 2, time: 3000});
         }
     });
-    $.ajaxFileUpload({
-            url: '/system/upload/'+url, //用于文件上传的服务器端请求地址
-            type: 'post',
-            data: {
-                folderName:folderName
-            },
-            secureuri: false, //是否需要安全协议，一般设置为false
-            fileElementId: fileId, //文件上传域的ID
-            dataType:"text/html",
-            success: function (data, status){
-                var pre = data.split(">")[1];
-                var aft = pre.split("<")[0];
-                var json = $.parseJSON(aft);
-                data = json.data;
-                if (url === "businessLicense") {
-                    $("#businessLicenseHidden").val(data)
-                } else if (url === "legalPersonCardZhen") {
-                    $("#legalPersonCardZhenHidden").val(data)
-                } else if (url === "legalPersonCardFan") {
-                    $("#legalPersonCardFanHidden").val(data)
-                } else if (url === "logo") {
-                    $("#logoHidden").val(data)
-                } else if (url === "authorization") {
-                    $("#authorizationHidden").val(data)
-                } else if (url === "numberProve") {
-                    $("#numberProveHidden").val(data)
-                }
-                layer.close(layuiLoding);
-                layer.msg("上传成功！", {icon: 1, time: 3000});
-            },
-            error: function (data, status, e){
-                layer.msg("上传失败！", {icon: 2, time: 3000});
-            }
-        }
-    );
-    return false;
+    var businessLicense = $("#businessLicenseAdd").val();
+    alert(businessLicense);
+    var ext = businessLicense.substring(businessLicense.lastIndexOf('.')+1,businessLicense.length).toLowerCase();
+    alert(ext);
+    if(!(ext == 'jpg' || ext == 'jpeg' || ext == 'png' || ext == 'bmp' || ext == 'gif')){
+        layer.msg('请上传图片文件');
+        return;
+    }
+
+    // $.ajaxFileUpload({
+    //         url: '/system/upload/'+url, //用于文件上传的服务器端请求地址
+    //         type: 'post',
+    //         data: {
+    //             folderName:folderName
+    //         },
+    //         secureuri: false, //是否需要安全协议，一般设置为false
+    //         fileElementId: fileId, //文件上传域的ID
+    //         dataType:"text/html",
+    //         success: function (data, status){
+    //             var pre = data.split(">")[1];
+    //             var aft = pre.split("<")[0];
+    //             var json = $.parseJSON(aft);
+    //             data = json.data;
+    //             if (url === "businessLicense") {
+    //                 $("#businessLicenseHidden").val(data)
+    //             } else if (url === "legalPersonCardZhen") {
+    //                 $("#legalPersonCardZhenHidden").val(data)
+    //             } else if (url === "legalPersonCardFan") {
+    //                 $("#legalPersonCardFanHidden").val(data)
+    //             } else if (url === "logo") {
+    //                 $("#logoHidden").val(data)
+    //             } else if (url === "authorization") {
+    //                 $("#authorizationHidden").val(data)
+    //             } else if (url === "numberProve") {
+    //                 $("#numberProveHidden").val(data)
+    //             }
+    //             layer.close(layuiLoding);
+    //             layer.msg("上传成功！", {icon: 1, time: 3000});
+    //         },
+    //         error: function (data, status, e){
+    //             layer.msg("上传失败！", {icon: 2, time: 3000});
+    //         }
+    //     }
+    // );
+    // return false;
 }
 
 //上传营业执照
@@ -809,7 +847,7 @@ $("#numberProveAdd").on('change', function (e) {
     uploadFile("numberProve","numberProveAdd",$("#telCompanyNameAdd").val())
 });
 
-<!--上传文件 -->
+<!--添加----上传图片文件 -->
 $("body").on('click', '.tpimgbka', function () {
     var telCompanyName = $("#telCompanyNameAdd").val();
     if(telCompanyName == "" || telCompanyName == null){
@@ -852,12 +890,12 @@ function getObjectURL(file) {
 function validate_img(ele) {
     // 返回 KB，保留小数点后两位
     var file = ele.value;
-    // var fileName = document.getElementById("businessLicenseAdd").value;
-    //     // var fileType = fileName.slice(fileName.lastIndexOf(".")+1).toLowerCase();
-    //     // if(fileType != "jpg" && fileType != "jpeg" && fileType != "png" && fileType != "JPG" && fileType != "bmp"){
-    //     //     layer.msg("图片类型必须是jpeg,jpg,png,bmp中的一种!");
-    //     //     return ;
-    //     // }
+        // var fileType = fileName.slice(fileName.lastIndexOf(".")+1).toLowerCase();
+        // if(fileType != "jpg" && fileType != "jpeg" && fileType != "png" && fileType != "JPG" && fileType != "bmp"){
+        //     layer.msg("图片类型必须是jpeg,jpg,png,bmp中的一种!");
+        //     return ;
+        // }
+    //在弹出上传图片的框之间就会运行，所以不行
     if (file != null && file != '' && file != undefined) {
         if (!/.(jpg|jpeg|png|JPG|bmp)$/.test(file)) {
             api.toast({
@@ -880,7 +918,7 @@ function validate_img(ele) {
 
 
 // --------------------------------------------------------修改---------------------------------------------------------
-<!--上传文件 -->
+<!--修改-----上传图片文件 -->
 $("body").on('click', '.tpimgbkaedit', function () {
     var telCompanyName = $("#telCompanyName").val();
     if(telCompanyName == "" || telCompanyName == null){
@@ -892,7 +930,6 @@ $("body").on('click', '.tpimgbkaedit', function () {
         $(this).next().on("change", function () {
             if (this.files[0] != null && this.files[0] != "" && this.files[0] != undefined) {
                 var objUrl = getObjectURL(this.files[0]); //获取图片的路径，该路径不是图片在本地的路径
-                alert(objUrl);
                 if (objUrl) {
                     ts.children().attr("src", objUrl); //将图片路径存入src中，显示出图片
                 }

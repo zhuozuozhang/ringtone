@@ -56,7 +56,7 @@
         <include refid="Base_Column_List"/>
     FROM
         tb_telcertification_order tco
-    WHERE 1 = 1 and id is not null
+    WHERE 1 = 1
     <include refid="parameters"/>
     ORDER BY tel_order_time DESC
     <include refid="page"/>

@@ -33,7 +33,7 @@
     </sql>
 
     <sql id="page">
-        <if test="page.page != null and page.page != '' and page.pagesize != '' and page.pagesize != null">
+        <if test="page.page != null and page.pagesize != '' and page.pagesize != null">
             LIMIT #{page.page},#{page.pagesize}
         </if>
     </sql>
@@ -64,18 +64,12 @@
     SELECT * FROM tb_telcertification_child_order WHERE id = #{id}
   </select>
 
-    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
-        select
-        <include refid="Base_Column_List"/>
-        from tb_telcertification_child_order
-        where id = #{id,jdbcType=INTEGER}
-    </select>
 <!--    删除成员信息-->
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from tb_telcertification_child_order
     where id = #{id,jdbcType=INTEGER}
   </delete>
-<!--修改业务反馈-->
+    <!--修改业务反馈-->
     <update id="editFeedBackById" parameterType="com.hrtxn.ringtone.project.telcertification.domain.CertificationChildOrder">
         UPDATE tb_telcertification_child_order
         <set>
@@ -85,7 +79,7 @@
         </set>
         WHERE id = #{id,jdbcType=INTEGER}
     </update>
-<!--根据成员号码获取父订单id-->
+    <!--根据成员号码获取父订单id-->
     <select id="getTelcerChildParentIdByPhoneNum" parameterType="java.lang.String" resultType="int">
         SELECT parent_order_id
         FROM tb_telcertification_child_order
@@ -105,7 +99,7 @@
         </set>
         WHERE id = #{id,jdbcType=INTEGER}
     </update>
-<!--根据子订单电话号码获得全部列表-->
+    <!--根据子订单电话号码获得全部列表-->
     <select id="getTelcerChildByPhoneNum" parameterType="java.lang.String" resultMap="BaseResultMap">
         SELECT * FROM tb_telcertification_child_order
         WHERE tel_child_order_phone = #{telChildOrderPhone,jdbcType=VARCHAR}
@@ -113,14 +107,14 @@
 
     <insert id="insert" parameterType="com.hrtxn.ringtone.project.telcertification.domain.CertificationChildOrder">
     insert into tb_telcertification_child_order (id, tel_child_order_num,tel_child_order_phone,years,
-      price, tel_child_order_status, business_feedback, 
-      tel_child_order_ctime, tel_child_order_open_time, 
-      tel_child_order_expire_time, parent_order_id, 
+      price, tel_child_order_status, business_feedback,
+      tel_child_order_ctime, tel_child_order_open_time,
+      tel_child_order_expire_time, parent_order_id,
       consume_log_id)
     values (#{id,jdbcType=INTEGER}, #{telChildOrderNum,jdbcType=VARCHAR},#{telChildOrderPhone,jdbcType=VARCHAR},#{years,jdbcType=INTEGER},
-      #{price,jdbcType=REAL}, #{telChildOrderStatus,jdbcType=INTEGER}, #{businessFeedback,jdbcType=VARCHAR}, 
-      #{telChildOrderCtime,jdbcType=TIMESTAMP}, #{telChildOrderOpenTime,jdbcType=TIMESTAMP}, 
-      #{telChildOrderExpireTime,jdbcType=TIMESTAMP}, #{parentOrderId,jdbcType=INTEGER}, 
+      #{price,jdbcType=REAL}, #{telChildOrderStatus,jdbcType=INTEGER}, #{businessFeedback,jdbcType=VARCHAR},
+      #{telChildOrderCtime,jdbcType=TIMESTAMP}, #{telChildOrderOpenTime,jdbcType=TIMESTAMP},
+      #{telChildOrderExpireTime,jdbcType=TIMESTAMP}, #{parentOrderId,jdbcType=INTEGER},
       #{consumeLogId,jdbcType=INTEGER})
   </insert>
 
@@ -140,6 +134,54 @@
       </foreach>
     </insert>
 
+    <select id="getFallDueList" resultMap="BaseResultMap">
+        SELECT
+            <include refid="Base_Column_List"/>
+        FROM
+            tb_telcertification_child_order tcc
+        WHERE 1=1
+        <include refid="parameters"/>
+        AND UNIX_TIMESTAMP(NOW()) >= (UNIX_TIMESTAMP(tel_child_order_expire_time)-86400*60)
+        AND UNIX_TIMESTAMP(tel_child_order_expire_time) >= UNIX_TIMESTAMP(NOW())
+        ORDER BY tel_child_order_ctime DESC
+        <include refid="page"></include>
+    </select>
+
+    <select id="getFallDueListCount" resultType="int">
+        SELECT
+        COUNT(*)
+        FROM
+        tb_telcertification_child_order tcc
+        WHERE 1=1
+        AND UNIX_TIMESTAMP(NOW()) >= (UNIX_TIMESTAMP(tel_child_order_expire_time)-86400*60)
+        AND UNIX_TIMESTAMP(tel_child_order_expire_time) >= UNIX_TIMESTAMP(NOW())
+    </select>
+
+    <select id="getDueList" resultMap="BaseResultMap">
+        SELECT
+        *
+        FROM
+        tb_telcertification_child_order tcc
+        WHERE 1=1
+        <include refid="parameters"/>
+        AND UNIX_TIMESTAMP(NOW()) >= UNIX_TIMESTAMP(tel_child_order_expire_time)
+        <include refid="page"/>
+    </select>
+    <select id="getDueListCount" resultType="int">
+        SELECT
+        COUNT(*)
+        FROM
+        tb_telcertification_child_order tcc
+        WHERE 1=1 AND
+        UNIX_TIMESTAMP(NOW()) >= UNIX_TIMESTAMP(tel_child_order_expire_time)
+    </select>
+
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from tb_telcertification_child_order
+        where id = #{id,jdbcType=INTEGER}
+    </select>
     <insert id="insertSelective"
             parameterType="com.hrtxn.ringtone.project.telcertification.domain.CertificationChildOrder">
         insert into tb_telcertification_child_order

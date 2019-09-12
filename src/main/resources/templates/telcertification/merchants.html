@@ -69,9 +69,9 @@
 <div id="allOrder">
     <div class="order_middle">
         <div class="order_div1">
-            <p style="cursor:pointer" class="active" id="myorder" onclick="myorder()">我的订单</p>
-            <p style="cursor:pointer" id="myorder2" onclick="surplusOrder()">即将到期号码</p>
-            <p style="cursor:pointer" id="myorder3" onclick="overOrder()">到期号码</p>
+            <p style="cursor:pointer" class="active" id="myorder" onclick="telCerTable()">我的订单</p>
+            <p style="cursor:pointer" id="myorder2" onclick="fallDueTable()">即将到期号码</p>
+            <p style="cursor:pointer" id="myorder3" onclick="dueTable()">到期号码</p>
         </div>
         <!-- 我的订单 -->
         <div class="myorder">
@@ -352,16 +352,17 @@
         </div>
         <div class="approvecon" style="padding-top:100px;">
             <div class="approvebk"><span><i>*</i>集团名称</span>
-                <input type="text" id="telCompanyName" placeholder="需跟营业执照名称一致">
+                <input type="text" id="telCompanyName" placeholder="需跟营业执照名称一致" required lay-verify="required" name="telCompanyName"
+                       maxlength="32" autocomplete="off" onblur="verificationNameEdit()">
             </div>
             <div class="approvebk"><span><i>*</i>联系人姓名</span>
-                <input type="text" id="telLinkName">
+                 <input type="text" id="telLinkName" maxlength="10" autocomplete="off" name="telLinkName">
             </div>
             <div class="approvebk"><span><i>*</i>联系人电话</span>
-                <input type="tel" id="telLinkPhone">
+                <input type="tel" id="telLinkPhone" maxlength="12" autocomplete="off" name="telLinkPhone" onblur="vertifyTelLinkPhoneEdit()">
             </div>
             <div class="approvebk"><span><i>*</i>认证展示内容</span>
-                <input type="text" id="telContent" placeholder="请跟营业执照主体一致">
+                <input type="text" id="telContent" placeholder="请跟营业执照主体一致" autocomplete="off" name="telContent">
             </div>
             <div class="imgbk"><span><i>*</i>上传营业执照</span>
                 <div class="tpscbk">

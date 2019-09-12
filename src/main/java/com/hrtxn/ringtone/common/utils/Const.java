@@ -93,12 +93,16 @@ public final class Const implements Serializable {
     //号码认证配置类型
     //泰迪熊
     public static Integer TEL_CER_CONFIG_TYPE_TEDDY = 1;
+    public static String TEDDY = "泰迪熊";
     //电话邦
     public static Integer TEL_CER_CONFIG_TYPE_TELBOND = 2;
+    public static String TELBOND = "电话邦";
     //彩印
     public static Integer TEL_CER_CONFIG_TYPE_COLORPRINT = 3;
+    public static String COLORPRINT = "彩印";
     //挂机短信
     public static Integer TEL_CER_CONFIG_TYPE_HANGUPMESSAGE = 4;
+    public static String HANGUPMESSAGE = "挂机短信";
 
     // 彩印永久有效
     public static String TEL_CER_COLORPRINT_ETERNAL = "永久有效";

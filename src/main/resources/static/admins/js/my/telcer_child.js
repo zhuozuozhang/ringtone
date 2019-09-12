@@ -129,7 +129,7 @@ function updateTelCertificationStatus(selObj,id,data) {
             id:id,
             telChildOrderStatus:status
         },function (res) {
-            if (res.code == 200 && res.data) {
+            if (res.code == 200 && res.msg) {
                 layer.msg(res.msg, {icon: 6, time: 2000});
                 $('#telcertification_child_table').DataTable().ajax.reload();
             } else {

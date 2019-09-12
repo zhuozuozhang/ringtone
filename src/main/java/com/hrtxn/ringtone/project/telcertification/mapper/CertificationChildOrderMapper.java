@@ -37,4 +37,12 @@ public interface CertificationChildOrderMapper {
     int batchInsertChildOrder(@Param("list") List<CertificationChildOrder> list);
 
     int editChildOrderIfStatusChanged(CertificationChildOrder certificationChildOrder);
+
+    List<CertificationChildOrder> getFallDueList(@Param("page") Page page, @Param("param") BaseRequest request);
+
+    int getFallDueListCount(@Param("page") Page page,@Param("param") BaseRequest request);
+
+    List<CertificationChildOrder> getDueList(@Param("page") Page page, @Param("param") BaseRequest request);
+
+    int getDueListCount(@Param("page") Page page,@Param("param") BaseRequest request);
 }

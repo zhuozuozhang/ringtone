@@ -20,5 +20,5 @@ function showRechargeLog() {
 
     ];
     var url = "/admin/getRechargeLogList";
-    page("#recharge", 2, param, url, columns, columnDefs);
+    page("#recharge", 15, param, url, columns, columnDefs);
 }
