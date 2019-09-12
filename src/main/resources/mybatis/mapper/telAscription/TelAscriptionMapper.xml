@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hrtxn.ringtone.project.system.telAscription.mapper.TelAscriptionMapper" >
+
+  <resultMap id="BaseResultMap" type="com.hrtxn.ringtone.project.system.telAscription.domain.TelAscription" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="province" property="province" jdbcType="VARCHAR" />
+    <result column="city" property="city" jdbcType="VARCHAR" />
+    <result column="area_code" property="areaCode" jdbcType="VARCHAR" />
+  </resultMap>
+
+  <sql id="Base_Column_List" >
+    id, province, city, area_code
+  </sql>
+
+  <!--根也获取号码归属地-->
+  <select id="findAllTelAscriptionList" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from tb_tel_ascription
+    WHERE 1 = 1
+    <if test="telAscription != null and telAscription.province != null and telAscription.province != '' ">
+      AND province = #{province}
+    </if>
+    <if test="telAscription != null and telAscription.city != null and telAscription.city != '' ">
+      AND province = #{city}
+    </if>
+    <if test="telAscription != null and telAscription.areaCode != null and telAscription.areaCode != '' ">
+      AND area_code = #{areaCode}
+    </if>
+    ORDER BY province DESC
+    LIMIT #{page.page},#{page.pagesize}
+  </select>
+
+
+  <!--获取号码归属地数量-->
+  <select id="getTelAscriptionCount" resultType="Integer">
+    select
+      count(1)
+    from tb_tel_ascription
+    WHERE 1 = 1
+    <if test="telAscription != null and telAscription.province != null and telAscription.province != '' ">
+      AND province = #{province}
+    </if>
+    <if test="telAscription != null and telAscription.city != null and telAscription.city != '' ">
+      AND province = #{city}
+    </if>
+    <if test="telAscription != null and telAscription.areaCode != null and telAscription.areaCode != '' ">
+      AND area_code = #{areaCode}
+    </if>
+  </select>
+
+
+  <insert id="insertTelAscription" parameterType="TelAscription" >
+    insert into tb_tel_ascription ( province, city,
+      area_code)
+    values ( #{province,jdbcType=VARCHAR}, #{city,jdbcType=VARCHAR},
+      #{areaCode,jdbcType=VARCHAR})
+  </insert>
+
+  <select id="getTelAscriptionById" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from tb_tel_ascription where id = #{id}
+  </select>
+
+
+  <update id="updateTelAscription" parameterType="TelAscription" >
+    update tb_tel_ascription
+    <set >
+      <if test="province != null" >
+        province = #{province,jdbcType=VARCHAR},
+      </if>
+      <if test="city != null" >
+        city = #{city,jdbcType=VARCHAR},
+      </if>
+      <if test="areaCode != null" >
+        area_code = #{areaCode,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+
+  <delete id="deleteTelAscription" parameterType="Integer" >
+    delete from tb_tel_ascription
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+
+</mapper>

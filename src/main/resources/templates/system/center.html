@@ -94,19 +94,22 @@
             <div class="xgtitle"><span>修改密码</span><i id="cancel"><img th:src="@{/system/center/images/del.png}" /></i>
             </div>
             <div class="xgmmbk">
+                <div class="xgmm"><span>旧密码:</span>
+                    <input id="oldword" type="password" placeholder="请输入新密码">
+                </div>
                 <div class="xgmm"><span>新密码:</span>
                     <input id="newpwd" type="password" placeholder="请输入新密码">
                 </div>
                 <div class="xgmm"><span>确认密码:</span>
                     <input id="againpwd" type="password" placeholder="请确认新密码">
                 </div>
-                <div class="xgmm"><span>验证手机号:</span>
-                    <input id="phone" type="tel" placeholder="请输入手机号">
-                </div>
-                <div class="xgmm"><span>验证码:</span>
-                    <input id="code" type="text" placeholder="请输入验证码">
-                    <input class="yzmbk" type="button" id="tel_code" value="获取验证码" th:onclick="sendMessage()"/>
-                </div>
+                <!--<div class="xgmm"><span>验证手机号:</span>-->
+                    <!--<input id="phone" type="tel" placeholder="请输入手机号">-->
+                <!--</div>-->
+                <!--<div class="xgmm"><span>验证码:</span>-->
+                    <!--<input id="code" type="text" placeholder="请输入验证码">-->
+                    <!--<input class="yzmbk" type="button" id="tel_code" value="获取验证码" th:onclick="sendMessage()"/>-->
+                <!--</div>-->
             </div>
             <div class="qdan" onClick="changepwd()">确认修改</div>
         </div>

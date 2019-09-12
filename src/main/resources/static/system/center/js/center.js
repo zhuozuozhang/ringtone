@@ -61,10 +61,12 @@ function doLoop() {
 
 // 执行修改密码操作
 function changepwd(){
+    var oldword = $("#oldword").val();
     var newpwd = $('#newpwd').val();
     var againpwd= $('#againpwd').val();
-    var phone= $('#phone').val();
-    var code = $('#code').val();
+    // var phone= $('#phone').val();
+    // var code = $('#code').val();
+
     // 判断密码
     if (!isNotEmpty(newpwd)) {
         layer.msg('新密码不能为空!', {icon: 5, time: 1000});
@@ -80,30 +82,44 @@ function changepwd(){
         layer.msg('密码不一致，请确认密码!', {icon: 5, time: 1000});
         return;
     }
-    // 判断手机号
-    if (!isNotEmpty(phone)) {
-        layer.msg('手机号不能为空!', {icon: 5, time: 1000});
-        return;
-    } else {
-        if (!isTel(phone)) {
-            layer.msg('手机号格式不正确!', {icon: 5, time: 1000});
-            return;
-        }
-    }
-    // 判断验证码
-    if (!isNotEmpty(code)) {
-        layer.msg('验证码不能为空!', {icon: 5, time: 1000});
-        return;
-    }
-    AjaxPut("/system/updatePassword",{
-        userPassword:newpwd,
-        code :code
+
+    AjaxPut("/threenets/updatePasswor",{
+        oldPassword:oldword,
+        newPassword:newpwd
     },function (res) {
-        if (res.code = 200 && res.data) {
-            layer.msg(res.msg, {icon: 6, time: 3000});
+        if (res.code == 200 && res.data){
+            layer.msg("修改成功,下次请使用新密码登录",{icon: 1,time:2500});
             $("#pop").addClass("display")
         }else{
-            layer.msg(res.msg, {icon: 5, time: 3000});
+            layer.msg(res.msg,{icon: 1,time:1000});
         }
-    });
+    })
+
+
+    // 判断手机号
+    // if (!isNotEmpty(phone)) {
+    //     layer.msg('手机号不能为空!', {icon: 5, time: 1000});
+    //     return;
+    // } else {
+    //     if (!isTel(phone)) {
+    //         layer.msg('手机号格式不正确!', {icon: 5, time: 1000});
+    //         return;
+    //     }
+    // }
+    // // 判断验证码
+    // if (!isNotEmpty(code)) {
+    //     layer.msg('验证码不能为空!', {icon: 5, time: 1000});
+    //     return;
+    // }
+    // AjaxPut("/system/updatePassword",{
+    //     userPassword:newpwd,
+    //     code :code
+    // },function (res) {
+    //     if (res.code = 200 && res.data) {
+    //         layer.msg(res.msg, {icon: 6, time: 3000});
+    //         $("#pop").addClass("display")
+    //     }else{
+    //         layer.msg(res.msg, {icon: 5, time: 3000});
+    //     }
+    // });
 }
