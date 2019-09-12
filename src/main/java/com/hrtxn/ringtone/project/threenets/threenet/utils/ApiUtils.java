@@ -123,7 +123,7 @@ public class ApiUtils {
                 String result = mcardApi.getUserInfo(attached.getMcardDistributorId());
                 Document doc = Jsoup.parse(result);
                 Elements contents = doc.getElementsByTag("tbody");
-                if(contents.size() == 0){
+                if (contents.size() == 0) {
                     log.info("[" + threenetsChildOrder.getLinkmanTel() + "：获取信息失败！]");
                     break;
                 }
@@ -308,7 +308,7 @@ public class ApiUtils {
                 String result = mcardApi.getUserInfo(attached.getMcardDistributorId());
                 Document doc = Jsoup.parse(result);
                 Elements contents = doc.getElementsByTag("tbody");
-                if(contents.size() == 0){
+                if (contents.size() == 0) {
                     log.info("[" + threenetsChildOrder.getLinkmanTel() + "：获取信息失败！]");
                     break;
                 }
@@ -438,7 +438,7 @@ public class ApiUtils {
                     Element el2 = tds.get(6);
                     String ringCheckmsg = el2.attr("title");
                     String remark = el2.text();
-                    respone.setMessage(remark+"-"+ringCheckmsg);
+                    respone.setMessage(remark + "-" + ringCheckmsg);
                     if (remark.indexOf("未通过") >= 0) {
                         respone.setCode("1001");
                     } else {
@@ -580,6 +580,7 @@ public class ApiUtils {
                                 if (nodes.size() > 5) {
                                     Elements temp = el.child(2).getElementsByTag("a");
                                     String t = temp.attr("onclick");
+                                    log.info("移动铃音id-------------->" + t);
                                     int begin = t.indexOf("showConfirm('") + 13;
                                     int end = begin + 36;
                                     String t2 = t.substring(begin, end);
@@ -1014,7 +1015,7 @@ public class ApiUtils {
             mcardApi.toUserList(attached.getMcardId(), attached.getMcardDistributorId());
             String userList = mcardApi.getUserInfo(attached.getMcardDistributorId());
             String[] phoness = phones.split(",");
-            if (StringUtils.isEmpty(threenetsRing.getOperateRingId())){
+            if (StringUtils.isEmpty(threenetsRing.getOperateRingId())) {
                 //跳转到铃音页面
                 String ringList = mcardApi.toRingList(attached.getMcardDistributorId());
                 //String ringList = mcardApi.toRingAlertList(apersonnelId,"61203" );
@@ -1032,7 +1033,7 @@ public class ApiUtils {
                         }
                     }
                 }
-            }else{
+            } else {
                 ringId = threenetsRing.getOperateRingId();
             }
             if (StringUtils.isNotEmpty(userList)) {
@@ -1126,7 +1127,7 @@ public class ApiUtils {
         //进行同步到服务器，同步3次。
         for (int i = 0; i < 3; i++) {// 重试添加3次
             addGroupResponse = miguApi.add1(order, attached);
-            if (addGroupResponse != null) {
+            if (addGroupResponse != null && !addGroupResponse.getMsg().equals("验证码输入错误")) {
                 break;
             }
         }
@@ -1150,7 +1151,7 @@ public class ApiUtils {
             if (swxlGroupResponse != null && 0 == swxlGroupResponse.getStatus()) {
                 break;
             }
-            if (swxlGroupResponse != null && swxlGroupResponse.getRemark().equals("企业联系号码已存在,请更换其他号码")){
+            if (swxlGroupResponse != null && swxlGroupResponse.getRemark().equals("企业联系号码已存在,请更换其他号码")) {
                 break;
             }
         }

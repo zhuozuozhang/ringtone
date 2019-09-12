@@ -77,12 +77,9 @@ public class TelCertificationChildController {
     @PostMapping("/getFallDueList")
     @ResponseBody
     @Log(title = "获取即将到期号码",operatorLogType = OperatorLogType.TELCERTIFICATION)
-    public AjaxResult getFallDueList(Page page, BaseRequest request){
-        List<CertificationChildOrder> list = null;
+    public AjaxResult getFallDueList(Page page,BaseRequest request){
         try{
-            list = telCertificationChildService.getFallDueList(page,request);
-//            int fallDueCount = telCertificationChildService.getCount(request);
-            return AjaxResult.success(list,"查询成功",list.size());
+            return telCertificationChildService.getFallDueList(page,request);
         }catch (Exception e){
             log.error("获取即将到期号码 方法：getFallDueList 错误信息",e);
         }
@@ -98,12 +95,9 @@ public class TelCertificationChildController {
     @PostMapping("/getDueList")
     @ResponseBody
     @Log(title = "获取到期号码",operatorLogType = OperatorLogType.TELCERTIFICATION)
-    public AjaxResult getDueList(Page page, BaseRequest request){
-        List<CertificationChildOrder> list = null;
+    public AjaxResult getDueList(Page page,BaseRequest request){
         try{
-            list = telCertificationChildService.getDueList(page,request);
-//            int dueCount = telCertificationService.getCount(request);
-            return AjaxResult.success(list,"查询成功",list.size());
+            return telCertificationChildService.getDueList(page,request);
         }catch (Exception e){
             log.error("获取到期号码 方法：getDueList 错误信息",e);
         }

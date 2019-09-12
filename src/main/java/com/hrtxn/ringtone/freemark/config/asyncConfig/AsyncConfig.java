@@ -65,7 +65,8 @@ public class AsyncConfig {
             boolean b = SpringUtils.getBean(OperateLogService.class).insertOperateLog(operateLog);
             log.info("日志添加到数据库结束，结果：===================="+b);
         } catch (BeansException e) {
-            e.printStackTrace();
+            log.info("获取地理位置异常  --->  "+operateLog.getIpAddress());
+//            e.printStackTrace();
         }
     }
 

@@ -130,12 +130,10 @@ function checkNum(obj) {
         if (document.getElementsByClassName('numlists')[i].value.length != 0) {
             checkData.push(document.getElementsByClassName('numlists')[i].value);
             var phones = checkData[i];
-            var phoneregex = /^[1][3,4,5,7,8,9][0-9]{9}$/; //手机号码
-            var tel_regex = /^(\d{3,4}\-)?\d{7,8}$/i;   //座机格式是 010-98909899 010-86551122
-            var telregex = /^0(([1-9]\d)|([3-9]\d{2}))\d{8}$/; //没有中间那段 -的 座机格式是 01098909899
-            if (!phoneregex.test(phones)) {
-                if (!tel_regex.test(phones)) {
-                    if(!telregex.test(phones)){
+            if(!isTel(phones)){
+                if(!isPhone(phones)){
+                    if(!is_Phone(phones)){
+                        $(document.getElementsByClassName("numlists")[i]).focus();
                         layer.msg('号码"' + phones + '"不正确!');
                         break;
                     }

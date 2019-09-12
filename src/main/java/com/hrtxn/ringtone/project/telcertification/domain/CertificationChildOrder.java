@@ -39,8 +39,6 @@ public class CertificationChildOrder implements Serializable {
     /**************************VO**********************************/
     //子订单的备注
     private String remark;
-    //1是过期，2是即将过期
-    private int due;
     //状态名称
     private String statusName;
     //批量添加的号码

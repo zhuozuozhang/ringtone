@@ -91,7 +91,7 @@ public class TelCertificationController {
      */
     @GetMapping("/toTelMerchantsPage")
     @Log(title = "订单管理页面",operatorLogType = OperatorLogType.TELCERTIFICATION)
-    public String toTelMerchantsPage(ModelMap map){
+    public String toTelMerchantsPage(ModelMap map,BaseRequest request){
         Page page = new Page();
         page.setPage(1);
         page.setPagesize(4);
@@ -135,7 +135,7 @@ public class TelCertificationController {
      */
     @GetMapping("/toTeldetailsOnePage/{id}")
     public String toTeldetailsOnePage(@PathVariable Integer id, ModelMap map){
-        CertificationChildOrder telcerChild = telCertificationChildService.getTelCerChildById(id,map);
+        telCertificationChildService.getTelCerChildById(id,map);
         return "telcertification/details_one";
     }
 

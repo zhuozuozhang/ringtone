@@ -7,6 +7,9 @@ import com.hrtxn.ringtone.common.utils.Const;
 import com.hrtxn.ringtone.common.utils.DateUtils;
 import com.hrtxn.ringtone.common.utils.ShiroUtils;
 import com.hrtxn.ringtone.common.utils.StringUtils;
+import com.hrtxn.ringtone.freemark.config.logConfig.Log;
+import com.hrtxn.ringtone.freemark.enums.BusinessType;
+import com.hrtxn.ringtone.freemark.enums.OperatorLogType;
 import com.hrtxn.ringtone.project.system.consumelog.domain.ConsumeLog;
 import com.hrtxn.ringtone.project.system.consumelog.mapper.ConsumeLogMapper;
 import com.hrtxn.ringtone.project.system.user.domain.User;
@@ -15,7 +18,6 @@ import com.hrtxn.ringtone.project.telcertification.domain.CertificationChildOrde
 import com.hrtxn.ringtone.project.telcertification.domain.CertificationOrder;
 import com.hrtxn.ringtone.project.telcertification.mapper.CertificationChildOrderMapper;
 import com.hrtxn.ringtone.project.telcertification.mapper.CertificationOrderMapper;
-import org.aspectj.weaver.loadtime.Aj;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -42,7 +44,6 @@ public class TelCertificationChildService {
     private ConsumeLogMapper consumeLogMapper;
 
     public int getCount(BaseRequest request) {
-
         return certificationChildOrderMapper.getCount(request);
     }
 
@@ -63,85 +64,58 @@ public class TelCertificationChildService {
             formatTelCerChildFromDatabase(cc);
         }
         int count = certificationChildOrderMapper.getCount(request);
-        return AjaxResult.success(allChildOrderList, "获取成功！", count);
+        if(count > 0){
+            return AjaxResult.success(allChildOrderList, "获取成功！", count);
+        }
+        return AjaxResult.success(false,"未获取到成员信息",count);
     }
-
-
     /**
      * 获取即将到期的号码
      *
      * @param page
-     * @param request
      * @return
      */
-    public List<CertificationChildOrder> getFallDueList(Page page, BaseRequest request) {
+    public AjaxResult getFallDueList(Page page,BaseRequest request) {
         page.setPage((page.getPage() - 1) * page.getPagesize());
-        List<CertificationChildOrder> allChildOrderList = certificationChildOrderMapper.findTheChildOrder(page, request);
-        List<CertificationChildOrder> fallDueList = new ArrayList<CertificationChildOrder>();
-        List<CertificationChildOrder> emptyTimeList = new ArrayList<CertificationChildOrder>();
-        if (allChildOrderList.size() > 0) {
-            for (CertificationChildOrder c : allChildOrderList) {
-                Timestamp nowTS = new Timestamp(System.currentTimeMillis());
-                long now = nowTS.getTime();
-                if(StringUtils.isNull(c.getTelChildOrderExpireTime())){
-                    emptyTimeList.add(c);
-                }else {
-                    long extime = DateUtils.getNow(c.getTelChildOrderExpireTime());
-                    long result = (extime - now) / 24 / 60 / 60 / 1000;
-                    if (result < 60 && result >= 0) {
-                        fallDueList.add(c);
-                        c.setDue(2);
-                    }
-                    formatTelCerChildFromDatabase(c);
-                }
-
+        List<CertificationChildOrder> fallDueList = certificationChildOrderMapper.getFallDueList(page,request);
+        int fallDueListCount = certificationChildOrderMapper.getFallDueListCount(page,request);
+        if(fallDueList.size() > 0 && fallDueListCount > 0){
+            for (CertificationChildOrder childOrder : fallDueList) {
+                formatTelCerChildFromDatabase(childOrder);
             }
-            return fallDueList;
+            return AjaxResult.success(fallDueList,"查询成功",fallDueListCount);
         }
-        return fallDueList;
+        return AjaxResult.success(false,"参数格式错误",fallDueListCount);
     }
-
-
     /**
      * 获取到期的号码
      *
      * @param page
-     * @param request
      * @return
      */
-    public List<CertificationChildOrder> getDueList(Page page, BaseRequest request) {
+    public AjaxResult getDueList(Page page,BaseRequest request) {
         page.setPage((page.getPage() - 1) * page.getPagesize());
-        List<CertificationChildOrder> allChildOrderList = certificationChildOrderMapper.findTheChildOrder(page, request);
-        List<CertificationChildOrder> dueList = new ArrayList<CertificationChildOrder>();
-        List<CertificationChildOrder> emptyTimeList = new ArrayList<CertificationChildOrder>();
-        if (allChildOrderList.size() > 0) {
-            for (CertificationChildOrder c : allChildOrderList) {
-                Timestamp nowTS = new Timestamp(System.currentTimeMillis());
-                long now = nowTS.getTime();
-                if(StringUtils.isNull(c.getTelChildOrderExpireTime())){
-                    emptyTimeList.add(c);
-                }else{
-                    long extime = DateUtils.getNow(c.getTelChildOrderExpireTime());
-                    long result = (extime - now) / 24 / 60 / 60 / 1000;
-                    if (result < 0) {
-                        dueList.add(c);
-                        c.setDue(1);
-                    }
-                    formatTelCerChildFromDatabase(c);
-                }
+        List<CertificationChildOrder> dueList = certificationChildOrderMapper.getDueList(page,request);
+        int dueListCount = certificationChildOrderMapper.getDueListCount(page,request);
+        if(dueList.size() > 0 && dueListCount > 0){
+            for (CertificationChildOrder childOrder : dueList) {
+                formatTelCerChildFromDatabase(childOrder);
             }
-            return dueList;
+            return AjaxResult.success(dueList,"查询成功",dueListCount);
         }
-        return null;
+        return AjaxResult.success(false,"参数格式错误",dueListCount);
     }
 
-
+    /**
+     * 进入即将到期号码查看详情页面
+     * @param id
+     * @param map
+     * @return
+     */
     public CertificationChildOrder getTelCerChildById(Integer id, ModelMap map) {
         if (StringUtils.isNotNull(id)) {
             CertificationChildOrder c = certificationChildOrderMapper.getTelCerChildById(id);
-
             formatTelCerChildFromDatabase(c);
-
             map.put("telCerChild", c);
             return c;
         }
@@ -198,7 +172,6 @@ public class TelCertificationChildService {
      * @return
      */
     public AjaxResult editChildStatus(CertificationChildOrder certificationChildOrder) throws Exception {
-        CertificationChildOrder childOrder = certificationChildOrder;
         if (StringUtils.isNotNull(certificationChildOrder) && StringUtils.isNotNull(certificationChildOrder.getId()) && certificationChildOrder.getId() != 0) {
             SimpleDateFormat sdf = new SimpleDateFormat(DateUtils.FORMAT_DEFAULT);
             CertificationChildOrder theTelCer = certificationChildOrderMapper.getTelCerChildById(certificationChildOrder.getId());
@@ -272,7 +245,7 @@ public class TelCertificationChildService {
             if(changeCount < 0){
                 changeCount = certificationChildOrderMapper.editChildOrderIfStatusChanged(certificationChildOrder);
                 if(changeCount > 0){
-                    return AjaxResult.success("操作成功！");
+                    return AjaxResult.success(200,changeCount,"操作成功！",changeCount);
                 }
                 return AjaxResult.error("操作失败！");
             }
@@ -311,8 +284,8 @@ public class TelCertificationChildService {
                             long exprie = (theTelCer.getTelChildOrderExpireTime()).getTime();
 
                             if(now > exprie){
-                                childOrder.setTelChildOrderOpenTime(new Date());
-                                childOrder.setTelChildOrderExpireTime(expireTime);
+                                certificationChildOrder.setTelChildOrderOpenTime(new Date());
+                                certificationChildOrder.setTelChildOrderExpireTime(expireTime);
                                 consumeLog.setTelConsumeLogOpenTime(new Date());
                                 consumeLog.setTelConsumeLogExpireTime(expireTime);
                             }
@@ -323,18 +296,18 @@ public class TelCertificationChildService {
                             Date expireTimeIfLess = DateUtils.getDate(expireStrIfLess,DateUtils.FORMAT_DEFAULT);
                             consumeLog.setTelConsumeLogOpenTime(theTelCer.getTelChildOrderOpenTime());
                             consumeLog.setTelConsumeLogExpireTime(expireTimeIfLess);
-                            childOrder.setTelChildOrderExpireTime(expireTimeIfLess);
+                            certificationChildOrder.setTelChildOrderExpireTime(expireTimeIfLess);
                         } else {
                             consumeLog.setTelConsumeLogOpenTime(new Date());
                             consumeLog.setTelConsumeLogExpireTime(expireTime);
-                            childOrder.setTelChildOrderOpenTime(new Date());
-                            childOrder.setTelChildOrderExpireTime(expireTime);
+                            certificationChildOrder.setTelChildOrderOpenTime(new Date());
+                            certificationChildOrder.setTelChildOrderExpireTime(expireTime);
                         }
                         int insertConsumeLog = consumeLogMapper.insert(consumeLog);
                         if(insertConsumeLog > 0){
-                            int afterSuccess = certificationChildOrderMapper.editChildOrderIfStatusChanged(childOrder);
+                            int afterSuccess = certificationChildOrderMapper.editChildOrderIfStatusChanged(certificationChildOrder);
                             if(afterSuccess > 0){
-                                return AjaxResult.success("操作成功！");
+                                return AjaxResult.success(200,afterSuccess,"操作成功！",afterSuccess);
                             }
                             return AjaxResult.error("操作失败!");
                         }
@@ -346,7 +319,7 @@ public class TelCertificationChildService {
             }
             int count = certificationChildOrderMapper.editChildOrderIfStatusChanged(certificationChildOrder);
             if (count > 0) {
-                return AjaxResult.success( "操作成功！");
+                return AjaxResult.success(200,count, "操作成功！",count);
             }
             return AjaxResult.error("操作失败！");
         }
