@@ -533,6 +533,11 @@ public class MiguApi implements Serializable {
             httpGet.abort();
             response.close();
         }
+        //如果返回登录页面则进行重新登录之后在进行接口访问
+        if (result.contains("nologin.html")){
+            loginAuto();
+            sendGet(getUrl);
+        }
         return result;
     }
 
@@ -570,6 +575,10 @@ public class MiguApi implements Serializable {
             } catch (IOException e) {
                 log.error("response.close(); 错误信息", e);
             }
+        }
+        if (result.contains("nologin.html")){
+            loginAuto();
+            sendPost(paramMap,url);
         }
         return result;
     }

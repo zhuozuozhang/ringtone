@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hrtxn.ringtone.project.system.json.JuhePhone;
 import com.hrtxn.ringtone.project.system.json.JuhePhoneResult;
 import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreenetsOrder;
+import net.sf.json.JSONObject;
 
 import java.io.*;
 import java.net.HttpURLConnection;
@@ -12,6 +13,7 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 /**
  * Author:zcy
@@ -28,6 +30,9 @@ public class JuhePhoneUtils {
     private static final String APPKEY = "44ad27368b548d74c37963eae21745bd";
     private static final String URL = "http://apis.juhe.cn/mobile/get";
 
+    private static final String TELURL = "http://op.juhe.cn/onebox/phone/query";
+    private static final String TELKEY = "7837c020cdc779d6a10bc35ecd4a889f";
+
     /**
      * 聚合获取号码信息
      *
@@ -43,6 +48,60 @@ public class JuhePhoneUtils {
         String method = "POST";
         try {
             params.put("key", APPKEY);
+            StringBuffer sb = new StringBuffer();
+            if (method == null || method.equals("GET")) {
+                strUrl = strUrl + "?" + urlencode(params);
+            }
+            URL url = new URL(strUrl);
+            conn = (HttpURLConnection) url.openConnection();
+            if (method == null || method.equals("GET")) {
+                conn.setRequestMethod("GET");
+            } else {
+                conn.setRequestMethod("POST");
+                conn.setDoOutput(true);
+            }
+            conn.setRequestProperty("User-agent", userAgent);
+            conn.setUseCaches(false);
+            conn.setConnectTimeout(DEF_CONN_TIMEOUT);
+            conn.setReadTimeout(DEF_READ_TIMEOUT);
+            conn.setInstanceFollowRedirects(false);
+            conn.connect();
+            if (params != null && method.equals("POST")) {
+                try {
+                    DataOutputStream out = new DataOutputStream(conn.getOutputStream());
+                    out.writeBytes(urlencode(params));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+            InputStream is = conn.getInputStream();
+            reader = new BufferedReader(new InputStreamReader(is, DEF_CHATSET));
+            String strRead = null;
+            while ((strRead = reader.readLine()) != null) {
+                sb.append(strRead);
+            }
+            rs = sb.toString();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (reader != null) {
+                reader.close();
+            }
+            if (conn != null) {
+                conn.disconnect();
+            }
+        }
+        return rs;
+    }
+
+    public static String netTel(Map<String, String> params) throws Exception {
+        HttpURLConnection conn = null;
+        BufferedReader reader = null;
+        String rs = null;
+        String strUrl = TELURL;
+        String method = "POST";
+        try {
+            params.put("key", TELKEY);
             StringBuffer sb = new StringBuffer();
             if (method == null || method.equals("GET")) {
                 strUrl = strUrl + "?" + urlencode(params);
@@ -119,7 +178,41 @@ public class JuhePhoneUtils {
         JuhePhone<JuhePhoneResult> resultJuhePhone = mapper.readValue(result, new TypeReference<JuhePhone<JuhePhoneResult>>() {
         });
         System.out.println(resultJuhePhone.toString());
+        if (isFixedPhone(phone)){
+            resultJuhePhone = getTel(phone);
+        }
         return resultJuhePhone;
+    }
+
+    public static JuhePhone getTel(String tel) throws Exception{
+        Map<String, String> params = new HashMap<String, String>();
+        params.put("tel", tel);//需要查询的手机号码或手机号码前7位
+        params.put("key", TELKEY);//应用APPKEY(应用详细页查询)
+        params.put("dtype", "");//返回数据的格式,xml或json，默认json
+        String result = netTel(params);
+        JSONObject jsonObject = JSONObject.fromObject(result);
+        String reason = jsonObject.getString("reason");
+        JuhePhone<JuhePhoneResult> resultJuhePhone = new JuhePhone<>();
+        JuhePhoneResult juhePhoneResult = new JuhePhoneResult();
+        if ("查询成功".equals(reason)){
+            resultJuhePhone.setResultcode("200");
+            JSONObject jsonData = jsonObject.getJSONObject("result");
+            juhePhoneResult.setProvince(jsonData.getString("province"));
+            juhePhoneResult.setCity(jsonData.getString("city"));
+            juhePhoneResult.setCompany("电信");
+        }else{
+            resultJuhePhone.setResultcode("203");
+            resultJuhePhone.setError_code(201103);
+        }
+        resultJuhePhone.setResult(juhePhoneResult);
+        System.out.println(resultJuhePhone.toString());
+        return resultJuhePhone;
+    }
+
+    private static boolean isFixedPhone(String fixedPhone) {
+        String reg = "(?:(\\(\\+?86\\))(0[0-9]{2,3}\\-?)?([2-9][0-9]{6,7})+(\\-[0-9]{1,4})?)|" +
+                "(?:(86-?)?(0[0-9]{2,3}\\-?)?([2-9][0-9]{6,7})+(\\-[0-9]{1,4})?)";
+        return Pattern.matches(reg, fixedPhone);
     }
 
     /**
@@ -158,7 +251,7 @@ public class JuhePhoneUtils {
 
 
     public static void main(String[] args) throws Exception {
-        JuhePhone phone = getPhone("15050840350");
+        JuhePhone phone = getTel("08328829669");
         System.out.println(phone);
     }
 }
