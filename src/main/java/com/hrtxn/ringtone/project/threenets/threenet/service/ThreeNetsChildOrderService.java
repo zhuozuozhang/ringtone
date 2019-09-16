@@ -315,7 +315,7 @@ public class ThreeNetsChildOrderService {
                 return AjaxResult.success(false, "查询不到数据！");
             }
         }
-        return AjaxResult.success(false, "参数不正确！");
+        return AjaxResult.success(false, "请F5刷新页面后进项数据刷新！");
     }
 
     /**
