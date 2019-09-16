@@ -47,4 +47,5 @@ public class SwxlPhoneInfoResult implements Serializable {
     private boolean state;//执行状态
     private String openTime;//开通时间
     private String closeTime;//开通时间
+    private String productName;
 }
