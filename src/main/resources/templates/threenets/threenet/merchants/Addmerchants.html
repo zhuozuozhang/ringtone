@@ -342,6 +342,8 @@
         matchingOperate(member_phone);
     }
 
+
+
     //验证手机号
     function matchingOperate(phones) {
         AjaxPost('/threenets/getOperate', {"phone": phones}, function (result) {
@@ -453,8 +455,28 @@
                 form.render();
             }
         });
+
+
         //监听提交
         form.on('submit(formDemo)', function (data) {
+            var member_phone = $("#member_phone").val();
+            var phones = member_phone.split(/[\r\n]/g);
+            var flag = false;
+            $.ajax({
+                url: '/threenets/checkPhone?phones='+phones,
+                async:false,
+                type: 'get',
+                success: function (res) {
+                    console.log(res);
+                    if(res != 'success'){
+                        layer.msg(res);
+                        flag = true;
+                    }
+                }
+            })
+            if(flag){
+                return;
+            }
             $("#tijiao").addClass("disable");
             //使用视频彩铃时只能添加移动用户
             if ($("#ringType").val() === "视频" && ($("#phone_dianxin").html() > 0 || $("#phone_liantong").html() > 0)) {

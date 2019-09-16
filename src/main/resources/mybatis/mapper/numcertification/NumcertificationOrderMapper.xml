@@ -1,0 +1,536 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hrtxn.ringtone.project.numcertification.mapper.NumcertificationOrderMapper">
+
+    <resultMap id="BaseResultMap" type="com.hrtxn.ringtone.project.numcertification.domain.NumcertificationOrder">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="user_id" property="userId" jdbcType="INTEGER"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="phone_num" property="phoneNum" jdbcType="VARCHAR"/>
+        <result column="provider" property="provider" jdbcType="VARCHAR"/>
+        <result column="price" property="price" jdbcType="DECIMAL"/>
+        <result column="combo_pattern" property="comboPattern" jdbcType="VARCHAR"/>
+        <result column="age_limit" property="ageLimit" jdbcType="INTEGER"/>
+        <result column="bind_phone" property="bindPhone" jdbcType="VARCHAR"/>
+        <result column="province" property="province" jdbcType="VARCHAR"/>
+        <result column="city" property="city" jdbcType="VARCHAR"/>
+        <result column="company_name" property="companyName" jdbcType="VARCHAR"/>
+        <result column="legal_persion_name" property="legalPersionName" jdbcType="VARCHAR"/>
+        <result column="legal_persion_phone" property="legalPersionPhone" jdbcType="VARCHAR"/>
+        <result column="legal_persion_card_num" property="legalPersionCardNum" jdbcType="VARCHAR"/>
+        <result column="company_address" property="companyAddress" jdbcType="VARCHAR"/>
+        <result column="email" property="email" jdbcType="VARCHAR"/>
+        <result column="business_certificate_num" property="businessCertificateNum" jdbcType="VARCHAR"/>
+        <result column="business" property="business" jdbcType="VARCHAR"/>
+        <result column="legal_persion_card_address" property="legalPersionCardAddress" jdbcType="VARCHAR"/>
+        <result column="fix_phone" property="fixPhone" jdbcType="VARCHAR"/>
+        <result column="open_account_bank" property="openAccountBank" jdbcType="VARCHAR"/>
+        <result column="bank_account" property="bankAccount" jdbcType="VARCHAR"/>
+        <result column="business_license_url" property="businessLicenseUrl" jdbcType="VARCHAR"/>
+        <result column="acceptance_form_url" property="acceptanceFormUrl" jdbcType="VARCHAR"/>
+        <result column="service_agreement_url" property="serviceAgreementUrl" jdbcType="VARCHAR"/>
+        <result column="security_responsibility_commitment_url" property="securityResponsibilityCommitmentUrl"
+                jdbcType="VARCHAR"/>
+        <result column="legal_persion_card_z_url" property="legalPersionCardZUrl" jdbcType="VARCHAR"/>
+        <result column="legal_persion_card_f_url" property="legalPersionCardFUrl" jdbcType="VARCHAR"/>
+        <result column="legal person_card_holds_url" property="legalPersonCardHoldsUrl" jdbcType="VARCHAR"/>
+        <result column="real_name_commitment_url" property="realNameCommitmentUrl" jdbcType="VARCHAR"/>
+        <result column="payment_voucher_url" property="paymentVoucherUrl" jdbcType="VARCHAR"/>
+        <result column="handler_persion_card_z_url" property="handlerPersionCardZUrl" jdbcType="VARCHAR"/>
+        <result column="handler_persion_card_f_url" property="handlerPersionCardFUrl" jdbcType="VARCHAR"/>
+        <result column="handler_persion_card_holds_url" property="handlerPersionCardHoldsUrl" jdbcType="VARCHAR"/>
+        <result column="handler_persion_certificate_url" property="handlerPersionCertificateUrl" jdbcType="VARCHAR"/>
+        <result column="bank_opening_permit_url" property="bankOpeningPermitUrl" jdbcType="VARCHAR"/>
+        <result column="combo_type" property="comboType" jdbcType="VARCHAR"/>
+        <result column="combo_money" property="comboMoney" jdbcType="REAL"/>
+        <result column="combo_period" property="comboPeriod" jdbcType="INTEGER"/>
+        <result column="deduction_period" property="deductionPeriod" jdbcType="INTEGER"/>
+        <result column="rate" property="rate" jdbcType="REAL"/>
+        <result column="min_consume_money" property="minConsumeMoney" jdbcType="REAL"/>
+        <result column="date_signing" property="dateSigning" jdbcType="VARCHAR"/>
+        <result column="contract_attach_url" property="contractAttachUrl" jdbcType="VARCHAR"/>
+        <result column="business_scope" property="businessScope" jdbcType="LONGVARCHAR"/>
+        <result column="remark" property="remark" jdbcType="LONGVARCHAR"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, user_id, create_time, phone_num, provider, price, combo_pattern, age_limit, bind_phone,
+        province, city, company_name, legal_persion_name, legal_persion_phone, legal_persion_card_num,
+        company_address, email, business_certificate_num, business, legal_persion_card_address,
+        fix_phone, open_account_bank, bank_account, business_license_url, acceptance_form_url,
+        service_agreement_url, security_responsibility_commitment_url, legal_persion_card_z_url,
+        legal_persion_card_f_url, "legal person_card_holds_url", real_name_commitment_url,
+        payment_voucher_url, handler_persion_card_z_url, handler_persion_card_f_url, handler_persion_card_holds_url,
+        handler_persion_certificate_url, bank_opening_permit_url, combo_type, combo_money,
+        combo_period, deduction_period, rate, min_consume_money, date_signing, contract_attach_url,business_scope, remark
+    </sql>
+
+    <!--获取订单列表-->
+    <select id="selectOrder" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from tb_numcertification_order
+        where 1 = 1
+        <include refid="parameters"/>
+        ORDER BY create_time DESC
+        <include refid="page"/>
+    </select>
+    <!--获取订单数量-->
+    <select id="getCount" resultType="java.lang.Integer">
+        select count(*) from tb_numcertification_order
+        where 1 = 1
+        <include refid="parameters"/>
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+        delete from tb_numcertification_order
+        where id = #{id,jdbcType=INTEGER}
+    </delete>
+    <!--创建订单-->
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id"
+            parameterType="com.hrtxn.ringtone.project.numcertification.domain.NumcertificationOrder">
+        insert into tb_numcertification_order
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userId != null">
+                user_id,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+            <if test="phoneNum != null">
+                phone_num,
+            </if>
+            <if test="provider != null">
+                provider,
+            </if>
+            <if test="price != null">
+                price,
+            </if>
+            <if test="comboPattern != null">
+                combo_pattern,
+            </if>
+            <if test="ageLimit != null">
+                age_limit,
+            </if>
+            <if test="bindPhone != null">
+                bind_phone,
+            </if>
+            <if test="province != null">
+                province,
+            </if>
+            <if test="city != null">
+                city,
+            </if>
+            <if test="companyName != null">
+                company_name,
+            </if>
+            <if test="legalPersionName != null">
+                legal_persion_name,
+            </if>
+            <if test="legalPersionPhone != null">
+                legal_persion_phone,
+            </if>
+            <if test="legalPersionCardNum != null">
+                legal_persion_card_num,
+            </if>
+            <if test="companyAddress != null">
+                company_address,
+            </if>
+            <if test="email != null">
+                email,
+            </if>
+            <if test="businessCertificateNum != null">
+                business_certificate_num,
+            </if>
+            <if test="business != null">
+                business,
+            </if>
+            <if test="legalPersionCardAddress != null">
+                legal_persion_card_address,
+            </if>
+            <if test="fixPhone != null">
+                fix_phone,
+            </if>
+            <if test="openAccountBank != null">
+                open_account_bank,
+            </if>
+            <if test="bankAccount != null">
+                bank_account,
+            </if>
+            <if test="businessLicenseUrl != null">
+                business_license_url,
+            </if>
+            <if test="acceptanceFormUrl != null">
+                acceptance_form_url,
+            </if>
+            <if test="serviceAgreementUrl != null">
+                service_agreement_url,
+            </if>
+            <if test="securityResponsibilityCommitmentUrl != null">
+                security_responsibility_commitment_url,
+            </if>
+            <if test="legalPersionCardZUrl != null">
+                legal_persion_card_z_url,
+            </if>
+            <if test="legalPersionCardFUrl != null">
+                legal_persion_card_f_url,
+            </if>
+            <if test="legalPersonCardHoldsUrl != null">
+                "legal person_card_holds_url",
+            </if>
+            <if test="realNameCommitmentUrl != null">
+                real_name_commitment_url,
+            </if>
+            <if test="paymentVoucherUrl != null">
+                payment_voucher_url,
+            </if>
+            <if test="handlerPersionCardZUrl != null">
+                handler_persion_card_z_url,
+            </if>
+            <if test="handlerPersionCardFUrl != null">
+                handler_persion_card_f_url,
+            </if>
+            <if test="handlerPersionCardHoldsUrl != null">
+                handler_persion_card_holds_url,
+            </if>
+            <if test="handlerPersionCertificateUrl != null">
+                handler_persion_certificate_url,
+            </if>
+            <if test="bankOpeningPermitUrl != null">
+                bank_opening_permit_url,
+            </if>
+            <if test="comboType != null">
+                combo_type,
+            </if>
+            <if test="comboMoney != null">
+                combo_money,
+            </if>
+            <if test="comboPeriod != null">
+                combo_period,
+            </if>
+            <if test="deductionPeriod != null">
+                deduction_period,
+            </if>
+            <if test="rate != null">
+                rate,
+            </if>
+            <if test="minConsumeMoney != null">
+                min_consume_money,
+            </if>
+            <if test="dateSigning != null">
+                date_signing,
+            </if>
+            <if test="contractAttachUrl != null">
+                contract_attach_url,
+            </if>
+            <if test="businessScope != null">
+                business_scope,
+            </if>
+            <if test="remark != null">
+                remark,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userId != null">
+                #{userId,jdbcType=INTEGER},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="phoneNum != null">
+                #{phoneNum,jdbcType=VARCHAR},
+            </if>
+            <if test="provider != null">
+                #{provider,jdbcType=VARCHAR},
+            </if>
+            <if test="price != null">
+                #{price,jdbcType=DECIMAL},
+            </if>
+            <if test="comboPattern != null">
+                #{comboPattern,jdbcType=VARCHAR},
+            </if>
+            <if test="ageLimit != null">
+                #{ageLimit,jdbcType=INTEGER},
+            </if>
+            <if test="bindPhone != null">
+                #{bindPhone,jdbcType=VARCHAR},
+            </if>
+            <if test="province != null">
+                #{province,jdbcType=VARCHAR},
+            </if>
+            <if test="city != null">
+                #{city,jdbcType=VARCHAR},
+            </if>
+            <if test="companyName != null">
+                #{companyName,jdbcType=VARCHAR},
+            </if>
+            <if test="legalPersionName != null">
+                #{legalPersionName,jdbcType=VARCHAR},
+            </if>
+            <if test="legalPersionPhone != null">
+                #{legalPersionPhone,jdbcType=VARCHAR},
+            </if>
+            <if test="legalPersionCardNum != null">
+                #{legalPersionCardNum,jdbcType=VARCHAR},
+            </if>
+            <if test="companyAddress != null">
+                #{companyAddress,jdbcType=VARCHAR},
+            </if>
+            <if test="email != null">
+                #{email,jdbcType=VARCHAR},
+            </if>
+            <if test="businessCertificateNum != null">
+                #{businessCertificateNum,jdbcType=VARCHAR},
+            </if>
+            <if test="business != null">
+                #{business,jdbcType=VARCHAR},
+            </if>
+            <if test="legalPersionCardAddress != null">
+                #{legalPersionCardAddress,jdbcType=VARCHAR},
+            </if>
+            <if test="fixPhone != null">
+                #{fixPhone,jdbcType=VARCHAR},
+            </if>
+            <if test="openAccountBank != null">
+                #{openAccountBank,jdbcType=VARCHAR},
+            </if>
+            <if test="bankAccount != null">
+                #{bankAccount,jdbcType=VARCHAR},
+            </if>
+            <if test="businessLicenseUrl != null">
+                #{businessLicenseUrl,jdbcType=VARCHAR},
+            </if>
+            <if test="acceptanceFormUrl != null">
+                #{acceptanceFormUrl,jdbcType=VARCHAR},
+            </if>
+            <if test="serviceAgreementUrl != null">
+                #{serviceAgreementUrl,jdbcType=VARCHAR},
+            </if>
+            <if test="securityResponsibilityCommitmentUrl != null">
+                #{securityResponsibilityCommitmentUrl,jdbcType=VARCHAR},
+            </if>
+            <if test="legalPersionCardZUrl != null">
+                #{legalPersionCardZUrl,jdbcType=VARCHAR},
+            </if>
+            <if test="legalPersionCardFUrl != null">
+                #{legalPersionCardFUrl,jdbcType=VARCHAR},
+            </if>
+            <if test="legalPersonCardHoldsUrl != null">
+                #{legalPersonCardHoldsUrl,jdbcType=VARCHAR},
+            </if>
+            <if test="realNameCommitmentUrl != null">
+                #{realNameCommitmentUrl,jdbcType=VARCHAR},
+            </if>
+            <if test="paymentVoucherUrl != null">
+                #{paymentVoucherUrl,jdbcType=VARCHAR},
+            </if>
+            <if test="handlerPersionCardZUrl != null">
+                #{handlerPersionCardZUrl,jdbcType=VARCHAR},
+            </if>
+            <if test="handlerPersionCardFUrl != null">
+                #{handlerPersionCardFUrl,jdbcType=VARCHAR},
+            </if>
+            <if test="handlerPersionCardHoldsUrl != null">
+                #{handlerPersionCardHoldsUrl,jdbcType=VARCHAR},
+            </if>
+            <if test="handlerPersionCertificateUrl != null">
+                #{handlerPersionCertificateUrl,jdbcType=VARCHAR},
+            </if>
+            <if test="bankOpeningPermitUrl != null">
+                #{bankOpeningPermitUrl,jdbcType=VARCHAR},
+            </if>
+            <if test="comboType != null">
+                #{comboType,jdbcType=VARCHAR},
+            </if>
+            <if test="comboMoney != null">
+                #{comboMoney,jdbcType=REAL},
+            </if>
+            <if test="comboPeriod != null">
+                #{comboPeriod,jdbcType=INTEGER},
+            </if>
+            <if test="deductionPeriod != null">
+                #{deductionPeriod,jdbcType=INTEGER},
+            </if>
+            <if test="rate != null">
+                #{rate,jdbcType=REAL},
+            </if>
+            <if test="minConsumeMoney != null">
+                #{minConsumeMoney,jdbcType=REAL},
+            </if>
+            <if test="dateSigning != null">
+                #{dateSigning,jdbcType=VARCHAR},
+            </if>
+            <if test="contractAttachUrl != null">
+                #{contractAttachUrl,jdbcType=VARCHAR},
+            </if>
+            <if test="businessScope != null">
+                #{businessScope,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="remark != null">
+                #{remark,jdbcType=LONGVARCHAR},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="updateByPrimaryKeySelective"
+            parameterType="com.hrtxn.ringtone.project.numcertification.domain.NumcertificationOrder">
+        update tb_numcertification_order
+        <set>
+            <if test="userId != null">
+                user_id = #{userId,jdbcType=INTEGER},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="phoneNum != null">
+                phone_num = #{phoneNum,jdbcType=VARCHAR},
+            </if>
+            <if test="provider != null">
+                provider = #{provider,jdbcType=VARCHAR},
+            </if>
+            <if test="price != null">
+                price = #{price,jdbcType=DECIMAL},
+            </if>
+            <if test="comboPattern != null">
+                combo_pattern = #{comboPattern,jdbcType=VARCHAR},
+            </if>
+            <if test="ageLimit != null">
+                age_limit = #{ageLimit,jdbcType=INTEGER},
+            </if>
+            <if test="bindPhone != null">
+                bind_phone = #{bindPhone,jdbcType=VARCHAR},
+            </if>
+            <if test="province != null">
+                province = #{province,jdbcType=VARCHAR},
+            </if>
+            <if test="city != null">
+                city = #{city,jdbcType=VARCHAR},
+            </if>
+            <if test="companyName != null">
+                company_name = #{companyName,jdbcType=VARCHAR},
+            </if>
+            <if test="legalPersionName != null">
+                legal_persion_name = #{legalPersionName,jdbcType=VARCHAR},
+            </if>
+            <if test="legalPersionPhone != null">
+                legal_persion_phone = #{legalPersionPhone,jdbcType=VARCHAR},
+            </if>
+            <if test="legalPersionCardNum != null">
+                legal_persion_card_num = #{legalPersionCardNum,jdbcType=VARCHAR},
+            </if>
+            <if test="companyAddress != null">
+                company_address = #{companyAddress,jdbcType=VARCHAR},
+            </if>
+            <if test="email != null">
+                email = #{email,jdbcType=VARCHAR},
+            </if>
+            <if test="businessCertificateNum != null">
+                business_certificate_num = #{businessCertificateNum,jdbcType=VARCHAR},
+            </if>
+            <if test="business != null">
+                business = #{business,jdbcType=VARCHAR},
+            </if>
+            <if test="legalPersionCardAddress != null">
+                legal_persion_card_address = #{legalPersionCardAddress,jdbcType=VARCHAR},
+            </if>
+            <if test="fixPhone != null">
+                fix_phone = #{fixPhone,jdbcType=VARCHAR},
+            </if>
+            <if test="openAccountBank != null">
+                open_account_bank = #{openAccountBank,jdbcType=VARCHAR},
+            </if>
+            <if test="bankAccount != null">
+                bank_account = #{bankAccount,jdbcType=VARCHAR},
+            </if>
+            <if test="businessLicenseUrl != null">
+                business_license_url = #{businessLicenseUrl,jdbcType=VARCHAR},
+            </if>
+            <if test="acceptanceFormUrl != null">
+                acceptance_form_url = #{acceptanceFormUrl,jdbcType=VARCHAR},
+            </if>
+            <if test="serviceAgreementUrl != null">
+                service_agreement_url = #{serviceAgreementUrl,jdbcType=VARCHAR},
+            </if>
+            <if test="securityResponsibilityCommitmentUrl != null">
+                security_responsibility_commitment_url = #{securityResponsibilityCommitmentUrl,jdbcType=VARCHAR},
+            </if>
+            <if test="legalPersionCardZUrl != null">
+                legal_persion_card_z_url = #{legalPersionCardZUrl,jdbcType=VARCHAR},
+            </if>
+            <if test="legalPersionCardFUrl != null">
+                legal_persion_card_f_url = #{legalPersionCardFUrl,jdbcType=VARCHAR},
+            </if>
+            <if test="legalPersonCardHoldsUrl != null">
+                "legal person_card_holds_url" = #{legalPersonCardHoldsUrl,jdbcType=VARCHAR},
+            </if>
+            <if test="realNameCommitmentUrl != null">
+                real_name_commitment_url = #{realNameCommitmentUrl,jdbcType=VARCHAR},
+            </if>
+            <if test="paymentVoucherUrl != null">
+                payment_voucher_url = #{paymentVoucherUrl,jdbcType=VARCHAR},
+            </if>
+            <if test="handlerPersionCardZUrl != null">
+                handler_persion_card_z_url = #{handlerPersionCardZUrl,jdbcType=VARCHAR},
+            </if>
+            <if test="handlerPersionCardFUrl != null">
+                handler_persion_card_f_url = #{handlerPersionCardFUrl,jdbcType=VARCHAR},
+            </if>
+            <if test="handlerPersionCardHoldsUrl != null">
+                handler_persion_card_holds_url = #{handlerPersionCardHoldsUrl,jdbcType=VARCHAR},
+            </if>
+            <if test="handlerPersionCertificateUrl != null">
+                handler_persion_certificate_url = #{handlerPersionCertificateUrl,jdbcType=VARCHAR},
+            </if>
+            <if test="bankOpeningPermitUrl != null">
+                bank_opening_permit_url = #{bankOpeningPermitUrl,jdbcType=VARCHAR},
+            </if>
+            <if test="comboType != null">
+                combo_type = #{comboType,jdbcType=VARCHAR},
+            </if>
+            <if test="comboMoney != null">
+                combo_money = #{comboMoney,jdbcType=REAL},
+            </if>
+            <if test="comboPeriod != null">
+                combo_period = #{comboPeriod,jdbcType=INTEGER},
+            </if>
+            <if test="deductionPeriod != null">
+                deduction_period = #{deductionPeriod,jdbcType=INTEGER},
+            </if>
+            <if test="rate != null">
+                rate = #{rate,jdbcType=REAL},
+            </if>
+            <if test="minConsumeMoney != null">
+                min_consume_money = #{minConsumeMoney,jdbcType=REAL},
+            </if>
+            <if test="dateSigning != null">
+                date_signing = #{dateSigning,jdbcType=VARCHAR},
+            </if>
+            <if test="contractAttachUrl != null">
+                contract_attach_url = #{contractAttachUrl,jdbcType=VARCHAR},
+            </if>
+            <if test="businessScope != null">
+                business_scope = #{businessScope,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="remark != null">
+                remark = #{remark,jdbcType=LONGVARCHAR},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+
+    <!--条件-->
+    <sql id="parameters">
+        <if test="param != null and param.id != null">
+            AND id = #{param.id}
+        </if>
+        <if test="param != null and param.userId != null">
+            AND user_id = #{param.userId}
+        </if>
+    </sql>
+    <!--分页-->
+    <sql id="page">
+        <if test="page != null and page.page != null and page.pagesize != null">
+            LIMIT #{page.page},#{page.pagesize}
+        </if>
+    </sql>
+</mapper>

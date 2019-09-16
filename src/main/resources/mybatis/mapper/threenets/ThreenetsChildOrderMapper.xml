@@ -437,4 +437,11 @@
             AND create_date &gt;= '${start}' AND create_date &lt;= '${end}'
         </if>
     </sql>
+
+
+    <select id="getThreenetsChildOrderByPhone" resultType="Integer">
+        select count(1) from tb_threenets_child_order
+        where linkman_tel =#{phone}
+    </select>
+
 </mapper>

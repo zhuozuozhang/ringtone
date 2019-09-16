@@ -21,6 +21,7 @@ import com.hrtxn.ringtone.project.threenets.threenet.json.mcard.McardAddGroupRes
 import com.hrtxn.ringtone.project.threenets.threenet.json.migu.MiguAddGroupRespone;
 import com.hrtxn.ringtone.project.threenets.threenet.json.migu.MiguAddRingRespone;
 import com.hrtxn.ringtone.project.threenets.threenet.json.swxl.SwxlGroupResponse;
+import com.hrtxn.ringtone.project.threenets.threenet.mapper.ThreenetsChildOrderMapper;
 import com.hrtxn.ringtone.project.threenets.threenet.mapper.ThreenetsOrderMapper;
 import com.hrtxn.ringtone.project.threenets.threenet.utils.ApiUtils;
 import lombok.Synchronized;
@@ -62,6 +63,9 @@ public class ThreeNetsOrderService {
 
     @Autowired
     private ThreeNetsAsyncService threeNetsAsyncService;
+
+    @Autowired
+    private ThreenetsChildOrderMapper threenetsChildOrderMapperl;
 
     /**
      * 根据id查询
@@ -204,6 +208,25 @@ public class ThreeNetsOrderService {
         } else {
             return AjaxResult.success(DateUtils.getTime(), "");
         }
+    }
+
+    public String checkPhone(String phones){
+        List<String> list = new ArrayList<>();
+        if(StringUtils.isNotEmpty(phones)){
+            String[] ps = phones.split(",");
+            for(String phone : ps){
+                if(list.contains(phone)){
+                    return phone + "号码重复！";
+                }else{
+                    list.add(phone) ;
+                }
+                int count = threenetsChildOrderMapperl.getThreenetsChildOrderByPhone(phone);
+                if(count>0){
+                    return phone + "号码重复！";
+                }
+            }
+        }
+        return "success";
     }
 
     /**

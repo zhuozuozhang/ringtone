@@ -282,6 +282,26 @@
             //监听提交
             form.on('submit(formDemo)', function (data) {
                 $("#tijiao").addClass("disable");
+
+                var member_phone = $("#member_phone").val();
+                var phones = member_phone.split(/[\r\n]/g);
+                var flag = false;
+                $.ajax({
+                    url: '/threenets/checkPhone?phones='+phones,
+                    async:false,
+                    type: 'get',
+                    success: function (res) {
+                        console.log(res);
+                        if(res != 'success'){
+                            layer.msg(res);
+                            flag = true;
+                        }
+                    }
+                })
+                if(flag){
+                    return;
+                }
+
                 //存在电信用户时需要验证电信的文件
                 if ($("#dxCount").val() > 0 && $("#companyUrl").val() == "") {
                     layer.msg("电信用户需要上传企业资质!");

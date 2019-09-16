@@ -106,6 +106,19 @@ public class ThreeNetsOrderController {
             log.error("保存三网订单失败 方法：saveThreeNetsOrder 错误信息", e);
             return AjaxResult.error("添加失败");
         }
+
+    }
+
+
+    /**
+     *
+     * @return
+     */
+    @GetMapping("/threenets/checkPhone")
+    @ResponseBody
+    public String checkPhone(String phones) {
+        String result = threeNetsOrderService.checkPhone(phones);
+        return result;
     }
 
     /**

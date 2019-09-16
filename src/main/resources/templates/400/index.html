@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset=utf-8>
+    <meta http-equiv=X-UA-Compatible content="IE=edge">
+    <meta name=viewport content="width=device-width,initial-scale=1">
+    <title>首页</title>
+    <link th:href="@{/client/400/css/app.c972703d.css}" rel="stylesheet">
+    <link th:href="@{/client/400/css/chunk-1d18d900.8acebab1.css}" rel="stylesheet">
+    <link th:href="@{/client/400/css/chunk-vendors.753ee7da.css}" rel="stylesheet">
+    <link th:href="@{/client/400/lib/layui/css/layui.css}" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" th:href="@{/public/layui/css/modules/layer/default/layer.css}">
+    <link th:href="@{/admins/dataTables/jquery.dataTables.min.css}" rel="stylesheet">
+    <script th:src="@{/public/js/jquery.min.js}"></script>
+    <style>
+        td, th {text-align: center !important;}
+
+        .yu {
+            background: #3c74ff;
+            color: white;
+            padding: 3px 10px;
+            border-radius: 5px;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+<div id="app">
+    <div>
+        <div data-v-e907fed4="" class="header">
+            <div data-v-e907fed4="" class="c-container">
+                <span data-v-e907fed4="" class="user-name">[[${session.username}]]</span>
+                <a th:href="@{/loginout}"><span data-v-e907fed4="" class="exit">退出</span></a>
+            </div>
+        </div>
+        <section data-v-04d52060="" class="el-container is-vertical">
+            <header data-v-04d52060="" class="el-header main-header" style="height: 65px;">
+                <div data-v-c11354a6="" data-v-04d52060="" id="homeTop">
+                    <div data-v-c11354a6="" class="el-row">
+                        <div data-v-c11354a6="" class="el-col el-col-6">
+                            <a data-v-c11354a6="" href="#" class="">
+                                <img data-v-c11354a6="" class="logo-view" th:src="@{/client/400/images/logo.png}">
+                            </a>
+                        </div>
+                        <div data-v-c11354a6="" class="right-nav el-col el-col-18">
+                            <ul data-v-c11354a6="">
+                                <li data-v-c11354a6="">
+                                    <a data-v-c11354a6="" th:href="@{/400/toIndex}"
+                                       class="router-link-exact-active active">号码选择</a>
+                                </li>
+                                <li data-v-c11354a6="">
+                                    <a data-v-c11354a6=""th:href="@{/400/order_list}" class="">订单管理</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </header>
+            <main data-v-04d52060="" class="el-main">
+                <div data-v-7c58087b="" data-v-04d52060="">
+                    <div data-v-7c58087b="" class="c-container" style="position: relative;width: 1200px;">
+                        <span data-v-7c58087b="" class="title" style="margin-left: 0px;">运营商</span>
+                        <div data-v-7c58087b="" class="el-select" style="width: 110px;">
+                            <div class="el-input el-input--suffix operator_div">
+                                <input type="text" readonly="readonly" autocomplete="off" placeholder="请选择"
+                                       class="el-input__inner" id="operator" data-bind=""
+                                       onclick="Searchd('operator',this)" is_click="1">
+                                <span class="el-input__suffix">
+                                    <span class="el-input__suffix-inner">
+                                        <i class="el-select__caret el-input__icon el-icon-arrow-up operator_icon"></i>
+                                    </span>
+                                </span>
+                            </div>
+                            <div class="el-select-dropdown el-popper operator_d"
+                                 style="display: none; min-width: 110px;">
+                                <div class="el-scrollbar" style="">
+                                    <div class="el-select-dropdown__wrap el-scrollbar__wrap"
+                                         style="margin-bottom: -17px; margin-right: -17px;">
+                                        <ul class="el-scrollbar__view el-select-dropdown__list">
+                                            <li data-v-7c58087b="" class="el-select-dropdown__item provider selected"
+                                                onclick="SelectCity('全部',this,'operator');"><span>全部</span></li>
+                                            <li data-v-7c58087b="" class="el-select-dropdown__item provider"
+                                                onclick="SelectCity('联通',this,'operator');"><span>联通</span></li>
+                                            <li data-v-7c58087b="" class="el-select-dropdown__item provider"
+                                                onclick="SelectCity('电信',this,'operator');"><span>电信</span></li>
+                                            <li data-v-7c58087b="" class="el-select-dropdown__item provider"
+                                                onclick="SelectCity('移动',this,'operator');"><span>移动</span></li>
+                                        </ul>
+                                    </div>
+                                    <div class="el-scrollbar__bar is-horizontal">
+                                        <div class="el-scrollbar__thumb" style="transform: translateX(0%);"></div>
+                                    </div>
+                                    <div class="el-scrollbar__bar is-vertical">
+                                        <div class="el-scrollbar__thumb" style="transform: translateY(0%);"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <span data-v-7c58087b="" class="title">类型</span>
+                        <div data-v-7c58087b="" class="el-select" style="width: 110px;">
+                            <div class="el-input el-input--suffix type_div">
+                                <input type="text" readonly="readonly" autocomplete="off" placeholder="请选择"
+                                       class="el-input__inner" id="type" data-bind="" onclick="Searchd('type',this)" is_click="1">
+                                <span class="el-input__suffix">
+                                    <span class="el-input__suffix-inner">
+                                        <i class="el-select__caret el-input__icon el-icon-arrow-up type_icon"></i>
+                                    </span>
+                                </span>
+                            </div>
+                            <div class="el-select-dropdown el-popper type_d" style="display: none; min-width: 110px;">
+                                <div class="el-scrollbar" style="">
+                                    <div class="el-select-dropdown__wrap el-scrollbar__wrap"
+                                         style="margin-bottom: -17px; margin-right: -17px;">
+                                        <ul class="el-scrollbar__view el-select-dropdown__list">
+                                            <li data-v-7c58087b="" class="el-select-dropdown__item selected"
+                                                onclick="SelectCity('全部',this,'type');"><span>全部</span></li>
+                                            <li data-v-7c58087b="" class="el-select-dropdown__item"
+                                                onclick="SelectCity('超级号',this,'type');"><span>超级号</span></li>
+                                            <li data-v-7c58087b="" class="el-select-dropdown__item"
+                                                onclick="SelectCity('A类',this,'type');"><span>A类</span></li>
+                                            <li data-v-7c58087b="" class="el-select-dropdown__item"
+                                                onclick="SelectCity('B类',this,'type');"><span>B类</span></li>
+                                            <li data-v-7c58087b="" class="el-select-dropdown__item"
+                                                onclick="SelectCity('C类',this,'type');"><span>C类</span></li>
+                                            <li data-v-7c58087b="" class="el-select-dropdown__item"
+                                                onclick="SelectCity('D类',this,'type');"><span>D类</span></li>
+                                            <li data-v-7c58087b="" class="el-select-dropdown__item"
+                                                onclick="SelectCity('顶级号',this,'type');"><span>顶级号</span></li>
+                                        </ul>
+                                    </div>
+                                    <div class="el-scrollbar__bar is-horizontal">
+                                        <div class="el-scrollbar__thumb" style="transform: translateX(0%);"></div>
+                                    </div>
+                                    <div class="el-scrollbar__bar is-vertical">
+                                        <div class="el-scrollbar__thumb" style="transform: translateY(0%);"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <span data-v-7c58087b="" class="title">不包含数字</span>
+                        <div data-v-7c58087b="" class="search el-input" style="width: 200px;">
+                            <input type="text" autocomplete="off" placeholder="多个数字以英文逗号 , 相隔" class="el-input__inner notInclude">
+                        </div>
+                        <span data-v-7c58087b="" class="title">号码筛选</span>
+                        <div data-v-7c58087b="" class="search el-input el-input-group el-input-group--append"
+                             style="width: 300px;">
+                            <input type="text" autocomplete="off" placeholder="示例: 400****888，*代表任意数字" class="el-input__inner phoneNum">
+                            <div class="el-input-group__append" onclick="showTable();">
+                                <button data-v-7c58087b="" type="button" class="el-button el-button--default" style="width: 70px;">
+                                    <span>搜索</span>
+                                </button>
+                            </div>
+                        </div>
+                        <button onclick="reset();" data-v-7c58087b="" type="button" class="el-button el-button--default" style="margin-left: 10px;">
+                            <span>重置</span>
+                        </button>
+                    </div>
+                    <div data-v-7c58087b="" class="c-container" style="position: relative;width:1200px;">
+                        <table class="layui-table" id="set">
+                            <thead>
+                            <tr>
+                                <th>序号</th>
+                                <th>400号码</th>
+                                <th>运营商</th>
+                                <th>成本价格</th>
+                                <th>指导价格</th>
+                                <th>操作</th>
+                            </tr>
+                            </thead>
+                        </table>
+                    </div>
+                </div>
+            </main>
+        </section>
+    </div>
+</div>
+</body>
+<div th:include="400/common/include :: footer"></div>
+<script>
+    $(document).ready(function () {
+        showTable();
+    });
+    // 展示数据
+    function showTable() {
+        var params = {
+            "provider": $("#operator").attr("data-bind"),
+            "category": $("#type").attr("data-bind"),
+            "notInclude": $('.notInclude').val(),
+            "phoneNum": $('.phoneNum').val(),
+        }
+        var columns = [
+            {"data": null},
+            {"data": "phoneNum"},
+            {"data": "phoneNum"},
+            {"data": "costPrice"},
+            {"data": "guidePrice"},
+        ];
+        var columnDefs = [{
+            targets: [2],
+            render: function (data, type, row, meta) {
+                var s = data.substr(0, 4);
+                if (4001 == s || 4007 == s) { return "移动";}
+                if (4000 == s || 4006 == s) { return "联通";}
+                if (4008 == s || 4009 == s) { return "电信";}
+            }
+        }, {
+            targets: [5],
+            render: function (data, type, row, meta) {
+                var phoneNum = row.phoneNum;
+                var agentCost = row.costPrice;
+                return "<a href='/400/toOrder/"+agentCost+"/"+phoneNum+"'><span class='yu'>预占</span></a>";
+            }
+        }]
+        page("#set", 20, params, "/400/selectData", columns, columnDefs);
+    }
+    //搜索
+    function Searchd(obj, this_) {
+        var is_click = $(this_).attr("is_click");
+        if (is_click == 1) {
+            $("." + obj + "_icon").addClass("is-reverse");
+            $("." + obj + "_d").show();
+            $(this_).attr("is_click", 2);
+        } else if (is_click == 2) {
+            $("." + obj + "_icon").removeClass("is-reverse");
+            $("." + obj + "_d").hide();
+            $(this_).attr("is_click", 1);
+        }
+    }
+    //城市切换
+    function SelectCity(obj, this_, id) {
+        $(this_).addClass("selected").siblings("li").removeClass("selected");
+        $("." + id + "_icon").removeClass("is-reverse");
+        $("." + id + "_d").hide();
+        $("#" + id).attr("is_click", 1).val(obj);
+
+        if("全部" == obj) {
+            $("#" + id).attr("data-bind", "")
+        }
+
+        if ("移动" == obj) {
+            $("#" + id).attr("data-bind", 3)
+        }
+        if ("联通" == obj) {
+            $("#" + id).attr("data-bind", 1)
+        }
+        if ("电信" == obj) {
+            $("#" + id).attr("data-bind", 2)
+        }
+
+        if ("顶级号" == obj) {
+            $("#" + id).attr("data-bind", 1)
+        }
+        if ("超级号" == obj) {
+            $("#" + id).attr("data-bind", 2)
+        }
+        if ("A类" == obj) {
+            $("#" + id).attr("data-bind", 3)
+        }
+        if ("B类" == obj) {
+            $("#" + id).attr("data-bind", 4)
+        }
+        if ("C类" == obj) {
+            $("#" + id).attr("data-bind", 5)
+        }
+        if ("D类" == obj) {
+            $("#" + id).attr("data-bind", 6)
+        }
+    }
+    // 重置
+    function reset() {
+        $("#operator").val("");
+        $("#operator").attr("data-bind", "");
+        $("#type").val("");
+        $("#type").attr("data-bind", "");
+        $(".notInclude").val("");
+        $(".phoneNum").val("");
+    }
+</script>
+</html>

@@ -143,4 +143,6 @@ public interface ThreenetsChildOrderMapper {
      * @return
      */
     Integer getPhoneCount(@Param("operate") Integer operate, @Param("isMonthly") Integer isMonthly);
+
+    int getThreenetsChildOrderByPhone(@Param("phone") String phone);
 }

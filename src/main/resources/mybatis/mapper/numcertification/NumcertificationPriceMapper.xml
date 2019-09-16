@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hrtxn.ringtone.project.numcertification.mapper.NumCertificateionPriceMapper">
+
+    <resultMap id="BaseResultMap" type="com.hrtxn.ringtone.project.numcertification.domain.NumcertificationPrice">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="category_alias" property="categoryAlias" jdbcType="VARCHAR"/>
+        <result column="category" property="category" jdbcType="VARCHAR"/>
+        <result column="cost_price" property="costPrice" jdbcType="DECIMAL"/>
+        <result column="raise_price" property="raisePrice" jdbcType="DECIMAL"/>
+        <result column="guide_price" property="guidePrice" jdbcType="DECIMAL"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, category_alias,category, cost_price, raise_price, guide_price, create_time
+    </sql>
+
+    <!--获取价格配置列表-->
+    <select id="getNumPriceList" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from tb_numcertification_price
+        where 1 = 1
+        <include refid="parameters"/>
+        <include refid="page"/>
+    </select>
+    <!--获取总数-->
+    <select id="getCount" resultType="java.lang.Integer">
+        select COUNT(*) from tb_numcertification_price
+    </select>
+    <!--修改价格配置信息-->
+    <update id="updateNumcertificationPrice"
+            parameterType="com.hrtxn.ringtone.project.numcertification.domain.NumcertificationPrice">
+        update tb_numcertification_price
+        <set>
+            <if test="categoryAlias != null">
+                category_alias = #{categoryAlias,jdbcType=VARCHAR},
+            </if>
+            <if test="costPrice != null">
+                cost_price = #{costPrice,jdbcType=DECIMAL},
+            </if>
+            <if test="raisePrice != null">
+                raise_price = #{raisePrice,jdbcType=DECIMAL},
+            </if>
+            <if test="guidePrice != null">
+                guide_price = #{guidePrice,jdbcType=DECIMAL},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+    <!--条件-->
+    <sql id="parameters">
+        <if test="param != null and param.id != null">
+            AND id = #{param.id}
+        </if>
+        <if test="param != null and param.name != null and param.name != '' ">
+            AND category = #{param.name}
+        </if>
+    </sql>
+    <!--分页-->
+    <sql id="page">
+        <if test="page != null and page.page != null and page.pagesize != null">
+            LIMIT #{page.page},#{page.pagesize}
+        </if>
+    </sql>
+</mapper>

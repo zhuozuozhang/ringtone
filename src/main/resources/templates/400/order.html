@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset=utf-8>
+    <meta http-equiv=X-UA-Compatible content="IE=edge">
+    <meta name=viewport content="width=device-width,initial-scale=1">
+    <title>号码订购</title>
+    <link th:href="@{/client/400/css/app.c972703d.css}" rel="stylesheet">
+    <link th:href="@{/client/400/css/chunk-1d18d900.8acebab1.css}" rel="stylesheet">
+    <link th:href="@{/client/400/css/chunk-vendors.753ee7da.css}" rel="stylesheet">
+    <link th:href="@{/client/400/css/chunk-175c044e.5fd6e6b9.css}" rel="stylesheet">
+    <link th:href="@{/client/400/css/xadmin.css}" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/client/400/lib/layui/css/layui.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/public/layui/css/modules/layer/default/layer.css}">
+    <style>
+        .layui-form-pane .layui-input {border-radius: 4px;}
+    </style>
+</head>
+
+<body>
+    <div id="app">
+        <div>
+            <div data-v-e907fed4="" class="header">
+                <div data-v-e907fed4="" class="c-container">
+                    <span data-v-e907fed4="" class="user-name">[[${session.username}]]</span>
+                    <a th:href="@{/loginout}"><span data-v-e907fed4="" class="exit">退出</span></a>
+                </div>
+            </div>
+            <section data-v-04d52060="" class="el-container is-vertical">
+                <header data-v-04d52060="" class="el-header main-header" style="height: 65px;">
+                    <div data-v-c11354a6="" data-v-04d52060="" id="homeTop">
+                        <div data-v-c11354a6="" class="el-row">
+                            <div data-v-c11354a6="" class="el-col el-col-6">
+                                <a data-v-c11354a6="" href="#" class="">
+                                    <img data-v-c11354a6="" class="logo-view" th:src="@{/client/400/images/logo.png}">
+                                </a>
+                            </div>
+                            <div data-v-c11354a6="" class="right-nav el-col el-col-18">
+                                <ul data-v-c11354a6="">
+                                    <li data-v-c11354a6="">
+                                        <a data-v-c11354a6="" th:href="@{/400/toIndex}"
+                                           class="router-link-exact-active active">号码选择</a>
+                                    </li>
+                                    <li data-v-c11354a6="">
+                                        <a data-v-c11354a6=""th:href="@{/400/order_list}" class="">订单管理</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </header>
+                <main data-v-04d52060="" class="el-main">
+                    <div data-v-072a8716="" data-v-04d52060="" class="c-container" style="width: 1200px;">
+                        <div data-v-072a8716="" class="title">
+                            <span data-v-072a8716="" style="font-size: 30px; font-weight: bold;">400订单</span>
+                            <span data-v-072a8716="" style="color: rgb(158, 158, 158); font-size: 18px; margin-left: 16px;">请尽快完成订购，避免被他人抢占。长时间未处理的订单，将会被系统回收！</span>
+                        </div>
+                        <div data-v-072a8716="" style="padding: 30px 0px; display: flex; align-items: flex-start;">
+                            <div data-v-072a8716="" style="width: 360px; padding: 30px 24px; border-width: 3px 1px 1px; border-style: solid; border-color: rgb(55, 122, 253) rgb(213, 213, 213) rgb(213, 213, 213); border-image: initial;">
+                                <div data-v-072a8716="" style="font-size: 18px; color: rgb(100, 100, 100);">已选号码:</div>
+                                <div data-v-072a8716="" style="font-size: 36px; font-weight: bold; line-height: 2;" th:text="${phoneNum}" id="phoneNum">400-9999-704</div>
+                                <div data-v-072a8716="" style="font-size: 15px; color: rgb(100, 100, 100); line-height: 1.9;">
+                                    <div data-v-072a8716="" style="font-size: 18px;">400号码说明：</div>
+                                    <div data-v-072a8716=""> 1. 400号码绑定可为任意运营商号码，比如：您当前选择移动的400号码，可绑定移动、联通、电信任意手机号或者座机</div>
+                                    <div data-v-072a8716="">
+                                        2. 套餐模式决定的是套餐内总分钟数是按月（ 按年）结算。比如一年12000分钟，按月结算，则每月扣除1000分钟。次月重新开始 1000分钟计时；按年结算则是12000分钟全年累计。
+                                    </div>
+                                </div>
+                            </div>
+                            <div data-v-072a8716="" style="padding: 40px 60px;">
+                                <div data-v-072a8716="" style="font-size: 22px; font-weight: bold;">基本信息</div>
+                                <div data-v-072a8716="" class="form-info">
+                                    <span data-v-072a8716="">运 营 商: </span>
+                                    <span data-v-072a8716="" style="color: rgb(60, 116, 255);" id="provider" th:text="${provider}">电信</span>
+                                    <span data-v-072a8716="">价 &nbsp; &nbsp; 格: </span>
+                                    <span data-v-072a8716="">
+                                        <span data-v-072a8716="" style="color: rgb(250, 36, 24); font-size: 30px; font-weight: bold;" id="price" th:text="${agentCost}">0</span>元/年
+                                    </span>
+                                    <span data-v-072a8716="">套餐模式: </span>
+                                    <button data-v-072a8716="" type="button" class="el-button button-select-active el-button--default el-button--medium" style="width: 150px;">
+                                        <span>按年</span>
+                                    </button>
+                                    <span data-v-072a8716="">充值年限: </span>
+                                    <div data-v-072a8716="" class="el-select" style="width: 150px;">
+                                        <div class="el-input el-input--suffix operator_div">
+                                            <input type="text" readonly="readonly" autocomplete="off" placeholder="请选择" class="el-input__inner" id="operator" data-bind="" onclick="Searchd('operator',this)" is_click="1">
+                                            <span class="el-input__suffix">
+                                                <span class="el-input__suffix-inner">
+                                                    <i class="el-select__caret el-input__icon el-icon-arrow-up operator_icon"></i>
+                                                </span>
+                                            </span>
+                                        </div>
+                                        <!-- 年份选择 -->
+                                        <div class="el-select-dropdown el-popper operator_d" style="display:none;min-width: 150px; position: absolute; top: 35px; left: 0px; transform-origin: center top; z-index: 2002;" x-placement="bottom-start">
+                                            <div class="el-scrollbar" style="">
+                                                <div class="el-select-dropdown__wrap el-scrollbar__wrap" style="margin-bottom: -17px; margin-right: -17px;">
+                                                    <ul class="el-scrollbar__view el-select-dropdown__list">
+                                                        <li data-v-072a8716="" class="el-select-dropdown__item selected" onclick="SelectCity('1年',this,'operator');">
+                                                            <span>1年</span>
+                                                        </li>
+                                                        <li data-v-072a8716="" class="el-select-dropdown__item" onclick="SelectCity('2年',this,'operator');">
+                                                            <span>2年</span>
+                                                        </li>
+                                                        <li data-v-072a8716="" class="el-select-dropdown__item" onclick="SelectCity('3年',this,'operator');">
+                                                            <span>3年</span>
+                                                        </li>
+                                                        <li data-v-072a8716="" class="el-select-dropdown__item" onclick="SelectCity('4年',this,'operator');">
+                                                            <span>4年</span>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                                <div class="el-scrollbar__bar is-horizontal">
+                                                    <div class="el-scrollbar__thumb" style="transform: translateX(0%);"></div>
+                                                </div>
+                                                <div class="el-scrollbar__bar is-vertical">
+                                                    <div class="el-scrollbar__thumb" style="transform: translateY(0%);"></div>
+                                                </div>
+                                            </div>
+                                            <div x-arrow="" class="popper__arrow" style="left: 35px;"></div>
+                                        </div>
+                                    </div>
+                                    <span data-v-072a8716="">号码使用地: </span>
+                                    <div class="layui-row">
+                                        <form class="layui-form layui-col-md12  layui-form-pane" style="height: 40px;">
+                                            <div class="layui-form-item" id="x-city">
+                                                <div class="layui-input-inline">
+                                                    <select name="province" id="province" lay-filter="province">
+                                                        <option value="">请选择省</option>
+                                                    </select>
+                                                </div>
+                                                <div class="layui-input-inline">
+                                                    <select name="city" id="city" lay-filter="city">
+                                                        <option value="">请选择市</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                    <span data-v-072a8716="">公司名: </span>
+                                    <div data-v-072a8716="" class="el-input">
+                                        <input type="text" autocomplete="off" placeholder="请输入公司名(必填)" class="el-input__inner companyName">
+                                    </div>
+                                </div>
+                                <div data-v-072a8716="" style="padding-left: 100px; padding-top: 35px;">
+                                    <button data-v-072a8716="" onClick="javascript :history.back(-1);" type="button" class="el-button el-button--default" style="width: 150px;">
+                                            <span>取 消</span>
+                                        </button>
+                                    <button data-v-072a8716="" type="button" class="el-button el-button--primary" style="width: 150px;" onclick="next();">
+                                        <span>下一步</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </main>
+            </section>
+        </div>
+    </div>
+</body>
+<div th:include="admin/common/include :: footer"></div>
+<script th:src="@{/client/400/js/xcity.js}"></script>
+<script>
+    //搜索
+    function Searchd(obj,this_){
+        var is_click = $(this_).attr("is_click");
+        if(is_click == 1){
+            $("."+obj+"_icon").addClass("is-reverse");
+            $("."+obj+"_d").show();
+            $(this_).attr("is_click",2);
+        }else if(is_click == 2){
+            $("."+obj+"_icon").removeClass("is-reverse");
+            $("."+obj+"_d").hide();
+            $(this_).attr("is_click",1);
+        }  
+    }
+    //城市切换
+    function SelectCity(obj,this_,id) {
+        $(this_).addClass("selected").siblings("li").removeClass("selected");
+        $("."+id+"_icon").removeClass("is-reverse");
+        $("."+id+"_d").hide();
+        $("#"+id).attr("is_click",1).val(obj);
+        if ("1年" == obj){$("#"+id).attr("data-bind",1)}
+        if ("2年" == obj){$("#"+id).attr("data-bind",2)}
+        if ("3年" == obj){$("#"+id).attr("data-bind",3)}
+        if ("4年" == obj){$("#"+id).attr("data-bind",4)}
+    }
+    //省市选择
+    layui.use(['form', 'code'], function() {
+        form = layui.form;
+        layui.code();
+        // $('#x-city').xcity('广东', '广州市', '东山区');
+        $('#x-city').xcity();
+    });
+    //下一步
+    function next(){
+        var ageLimit = $("#operator").attr("data-bind");
+        var province = $("#province").val();
+        var city = $("#city").val();
+        var phoneNum = $("#phoneNum").html();
+        var companyName = $(".companyName").val();
+        var provider = $("#provider").html();
+        var price = $("#price").html();
+
+        if (!isNotEmpty(ageLimit)) {layer.msg("请选择充值年限！", {icon: 5, time: 2500});return;}
+        if (!isNotEmpty(province)) {layer.msg("请选择号码使用地！", {icon: 5, time: 2500});return;}
+        if (!isNotEmpty(city)) {layer.msg("请选择号码使用地！", {icon: 5, time: 2500});return;}
+        if (!isNotEmpty(companyName)) {layer.msg("请输入公司名称！", {icon: 5, time: 2500});return;}
+        
+        AjaxPost("/400/order",{
+            ageLimit:ageLimit,
+            province:province,
+            city:city,
+            companyName:companyName,
+            phoneNum:phoneNum,
+            provider:provider,
+            price:price
+        },function (res) {
+            if (res.code == 200){
+                var orderId = res.data;
+                if (isNotEmpty(orderId)){
+                    window.location.href = "/400/next/"+orderId;
+                }
+            } else {
+                layer.msg(res.msg, {icon: 5, time: 2500});
+            }
+        });
+    }
+</script>
+</html>
