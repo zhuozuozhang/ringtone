@@ -42,8 +42,7 @@ public class MySQLDatabaseBackup {
 		BufferedReader bufferedReader = null;
 		try {
 			printWriter = new PrintWriter(new OutputStreamWriter(new FileOutputStream(savePath + fileName), "utf8"));
-			Process process = Runtime.getRuntime().exec("D:\\Program Files (x86)\\java\\mysql-5.6.41\\bin\\mysqldump -h" + hostIP + " -u" + userName + " -p" + password + " --set-charset=UTF8 " + databaseName);
-			/*Process process = Runtime.getRuntime().exec("D:\\Program Files (x86)\\java\\mysql-5.6.41\\bin\\mysqldump -h" + hostIP + " -u" + userName + " -p" + password + " --set-charset=UTF8 " + databaseName);*/
+			Process process = Runtime.getRuntime().exec("C:\\soft\\mysql-5.7.17-winx64\\bin\\mysqldump -h" + hostIP + " -u" + userName + " -p" + password + " --set-charset=UTF8 " + databaseName);
 			InputStreamReader inputStreamReader = new InputStreamReader(
 					process.getInputStream(), "utf8");
 			bufferedReader = new BufferedReader(inputStreamReader);
@@ -90,7 +89,7 @@ public class MySQLDatabaseBackup {
 
 	public static void main(String[] args) {
 		try {
-			if (exportDatabaseTool("127.0.0.1", "root", "root","D:/ringtoneDatabase", "2019-10-14.sql", "ringtone")) {
+			if (exportDatabaseTool("127.0.0.1", "root", "root","C:/ringtoneDatabase", "2019-10-14.sql", "ringtone")) {
 				System.out.println("数据库成功备份！！！");
 			} else {
 				System.out.println("数据库备份失败！！！");

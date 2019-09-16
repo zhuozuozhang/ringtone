@@ -581,10 +581,8 @@ public class ApiUtils {
                                     Elements temp = el.child(2).getElementsByTag("a");
                                     String t = temp.attr("onclick");
                                     log.info("移动铃音id-------------->" + t);
-                                    int begin = t.indexOf("showConfirm('") + 13;
-                                    int end = begin + 36;
-                                    String t2 = t.substring(begin, end);
-                                    threenetsRing.setOperateRingId(t2);
+                                    t = t.replace("showConfirm('","").replace("');","");
+                                    threenetsRing.setOperateRingId(t);
                                 }
                             } else {
                                 Element el = tds.get(8);
@@ -972,7 +970,6 @@ public class ApiUtils {
      * @throws NoLoginException
      */
     public AjaxResult setRing(String phones, ThreenetsRing threenetsRing, Integer operate, Integer orderId) throws IOException, NoLoginException {
-        operate = 2;
         String sucMsg = "";
         String errMsg = "";
         int failure = 0;
