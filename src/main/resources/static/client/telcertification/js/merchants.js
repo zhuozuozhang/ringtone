@@ -647,6 +647,11 @@ function addTelCerMerchants(){
         var caiyin = $("#caiyin").val();
     }
     if ($("#gjdx").hasClass("active")) {
+        if($("#dxsrk").val() == ""){
+            $("#dxsrk").focus();
+            layer.msg("请填写挂机短信的金额");
+            return;
+        }
         var gjdx = $("#gjdx").val();
     }
     var note = $(".note .active").val();

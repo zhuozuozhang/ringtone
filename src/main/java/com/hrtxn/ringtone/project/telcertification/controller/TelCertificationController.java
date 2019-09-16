@@ -222,4 +222,22 @@ public class TelCertificationController {
         return telCertificationService.isRepetitionByName(telCompanyName);
     }
 
+    /**
+     * 进入即将到期号码页面
+     * @return
+     */
+    @GetMapping("/toFallDuePage")
+    public String toFallDuePage(){
+        return "telcertification/fall_due";
+    }
+
+    /**
+     * 进入即将到期号码页面
+     * @return
+     */
+    @GetMapping("/toDuePage")
+    public String toDuePage(){
+        return "telcertification/due";
+    }
+
 }

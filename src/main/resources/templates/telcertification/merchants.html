@@ -1,78 +1,42 @@
 <!DOCTYPE>
 <html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head th:include="telcertification/common/include :: linkcss"></head>
 <head>
-    <meta charset="utf-8"/>
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+<!--    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>-->
+<!--    <meta charset="utf-8"/>-->
+<!--    <meta http-equiv="X-UA-Compatible" content="IE=edge">-->
     <title>商户管理</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" th:href="@{/public/layui/css/layui.css}">
-    <link rel="stylesheet" th:href="@{/public/layui/css/modules/layer/default/layer.css}">
-    <link rel="stylesheet" th:href="@{/public/layui/css/modules/laydate/default/laydate.css}">
-    <link rel="stylesheet" th:href="@{/public/css/commer.css}">
-    <link rel="stylesheet" th:href="@{/client/telcertification/css/boxstyle.css}">
-    <link rel="stylesheet" th:href="@{/client/telcertification/css/msgbox.css}">
-    <link rel="stylesheet" th:href="@{/client/telcertification/css/webandwxxcx.css}">
-    <link rel="stylesheet" th:href="@{/client/telcertification/css/orderform.css}">
-    <link rel="stylesheet" th:href="@{/client/telcertification/css/order.css}">
-    <link rel="stylesheet" type="text/css" th:href="@{/client/telcertification/css/choose.css}">
-    <link rel="stylesheet" type="text/css" th:href="@{/client/telcertification/css/header.css}">
-    <link rel="stylesheet" type="text/css" th:href="@{/public/dataTables/jquery.dataTables.min.css}">
-    <style>
-        .rz_y .active {
-            background-color: #0569FD !important;
-            color: #fff !important;
-        }
+<!--    <meta name="viewport" content="width=device-width, initial-scale=1">-->
 
-        .scwj {
-            margin-top: 5px;
-            line-height: 28px !important;
-            height: 28px !important;
-            padding-left: 2px !important;
-        }
-
-        .dataTables_wrapper .dataTables_paginate .paginate_button.current, .dataTables_wrapper .dataTables_paginate .paginate_button.current:hover {
-            color: #fff !important;
-            border: 1px solid #17a9ff !important;
-            background-color: #17a9ff !important;
-        }
-
-        .new_businesses {
-            width: 80px !important;
-            margin-bottom: 0px !important;
-            padding-left: 20px !important;
-            height: 34px !important;
-            line-height: 34px !important;
-            background-color: #17a9ff !important;
-        }
-    </style>
 </head>
 
 <body>
-<div class="header">
-    <div class="top">
-        <div class="logo"><img th:src="@{/client/telcertification/images/logo.png}"></div>
-        <div class="top_r">
-            <span style="float: left">欢迎！</span>
-            <i>[[${session.username}]]</i>
-            <a href="/telcertify/toTelNoticePage" class="notice">公告</a>
-        </div>
-    </div>
-    <div class="menu">
-        <div class="cdwbk">
-            <a href="/telcertify/toTelIndexPage" class="home">首页</a>
-            <a href="/telcertify/toTelChoosePage">号码认证订购</a>
-            <a href="/telcertify/toTelMerchantsPage" class="dqxx">订单列表</a>
-            <a href="#">认证查询与取消</a>
-        </div>
-    </div>
-</div>
+<div th:include="telcertification/common/include :: header"></div>
+<!--<div class="header">-->
+<!--    <div class="top">-->
+<!--        <div class="logo"><img th:src="@{/client/telcertification/images/logo.png}"></div>-->
+<!--        <div class="top_r">-->
+<!--            <span style="float: left">欢迎！</span>-->
+<!--            <i>[[${session.username}]]</i>-->
+<!--            <a href="/telcertify/toTelNoticePage" class="notice">公告</a>-->
+<!--        </div>-->
+<!--    </div>-->
+<!--    <div class="menu">-->
+<!--        <div class="cdwbk">-->
+<!--            <a href="/telcertify/toTelIndexPage" class="home">首页</a>-->
+<!--            <a href="/telcertify/toTelChoosePage">号码认证订购</a>-->
+<!--            <a href="/telcertify/toTelMerchantsPage" class="dqxx">订单列表</a>-->
+<!--            <a href="#">认证查询与取消</a>-->
+<!--        </div>-->
+<!--    </div>-->
+<!--</div>-->
 <div id="allOrder">
     <div class="order_middle">
-        <div class="order_div1">
-            <p style="cursor:pointer" class="active" id="myorder" onclick="telCerTable()">我的订单</p>
-            <p style="cursor:pointer" id="myorder2" onclick="fallDueTable()">即将到期号码</p>
-            <p style="cursor:pointer" id="myorder3" onclick="dueTable()">到期号码</p>
-        </div>
+<!--        <div class="order_div1">-->
+<!--            <p style="cursor:pointer" class="active" id="myorder" onclick="telCerTable()">我的订单</p>-->
+<!--            <p style="cursor:pointer" id="myorder2" onclick="fallDueTable()">即将到期号码</p>-->
+<!--            <p style="cursor:pointer" id="myorder3" onclick="dueTable()">到期号码</p>-->
+<!--        </div>-->
         <!-- 我的订单 -->
         <div class="myorder">
             <div class="number_search">
@@ -449,4 +413,7 @@
 <script type="text/javascript" th:src="@{/public/js/ajax.js}"></script>
 <script th:src="@{/client/telcertification/js/merchants.js}"></script>
 <script type="text/javascript" th:src="@{/public/js/ajaxfileupload.js}"></script>
+<script>
+    $(".index2").addClass("active");
+</script>
 </html>

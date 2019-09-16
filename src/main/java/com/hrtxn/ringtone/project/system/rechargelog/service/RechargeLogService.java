@@ -54,6 +54,6 @@ public class RechargeLogService {
         if(allCharge.size() > 0 && allCharge != null){
             return AjaxResult.success(allCharge,"获取成功",totalCount);
         }
-        return AjaxResult.success(false,"获取失败");
+        return AjaxResult.success(allCharge,"获取失败",totalCount);
     }
 }

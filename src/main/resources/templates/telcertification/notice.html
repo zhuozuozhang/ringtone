@@ -1,5 +1,6 @@
 <!DOCTYPE>
 <html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<!--<head th:include="telcertification/common/include :: linkcss"></head>-->
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <title>公告</title>
@@ -8,32 +9,44 @@
     <link rel="stylesheet" type="text/css" th:href="@{/client/telcertification/css/header.css}">
     <link rel="stylesheet" type="text/css" th:href="@{/public/dataTables/jquery.dataTables.min.css}">
 
+    <link rel="stylesheet" type="text/css" th:href="@{/public/layui/css/layui.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/public/layui/css/modules/layer/default/layer.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/public/css/commer.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/public/dataTables/jquery.dataTables.min.css}">
+<!--    <link rel="stylesheet" type="text/css" th:href="@{/client/threenets/css/announcement.css}">-->
+<!--    <link rel="stylesheet" type="text/css" th:href="@{/client/threenets/css/head.css}">-->
+<!--    <script type="text/javascript" th:src="@{/public/js/jquery.min.js}"></script>-->
     <style type="text/css">
         .layui-laypage .layui-laypage-curr .layui-laypage-em {
             background-color: #ff4103;
         }
+        #tabs {padding-left: 70px;}
+
+        #tabs li {font-size: 16px;}
     </style>
 </head>
 
 <body>
-<div class="header">
-    <div class="top">
-        <div class="logo">
-            <img th:src="@{/client/telcertification/images/cllogo.jpg}">
-        </div>
-        <div class="top_r">
-            <a th:href="@{/telcertify/toTelNoticePage}" class="notice dqxx">公告</a>
-        </div>
-    </div>
-    <div class="menu">
-        <div class="cdwbk">
-            <a th:href="@{/telcertify/toTelIndexPage}" class="home">首页</a>
-            <a th:href="@{/telcertify/toTelChoosePage}">号码认证订购</a>
-            <a th:href="@{/telcertify/toTelMerchantsPage}">订单列表</a>
-            <a th:href="@{#}">认证查询与取消</a>
-        </div>
-    </div>
-</div>
+<div th:include="telcertification/common/include :: header"></div>
+
+<!--<div class="header">-->
+<!--    <div class="top">-->
+<!--        <div class="logo">-->
+<!--            <img th:src="@{/client/telcertification/images/cllogo.jpg}">-->
+<!--        </div>-->
+<!--        <div class="top_r">-->
+<!--            <a th:href="@{/telcertify/toTelNoticePage}" class="notice dqxx">公告</a>-->
+<!--        </div>-->
+<!--    </div>-->
+<!--    <div class="menu">-->
+<!--        <div class="cdwbk">-->
+<!--            <a th:href="@{/telcertify/toTelIndexPage}" class="home">首页</a>-->
+<!--            <a th:href="@{/telcertify/toTelChoosePage}">号码认证订购</a>-->
+<!--            <a th:href="@{/telcertify/toTelMerchantsPage}">订单列表</a>-->
+<!--            <a th:href="@{#}">认证查询与取消</a>-->
+<!--        </div>-->
+<!--    </div>-->
+<!--</div>-->
 <div class="wbk">
     <div class="nbk">
         <table id="example">
