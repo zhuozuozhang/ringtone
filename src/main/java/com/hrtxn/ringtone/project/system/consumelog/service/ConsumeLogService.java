@@ -62,7 +62,7 @@ public class ConsumeLogService {
         if(allConsume.size() > 0 && allConsume != null){
             return AjaxResult.success(allConsume,"获取成功",totalCount);
         }
-        return AjaxResult.success(false,"获取失败");
+        return AjaxResult.success(allConsume,"获取失败",totalCount);
     }
 
     /**

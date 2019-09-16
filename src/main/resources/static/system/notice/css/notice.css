@@ -91,3 +91,7 @@
 	width: 180px;
 	vertical-align: top;
 }
+
+#tabs {padding-left: 70px;}
+
+#tabs li {font-size: 16px;}

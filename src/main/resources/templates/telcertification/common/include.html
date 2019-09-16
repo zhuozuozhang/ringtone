@@ -1,0 +1,99 @@
+<head th:fragment="linkcss">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" type="text/css" th:href="@{/public/layui/css/layui.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/public/layui/css/modules/layer/default/layer.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/public/css/commer.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/public/dataTables/jquery.dataTables.min.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/client/threenets/css/announcement.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/client/threenets/css/head.css}">
+    <script type="text/javascript" th:src="@{/public/js/jquery.min.js}"></script>
+
+<!--    <link rel="stylesheet" th:href="@{/public/layui/css/layui.css}">-->
+<!--    <link rel="stylesheet" th:href="@{/public/layui/css/modules/layer/default/layer.css}">-->
+    <link rel="stylesheet" th:href="@{/public/layui/css/modules/laydate/default/laydate.css}">
+<!--    <link rel="stylesheet" th:href="@{/public/css/commer.css}">-->
+    <link rel="stylesheet" th:href="@{/client/telcertification/css/boxstyle.css}">
+    <link rel="stylesheet" th:href="@{/client/telcertification/css/msgbox.css}">
+    <link rel="stylesheet" th:href="@{/client/telcertification/css/webandwxxcx.css}">
+    <link rel="stylesheet" th:href="@{/client/telcertification/css/orderform.css}">
+    <link rel="stylesheet" th:href="@{/client/telcertification/css/order.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/client/telcertification/css/choose.css}">
+<!--    <link rel="stylesheet" type="text/css" th:href="@{/client/telcertification/css/header.css}">-->
+<!--    <link rel="stylesheet" type="text/css" th:href="@{/public/dataTables/jquery.dataTables.min.css}">-->
+    <style>
+        .rz_y .active {
+            background-color: #0569FD !important;
+            color: #fff !important;
+        }
+
+        .scwj {
+            margin-top: 5px;
+            line-height: 28px !important;
+            height: 28px !important;
+            padding-left: 2px !important;
+        }
+
+        .dataTables_wrapper .dataTables_paginate .paginate_button.current, .dataTables_wrapper .dataTables_paginate .paginate_button.current:hover {
+            color: #fff !important;
+            border: 1px solid #17a9ff !important;
+            background-color: #17a9ff !important;
+        }
+
+        .new_businesses {
+            width: 80px !important;
+            margin-bottom: 0px !important;
+            padding-left: 20px !important;
+            height: 34px !important;
+            line-height: 34px !important;
+            background-color: #17a9ff !important;
+        }
+    </style>
+</head>
+
+<div th:fragment="header">
+    <div id="heads">
+        <div id="LAY_app" class="layadmin-tabspage-none" style="width:95%;margin:0 auto;">
+            <div class="layui-row" style="height:110px;">
+                <div class="layui-col-xs6">
+                    <div class="grid-demo grid-demo-bg1">
+                        <img th:src="@{/public/images/logo.png}" alt="" width="580px" height="100px" style='margin: 5px 20px;'>
+                    </div>
+                </div>
+                <div class="layui-col-xs6" id="navigation">
+                    <div class="grid-demo" style="margin-top: 15px;">
+                        <div class="layui-row layui-col-space5">
+                            <div class="layui-col-md4">
+                                <div class="grid-demo grid-demo-bg1">您好,代理商，[[${session.username}]]</div>
+                            </div>
+                            <div class="layui-col-md1" >
+                                <a th:href="@{/telcertify/toTelNoticePage}">
+                                    <div class="grid-demo" style="cursor: pointer;">|&nbsp;&nbsp;公告</div>
+                                </a>
+                            </div>
+                            <div class="layui-col-md1">
+                                <a th:href="@{/loginout}">
+                                    <div class="grid-demo grid-demo-bg1" style="cursor: pointer;">|&nbsp;&nbsp;退出</div>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- 导航栏tab切换 -->
+        <div class="layui-tab layui-tab-brief" lay-filter="docDemoTabBrief" style="margin:0 auto;">
+            <ul class="layui-tab-title" id="tabs">
+<!--                <a th:href="@{/telcertify/threeNetsTaskList}"><li class='index1'>待办任务</li></a>-->
+                <a th:href="@{/telcertify/toTelMerchantsPage}"><li class='index2'>订单列表</li></a>
+                <a th:href="@{/telcertify/toFallDuePage}"><li class='index3'>即将到期号码</li></a>
+                <a th:href="@{/telcertify/toDuePage}"><li class='index4'>到期号码</li></a>
+<!--                <a th:href="@{/threenets/toDbusinessPage}"><li class='index6'></li></a>-->
+<!--                <a th:href="@{/threenets/toPersonalInformation}"><li class='index10'>个人信息</li></a>-->
+<!--                <a><li class='index8'>工具箱</li></a>-->
+            </ul>
+        </div>
+    </div>
+</div>

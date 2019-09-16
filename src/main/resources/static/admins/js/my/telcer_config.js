@@ -41,12 +41,10 @@ layui.use(['form','layer'], function(){
     var form = layui.form,layer = layui.layer;
     //监听提交
     form.on('submit(add)', function(data){
-        var name = $("#type").val();
-        var price = $("#price").val();
         AjaxPut("/admin/editTelCerConfig",{
-            name:name,
-            price:price,
-            id:$("#configId").val()
+            name:$("#typeName").val(),
+            price: $("#price").val(),
+            id:$("#configId").val(),
         },function (res) {
             if (res.code == 200){
                 //发异步，把数据提交给后台
