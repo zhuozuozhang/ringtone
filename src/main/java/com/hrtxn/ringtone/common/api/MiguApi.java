@@ -379,6 +379,13 @@ public class MiguApi implements Serializable {
      * @throws IOException
      */
     public String getPhoneInfo(String linkmanTel, String operateId) throws NoLoginException, IOException {
+        //需要先更新移动成员包月状态
+        refreshIsMonthly(linkmanTel);
+        //更新彩铃状态
+        refreshCrbtStatus(linkmanTel);
+        //更新视频彩铃状态
+        refreshVbrtStatus(linkmanTel);
+        //获取移动成员包月状态
         String getUrl = getPhonePage_url + "?provinceCode=&phoneNoOrName=" + linkmanTel + "&groupId=" + operateId + "&groupName=&freezeStatus=-1&payType=0&pageView.currentpage=1";
         String result = sendGet(getUrl);
         log.info("移动获取铃音列表页面 参数：{},{} 结果：{}--->", linkmanTel, operateId, result);
