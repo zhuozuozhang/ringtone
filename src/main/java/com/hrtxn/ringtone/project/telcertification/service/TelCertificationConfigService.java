@@ -57,9 +57,18 @@ public class TelCertificationConfigService {
      */
     public AjaxResult editTelCerConfig(CertificationConfig certificationConfig) {
         if(StringUtils.isNotNull(certificationConfig) && StringUtils.isNotNull(certificationConfig.getId()) && certificationConfig.getId() != 0){
+            if(Const.TEL_CER_CONFIG_TYPE_TEDDY.equals(certificationConfig.getId())){
+                certificationConfig.setType(Const.TEL_CER_CONFIG_TYPE_TEDDY);
+            }else if(Const.TEL_CER_CONFIG_TYPE_TELBOND.equals(certificationConfig.getId())){
+                certificationConfig.setType(Const.TEL_CER_CONFIG_TYPE_TELBOND);
+            }else if(Const.TEL_CER_CONFIG_TYPE_COLORPRINT.equals(certificationConfig.getId())){
+                certificationConfig.setType(Const.TEL_CER_CONFIG_TYPE_COLORPRINT);
+            }else if(Const.TEL_CER_CONFIG_TYPE_HANGUPMESSAGE.equals(certificationConfig.getId())){
+                certificationConfig.setType(Const.TEL_CER_CONFIG_TYPE_HANGUPMESSAGE);
+            }
             int count = certificationConfigMapper.updateTelCerConfig(certificationConfig);
             if(count > 0){
-                return AjaxResult.success(true, "修改成功！");
+                return AjaxResult.success("修改成功！");
             }
             return AjaxResult.error("修改失败！");
         }

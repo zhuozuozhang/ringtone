@@ -285,27 +285,26 @@
 
                 <div class="imgbk"><span><i>*</i>上传营业执照</span>
                     <div class="tpscbk">
-                        <div class="tpimgbka"><img class="tpimga" border="0" th:src="@{/public/images/addimg.png}" test="111" style="margin:0px auto;max-height:140px;"></div>
-                        <input type="file" style="display: none;" name="businessLicense" class="tpdza" onclick="javascript:validate_img(this);" id="businessLicenseAdd">
+                        <div class="tpimgbka" id="businessLicenseClass"><img class="tpimga" border="0" th:src="@{/public/images/addimg.png}" test="111" style="margin:0px auto;max-height:140px;"></div>
+                        <input type="file" style="display: none;" name="businessLicense" class="tpdza" id="businessLicenseAdd">
                     </div>
                 </div>
                 <div class="imgbk"><span><i>*</i>上传法人身份证正面</span>
                     <div class="tpscbk">
-                        <div class="tpimgbka">
-                            <img class="tpimga" border="0" th:src="@{/public/images/addimg.png}" test="111" style="margin:0px auto;max-height:140px;"></div>
-                        <input type="file" style="display: none;" name="legalPersonCardZhen" class="tpdza" onclick="javascript:validate_img(this);" id="legalPersonCardZhenAdd">
+                        <div class="tpimgbka" id="legalPersonCardZhenClass"><img class="tpimga" border="0" th:src="@{/public/images/addimg.png}" test="111" style="margin:0px auto;max-height:140px;"></div>
+                        <input type="file" style="display: none;" name="legalPersonCardZhen" class="tpdza" id="legalPersonCardZhenAdd">
                     </div>
                 </div>
                 <div class="imgbk"><span><i>*</i>上传法人身份证反面</span>
                     <div class="tpscbk">
-                        <div class="tpimgbka"><img class="tpimga" border="0" th:src="@{/public/images/addimg.png}" test="111" style="margin:0px auto;max-height:140px;"></div>
-                        <input type="file" style="display: none;" name="legalPersonCardFan" class="tpdza" onclick="javascript:validate_img(this);" id="legalPersonCardFanAdd">
+                        <div class="tpimgbka" id="legalPersonCardFanClass"><img class="tpimga" border="0" th:src="@{/public/images/addimg.png}" test="111" style="margin:0px auto;max-height:140px;"></div>
+                        <input type="file" style="display: none;" name="legalPersonCardFan" class="tpdza" id="legalPersonCardFanAdd">
                     </div>
                 </div>
                 <div class="imgbk"><span><i>*</i>上传LOGO</span>
                     <div class="tpscbk">
-                        <div class="tpimgbka"><img class="tpimga" border="0" th:src="@{/public/images/addimg.png}" test="111" style="margin:0px auto;max-height:140px;"></div>
-                        <input type="file" style="display: none;" name="logo" class="tpdza" onclick="javascript:validate_img(this);" id="logoAdd">
+                        <div class="tpimgbka" id="logoClass"><img class="tpimga" border="0" th:src="@{/public/images/addimg.png}" test="111" style="margin:0px auto;max-height:140px;"></div>
+                        <input type="file" style="display: none;" name="logo" class="tpdza" id="logoAdd">
                     </div>
                 </div>
                 <div class="approvebk"><span><i>*</i>上传授权书</span>
@@ -347,7 +346,7 @@
 <div class="back display" id="editor">
     <div class="pop_content">
         <div class="approve_title">
-            <h3>更改业务</h3>
+            <h3>更改商户信息</h3>
             <div class="gban" id="gbxg"><img src="../../client/telcertification/images/close.png"></div>
         </div>
         <div class="approvecon" style="padding-top:100px;">
@@ -366,26 +365,26 @@
             </div>
             <div class="imgbk"><span><i>*</i>上传营业执照</span>
                 <div class="tpscbk">
-                    <div class="tpimgbkaedit"><img class="tpimga" border="0" src="../../public/images/addimg.png" test="111" style="margin:0px auto;max-height:140px;"></div>
-                    <input type="file" id="businessLicense" style="display: none;" name="businessLicense" class="tpdza" onclick="javascript:validate_img(this);">
+                    <div class="tpimgbka" id="businessLicenseClassEdit"><img class="tpimga" border="0" src="../../public/images/addimg.png" test="111" style="margin:0px auto;max-height:140px;"></div>
+                    <input type="file" id="businessLicense" style="display: none;" name="businessLicense" class="tpdza" >
                 </div>
             </div>
             <div class="imgbk"><span><i>*</i>上传法人身份证正面</span>
                 <div class="tpscbk">
-                    <div class="tpimgbkaedit"><img class="tpimga" border="0" src="../../public/images/addimg.png" test="111" style="margin:0px auto;max-height:140px;"></div>
-                    <input type="file" id="legalPersonCardZhen" style="display: none;" name="legalPersonCardZhen" class="tpdza" onclick="javascript:validate_img(this);">
+                    <div class="tpimgbka" id="legalPersonCardZhenClassEdit"><img class="tpimga" border="0" src="../../public/images/addimg.png" test="111" style="margin:0px auto;max-height:140px;"></div>
+                    <input type="file" id="legalPersonCardZhen" style="display: none;" name="legalPersonCardZhen" class="tpdza" >
                 </div>
             </div>
             <div class="imgbk"><span><i>*</i>上传法人身份证反面</span>
                 <div class="tpscbk">
-                    <div class="tpimgbkaedit"><img class="tpimga" border="0" src="../../public/images/addimg.png" test="111" style="margin:0px auto;max-height:140px;"></div>
-                    <input type="file" id="legalPersonCardFan" style="display: none;" name="legalPersonCardFan" class="tpdza" onclick="javascript:validate_img(this);">
+                    <div class="tpimgbka" id="legalPersonCardFanClassEdit"><img class="tpimga" border="0" src="../../public/images/addimg.png" test="111" style="margin:0px auto;max-height:140px;"></div>
+                    <input type="file" id="legalPersonCardFan" style="display: none;" name="legalPersonCardFan" class="tpdza">
                 </div>
             </div>
             <div class="imgbk"><span><i>*</i>上传LOGO</span>
                 <div class="tpscbk">
-                    <div class="tpimgbkaedit"><img class="tpimga" border="0" src="../../public/images/addimg.png" test="111" style="margin:0px auto;max-height:140px;"></div>
-                    <input type="file" id="logo" style="display: none;" name="logo" class="tpdza" onclick="javascript:validate_img(this);">
+                    <div class="tpimgbka" id="logoClassEdit"><img class="tpimga" border="0" src="../../public/images/addimg.png" test="111" style="margin:0px auto;max-height:140px;"></div>
+                    <input type="file" id="logo" style="display: none;" name="logo" class="tpdza">
                 </div>
             </div>
             <div class="approvebk"><span><i>*</i>上传授权书</span>

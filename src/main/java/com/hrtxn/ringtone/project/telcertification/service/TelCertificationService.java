@@ -221,6 +221,12 @@ public class TelCertificationService {
         certificationOrder.setTelOrderTime(new Date());
         int i = certificationOrderMapper.updateByPrimaryKey(certificationOrder);
         if (i > 0) {
+            SpringUtils.getBean(FileService.class).updateStatus(certificationOrder.getBusinessLicense());
+            SpringUtils.getBean(FileService.class).updateStatus(certificationOrder.getLegalPersonCardZhen());
+            SpringUtils.getBean(FileService.class).updateStatus(certificationOrder.getLegalPersonCardFan());
+            SpringUtils.getBean(FileService.class).updateStatus(certificationOrder.getLogo());
+            SpringUtils.getBean(FileService.class).updateStatus(certificationOrder.getAuthorization());
+            SpringUtils.getBean(FileService.class).updateStatus(certificationOrder.getNumberProve());
             return AjaxResult.success(i, "修改商户信息成功");
         } else {
             return AjaxResult.error("修改商户信息失败");
@@ -237,7 +243,6 @@ public class TelCertificationService {
         if (!StringUtils.isNotNull(certificationProduct)) {
             return AjaxResult.error("参数不正确！");
         }
-
         Page page = new Page();
         page.setPage(0);
         page.setPagesize(5);
@@ -311,7 +316,7 @@ public class TelCertificationService {
                         childOrder.setTelChildOrderPhone(phoneNum[1]);
                         childOrder.setYears(certificationProduct.getYear());
                         childOrder.setPrice(certificationProduct.getUnitPrice());
-                        childOrder.setTelChildOrderStatus(1);
+                        childOrder.setTelChildOrderStatus(Const.TEL_CER_STATUS_OPENING);
                         childOrder.setBusinessFeedback("暂无");
                         childOrder.setTelChildOrderCtime(new Date());
                         childOrder.setTelChildOrderOpenTime(null);
@@ -329,17 +334,22 @@ public class TelCertificationService {
 
         if(count > 0){
             if(childCount > 0){
+                updateFileStatus(certificationProduct);
                 return AjaxResult.success(true,"添加商户信息和成员号码成功！");
             }
-            SpringUtils.getBean(FileService.class).updateStatus(certificationProduct.getBusinessLicense());
-            SpringUtils.getBean(FileService.class).updateStatus(certificationProduct.getLegalPersonCardZhen());
-            SpringUtils.getBean(FileService.class).updateStatus(certificationProduct.getLegalPersonCardFan());
-            SpringUtils.getBean(FileService.class).updateStatus(certificationProduct.getLogo());
-            SpringUtils.getBean(FileService.class).updateStatus(certificationProduct.getAuthorization());
-            SpringUtils.getBean(FileService.class).updateStatus(certificationProduct.getNumberProve());
+            updateFileStatus(certificationProduct);
             return AjaxResult.success(true,"添加商户成功！");
         }
         return AjaxResult.error("添加失败");
+    }
+
+    private void updateFileStatus(CertificationRequest certificationProduct) {
+        SpringUtils.getBean(FileService.class).updateStatus(certificationProduct.getBusinessLicense());
+        SpringUtils.getBean(FileService.class).updateStatus(certificationProduct.getLegalPersonCardZhen());
+        SpringUtils.getBean(FileService.class).updateStatus(certificationProduct.getLegalPersonCardFan());
+        SpringUtils.getBean(FileService.class).updateStatus(certificationProduct.getLogo());
+        SpringUtils.getBean(FileService.class).updateStatus(certificationProduct.getAuthorization());
+        SpringUtils.getBean(FileService.class).updateStatus(certificationProduct.getNumberProve());
     }
 
     /**
