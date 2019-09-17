@@ -96,6 +96,7 @@ function showTable() {
 // type 标识是否是批量操作 1、批量操作/2、单个操作
 // data 数据 type为1时，data为父级订单ID；type为2时，data为子订单ID
 function getPhoneInfo(type,data) {
+    window.location.reload();
     if (type == 1){
         data  = $('#parentOrderId').val();
     }

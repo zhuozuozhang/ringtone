@@ -93,16 +93,16 @@ public class FileService {
             MultipartFile multipartFile = new MockMultipartFile(file.getName(), inputStream);
             String fileName = "";
             if (ring.getRingName().indexOf(".") > 0) {
-                boolean result = ring.getRingName().substring(ring.getRingName().length() - 6).matches("[0-9]+");
-                if (result){
+                boolean result = ring.getRingName().substring(ring.getRingName().length() - 10, ring.getRingName().lastIndexOf(".")).matches("[0-9]+");
+                if (result) {
                     fileName = ring.getRingName().substring(0, ring.getRingName().length() - 10) + DateUtils.getTimeRadom();
-                }else{
+                } else {
                     fileName = ring.getRingName().substring(0, ring.getRingName().length() - 4) + DateUtils.getTimeRadom();
                 }
             } else {
                 fileName = ring.getRingName();
             }
-            String folderName = ring.getRingWay().substring(ring.getRingWay().indexOf("\\")+1, ring.getRingWay().lastIndexOf("\\"));
+            String folderName = ring.getRingWay().substring(ring.getRingWay().indexOf("\\") + 1, ring.getRingWay().lastIndexOf("\\"));
             return FileUtil.uploadFile(multipartFile, folderName, fileName);
         } catch (Exception e) {
             return null;

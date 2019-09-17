@@ -2,6 +2,8 @@ package com.hrtxn.ringtone.common.utils.juhe;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.hrtxn.ringtone.common.utils.Const;
+import com.hrtxn.ringtone.common.utils.StringUtils;
 import com.hrtxn.ringtone.project.system.json.JuhePhone;
 import com.hrtxn.ringtone.project.system.json.JuhePhoneResult;
 import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreenetsOrder;
@@ -178,13 +180,19 @@ public class JuhePhoneUtils {
         JuhePhone<JuhePhoneResult> resultJuhePhone = mapper.readValue(result, new TypeReference<JuhePhone<JuhePhoneResult>>() {
         });
         System.out.println(resultJuhePhone.toString());
-        if (isFixedPhone(phone)){
+        if (isFixedPhone(phone)) {
             resultJuhePhone = getTel(phone);
+        }
+        if (StringUtils.isEmpty(resultJuhePhone.getResult().getCompany())) {
+            //验证手机号是哪个运营商的
+            JuhePhoneResult juhePhoneResult = resultJuhePhone.getResult();
+            juhePhoneResult.setCompany(isChinaMobilePhoneNum(phone));
+            resultJuhePhone.setResult(juhePhoneResult);
         }
         return resultJuhePhone;
     }
 
-    public static JuhePhone getTel(String tel) throws Exception{
+    public static JuhePhone getTel(String tel) throws Exception {
         Map<String, String> params = new HashMap<String, String>();
         params.put("tel", tel);//需要查询的手机号码或手机号码前7位
         params.put("key", TELKEY);//应用APPKEY(应用详细页查询)
@@ -194,13 +202,13 @@ public class JuhePhoneUtils {
         String reason = jsonObject.getString("reason");
         JuhePhone<JuhePhoneResult> resultJuhePhone = new JuhePhone<>();
         JuhePhoneResult juhePhoneResult = new JuhePhoneResult();
-        if ("查询成功".equals(reason)){
+        if ("查询成功".equals(reason)) {
             resultJuhePhone.setResultcode("200");
             JSONObject jsonData = jsonObject.getJSONObject("result");
             juhePhoneResult.setProvince(jsonData.getString("province"));
             juhePhoneResult.setCity(jsonData.getString("city"));
             juhePhoneResult.setCompany("电信");
-        }else{
+        } else {
             resultJuhePhone.setResultcode("203");
             resultJuhePhone.setError_code(201103);
         }
@@ -216,30 +224,64 @@ public class JuhePhoneUtils {
     }
 
     /**
+     * 查询电话属于哪个运营商
+     *
+     * @param tel 手机号码
+     * @return 0：不属于任何一个运营商，1:移动，2：联通，3：电信
+     */
+    private static String isChinaMobilePhoneNum(String tel) {
+        boolean b1 = tel == null || tel.trim().equals("") ? false : match(Const.CHINA_MOBILE_PATTERN, tel);
+        if (b1) {
+            return "移动";
+        }
+        b1 = tel == null || tel.trim().equals("") ? false : match(Const.CHINA_UNICOM_PATTERN, tel);
+        if (b1) {
+            return "联通";
+        }
+        b1 = tel == null || tel.trim().equals("") ? false : match(Const.CHINA_TELECOM_PATTERN, tel);
+        if (b1) {
+            return "电信";
+        }
+        return "其他";
+    }
+
+    /**
+     * 匹配函数
+     *
+     * @param regex
+     * @param tel
+     * @return
+     */
+    private static boolean match(String regex, String tel) {
+        return Pattern.matches(regex, tel);
+    }
+
+    /**
      * 获取号码归属地并转义
      *
      * @param result
      * @return
      */
-    public static Integer getOperate(JuhePhoneResult result){
+    public static Integer getOperate(JuhePhoneResult result) {
         if (result.getCompany().equals("移动")) {
             return 1;
         } else if (result.getCompany().equals("联通")) {
             return 3;
-        } else {
+        } else if (result.getCompany().equals("电信")) {
             return 2;
+        } else {
+            return 0;
         }
     }
 
     /**
-     *
      * @param order
      * @return
      * @throws Exception
      */
-    public static ThreenetsOrder getPhone(ThreenetsOrder order)throws Exception{
+    public static ThreenetsOrder getPhone(ThreenetsOrder order) throws Exception {
         JuhePhone phone = getPhone(order.getLinkmanTel());
-        if (phone.getResult() == null){
+        if (phone.getResult() == null) {
             return order;
         }
         JuhePhoneResult result = (JuhePhoneResult) phone.getResult();
