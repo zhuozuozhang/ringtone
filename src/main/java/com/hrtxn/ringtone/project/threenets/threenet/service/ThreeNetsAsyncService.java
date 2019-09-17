@@ -772,11 +772,10 @@ public class ThreeNetsAsyncService {
         try {
             McardAddGroupRespone respone = apiUtils.normalBusinessInfo(order);
             if (respone.getCode().equals("0000")) {
-                attached.setMcardStatus(Const.REVIEWED);
                 ThreenetsChildOrder param = new ThreenetsChildOrder();
                 param.setParentOrderId(order.getId());
                 param.setOperator(Const.OPERATORS_TELECOM);
-                param.setStatus("未审核");
+                param.setStatus(Const.PENDING_REVIEW);
                 //保存成员
                 List<ThreenetsChildOrder> childOrders = threenetsChildOrderMapper.listByParamNoPage(param);
                 childOrders = apiUtils.addPhoneByDx(childOrders, attached.getMcardId(), attached.getMcardDistributorId());
@@ -794,6 +793,7 @@ public class ThreeNetsAsyncService {
                 for (int i = 0; i < childOrders.size(); i++) {
                     threenetsChildOrderMapper.updateThreeNetsChidOrder(childOrders.get(i));
                 }
+                attached.setMcardStatus(Const.REVIEWED);
             } else {
                 ThreenetsChildOrder param = new ThreenetsChildOrder();
                 param.setParentOrderId(order.getId());
