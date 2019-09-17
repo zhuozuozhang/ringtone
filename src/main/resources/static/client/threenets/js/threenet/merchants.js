@@ -37,10 +37,10 @@ function showTable() {
         targets: [9],
         render:function (data, type, row, meta) {
             var id = row.id;
-            if(data == 1){
-                return "<i>无</i>"
-            }else{
+            if(data == 2){
                 return "<i class='layui-icon' title='查看消息' onclick='findCricleMsgList("+id+")'><img src='../../client/threenets/images/group_msg.png'></i>"
+            }else{
+                return "<i>无</i>"
             }
         }
     },{
