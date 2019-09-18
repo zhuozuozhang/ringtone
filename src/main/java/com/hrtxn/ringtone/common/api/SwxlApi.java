@@ -109,7 +109,7 @@ public class SwxlApi implements Serializable {
         this.connectTime = connectTime;
     }
 
-    public CookieStore getCookieStore() throws NoLoginException, IOException {
+    public CookieStore getCookieStore() throws NoLoginException{
         // 为空的话，先去取
         if (this.swxlCookie == null) {
             // 重新登录获取
@@ -558,10 +558,6 @@ public class SwxlApi implements Serializable {
                 HttpEntity resEntity = response1.getEntity();
                 String res = EntityUtils.toString(resEntity);
                 log.info("联通商户建立=>" + res);
-                if (res.contains("您的登录信息已过期，请重新登录")) {
-                    loginAuto();
-                    addGroup(ringOrder, attached);
-                }
                 //res{"recode":"000000","message":"成功","data":{"groupId":"2e33a3e9c0e1452d83a6fa3e5a8ad2e2"},"success":true}
                 ObjectMapper mapper = new ObjectMapper();
                 if (res.contains("000000")) {
@@ -725,10 +721,6 @@ public class SwxlApi implements Serializable {
             HttpResponse response = httpclient.execute(httppost);
             HttpEntity resEntity = response.getEntity();
             result = EntityUtils.toString(resEntity);
-            if (result.contains("您的登录信息已过期，请重新登录")) {
-                loginAuto();
-                addPhone(members, groupId);
-            }
             //{"recode":"200015","message":"成员属于其他企业,无法操作","data":null,"success":false}
             info = SpringUtils.getBean(ObjectMapper.class).readValue(result, SwxlBaseBackMessage.class);
             System.out.println("result:" + result);
@@ -765,10 +757,6 @@ public class SwxlApi implements Serializable {
                 log.debug("铃音上传服务器正常响应.....");
                 // HttpEntity resEntity = response1.getEntity();
                 String result = EntityUtils.toString(response1.getEntity());
-                if (result.contains("您的登录信息已过期，请重新登录")) {
-                    loginAuto();
-                    addRing(ring, circleID);
-                }
                 flag = !result.contains("铃音名称已经存在，请修改");
                 // 铃音文件时长超过48秒
                 this.setSwxlCookie(httpclient.getCookieStore());
