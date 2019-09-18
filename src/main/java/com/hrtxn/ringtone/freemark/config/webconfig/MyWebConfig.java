@@ -60,7 +60,7 @@ public class MyWebConfig implements WebMvcConfigurer {
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/statics/**").addResourceLocations("classpath:/statics/");
-        registry.addResourceHandler("/profile/**").addResourceLocations("file:D:/profile/");
+        registry.addResourceHandler("/profile/**").addResourceLocations("file:C:/profile/");
     }
 
 }
