@@ -107,12 +107,12 @@ public class ThreeNetsController {
      * @return
      */
     @GetMapping("/threenets/toAddMerchantsPhonePage/{orderId}")
-    public String toAddMerchantsPhonePage(ModelMap map,@PathVariable("orderId")Integer orderId) {
-        try{
+    public String toAddMerchantsPhonePage(ModelMap map, @PathVariable("orderId") Integer orderId) {
+        try {
             ThreenetsOrder order = threenetsOrderMapper.selectByPrimaryKey(orderId);
-            map.put("orderId",orderId);
-            map.put("folderName",order.getFolderName());
-        }catch(Exception e) {
+            map.put("orderId", orderId);
+            map.put("folderName", order.getFolderName());
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return "threenets/threenet/merchants/Addnumber";
@@ -237,7 +237,7 @@ public class ThreeNetsController {
         try {
             return userService.updateUserById(user);
         } catch (Exception e) {
-            log.error("个人信息-->个人设置 --->"+e);
+            log.error("个人信息-->个人设置 --->" + e);
             return AjaxResult.error(e.getMessage());
         }
     }
@@ -327,9 +327,9 @@ public class ThreeNetsController {
      */
     @PostMapping("/threenets/getChildAccountList")
     @ResponseBody
-    public AjaxResult getChildAccountList(Integer page, Integer pagesize, Integer type) {
+    public AjaxResult getChildAccountList(Integer page, Integer pagesize, Integer type, String userName, String userTel) {
         try {
-            return userService.getChildAccountList(page, pagesize, type);
+            return userService.getChildAccountList(page, pagesize, type, userName, userTel);
         } catch (Exception e) {
             log.error("获取子账号列表 方法：getChildAccountList 错误信息", e);
         }
@@ -378,12 +378,12 @@ public class ThreeNetsController {
      */
     @PostMapping("/threenets/insertUser")
     @ResponseBody
-    @Log(title = "添加子账号",businessType = BusinessType.INSERT,operatorLogType = OperatorLogType.THREENETS)
-    public AjaxResult insertUser(User user){
+    @Log(title = "添加子账号", businessType = BusinessType.INSERT, operatorLogType = OperatorLogType.THREENETS)
+    public AjaxResult insertUser(User user) {
         try {
             return userService.insertUser(user);
         } catch (Exception e) {
-            log.error("添加子账号--->"+e);
+            log.error("添加子账号--->" + e);
             return AjaxResult.error(e.getMessage());
         }
     }
@@ -396,9 +396,9 @@ public class ThreeNetsController {
      */
     @PostMapping("/threenets/getOperate")
     @ResponseBody
-    public AjaxResult matchingOperate(String phone,Integer parentOrderId) {
+    public AjaxResult matchingOperate(String phone, Integer parentOrderId) {
         try {
-            return threeNetsService.matchingOperate(phone,parentOrderId);
+            return threeNetsService.matchingOperate(phone, parentOrderId);
         } catch (Exception e) {
             return AjaxResult.error("验证手机运营商失败！");
         }
@@ -426,21 +426,23 @@ public class ThreeNetsController {
 
     /**
      * 商户列表-->查看消息
+     *
      * @return
      */
     @GetMapping("/threenets/toFindCricleMsgListPage/{com_id}")
-    public String toFindCricleMsgListPage(ModelMap map,@PathVariable String com_id){
-        map.put("parentOrderId",com_id);
+    public String toFindCricleMsgListPage(ModelMap map, @PathVariable String com_id) {
+        map.put("parentOrderId", com_id);
         return "threenets/threenet/merchants/cricle_msg_list";
     }
 
     /**
      * 商户列表-->消息处理
+     *
      * @return
      */
     @PostMapping("/threenets/findCricleMsgList/{com_id}")
     @ResponseBody
-    public AjaxResult findCricleMsgList(@PathVariable String com_id){
+    public AjaxResult findCricleMsgList(@PathVariable String com_id) {
         try {
             return threeNetsOrderAttachedService.findCricleMsgList(com_id);
         } catch (Exception e) {

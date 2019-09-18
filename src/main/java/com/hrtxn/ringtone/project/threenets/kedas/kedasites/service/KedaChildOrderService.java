@@ -127,7 +127,7 @@ public class KedaChildOrderService {
         if (baseRequest.getUserId().equals(0)) {
             baseRequest.setUserId(null);
             // 递归查询当前登陆者下的所有子代理商
-            List<UserVo> userVoList = userMapper.findUserByparentId(null, null, ShiroUtils.getSysUser().getId());
+            List<UserVo> userVoList = userMapper.findUserByparentId(null, null, ShiroUtils.getSysUser().getId(),null,null);
             List<UserVo> node = getNode(userVoList);
             // 获取当前登陆者下的所有子代理商ID
             Integer[] id = new Integer[node.size()];
@@ -237,7 +237,7 @@ public class KedaChildOrderService {
     public List<UserVo> getNode(List<UserVo> users) throws Exception {
         if (users != null && users.size() != 0) {
             for (int i = 0; i < users.size(); i++) {
-                List<UserVo> list = userMapper.findUserByparentId(null, null, users.get(i).getId());
+                List<UserVo> list = userMapper.findUserByparentId(null, null, users.get(i).getId(),null,null);
                 if (list != null && list.size() != 0) {
                     for (UserVo user : list) {
                         users.add(user);

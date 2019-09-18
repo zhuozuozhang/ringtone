@@ -20,6 +20,9 @@ var columnDefs = [{
 
 //子账号切换
 function openLower(obj) {
+    if (obj == undefined){
+        obj = $("#type").val();
+    }
     if (obj == 1) {
         $("#Alower").removeClass("seled");
         $("#lower").addClass("seled");
@@ -27,8 +30,11 @@ function openLower(obj) {
         $("#lower").removeClass("seled");
         $("#Alower").addClass("seled");
     }
+    $("#type").val(obj)
     page("#set",15,{
-        type:obj
+        type:obj,
+        userName:$("#userName").val(),
+        userTel:$("#userTel").val()
     },"/threenets/getChildAccountList",columns,columnDefs);
 }
 //添加子账号

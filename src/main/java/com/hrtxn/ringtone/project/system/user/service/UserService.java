@@ -223,7 +223,7 @@ public class UserService {
      * @return
      * @throws Exception
      */
-    public AjaxResult getChildAccountList(Integer page, Integer pagesize, Integer type) throws Exception {
+    public AjaxResult getChildAccountList(Integer page, Integer pagesize, Integer type, String userName, String userTel) throws Exception {
         if (!StringUtils.isNotNull(page) || !StringUtils.isNotNull(pagesize) || !StringUtils.isNotNull(type)) {
             return AjaxResult.error("参数格式错误");
         }
@@ -231,11 +231,11 @@ public class UserService {
         int totalCount = 0;
         page = (page - 1) * pagesize;
         if (type == 1) {// 获取当前登录者下级代理商
-            userVoList = userMapper.findUserByparentId(page, pagesize, ShiroUtils.getSysUser().getId());
-            totalCount = userMapper.getUserCount(ShiroUtils.getSysUser().getId());
+            userVoList = userMapper.findUserByparentId(page, pagesize, ShiroUtils.getSysUser().getId(),userName,userTel);
+            totalCount = userMapper.getUserCount(ShiroUtils.getSysUser().getId(),userName,userTel);
         } else { // 管理员 获取所有代理商
-            totalCount = userMapper.getUserCount(null);
-            userVoList = userMapper.findUserByparentId(page, pagesize, null);
+            totalCount = userMapper.getUserCount(null,userName,userTel);
+            userVoList = userMapper.findUserByparentId(page, pagesize, null,userName,userTel);
         }
         return AjaxResult.success(userVoList, "查询成功", totalCount);
     }
@@ -431,7 +431,7 @@ public class UserService {
             user = ShiroUtils.getSysUser();
         }
         if (StringUtils.isNotNull(user)){
-            userVoList = userMapper.findUserByparentId(null, null, user.getId());
+            userVoList = userMapper.findUserByparentId(null, null, user.getId(),null,null);
             List<UserVo> users = getLowNode(userVoList);
             return AjaxResult.success(users,"获取数据成功！");
         }
@@ -466,7 +466,7 @@ public class UserService {
     public List<UserVo> getLowNode(List<UserVo> users) throws Exception {
         if(users !=null && users.size()!=0){
             for(int i=0;i<users.size();i++){
-                List<UserVo> list = userMapper.findUserByparentId(null, null,users.get(i).getId());
+                List<UserVo> list = userMapper.findUserByparentId(null, null,users.get(i).getId(),null,null);
                 if (list != null && list.size() != 0) {
                     for (UserVo user : list) {
                         users.add(user);
