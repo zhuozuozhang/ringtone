@@ -54,4 +54,6 @@ public class ThreenetsOrder implements Serializable {
     private String ringName;
 
     private String mianduan;
+
+    private String paymentType;
 }

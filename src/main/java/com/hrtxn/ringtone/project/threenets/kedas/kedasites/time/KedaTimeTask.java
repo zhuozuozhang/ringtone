@@ -2,6 +2,7 @@ package com.hrtxn.ringtone.project.threenets.kedas.kedasites.time;
 
 import com.hrtxn.ringtone.common.api.KedaApi;
 import com.hrtxn.ringtone.common.constant.AjaxResult;
+import com.hrtxn.ringtone.common.domain.BaseRequest;
 import com.hrtxn.ringtone.common.utils.SpringUtils;
 import com.hrtxn.ringtone.project.threenets.kedas.kedasites.domain.KedaChildOrder;
 import com.hrtxn.ringtone.project.threenets.kedas.kedasites.mapper.KedaChildOrderMapper;
@@ -32,10 +33,10 @@ public class KedaTimeTask {
     public void updatew() throws IOException {
         // 获取除已包月子订单数据（0,2,3,4）
         List<KedaChildOrder> kedaChildOrders = SpringUtils.getBean(KedaChildOrderMapper.class).selectKedaChildorder(1);
-        if (kedaChildOrders.size() > 0){
-            for (int i = 0; i < kedaChildOrders.size(); i++){
+        if (kedaChildOrders.size() > 0) {
+            for (int i = 0; i < kedaChildOrders.size(); i++) {
                 AjaxResult msg = kedaApi.getMsg(kedaChildOrders.get(i).getLinkTel(), kedaChildOrders.get(i).getId());
-                log.info("疑难杂单定时器更新除已包月子订单数据：{}",msg);
+                log.info("疑难杂单定时器更新除已包月子订单数据：{}", msg);
             }
         }
     }
@@ -49,12 +50,33 @@ public class KedaTimeTask {
     public void updatey() throws IOException {
         // 获取所有无效文件
         List<KedaChildOrder> kedaChildOrders = SpringUtils.getBean(KedaChildOrderMapper.class).selectKedaChildorder(2);
-        if (kedaChildOrders.size() > 0){
-            for (int i = 0; i < kedaChildOrders.size(); i++){
+        if (kedaChildOrders.size() > 0) {
+            for (int i = 0; i < kedaChildOrders.size(); i++) {
                 AjaxResult msg = kedaApi.getMsg(kedaChildOrders.get(i).getLinkTel(), kedaChildOrders.get(i).getId());
-                log.info("疑难杂单定时器更新已包月子订单数据：{}",msg);
+                log.info("疑难杂单定时器更新已包月子订单数据：{}", msg);
             }
         }
     }
 
+    /**
+     * 同步失败的子订单
+     *
+     * @throws IOException
+     */
+    @Scheduled(cron = "0 00 23 ? * *")
+    public void synchronizationFailureData() throws IOException {
+        BaseRequest baseRequest = new BaseRequest();
+        baseRequest.setRemark("参数校验失败");
+        List<KedaChildOrder> list = SpringUtils.getBean(KedaChildOrderMapper.class).selectByParam(baseRequest);
+        for (int i = 0; i < list.size(); i++) {
+            KedaChildOrder kedaChildOrder = list.get(i);
+            AjaxResult add = kedaApi.add(kedaChildOrder);
+            if ((int) add.get("code") == 200) {
+                kedaChildOrder.setRemark("添加成功！");
+            } else {
+                kedaChildOrder.setRemark(add.get("msg").toString());
+            }
+            SpringUtils.getBean(KedaChildOrderMapper.class).updatKedaChildOrder(kedaChildOrder);
+        }
+    }
 }

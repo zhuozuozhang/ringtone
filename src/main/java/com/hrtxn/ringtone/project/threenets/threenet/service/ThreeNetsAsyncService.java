@@ -81,6 +81,7 @@ public class ThreeNetsAsyncService {
                 if (StringUtils.isNotEmpty(orderRequest.getMianduan()) && orderRequest.getMianduan().equals("是")) {
                     order.setMianduan("1");
                 }
+                order.setPaymentType(orderRequest.getPaymentType());
                 createUnicomMerchant(order, attached, collect.get(Const.OPERATORS_UNICOM));
             }
             //电信
@@ -344,6 +345,8 @@ public class ThreeNetsAsyncService {
                     if (StringUtils.isNotEmpty(request.getMianduan()) && request.getMianduan().equals("是")) {
                         order.setMianduan("1");
                     }
+                    //各付
+                    order.setPaymentType("0");
                     ThreenetsRing threenetsRing = rings.get(0);
                     if (ringMap.get(3) == null) {
                         String path = fileService.cloneFile(threenetsRing);
