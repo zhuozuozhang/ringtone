@@ -1,0 +1,2 @@
+2019年9月19日  | tb_test
+    alter table tb_threenets_ring add oid_ring_id VARCHAR(100) DEFAULT NULL COMMENT '旧表铃音ID';
