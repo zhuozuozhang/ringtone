@@ -62,7 +62,8 @@ public interface UserMapper {
     List<UserVo> findUserByparentId(
         @Param("page") Integer page,
         @Param("pagesize") Integer pagesize,
-        @Param("id") Integer id) throws Exception;
+        @Param("id") Integer id,@Param("userName") String userName,@Param("userTel") String userTel
+    ) throws Exception;
 
     List<User> findChildUser(@Param("id") Integer id,@Param("name") String name) throws Exception;
     /**
@@ -70,7 +71,7 @@ public interface UserMapper {
      * @param parentId
      * @return
      */
-    int getUserCount(@Param("parentId") Integer parentId) throws Exception;
+    int getUserCount(@Param("parentId") Integer parentId,@Param("userName") String userName,@Param("userTel") String userTel) throws Exception;
 
     /**
      * 添加账号

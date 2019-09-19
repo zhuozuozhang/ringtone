@@ -78,6 +78,12 @@
         <if test="id != null">
             AND u.parent_id = #{id}
         </if>
+        <if test="userName != null and userName != ''">
+            AND user_name LIKE '%${userName}%'
+        </if>
+        <if test="userTel != null and userTel != ''">
+            AND user_tel LIKE '%${userTel}%'
+        </if>
         ORDER BY user_time DESC
         <if test="page != null and page != '' and pagesize != null and pagesize !='' ">
             LIMIT #{page},#{pagesize}
@@ -116,6 +122,12 @@
         WHERE 1 = 1
         <if test="parentId != null">
             AND parent_id = #{parentId}
+        </if>
+        <if test="userName != null and userName != ''">
+            AND user_name LIKE '%${userName}%'
+        </if>
+        <if test="userTel != null and userTel != ''">
+            AND user_tel LIKE '%${userTel}%'
         </if>
     </select>
     <!-- 根据条件获取代理商总数-->

@@ -72,4 +72,6 @@ public class BaseRequest {
 
     //批量添加的号码
     private String[] phoneNumberArray;
+
+    private String remark;
 }

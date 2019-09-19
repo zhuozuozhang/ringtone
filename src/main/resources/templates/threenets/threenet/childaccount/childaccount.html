@@ -38,11 +38,19 @@
     <div class="layui-row contant" style="width:80%;">
         <!-- 等待设置铃音 -->
         <div class="layui-col-md12" id="search">
-            <div style="padding:20px 0;padding-left:0px;font-size:16px;">
-                操作:
-                <button type="button" class="layui-btn layui-btn-radius" id="Adds" onclick="AddUser();">添加子账户</button>
-                <button type="button" class="layui-btn layui-btn-radius" id="lower" onclick="openLower(1);">下级代理</button>
-                <button shiro:hasRole="admin" type="button" class="layui-btn layui-btn-radius" id="Alower" onclick="openLower(2);">所有下级代理</button>
+            <div style="padding:20px 0;padding-left:0px;font-size:16px; display: flex; flex-direction: row;justify-content: space-between">
+                <div>
+                    操作:
+                    <button type="button" class="layui-btn layui-btn-radius" id="Adds" onclick="AddUser();">添加子账户</button>
+                    <button type="button" class="layui-btn layui-btn-radius" id="lower" onclick="openLower(1);">下级代理</button>
+                    <button shiro:hasRole="admin" type="button" class="layui-btn layui-btn-radius" id="Alower" onclick="openLower(2);">所有下级代理</button>
+                </div>
+                <div>
+                    名称：<input type="text" name="userName" id="userName" autocompvare="off">&nbsp;&nbsp;
+                    联系号码：<input type="text" name="userTel" id="userTel" style="margin:0 10px" autocompvare="off">
+                    <input type="hidden" id="type">
+                    <button type="button" class="layui-btn layui-btn-radius layui-btn-normal" id="sear" onclick="openLower();">搜 索</button>
+                </div>
             </div>
             <table class="layui-table" id="set">
                 <thead>

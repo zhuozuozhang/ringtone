@@ -6,10 +6,7 @@ import com.hrtxn.ringtone.common.api.MiguApi;
 import com.hrtxn.ringtone.common.api.SwxlApi;
 import com.hrtxn.ringtone.common.constant.AjaxResult;
 import com.hrtxn.ringtone.common.exception.NoLoginException;
-import com.hrtxn.ringtone.common.utils.ConfigUtil;
-import com.hrtxn.ringtone.common.utils.Const;
-import com.hrtxn.ringtone.common.utils.SpringUtils;
-import com.hrtxn.ringtone.common.utils.StringUtils;
+import com.hrtxn.ringtone.common.utils.*;
 import com.hrtxn.ringtone.common.utils.json.JsonUtil;
 import com.hrtxn.ringtone.project.system.File.service.FileService;
 import com.hrtxn.ringtone.project.system.user.domain.User;
@@ -49,6 +46,13 @@ public class ApiUtils {
     private static SwxlApi swxlApi = new SwxlApi();
     private static McardApi mcardApi = new McardApi();
     private static ConfigUtil configUtil = new ConfigUtil();
+
+    /**
+     * 登录联通商户
+     */
+    public void loginToUnicom(){
+        swxlApi.loginAutoParam(ShiroUtils.getSysUser().getUserName());
+    }
 
     /**
      * 获取号码信息
@@ -1073,6 +1077,7 @@ public class ApiUtils {
         } else { // 联通
             String[] phoness = phones.split(",");
             for (String phone : phoness) {
+                loginToUnicom();
                 String result = swxlApi.setRingForPhone(phone, threenetsRing.getOperateRingId());
                 if (StringUtils.isNotEmpty(result)) {
                     SwxlBaseBackMessage<SwxlAddPhoneNewResult> info = SpringUtils.getBean(ObjectMapper.class).readValue(result, SwxlBaseBackMessage.class);
@@ -1304,6 +1309,7 @@ public class ApiUtils {
     public AjaxResult insertUser(User user) throws NoLoginException, IOException {
         String msg = "创建失败！";
         // 执行添加联通子渠道商
+        loginToUnicom();
         String result = swxlApi.addChild(user);
         if (StringUtils.isNotEmpty(result)) {
             SwxlBaseBackMessage<Object> createUser = SpringUtils.getBean(ObjectMapper.class).readValue(result, SwxlBaseBackMessage.class);

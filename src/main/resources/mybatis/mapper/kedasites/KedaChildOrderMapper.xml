@@ -322,7 +322,11 @@
             AND is_monthly = 1
         </if>
     </select>
-
+    <select id="selectByParam" resultMap="BaseResultMap" parameterType="com.hrtxn.ringtone.common.domain.BaseRequest">
+        SELECT * FROM tb_keda_child_order
+        WHERE 1=1
+        <include refid="parameters"/>
+    </select>
     <!--条件-->
     <sql id="parameters">
         <if test="param != null and param.id != null">
@@ -354,6 +358,9 @@
         </if>
         <if test="param != null and param.linkMan != null and param.linkMan != ''">
             AND link_man = #{param.linkMan}
+        </if>
+        <if test="param != null and param.remark != null and param.remark != ''">
+            AND remark like '%${param.remark}%'
         </if>
     </sql>
     <!--分页-->

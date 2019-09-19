@@ -81,6 +81,7 @@ public class ThreeNetsAsyncService {
                 if (StringUtils.isNotEmpty(orderRequest.getMianduan()) && orderRequest.getMianduan().equals("是")) {
                     order.setMianduan("1");
                 }
+                order.setPaymentType(orderRequest.getPaymentType());
                 createUnicomMerchant(order, attached, collect.get(Const.OPERATORS_UNICOM));
             }
             //电信
@@ -156,6 +157,7 @@ public class ThreeNetsAsyncService {
      */
     private void saveOrderByLt(ThreenetsOrder order, ThreeNetsOrderAttached attached, List<ThreenetsChildOrder> childOrders) throws Exception {
         ApiUtils utils = new ApiUtils();
+        utils.loginToUnicom();
         ThreenetsRing ring = threenetsRingMapper.selectByPrimaryKey(childOrders.get(0).getRingId());
         order.setLinkmanTel(childOrders.get(0).getLinkmanTel());
         order.setRingName(ring.getRingName().substring(0, ring.getRingName().indexOf(".")));
@@ -343,6 +345,8 @@ public class ThreeNetsAsyncService {
                     if (StringUtils.isNotEmpty(request.getMianduan()) && request.getMianduan().equals("是")) {
                         order.setMianduan("1");
                     }
+                    //各付
+                    order.setPaymentType("0");
                     ThreenetsRing threenetsRing = rings.get(0);
                     if (ringMap.get(3) == null) {
                         String path = fileService.cloneFile(threenetsRing);
@@ -438,6 +442,8 @@ public class ThreeNetsAsyncService {
             createUnicomMerchant(order, attached, list);
             return list;
         }
+        //登录联通商户
+        apiUtils.loginToUnicom();
         for (int i = 0; i < list.size(); i++) {
             ThreenetsChildOrder childOrder = list.get(i);
             childOrder.setOperateId(attached.getSwxlId());
@@ -583,6 +589,8 @@ public class ThreeNetsAsyncService {
     private void createUnicomMerchant(ThreenetsOrder order, ThreeNetsOrderAttached attached, List<ThreenetsChildOrder> childOrders) {
         try {
             ApiUtils utils = new ApiUtils();
+            //登录联通商户
+            utils.loginToUnicom();
             ThreenetsChildOrder firstChildOrder = childOrders.get(0);
             //获取关联铃音
             ThreenetsRing ring = threenetsRingMapper.selectByPrimaryKey(firstChildOrder.getRingId());
@@ -873,6 +881,8 @@ public class ThreeNetsAsyncService {
     public void ringToneUploadByUnicom(ThreenetsRing ring) {
         try {
             ApiUtils apiUtils = new ApiUtils();
+            //登录联通商户
+            apiUtils.loginToUnicom();
             ring.setFile(new File(RingtoneConfig.getProfile() + ring.getRingWay()));
             ThreeNetsOrderAttached attached = threeNetsOrderAttachedMapper.selectByParentOrderId(ring.getOrderId());
             ring.setOperateId(attached.getSwxlId());

@@ -106,4 +106,13 @@ public interface KedaChildOrderMapper {
      * @return
      */
     List<KedaChildOrder> selectKedaChildorder(@Param("type") Integer type);
+
+
+    /**
+     * 按照条件查询
+     *
+     * @param baseRequest
+     * @return
+     */
+    List<KedaChildOrder> selectByParam(@Param("param") BaseRequest baseRequest);
 }

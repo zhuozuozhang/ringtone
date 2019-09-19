@@ -32,7 +32,8 @@
             AND p.id = #{param.id}
         </if>
         <if test="param.tel != null and param.tel !=''">
-            AND p.linkman_tel like '%${param.tel}%'
+            AND (p.linkman_tel like '%${param.tel}%'
+            or p.id in(select parent_order_id from tb_threenets_child_order where linkman_tel like '%${param.tel}%' GROUP BY parent_order_id))
         </if>
         <if test="param.name != null and param.name !=''">
             AND p.company_name like '%${param.name}%'
