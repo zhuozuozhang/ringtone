@@ -27,14 +27,17 @@
     </div>
     <div class="layui-col-xs11 mconr">
         <div class="grid-demo">
-            <div class="layui-row contant" style="width:95%;">
+            <div class="layui-row" style="width:95%;padding-top: 0px;">
                 <!-- 等待设置铃音 -->
                 <div class="layui-col-md12" id="search">
-                    <div class="title-bar clearfix">
+                    <div class="title-bar clearfix" style="display: flex;flex-direction: row;justify-content: space-between">
                         <h1 class="pull-cnter">
                             您正在以 <span style="color: red;" id="name" th:text="${name}"></span> 的管理员身份进行操作。
                             <input type="hidden" id="orderId" th:value="${id}">
                         </h1>
+                        <div>
+                            <span>铃音审核通过后设置铃音后会自动下发短信</span>
+                        </div>
                     </div>
                     <div style="padding:10px 0 0 10px;font-size:16px;">
                         操作：

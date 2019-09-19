@@ -18,7 +18,17 @@
             <div class="layui-row" style="height:110px;">
                 <div class="layui-col-xs6">
                     <div class="grid-demo grid-demo-bg1">
-                        <img th:src="@{/public/images/logo.png}" alt="" width="580px" height="100px" style='margin: 5px 20px;'>
+                        <img th:src="@{/public/images/keda_logo.png}" alt="" width="690px" height="100px" style='margin: 5px 20px;'>
+                    </div>
+                </div>
+                <div class="layui-col-xs6" id="navigation">
+                    <div class="grid-demo" style="margin-top: 15px;">
+                        <div class="layui-row layui-col-space5"  style="display: flex;justify-content: center">
+                            <div class="layui-col-md4">
+                                <div class="grid-demo grid-demo-bg1">您好,代理商，[[${session.username}]]</div>
+                            </div>
+                            <i class="layui-icon layui-icon-notice" style="font-size:30px" onclick="showAnnouncement()"></i>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -32,6 +42,11 @@
             </ul>
         </div>
     </div>
+    <script>
+        function showAnnouncement() {
+            layer.open({type: 2, title: '公告', area: ['850px', '500px'], content: '/threenets/threeNetsAnnunciate?type=keda'});
+        }
+    </script>
 </div>
 
 <div th:fragment="footer">
