@@ -14,7 +14,7 @@
                 <span class="x-red">*</span>类型名称
             </label>
             <div class="layui-input-inline">
-                <input type="text" id="typeName" readonly name="typeName" required lay-verify="required" th:value="${telCerConfig.typeName}" autocomplete="off" class="layui-input">
+                <input type="text" id="typeName" name="typeName" required lay-verify="required" autocomplete="off" class="layui-input">
             </div>
         </div>
         <div class="layui-form-item">
@@ -22,14 +22,13 @@
                 <span class="x-red">*</span>金额
             </label>
             <div class="layui-input-inline">
-                <input type="text" id="price" name="price" required lay-verify="required" th:value="${telCerConfig.price}" autocomplete="off" class="layui-input">
+                <input type="number" id="price" name="price" required lay-verify="required" autocomplete="off" class="layui-input">
             </div>
         </div>
         <div class="layui-form-item">
             <label class="layui-form-label"></label>
-            <button class="layui-btn" lay-filter="add" lay-submit="">修改</button>
+            <button class="layui-btn" lay-filter="addConfig" lay-submit="">添加</button>
         </div>
-        <input type="hidden" id="configId" th:value="${telCerConfig.id}">
     </form>
 </div>
 </body>

@@ -307,9 +307,9 @@ public class TelCertificationChildService {
                         if(insertConsumeLog > 0){
                             int afterSuccess = certificationChildOrderMapper.editChildOrderIfStatusChanged(certificationChildOrder);
                             if(afterSuccess > 0){
-                                return AjaxResult.success(200,afterSuccess,"操作成功！",afterSuccess);
+                                return AjaxResult.success(200,afterSuccess,"扣费成功！",afterSuccess);
                             }
-                            return AjaxResult.error("操作失败!");
+                            return AjaxResult.error("扣费失败!");
                         }
                         return AjaxResult.error("添加消费日志失败！");
                     }
