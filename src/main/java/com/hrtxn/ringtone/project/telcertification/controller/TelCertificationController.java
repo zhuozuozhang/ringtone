@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 /**
- * Author:yuanye
+ * @author : yuanye
  * Date:2019-07-10 16:07
  * Description:电话认证控制器
  */
@@ -239,5 +239,16 @@ public class TelCertificationController {
     public String toDuePage(){
         return "telcertification/due";
     }
+
+    /**
+     * 进入订购统计页面
+     * @return
+     */
+    @GetMapping("/toServiceStatisticsPage")
+    public String toServiceStatisticsPage(){
+        return "telcertification/statistics";
+    }
+
+
 
 }

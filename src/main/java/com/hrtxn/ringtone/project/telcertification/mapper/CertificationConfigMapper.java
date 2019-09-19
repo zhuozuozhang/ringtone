@@ -35,4 +35,12 @@ public interface CertificationConfigMapper {
     int updateTelCerConfig(CertificationConfig certificationConfig);
 
     int deleteByPrimaryKey(@Param("id") Integer id);
+
+    int insert (CertificationConfig certificationConfig);
+
+    /**
+     * 获取最新添加的id
+     * @return
+     */
+    int getLastInsertId();
 }

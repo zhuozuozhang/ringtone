@@ -101,9 +101,10 @@ public class ConsumeLogService {
         if(StringUtils.isNotNull(consumeLog) && StringUtils.isNotEmpty(consumeLog.getUserTel())){
             CertificationOrder certificationOrder = certificationOrderMapper.getTelCerOrderByChildOrder(consumeLog.getUserTel());
             CertificationChildOrder certificationChildOrder = certificationChildOrderMapper.getTelcerChildByPhoneNum(consumeLog.getUserTel());
-            if(Const.TEL_CER_STATUS_OPENING.equals(certificationChildOrder.getTelChildOrderStatus()) ||
-                    Const.TEL_CER_STATUS_DEFAULT_OPENING.equals(certificationChildOrder.getTelChildOrderStatus())){
-                return AjaxResult.error("当前业务需要在管理端开通后才可以再续费");
+            if(Const.TEL_CER_STATUS_OPENING.equals(certificationChildOrder.getTelChildOrderStatus())) {
+                return AjaxResult.error("业务开通中不可设置为续费中");
+            }else if(Const.TEL_CER_STATUS_DEFAULT_OPENING.equals(certificationChildOrder.getTelChildOrderStatus())){
+                return AjaxResult.error("业务开通失败不可设置为续费中");
             }
             Float price = certificationOrder.getUnitPrice();
             User user = userMapper.findUserById(ShiroUtils.getSysUser().getId());
@@ -160,6 +161,7 @@ public class ConsumeLogService {
                         String expireStrIfLess = expireYearIfLess.toString() + sdf.format(certificationChildOrder.getTelChildOrderExpireTime()).split(ifLess)[1];
                         Date expireTimeIfLess = DateUtils.getDate(expireStrIfLess,DateUtils.FORMAT_DEFAULT);
 
+                        childOrder.setTelChildOrderOpenTime(certificationChildOrder.getTelChildOrderOpenTime());
                         childOrder.setTelChildOrderExpireTime(expireTimeIfLess);
 
                         consumeLog.setTelConsumeLogOpenTime(certificationChildOrder.getTelChildOrderOpenTime());
@@ -174,7 +176,7 @@ public class ConsumeLogService {
                     if(count > 0){
                         int afterRenew = certificationChildOrderMapper.editChildOrderIfStatusChanged(childOrder);
                         if(afterRenew > 0){
-                            return AjaxResult.success(true,"续费成功！");
+                            return AjaxResult.success(200,afterRenew,"续费成功！");
                         }
                         return AjaxResult.error("修改状态、提交时间、开通时间、到期时间失败");
                     }

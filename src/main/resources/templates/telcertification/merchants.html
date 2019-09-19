@@ -160,8 +160,8 @@
         </div>
         <div class="rz_y">
             <div class="title" th:each="c:${configList}">
-                <span th:text="${c.name}" th:if="${c.type}!=4">泰迪熊号码认证</span><i th:if="${c.type}!=4" th:text="'¥ ' + ${c.price} + '元/年'">¥ 80元/年</i>
-                <span th:text="${c.name}" th:if="${c.type}==4">挂机短信</span><i th:if="${c.type}==4" th:text="'¥ ' + ${c.price} + '元/条'">¥ 0.1元/条</i>
+                <span th:text="${c.typeName}" th:if="${c.type}!=4">泰迪熊号码认证</span><i th:if="${c.type}!=4" th:text="'¥ ' + ${c.price} + '元/年'">¥ 80元/年</i>
+                <span th:text="${c.typeName}" th:if="${c.type}==4">挂机短信</span><i th:if="${c.type}==4" th:text="'¥ ' + ${c.price} + '元/条'">¥ 0.1元/条</i>
             </div>
             <div class="ywxz">
                 <div class="tswz">选择业务</div>
