@@ -52,6 +52,7 @@ public class MyWebConfig implements WebMvcConfigurer {
         interceptorRegistry.excludePathPatterns("/client/**");
         interceptorRegistry.excludePathPatterns("/imageCode");
         interceptorRegistry.excludePathPatterns("/test/**");
+        interceptorRegistry.excludePathPatterns("/jsjt/**");
 
         // 设置拦截资源
         interceptorRegistry.addPathPatterns("/**");

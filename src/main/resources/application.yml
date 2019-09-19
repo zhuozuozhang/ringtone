@@ -8,6 +8,8 @@ ringtone:
   copyrightYear: 2019
   # 文件上传路径
   profile: C:/profile
+  #文件访问地址
+  profile-url: http://120.27.226.14/
   # 获取ip地址开关
   addressEnabled: true
 

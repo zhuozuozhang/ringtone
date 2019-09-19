@@ -43,7 +43,7 @@ public class NumcertificationOrder implements Serializable {
     private String legalPersionPhone;
     /**法人身份证号码*/
     private String legalPersionCardNum;
-    /**公司地址*/
+    /**公司注册地址*/
     private String companyAddress;
     /**电子邮箱*/
     private String email;
@@ -57,7 +57,7 @@ public class NumcertificationOrder implements Serializable {
     private String fixPhone;
     /**开户银行*/
     private String openAccountBank;
-    /**银行账户*/
+    /**公司账户 银行账户*/
     private String bankAccount;
     /**营业执照*/
     private String businessLicenseUrl;
@@ -111,4 +111,48 @@ public class NumcertificationOrder implements Serializable {
     /*****************VO****************/
     /**用户名称*/
     private String userName;
+
+    /**
+     * 接口返回唯一标识
+     */
+    private String taskId;
+
+    /**
+     * 统一社会信用代码
+     */
+    private String corpSocietyNo;
+    /** 号码用途 */
+    private String corpNunmberUsage;
+    /** 开户类型*/
+    private String corpAccountType;
+    /** 法人身份证有效期 */
+    private String legalEffective;
+    /** 法人身份证有效期是否永久有效 */
+    private String legalLongEffective;
+    /** 经办人名称 */
+    private String legalHandlerName;
+    /** 经办人身份证 */
+    private String legalHandlerIdentityId;
+    /** 经办人身份证有效期 */
+    private String legalHandlerEffective;
+    /** 经办人身份证有效期类型 */
+    private String legalHandlerLongEffective;
+    /** 法人身份证地址 */
+    private String legalAddress;
+    /** 经办人身份证地址 */
+    private String legalHandlerAddress;
+
+    /** 订单预占申请状态 */
+    private String  auditStatus;
+    /** 订单状态 */
+    private String status;
+
+    /** 订单更新时间 */
+    private String updateDate;
+
+    /** 平台编号 */
+    private String platform;
+
+    /** 资料审核状态 */
+    private String approveStatus;
 }

@@ -1,5 +1,7 @@
 package com.hrtxn.ringtone.common.utils;
 
+import org.springframework.beans.factory.annotation.Value;
+
 import java.io.Serializable;
 
 /**
@@ -125,6 +127,32 @@ public final class Const implements Serializable {
      * 手机段：134,135,136,137,138,139,150,151,152,157,158,159,182,183,184,187,188,147,178,1705
      **/
     public static final String CHINA_MOBILE_PATTERN = "(^1(3[4-9]|4[7]|5[0-27-9]|7[8]|8[2-478])\\d{8}$)|(^1705\\d{7}$)";
+
+
+    /**
+     * 请求type
+     */
+    public static final String CONTENT_TYPE_JSON = "application/json";
+    public static final String CONTENT_TYPE_FORM_DATA="multipart/form-data";
+
+
+
+    /**
+     * 接口编码对照
+     */
+    /**
+     * 400预占结果通知
+     */
+    public static final String PREEMPTION_RESULT = "80001001";
+    /**
+     * 400资料模板生成完成通知
+     */
+    public static final String TEMPLATE_GENERATION_RESULT = "80001002";
+    /**
+     * 资料审核通知
+     */
+    public static final String EXAMINE_RESULT = "80001003";
+
 
 
 }

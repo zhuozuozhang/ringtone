@@ -22,4 +22,8 @@ public interface NumcertificationOrderMapper {
 
     int getCount(@Param("param") BaseRequest b);
 
+    NumcertificationOrder getOrderByphoneNum(@Param("phoneNum") String phoneNum);
+
+    void update(NumcertificationOrder numcertificationOrder);
+
 }

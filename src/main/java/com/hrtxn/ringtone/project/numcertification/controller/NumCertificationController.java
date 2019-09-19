@@ -1,5 +1,6 @@
 package com.hrtxn.ringtone.project.numcertification.controller;
 
+import com.hrtxn.ringtone.common.api.NumApi;
 import com.hrtxn.ringtone.common.constant.AjaxResult;
 import com.hrtxn.ringtone.common.domain.Page;
 import com.hrtxn.ringtone.project.numcertification.domain.NumOrder;
@@ -33,6 +34,8 @@ public class NumCertificationController {
      */
     @GetMapping("/toIndex")
     public String toIndex() {
+        NumApi api = new NumApi();
+//        api.yuzjgtz();
         return "400/index";
     }
     /**

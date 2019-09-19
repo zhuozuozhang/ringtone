@@ -105,15 +105,23 @@ public class NumCertificationService {
             return AjaxResult.error();
         }
         // 1、执行预占
-
-        // 2、预占成功生成订单
-        numcertificationOrder.setUserId(ShiroUtils.getSysUser().getId());
-        numcertificationOrder.setCreateTime(new Date());
-        int count = numcertificationOrderMapper.insert(numcertificationOrder);
-        if (count > 0) {
-            // 3、返回订单ID
-            return AjaxResult.success(numcertificationOrder.getId(), "创建成功！");
+        try {
+//            String result =  numApi.cgiOccupyAdd(numcertificationOrder);
+//            if(!"0".equals(result)){
+//                return AjaxResult.error("预占失败！");
+//            }
+            numcertificationOrder.setUserId(ShiroUtils.getSysUser().getId());
+            numcertificationOrder.setCreateTime(new Date());
+            int count = numcertificationOrderMapper.insert(numcertificationOrder);
+            if (count > 0) {
+                // 3、返回订单ID
+                return AjaxResult.success(numcertificationOrder.getId(), "创建成功！");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+        // 2、预占成功生成订单
+
         return AjaxResult.error("订单创建失败！");
     }
 
@@ -152,4 +160,22 @@ public class NumCertificationService {
         int count = numcertificationOrderMapper.getCount(b);
         return AjaxResult.success(numcertificationOrders, "", count);
     }
+
+    /**
+     * 根据400号码查询订单
+     * @param phoneNum
+     * @return
+     */
+    public NumcertificationOrder getOrderByphoneNum(String phoneNum){
+        return  numcertificationOrderMapper.getOrderByphoneNum(phoneNum);
+    }
+
+    /**
+     * 修改订单
+     * @param numcertificationOrder
+     */
+    public void update(NumcertificationOrder numcertificationOrder){
+        numcertificationOrderMapper.update(numcertificationOrder);
+    }
+
 }

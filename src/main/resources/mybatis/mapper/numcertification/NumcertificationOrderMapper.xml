@@ -51,6 +51,7 @@
         <result column="contract_attach_url" property="contractAttachUrl" jdbcType="VARCHAR"/>
         <result column="business_scope" property="businessScope" jdbcType="LONGVARCHAR"/>
         <result column="remark" property="remark" jdbcType="LONGVARCHAR"/>
+        <result column="task_id" property="taskId" jdbcType="LONGVARCHAR"/>
     </resultMap>
 
     <sql id="Base_Column_List">
@@ -62,7 +63,7 @@
         legal_persion_card_f_url, "legal person_card_holds_url", real_name_commitment_url,
         payment_voucher_url, handler_persion_card_z_url, handler_persion_card_f_url, handler_persion_card_holds_url,
         handler_persion_certificate_url, bank_opening_permit_url, combo_type, combo_money,
-        combo_period, deduction_period, rate, min_consume_money, date_signing, contract_attach_url,business_scope, remark
+        combo_period, deduction_period, rate, min_consume_money, date_signing, contract_attach_url,business_scope, remark,task_id
     </sql>
 
     <!--获取订单列表-->
@@ -229,6 +230,9 @@
             <if test="remark != null">
                 remark,
             </if>
+            <if test="taskId != null">
+                task_id,
+            </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="userId != null">
@@ -368,6 +372,9 @@
             </if>
             <if test="remark != null">
                 #{remark,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="taskId != null">
+                #{taskId,jdbcType=LONGVARCHAR},
             </if>
         </trim>
     </insert>
@@ -514,6 +521,9 @@
             <if test="remark != null">
                 remark = #{remark,jdbcType=LONGVARCHAR},
             </if>
+            <if test="taskId != null">
+                task_id = #{taskId,jdbcType=LONGVARCHAR},
+            </if>
         </set>
         where id = #{id,jdbcType=INTEGER}
     </update>
@@ -533,4 +543,16 @@
             LIMIT #{page.page},#{page.pagesize}
         </if>
     </sql>
+
+
+    <!--获取订单列表-->
+    <select id="getOrderByphoneNum" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from tb_numcertification_order
+        where where phone_num = #{phoneNum}
+    </select>
+
+
+
 </mapper>
