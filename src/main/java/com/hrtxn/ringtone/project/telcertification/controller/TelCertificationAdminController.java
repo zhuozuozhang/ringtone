@@ -23,7 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Author: yuanye
+ * @author : yuanye
  * Date:2019/8/22 16:26
  * Description:管理端号码认证
  */
@@ -67,10 +67,16 @@ public class TelCertificationAdminController {
         return "admin/telcertification/telcertification_config";
     }
 
+    /**
+     * 获取全部配置信息
+     * @param page
+     * @param map
+     * @return
+     */
     @RequiresRoles("admin")
     @PostMapping("/getAllConfig")
     @ResponseBody
-    public AjaxResult  getAllConfig(Page page, ModelMap map){
+    public AjaxResult getAllConfig(Page page, ModelMap map){
         return telCertificationConfigService.getAllConfig(page,map);
     }
 
@@ -88,6 +94,11 @@ public class TelCertificationAdminController {
         return "admin/telcertification/telcertification_config_edit";
     }
 
+    /**
+     * 修改配置信息
+     * @param certificationConfig
+     * @return
+     */
     @RequiresRoles("admin")
     @ResponseBody
     @PutMapping("/editTelCerConfig")
@@ -248,6 +259,42 @@ public class TelCertificationAdminController {
         return telCertificationChildService.deleteTelCerChild(id);
     }
 
+    /**
+     * 跳转到添加配置页面
+     * @return
+     */
+    @RequiresRoles("admin")
+    @GetMapping("/toAddTelCerConfig")
+    public String toAddTelCerConfig(){
+        return "admin/telcertification/telcertification_config_add";
+    }
+
+    /**
+     * 添加号码认证配置信息
+     * @return
+     */
+    @ResponseBody
+    @RequiresRoles("admin")
+    @PutMapping("/addTelCerService")
+    @Log(title = "添加号码认证配置",businessType = BusinessType.INSERT,operatorLogType = OperatorLogType.ADMIN)
+    public AjaxResult addTelCerService(CertificationConfig certificationConfig) {
+        return telCertificationConfigService.addTelCerService(certificationConfig);
+    }
+
+
+    /**
+     * 根据id删除号码认证配置
+     *
+     * @param id
+     * @return
+     */
+    @ResponseBody
+    @RequiresRoles("admin")
+    @DeleteMapping("/delConfig/{id}")
+    @Log(title = "删除号码认证信息",businessType = BusinessType.DELETE,operatorLogType = OperatorLogType.ADMIN)
+    public AjaxResult delConfig(@PathVariable Integer id) {
+        return telCertificationConfigService.delConfig(id);
+    }
 
 
 }

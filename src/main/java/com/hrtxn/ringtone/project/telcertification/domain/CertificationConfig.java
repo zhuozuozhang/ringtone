@@ -20,6 +20,10 @@ public class CertificationConfig implements Serializable {
      */
     private Integer type;
     /**
+     * 产品名称
+     */
+    private String typeName;
+    /**
      * 产品标价
      */
     private Float price;
@@ -41,6 +45,5 @@ public class CertificationConfig implements Serializable {
      *  号码认证挂机短信每月上限条数
      */
     private Integer itemPerMonth;
-
 
 }

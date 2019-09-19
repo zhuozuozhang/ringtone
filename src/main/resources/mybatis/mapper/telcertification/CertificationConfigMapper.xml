@@ -4,10 +4,11 @@
     <resultMap id="BaseResultMap" type="com.hrtxn.ringtone.project.telcertification.domain.CertificationConfig">
         <id column="id" property="id" jdbcType="INTEGER"/>
         <result column="type" property="type" jdbcType="INTEGER"/>
+        <result column="type_name" property="typeName" jdbcType="VARCHAR"/>
         <result column="price" property="price" jdbcType="REAL"/>
     </resultMap>
     <sql id="Base_Column_List">
-    id, type, price
+    id, type, type_name,price
   </sql>
     <!--获取配置列表-->
     <select id="getAllConfig" resultMap="BaseResultMap">
@@ -36,6 +37,9 @@
             <if test="type != null">
                 type = #{type,jdbcType=INTEGER},
             </if>
+            <if test="typeName != null">
+                type_name = #{typeName,jdbcType=VARCHAR},
+            </if>
             <if test="price != null">
                 price = #{price,jdbcType=REAL},
             </if>
@@ -49,9 +53,15 @@
   </delete>
 
     <insert id="insert" parameterType="com.hrtxn.ringtone.project.telcertification.domain.CertificationConfig">
-    insert into tb_telcertification_config (id, type, price)
-    values (#{id,jdbcType=INTEGER}, #{type,jdbcType=INTEGER}, #{price,jdbcType=REAL})
+    insert into tb_telcertification_config (type,type_name, price)
+    values (#{type,jdbcType=INTEGER}, #{typeName,jdbcType=VARCHAR},#{price,jdbcType=REAL})
   </insert>
+
+    <!--获取最新的id-->
+    <select id="getLastInsertId" resultType="java.lang.Integer">
+        SELECT MAX(id) FROM tb_telcertification_config;
+    </select>
+
     <insert id="insertSelective" parameterType="com.hrtxn.ringtone.project.telcertification.domain.CertificationConfig">
         insert into tb_telcertification_config
         <trim prefix="(" suffix=")" suffixOverrides=",">

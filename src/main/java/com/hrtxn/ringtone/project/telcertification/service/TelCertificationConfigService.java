@@ -6,7 +6,6 @@ import com.hrtxn.ringtone.common.utils.Const;
 import com.hrtxn.ringtone.common.utils.StringUtils;
 import com.hrtxn.ringtone.project.telcertification.domain.CertificationConfig;
 import com.hrtxn.ringtone.project.telcertification.mapper.CertificationConfigMapper;
-import org.aspectj.weaver.loadtime.Aj;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.ModelMap;
@@ -81,5 +80,26 @@ public class TelCertificationConfigService {
             certificationConfig.setName(Const.HANGUPMESSAGE);
         }
         return certificationConfig;
+    }
+
+    public AjaxResult addTelCerService(CertificationConfig certificationConfig) {
+        int maxId = certificationConfigMapper.getLastInsertId();
+        certificationConfig.setType(maxId+1);
+        int num = certificationConfigMapper.insert(certificationConfig);
+        if(num > 0){
+            return AjaxResult.success("添加成功！");
+        }
+        return AjaxResult.error("添加失败！");
+    }
+
+    public AjaxResult delConfig(Integer id) {
+        if (StringUtils.isNotNull(id) && id != 0) {
+            int count = certificationConfigMapper.deleteByPrimaryKey(id);
+            if (count > 0) {
+                return AjaxResult.success(200,count,"删除成功！");
+            }
+            return AjaxResult.error("删除失败！");
+        }
+        return AjaxResult.error("参数格式错误！");
     }
 }

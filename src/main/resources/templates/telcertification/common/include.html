@@ -66,16 +66,16 @@
                     <div class="grid-demo" style="margin-top: 15px;">
                         <div class="layui-row layui-col-space5">
                             <div class="layui-col-md4">
-                                <div class="grid-demo grid-demo-bg1">您好,代理商，[[${session.username}]]</div>
+                                <a class="grid-demo grid-demo-bg1 layui-icon layui-icon-username" th:href="@{/system/toCenterPage}">  [[${session.username}]]</a>
                             </div>
-                            <div class="layui-col-md1" >
-                                <a th:href="@{/telcertify/toTelNoticePage}">
-                                    <div class="grid-demo" style="cursor: pointer;">|&nbsp;&nbsp;公告</div>
-                                </a>
-                            </div>
+<!--                            <div class="layui-col-md1" >-->
+<!--                                <a th:href="@{/telcertify/toTelNoticePage}">-->
+<!--                                    <div class="grid-demo" style="cursor: pointer;">|&nbsp;&nbsp;公告</div>-->
+<!--                                </a>-->
+<!--                            </div>-->
                             <div class="layui-col-md1">
                                 <a th:href="@{/loginout}">
-                                    <div class="grid-demo grid-demo-bg1" style="cursor: pointer;">|&nbsp;&nbsp;退出</div>
+                                    <div class="grid-demo grid-demo-bg1 layui-icon layui-icon-close" style="cursor: pointer;">&nbsp;&nbsp;退出</div>
                                 </a>
                             </div>
                         </div>
@@ -86,12 +86,12 @@
         <!-- 导航栏tab切换 -->
         <div class="layui-tab layui-tab-brief" lay-filter="docDemoTabBrief" style="margin:0 auto;">
             <ul class="layui-tab-title" id="tabs">
-<!--                <a th:href="@{/telcertify/threeNetsTaskList}"><li class='index1'>待办任务</li></a>-->
-                <a th:href="@{/telcertify/toTelMerchantsPage}"><li class='index2'>订单列表</li></a>
+<!--                <a th:href="@{/system/index}"><li class='index1'>首页</li></a>-->
+                <a th:href="@{/telcertify/toTelMerchantsPage}"><li class='index2'>订单管理</li></a>
                 <a th:href="@{/telcertify/toFallDuePage}"><li class='index3'>即将到期号码</li></a>
                 <a th:href="@{/telcertify/toDuePage}"><li class='index4'>到期号码</li></a>
-<!--                <a th:href="@{/threenets/toDbusinessPage}"><li class='index6'></li></a>-->
-<!--                <a th:href="@{/threenets/toPersonalInformation}"><li class='index10'>个人信息</li></a>-->
+                <a th:href="@{/telcertify/toServiceStatisticsPage}"><li class='index5'>订购统计</li></a>
+                <a th:href="@{/telcertify/toTelNoticePage}"><li class='index10'>公告</li></a>
 <!--                <a><li class='index8'>工具箱</li></a>-->
             </ul>
         </div>
