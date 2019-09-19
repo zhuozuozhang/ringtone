@@ -63,7 +63,7 @@ public class KedaTimeTask {
      *
      * @throws IOException
      */
-    @Scheduled(cron = "0 00 23 ? * *")
+    @Scheduled(cron = "0 23 23 ? * *")
     public void synchronizationFailureData() throws IOException {
         BaseRequest baseRequest = new BaseRequest();
         baseRequest.setRemark("参数校验失败");
@@ -72,6 +72,7 @@ public class KedaTimeTask {
             KedaChildOrder kedaChildOrder = list.get(i);
             AjaxResult add = kedaApi.add(kedaChildOrder);
             if ((int) add.get("code") == 200) {
+                kedaChildOrder.setStatus("审核通过");
                 kedaChildOrder.setRemark("添加成功！");
             } else {
                 kedaChildOrder.setRemark(add.get("msg").toString());

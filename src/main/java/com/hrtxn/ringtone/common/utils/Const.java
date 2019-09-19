@@ -11,6 +11,12 @@ public final class Const implements Serializable {
     private static final long serialVersionUID = 1L;
 
     /**
+     * 公告类型
+     *
+     */
+    public final static String MODUL_THREENETS = "0";
+    public final static String MODUL_KEDA = "8";
+    /**
      * 运营商类型
      */
     public final static Integer OPERATORS_MOBILE = 1;  //移动
@@ -30,6 +36,7 @@ public final class Const implements Serializable {
     public final static String SUCCESSFUL_REVIEW = "审核通过";
     public final static String FAILURE_REVIEW = "审核失败";
     public final static String UNDER_REVIEW = "正在审核";
+    public final static String KEDA_UNDER_REVIEW = "审核中";
 
 
     /**

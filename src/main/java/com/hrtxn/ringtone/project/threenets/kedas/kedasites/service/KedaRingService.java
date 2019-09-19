@@ -133,8 +133,8 @@ public class KedaRingService {
         } else {
             return ajaxResult;
         }
-        // 添加本地铃音纪录
-        kedaRing.setRingStatus(3);
+        // 添加本地铃音纪录  //审核中
+        kedaRing.setRingStatus(1);
         int i1 = kedaRingMapper.isertKedaRingOrder(kedaRing);
         log.info("疑难杂单添加铃音信息" + i1);
         if (i1 > 0) {

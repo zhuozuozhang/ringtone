@@ -34,11 +34,12 @@ import java.util.List;
 public class TimeTask {
 
     /**
+     * 每周执行一次
      * 删除无效文件
      * 每天00:05执行
      * 删除status为1的数据
      */
-    @Scheduled(cron = "0 30 02 ? * *")
+    @Scheduled(cron = "0 30 02 ? * 1")
     public void deleteFile() {
         // 获取所有无效文件
         List<Uploadfile> uploadfileList = SpringUtils.getBean(UploadfileMapper.class).selectAllFile();

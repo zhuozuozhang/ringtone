@@ -2,6 +2,7 @@ package com.hrtxn.ringtone.project.threenets.threenet.controller;
 
 import com.hrtxn.ringtone.common.constant.AjaxResult;
 import com.hrtxn.ringtone.common.domain.BaseRequest;
+import com.hrtxn.ringtone.common.utils.Const;
 import com.hrtxn.ringtone.common.utils.MD5Utils;
 import com.hrtxn.ringtone.common.utils.ShiroUtils;
 import com.hrtxn.ringtone.common.utils.StringUtils;
@@ -39,7 +40,6 @@ import java.util.List;
 @Controller
 public class ThreeNetsController {
 
-    private final String MODUL_THREENETS = "0";
 
     @Autowired
     private ThreeNetsService threeNetsService;
@@ -64,7 +64,7 @@ public class ThreeNetsController {
     public String toThreeNetsTaskList(ModelMap map) {
         try {
             // 获取公告列表
-            List<Notice> noticeList = noticeService.findNoticeListByModul(MODUL_THREENETS);
+            List<Notice> noticeList = noticeService.findNoticeListByModul(Const.MODUL_THREENETS);
             map.put("noticeList", noticeList);
             // 获取近5日信息
             List<PlotBarPhone> plotBarPhoneList = threeNetsChildOrderService.getFiveData();
@@ -83,7 +83,7 @@ public class ThreeNetsController {
     @GetMapping("/threenets/toAnnouncementPage")
     public String toAnnouncementPage(ModelMap map) {
         try {
-            List<Notice> noticeList = noticeService.findNoticeListByModul(MODUL_THREENETS);
+            List<Notice> noticeList = noticeService.findNoticeListByModul(Const.MODUL_THREENETS);
             map.put("noticeList", noticeList);
         } catch (Exception e) {
             log.error("获取三网公告列表,方法：getThreeNetsAnnunciate,错误信息", e);
@@ -284,9 +284,10 @@ public class ThreeNetsController {
      * @return
      */
     @GetMapping("/threenets/threeNetsAnnunciate")
-    public String getThreeNetsAnnunciate(ModelMap map) {
+    public String getThreeNetsAnnunciate(ModelMap map,String type) {
         try {
-            List<Notice> noticeList = noticeService.findNoticeListByModul(MODUL_THREENETS);
+            String model = StringUtils.isNotEmpty(type)?Const.MODUL_KEDA:Const.MODUL_THREENETS;
+            List<Notice> noticeList = noticeService.findNoticeListByModul(model);
             Notice notice = noticeList.size() > 0 ? noticeList.get(0) : new Notice();
             map.put("noticeList", noticeList);
             map.put("notice", notice);
