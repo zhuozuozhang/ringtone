@@ -44,6 +44,10 @@ public class KedaRingService {
     private UploadfileMapper uploadfileMapper;
     @Autowired
     private KedaChildOrderMapper kedaChildOrderMapper;
+
+    @Autowired
+    private  KedaAsyncService asyncService;
+
     private KedaApi kedaApi = new KedaApi();
 
     /**
@@ -57,10 +61,11 @@ public class KedaRingService {
         page.setPage((page.getPage() - 1) * page.getPagesize());
         // 获取铃音列表
         List<KedaRing> kedaRingList = kedaRingMapper.getKedaRingList(page, baseRequest);
-        // 执行刷新铃音操作
-        kedaRingList = kedaApi.refreshRingInfo(kedaRingList);
         // 获取铃音数量
         int count = kedaRingMapper.getCount(baseRequest);
+        // 执行刷新铃音操作
+        asyncService.updateRingtoneInformation(kedaRingList);
+        log.info("获取铃音列表 ----------->");
         return AjaxResult.success(kedaRingList, "获取数据成功！", count);
     }
     /**

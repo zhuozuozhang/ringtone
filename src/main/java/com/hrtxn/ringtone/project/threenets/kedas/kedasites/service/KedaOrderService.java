@@ -57,8 +57,12 @@ public class KedaOrderService {
      */
     public AjaxResult getKeDaOrderList(Page page, BaseRequest baseRequest) {
         page.setPage((page.getPage() - 1) * page.getPagesize());
+        //是否为管理员
+        Integer userRole = ShiroUtils.getSysUser().getUserRole();
+        if (userRole != 1) {
+            baseRequest.setUserId(ShiroUtils.getSysUser().getId());
+        }
         // 获取数据
-        baseRequest.setUserId(ShiroUtils.getSysUser().getId());
         List<KedaOrder> kedaOrderList = kedaOrderMapper.getKeDaOrderList(page, baseRequest);
         // 获取数量
         int count = kedaOrderMapper.getCount(baseRequest);

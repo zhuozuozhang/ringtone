@@ -32,10 +32,12 @@ public class KaptchaConfig {
         properties.setProperty("kaptcha.textproducer.font.size", "30");
         // KAPTCHA_SESSION_KEY
         properties.setProperty("kaptcha.session.key", "kaptchaCode");
+        // 验证码值从此集合中获取
+        properties.setProperty("kaptcha.textproducer.char.string", "1234567890");
         // 验证码文本字符间距  默认为2
         properties.setProperty("kaptcha.textproducer.char.space", "3");
         // 验证码文本字符长度  默认为5
-        properties.setProperty("kaptcha.textproducer.char.length", "5");
+        properties.setProperty("kaptcha.textproducer.char.length", "4");
         // 验证码文本字体样式  默认为new Font("Arial", 1, fontSize), new Font("Courier", 1, fontSize) 
         properties.setProperty("kaptcha.textproducer.font.names", "Arial,Courier");
         // 验证码噪点颜色   默认为Color.BLACK

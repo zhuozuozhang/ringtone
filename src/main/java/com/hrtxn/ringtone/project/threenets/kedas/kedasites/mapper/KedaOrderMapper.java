@@ -50,4 +50,12 @@ public interface KedaOrderMapper {
      * @return
      */
     int deleteKedaOrder(@Param("id") Integer id);
+
+    /**
+     * 根据id查询
+     *
+     * @param id
+     * @return
+     */
+    KedaOrder getKedaOrder(@Param("id") Integer id);
 }

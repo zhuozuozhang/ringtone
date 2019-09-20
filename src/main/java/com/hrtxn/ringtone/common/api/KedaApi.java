@@ -8,6 +8,7 @@ import com.hrtxn.ringtone.common.utils.SpringUtils;
 import com.hrtxn.ringtone.common.utils.StringUtils;
 import com.hrtxn.ringtone.project.system.config.domain.SystemConfig;
 import com.hrtxn.ringtone.project.threenets.kedas.kedasites.domain.KedaChildOrder;
+import com.hrtxn.ringtone.project.threenets.kedas.kedasites.domain.KedaOrder;
 import com.hrtxn.ringtone.project.threenets.kedas.kedasites.domain.KedaRing;
 import com.hrtxn.ringtone.project.threenets.kedas.kedasites.json.*;
 import com.hrtxn.ringtone.project.threenets.kedas.kedasites.mapper.KedaChildOrderMapper;
@@ -46,8 +47,9 @@ public class KedaApi {
      * @return
      * @throws IOException
      */
-    public AjaxResult add(KedaChildOrder kedaChildOrder) throws IOException {
-        String param = "businessId=21&empPhone=" + kedaChildOrder.getLinkTel() + "&empName=" + kedaChildOrder.getLinkMan() + "&groupId=" + Constant.OPERATEID + "&businessType=ring";
+    public AjaxResult add(KedaChildOrder kedaChildOrder, KedaOrder order) throws IOException {
+        //http://clcy.adsring.cn/meap-web/ring/emp/addRingEmp?r=0.647359152849093
+        String param = "businessId=21&empPhone=" + kedaChildOrder.getLinkTel() + "&empName=" + order.getCompanyName() + "&groupId=" + Constant.OPERATEID + "&businessType=ring";
         double rm = (new Random()).nextDouble();
         String res = sendPost(ADD_URL + "?r=" + rm, param);
         log.info("疑难杂单创建订单结果：" + res);

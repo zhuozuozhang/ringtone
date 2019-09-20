@@ -4,7 +4,9 @@ import com.hrtxn.ringtone.common.api.KedaApi;
 import com.hrtxn.ringtone.common.constant.AjaxResult;
 import com.hrtxn.ringtone.common.utils.Const;
 import com.hrtxn.ringtone.project.threenets.kedas.kedasites.domain.KedaChildOrder;
+import com.hrtxn.ringtone.project.threenets.kedas.kedasites.domain.KedaOrder;
 import com.hrtxn.ringtone.project.threenets.kedas.kedasites.mapper.KedaChildOrderMapper;
+import com.hrtxn.ringtone.project.threenets.kedas.kedasites.mapper.KedaOrderMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -31,6 +33,9 @@ public class RectorHandler {
     @Autowired
     private KedaChildOrderMapper kedaChildOrderMapper;
 
+    @Autowired
+    private KedaOrderMapper kedaOrderMapper;
+
     private KedaApi kedaApi = new KedaApi();
 
     /**
@@ -42,8 +47,9 @@ public class RectorHandler {
     @Selector(value = "insertKedaorder", reactor = "@createReactor")
     public void insertKedaorder(Event<KedaChildOrder> data) throws IOException {
         KedaChildOrder kedaChildOrder = data.getData();
+        KedaOrder order = kedaOrderMapper.getKedaOrder(kedaChildOrder.getOrderId());
         // 对接数据，创建父级订单
-        AjaxResult add = kedaApi.add(kedaChildOrder);
+        AjaxResult add = kedaApi.add(kedaChildOrder,order);
         if ((int) add.get("code") == 200) {
             kedaChildOrder.setStatus(Const.SUCCESSFUL_REVIEW);
             kedaChildOrder.setRemark("添加成功！");

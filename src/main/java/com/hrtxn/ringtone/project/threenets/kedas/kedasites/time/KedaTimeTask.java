@@ -5,7 +5,9 @@ import com.hrtxn.ringtone.common.constant.AjaxResult;
 import com.hrtxn.ringtone.common.domain.BaseRequest;
 import com.hrtxn.ringtone.common.utils.SpringUtils;
 import com.hrtxn.ringtone.project.threenets.kedas.kedasites.domain.KedaChildOrder;
+import com.hrtxn.ringtone.project.threenets.kedas.kedasites.domain.KedaOrder;
 import com.hrtxn.ringtone.project.threenets.kedas.kedasites.mapper.KedaChildOrderMapper;
+import com.hrtxn.ringtone.project.threenets.kedas.kedasites.mapper.KedaOrderMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -70,7 +72,8 @@ public class KedaTimeTask {
         List<KedaChildOrder> list = SpringUtils.getBean(KedaChildOrderMapper.class).selectByParam(baseRequest);
         for (int i = 0; i < list.size(); i++) {
             KedaChildOrder kedaChildOrder = list.get(i);
-            AjaxResult add = kedaApi.add(kedaChildOrder);
+            KedaOrder order = SpringUtils.getBean(KedaOrderMapper.class).getKedaOrder(kedaChildOrder.getOrderId());
+            AjaxResult add = kedaApi.add(kedaChildOrder,order);
             if ((int) add.get("code") == 200) {
                 kedaChildOrder.setStatus("审核通过");
                 kedaChildOrder.setRemark("添加成功！");

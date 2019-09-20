@@ -127,6 +127,10 @@
         delete from tb_keda_order
         where id = #{id,jdbcType=INTEGER}
     </delete>
+    <select id="getKedaOrder" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+        select * from tb_keda_order
+        where id = #{id,jdbcType=INTEGER}
+    </select>
     <!--条件-->
     <sql id="parameters">
         <if test="param != null and param.userId != null">

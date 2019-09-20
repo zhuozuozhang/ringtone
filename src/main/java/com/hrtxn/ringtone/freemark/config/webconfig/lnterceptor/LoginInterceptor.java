@@ -29,7 +29,8 @@ public class LoginInterceptor implements HandlerInterceptor {
         Object sessionA = session.getAttribute("sessionA");
         Object sessionB = session.getAttribute("sessionB");
         Cookie[] cookies = request.getCookies();
-        for (Cookie cookie:cookies) {
+        for (int i = 0; i < cookies.length; i++) {
+            Cookie cookie = cookies[i];
             String cookieName = cookie.getName();
             String cookieValue = cookie.getValue();
             if ("AUTHENTICATION-TOKEN".equals(cookieName)){

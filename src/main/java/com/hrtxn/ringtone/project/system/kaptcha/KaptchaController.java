@@ -2,6 +2,7 @@ package com.hrtxn.ringtone.project.system.kaptcha;
 
 import com.google.code.kaptcha.Constants;
 import com.google.code.kaptcha.Producer;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.servlet.ModelAndView;
@@ -20,6 +21,7 @@ import java.io.IOException;
  * Date:2019-06-12 13:52
  * Description:图片验证码 type=math 为计算验证码 type=char为数字字母验证码
  */
+@Slf4j
 @Controller
 public class KaptchaController {
     @Resource(name = "captchaProducer")
@@ -50,9 +52,11 @@ public class KaptchaController {
                 capStr = capText.substring(0, capText.lastIndexOf("@"));
                 code = capText.substring(capText.lastIndexOf("@") + 1);
                 bi = captchaProducerMath.createImage(capStr);
+                log.info("验证码：{},结果：{},原始记录：{}", capStr,code,capText);
             } else if ("char".equals(type)) {
                 capStr = code = captchaProducer.createText();
                 bi = captchaProducer.createImage(capStr);
+                log.info("验证码：{},结果：{}", capStr,code);
             }
             session.setAttribute(Constants.KAPTCHA_SESSION_KEY, code);
             out = response.getOutputStream();
