@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head th:include="admin/common/include :: header"></head>
+<script type="text/javascript" charset="utf-8" th:src="@{/admins/kindeditor/kindeditor-all.js}"></script>
+<script type="text/javascript" charset="utf-8" th:src="@{/admins/kindeditor/lang/zh-CN.js}"> </script>
+<style type="text/css">
+  .layui-input-inline{
+    width: 490px!important;
+  }
+</style>
+<body>
+<div class="x-body layui-anim layui-anim-up">
+  <form class="layui-form">
+    <div class="layui-form-item">
+      <label for="code" class="layui-form-label">
+        <span class="x-red">*</span>健
+      </label>
+      <div class="layui-input-inline">
+        <input type="text" id="code" name="code" required lay-verify="code" autocomplete="off" class="layui-input">
+      </div>
+    </div>
+    <div class="layui-form-item">
+      <label for="name" class="layui-form-label">
+        <span class="x-red">*</span>值
+      </label>
+      <div class="layui-input-inline">
+        <input type="text" id="name" name="name" required lay-verify="name" autocomplete="off" class="layui-input">
+      </div>
+    </div>
+    <div class="layui-form-item">
+      <label for="type" class="layui-form-label">
+        <span class="x-red">*</span>类型
+      </label>
+      <div class="layui-input-inline">
+        <input type="text" id="type" name="type" required lay-verify="type" autocomplete="off" class="layui-input">
+      </div>
+    </div>
+    <div class="layui-form-item">
+      <label for="remarks" class="layui-form-label">
+        <span class="x-red">*</span>描述
+      </label>
+      <div class="layui-input-inline">
+        <input type="text" id="remarks" name="remarks" required lay-verify="remarks" autocomplete="off" class="layui-input">
+      </div>
+    </div>
+
+    <div class="layui-form-item">
+      <label class="layui-form-label"></label>
+      <button class="layui-btn" lay-filter="add" lay-submit="">增加</button>
+    </div>
+  </form>
+</div>
+</body>
+<div th:include="admin/common/include :: footer"></div>
+<script type="text/javascript">
+
+    layui.use(['form','layer'], function(){
+        $ = layui.jquery;
+        var form = layui.form,layer = layui.layer;
+        //自定义验证规则
+        //监听提交
+        form.on('submit(add)', function(data){
+            var code = $("#code").val();
+            var name = $("#name").val();
+            var type = $("#type").val();
+            var remarks = $("#remarks").val();
+            AjaxPost("/dict/addDict",{
+                code:code,
+                name:name,
+                type:type,
+                remarks:remarks
+            },function (res) {
+                if (res.code == 200 && res.data){
+                    //发异步，把数据提交给后台
+                    layer.alert("增加成功", {icon: 6},function () {
+                        // 获得frame索引
+                        var index = parent.layer.getFrameIndex(window.name);
+                        //关闭当前frame
+                        parent.layer.close(index);
+                    });
+                }else{
+                    layer.msg("添加出错", {icon: 5, time: 1000});
+                }
+            });
+            return false;
+        });
+    });
+</script>
+</html>

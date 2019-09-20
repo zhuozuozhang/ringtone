@@ -5,9 +5,9 @@
 <div class="x-nav">
     <span class="layui-breadcrumb">
         <a href="">首页</a>
-        <a href="">固话归属地管理</a>
+        <a href="">字典管理</a>
         <a>
-            <cite>固话归属地列表</cite>
+            <cite>字典列表</cite>
         </a>
     </span>
     <a class="layui-btn layui-btn-primary layui-btn-small" style="line-height:1.6em;margin-top:3px;float:right"
@@ -18,22 +18,23 @@
 <div class="x-body">
     <div class="layui-row">
         <form class="layui-form layui-col-md12 x-so" action="javascript:void(0);">
-            <input type="text" name="province" placeholder="请输入省份" autocomplete="off" class="layui-input userName">
-            <input type="text" name="city" placeholder="请输入城市" autocomplete="off" class="layui-input userName">
-            <input type="text" name="areaCode" placeholder="号码区号" autocomplete="off" class="layui-input userName">
-            <button class="layui-btn" onclick="showTelAscriptionTable()"><i class="layui-icon">&#xe615;查询</i></button>
-            <button class="layui-btn" onclick="changetelAscription('添加固话归属地','/admin/toTelAscriptionAdd',800,670)">
+            <input type="text" name="code" placeholder="请输入键" autocomplete="off" class="layui-input userName">
+            <input type="text" name="name" placeholder="请输入值" autocomplete="off" class="layui-input userName">
+            <input type="text" name="type" placeholder="请输入类型" autocomplete="off" class="layui-input userName">
+            <button class="layui-btn" onclick="showDictTable()"><i class="layui-icon">&#xe615;查询</i></button>
+            <button class="layui-btn" onclick="changeDict('添加字典','/dict/toDictAdd',800,670)">
                 <i class="layui-icon"></i>添加
             </button>
         </form>
     </div>
-    <table class="layui-table" id="telAscription_table">
+    <table class="layui-table" id="dict_table">
         <thead>
             <tr>
                 <th>ID</th>
-                <th>省</th>
-                <th>市</th>
-                <th>号码区号</th>
+                <th>键</th>
+                <th>值</th>
+                <th>类型</th>
+                <th>描述</th>
                 <th>操作</th>
             </tr>
         </thead>
@@ -41,11 +42,11 @@
 </div>
 </body>
 <div th:include="admin/common/include :: footer"></div>
-<script th:src="@{/admins/js/my/telAscription_list.js}"></script>
+<script th:src="@{/admins/js/my/dict_list.js}"></script>
 <script type="text/javascript">
     $(document).ready(function () {
         //  分页
-        showTelAscriptionTable();
+        showDictTable();
     });
 </script>
 </html>

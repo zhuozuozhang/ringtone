@@ -33,21 +33,21 @@ public class TelAscriptionController {
     private TelAscriptionService telAscriptionService;
 
     /**
-     * 获取公告列表
+     * 获取固话号码归属地列
      * @return
      */
     @RequiresRoles("admin")
     @GetMapping("/telAscription/toTelAscriptionPage")
-    public String toNoticeListPage(ModelMap map){
+    public String toTelAscriptionPage(ModelMap map){
         try {
         } catch (Exception e) {
-            log.error("获取固话号码归属地列表 方法：toNoticeListPage 错误信息：",e);
+            log.error("获取固话号码归属地列表 方法：toTelAscriptionPage 错误信息：",e);
         }
         return "admin/telAscription/telAscription_list";
     }
 
     /**
-     * 获取公告列表
+     * 获取固话号码归属地列
      *
      * @param page
      * @return

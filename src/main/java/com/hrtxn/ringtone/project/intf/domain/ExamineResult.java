@@ -1,14 +1,13 @@
 package com.hrtxn.ringtone.project.intf.domain;
 
-import java.io.Serializable;
 
-public class ExamineResult implements Serializable {
+public class ExamineResult  {
 
     private String applyNumber;
 
     private String infoType;
 
-    private resultBean data;
+    private ExamineBean data;
 
     public String getApplyNumber() {
         return applyNumber;
@@ -26,15 +25,15 @@ public class ExamineResult implements Serializable {
         this.infoType = infoType;
     }
 
-    public resultBean getData() {
+    public ExamineBean getData() {
         return data;
     }
 
-    public void setData(resultBean data) {
+    public void setData(ExamineBean data) {
         this.data = data;
     }
 
-    public class resultBean{
+    public class ExamineBean{
         private String approveStatus ;
         private String approveComment ;
         private String approveTime ;

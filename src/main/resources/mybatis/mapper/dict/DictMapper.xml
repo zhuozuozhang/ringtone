@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hrtxn.ringtone.project.system.dict.mapper.DictMapper" >
+
+  <resultMap id="BaseResultMap" type="com.hrtxn.ringtone.project.system.dict.domain.Dict" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="code" property="code" jdbcType="VARCHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="type" property="type" jdbcType="VARCHAR" />
+    <result column="remarks" property="remarks" jdbcType="VARCHAR" />
+  </resultMap>
+
+  <sql id="Base_Column_List" >
+    id, code, name, type,remarks
+  </sql>
+
+
+  <select id="pageDictList" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from sys_dict
+    WHERE 1 = 1
+    <if test="dict != null and dict.code != null and dict.code != '' ">
+      AND code = #{code}
+    </if>
+    <if test="dict != null and dict.name != null and dict.name != '' ">
+      AND name = #{name}
+    </if>
+    <if test="dict != null and dict.type != null and dict.type != '' ">
+      AND type = #{type}
+    </if>
+    ORDER BY type
+    LIMIT #{page.page},#{page.pagesize}
+  </select>
+
+
+  <!--获取号码归属地数量-->
+  <select id="getDictCount" resultType="Integer">
+    select
+    count(1)
+    from sys_dict
+    WHERE 1 = 1
+    <if test="dict != null and dict.code != null and dict.code != '' ">
+      AND code = #{code}
+    </if>
+    <if test="dict != null and dict.name != null and dict.name != '' ">
+      AND name = #{name}
+    </if>
+    <if test="dict != null and dict.type != null and dict.type != '' ">
+      AND type = #{type}
+    </if>
+  </select>
+
+
+  <insert id="insert" parameterType="Dict" >
+    insert into sys_dict ( code, name,
+      type,remarks)
+    values ( #{code,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR},
+      #{type,jdbcType=VARCHAR},#{remarks})
+  </insert>
+
+
+
+  <update id="update" parameterType="Dict" >
+    update sys_dict
+    <set >
+      <if test="code != null" >
+        code = #{code,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null" >
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null" >
+        type = #{type,jdbcType=VARCHAR},
+      </if>
+      <if test="remarks != null" >
+        remarks = #{remarks,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+
+  <delete id="delete" parameterType="Integer" >
+    delete from sys_dict
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+
+  <select id="getDcitByTypeAndCode" resultMap="BaseResultMap">
+    select <include refid="Base_Column_List" />
+    from sys_dict
+    where type = #{type} and code = #{code}
+  </select>
+
+  <select id="getDcitByTypeAndName" resultMap="BaseResultMap">
+    select <include refid="Base_Column_List" />
+    from sys_dict
+    where type = #{type} and name = #{name}
+  </select>
+
+  <select id="getDictById" resultMap="BaseResultMap">
+    select <include refid="Base_Column_List" />
+    from sys_dict
+    where id = #{id}
+  </select>
+
+</mapper>
