@@ -6,7 +6,9 @@ import com.hrtxn.ringtone.common.domain.Page;
 import com.hrtxn.ringtone.freemark.config.logConfig.Log;
 import com.hrtxn.ringtone.freemark.enums.BusinessType;
 import com.hrtxn.ringtone.freemark.enums.OperatorLogType;
+import com.hrtxn.ringtone.project.threenets.kedas.kedasites.domain.KedaOrder;
 import com.hrtxn.ringtone.project.threenets.kedas.kedasites.domain.KedaRing;
+import com.hrtxn.ringtone.project.threenets.kedas.kedasites.mapper.KedaOrderMapper;
 import com.hrtxn.ringtone.project.threenets.kedas.kedasites.service.KedaRingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -62,9 +64,10 @@ public class KedaRingController {
      *
      * @return
      */
-    @GetMapping("toAddring/{orderId}")
-    public String toAddring(@PathVariable Integer orderId, ModelMap m) {
+    @GetMapping("toAddring/{orderId}/{name}")
+    public String toAddring(@PathVariable Integer orderId, @PathVariable String name,ModelMap m) {
         m.put("orderId", orderId);
+        m.put("name", name);
         return "threenets/kedas/kedasites/merchants/addring";
     }
 

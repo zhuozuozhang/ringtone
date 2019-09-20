@@ -63,8 +63,9 @@
                         //关闭当前frame
                         parent.layer.close(index);
                     },2000);
+                }else{
+                    layer.msg(res.msg, {icon: 5, time: 3000});
                 }
-                layer.msg(res.msg, {icon: 5, time: 3000});
             });
             return false;
         });

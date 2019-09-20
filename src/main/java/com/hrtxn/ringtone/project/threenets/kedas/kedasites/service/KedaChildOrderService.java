@@ -5,6 +5,7 @@ import com.hrtxn.ringtone.common.constant.AjaxResult;
 import com.hrtxn.ringtone.common.constant.Constant;
 import com.hrtxn.ringtone.common.domain.BaseRequest;
 import com.hrtxn.ringtone.common.domain.Page;
+import com.hrtxn.ringtone.common.utils.Const;
 import com.hrtxn.ringtone.common.utils.ShiroUtils;
 import com.hrtxn.ringtone.common.utils.StringUtils;
 import com.hrtxn.ringtone.common.utils.juhe.JuhePhoneUtils;
@@ -214,6 +215,7 @@ public class KedaChildOrderService {
                 kedaChildOrder.setOperate(3);
             }
         }
+        kedaChildOrder.setStatus(Const.KEDA_UNDER_REVIEW);
         kedaChildOrder.setCreateTime(new Date());
         kedaChildOrder.setOperateId(Constant.OPERATEID);
         kedaChildOrder.setUserId(ShiroUtils.getSysUser().getId());

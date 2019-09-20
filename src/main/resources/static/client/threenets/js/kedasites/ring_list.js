@@ -24,9 +24,11 @@ function showTable() {
     },{
         targets:[2],
         render:function (data, type, row, meta) {
-            // 铃音状态（1.待审核/2.激活中/3.激活成功/4.激活失败）
-            if (data ==1){
+            // 铃音状态（0.待审核/1.审核中/2.激活中/3.激活成功/4.激活失败）
+            if(data == 0){
                 return "待审核";
+            }else if (data ==1){
+                return "审核中";
             } else if(data ==2){
                 return "激活中";
             } else if(data ==3){
@@ -58,7 +60,7 @@ function AddUser() {
         type: 2,
         title: '上传铃音',
         area: ['650px', '550px'],
-        content: '/threenets/clcy/toAddring/'+$('#orderId').val(),
+        content: '/threenets/clcy/toAddring/'+$('#orderId').val()+"/"+$('#name').html(),
         end: function () {
             $('#set').DataTable().ajax.reload(null,false);//弹出层结束后，刷新主页面
         }

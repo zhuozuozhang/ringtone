@@ -284,41 +284,41 @@ public class McardApi {
      */
     public McardAddGroupRespone addGroup(ThreenetsOrder order, ThreeNetsOrderAttached attached) {
         McardAddGroupRespone groupRespone = new McardAddGroupRespone();
-        McardPhoneAddressRespone respone = phoneAdd(order.getLinkmanTel(), attached.getMcardDistributorId());
-        Map<String, String> map = new HashMap<>();
-        map.put("ausertype", "");
-        map.put("codeId", "");
-        map.put("provinceChannel", "");
-        map.put("isFeeType", "0");
-        map.put("makeFee", "");
-        map.put("feeType", attached.getMcardPrice().toString());
-        map.put("aUserProvince", respone.getProvince());
-        map.put("aUserCity", respone.getCity());
-        map.put("phoneProvinceCode", respone.getProvinceCode());
-        map.put("checkUnipayphone", "");
-        map.put("makeFeeType", "");
-        map.put("phoneCityCode", respone.getCityCode());
-        map.put("auserAccount", order.getLinkmanTel());
-        map.put("auserName", order.getCompanyName());
-        map.put("auserLinkName", order.getCompanyLinkman());
-        map.put("auserMoney", attached.getMcardPrice().toString());
-        map.put("auserPhone", order.getLinkmanTel());
-        map.put("auserEmail", "");
-        map.put("chargingPhone", order.getLinkmanTel());
-        map.put("auserWeixin", "");
-        map.put("auserYi", "");
-        map.put("auserFengChao", "");
-        map.put("busiSeizedName", "");
-        map.put("busiSeizedPhone", "");
-        map.put("industry", "1");
-        map.put("isUnifyPay", "2");
-        map.put("unifyPayPhone", "");
-        map.put("imageCode", getCodeString(attached.getMcardDistributorId()));
-        map.put("auserBlicencePath", attached.getBusinessLicense());
-        map.put("auserCardidPath", attached.getConfirmLetter());
-        map.put("auserFilePath", attached.getSubjectProve() == null ? "" : attached.getSubjectProve());
-        String result = sendPost(map, add_user_url, attached.getMcardDistributorId());
         try {
+            McardPhoneAddressRespone respone = phoneAdd(order.getLinkmanTel(), attached.getMcardDistributorId());
+            Map<String, String> map = new HashMap<>();
+            map.put("ausertype", "");
+            map.put("codeId", "");
+            map.put("provinceChannel", "");
+            map.put("isFeeType", "0");
+            map.put("makeFee", "");
+            map.put("feeType", attached.getMcardPrice().toString());
+            map.put("aUserProvince", respone.getProvince());
+            map.put("aUserCity", respone.getCity());
+            map.put("phoneProvinceCode", respone.getProvinceCode());
+            map.put("checkUnipayphone", "");
+            map.put("makeFeeType", "");
+            map.put("phoneCityCode", respone.getCityCode());
+            map.put("auserAccount", order.getLinkmanTel());
+            map.put("auserName", order.getCompanyName());
+            map.put("auserLinkName", order.getCompanyLinkman());
+            map.put("auserMoney", attached.getMcardPrice().toString());
+            map.put("auserPhone", order.getLinkmanTel());
+            map.put("auserEmail", "");
+            map.put("chargingPhone", order.getLinkmanTel());
+            map.put("auserWeixin", "");
+            map.put("auserYi", "");
+            map.put("auserFengChao", "");
+            map.put("busiSeizedName", "");
+            map.put("busiSeizedPhone", "");
+            map.put("industry", "1");
+            map.put("isUnifyPay", "2");
+            map.put("unifyPayPhone", "");
+            map.put("imageCode", getCodeString(attached.getMcardDistributorId()));
+            map.put("auserBlicencePath", attached.getBusinessLicense());
+            map.put("auserCardidPath", attached.getConfirmLetter());
+            map.put("auserFilePath", attached.getSubjectProve() == null ? "" : attached.getSubjectProve());
+            String result = sendPost(map, add_user_url, attached.getMcardDistributorId());
             log.info("电信创建集团结果--->" + result);
             JSONObject jsonObject = JSONObject.fromObject(result);
             String code = jsonObject.getString("code");
@@ -338,6 +338,9 @@ public class McardApi {
             }
         } catch (Exception e) {
             log.info("电信添加商户失败" + e);
+            groupRespone.setCode(Const.ILLEFAL_AREA);
+            groupRespone.setMessage("添加失败");
+            return groupRespone;
         } finally {
             return groupRespone;
         }

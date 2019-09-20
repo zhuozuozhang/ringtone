@@ -89,9 +89,9 @@ public class KedaApi {
                 String businessEmpPhone = kedaPhoneResults.get(i).getBusinessEmpPhone();
                 if (businessEmpPhone.equals(tel)) {
                     // 判断是否是未开通
-                    if (kedaPhoneResults.get(i).getBusinessState() == 0){
+                    if (kedaPhoneResults.get(i).getBusinessState() == 0) {
                         // 判断是否恢复短信（是）
-                        if (kedaPhoneResults.get(i).getBusinessEmpState() == 2){
+                        if (kedaPhoneResults.get(i).getBusinessEmpState() == 2) {
                             kedaChildOrder.setIsMonthly(7);
                         } else {
                             kedaChildOrder.setIsMonthly(kedaPhoneResults.get(i).getBusinessState());
@@ -177,7 +177,7 @@ public class KedaApi {
      * @throws IOException
      */
     public AjaxResult addRing(String fileUrl, String ringName) throws IOException {
-        ringName = URLEncoder.encode(URLEncoder.encode(URLEncoder.encode(URLEncoder.encode(ringName, "utf-8"), "utf-8"), "utf-8"),"utf-8");
+        ringName = URLEncoder.encode(URLEncoder.encode(URLEncoder.encode(URLEncoder.encode(ringName, "utf-8"), "utf-8"), "utf-8"), "utf-8");
         String param = "groupId=" + Constant.OPERATEID + "&name=" + ringName + "&ringPrice=0&ringActivePrice=0&addSetting=0&uploadMusicName=" + URLEncoder.encode(fileUrl, "UTF-8") + "&businessType=ring";
         double rm = (new Random()).nextDouble();
         String s = sendPost(SAVEORSETRINGBYUPLOAD + "?r=" + rm, param);
@@ -223,15 +223,19 @@ public class KedaApi {
                             for (int j = 0; j < kedaRefresRingInfos.size(); j++) {
                                 if (kedaRingList.get(i).getRingNum().equals(kedaRefresRingInfos.get(j).getId().toString())) {
                                     if (kedaRefresRingInfos.get(j).getStatus() == 0) { // 待审核
-                                        kedaRingList.get(i).setRingStatus(3);
+                                        kedaRingList.get(i).setRingStatus(0);
                                     } else if (kedaRefresRingInfos.get(j).getStatus() == 1) { // 审核中
-                                        kedaRingList.get(i).setRingStatus(3);
+                                        kedaRingList.get(i).setRingStatus(1);
                                     } else if (kedaRefresRingInfos.get(j).getStatus() == 2) { // 审核通过
                                         kedaRingList.get(i).setRingStatus(3);
                                     } else { // 审核失败
                                         kedaRingList.get(i).setRingStatus(4);
                                     }
-                                    kedaRingList.get(i).setRemark(kedaRefresRingInfos.get(j).getAuditDesc());
+                                    String remark = kedaRefresRingInfos.get(j).getAuditDesc();
+                                    if (remark.equals("运营平台正在审核彩铃作品")) {
+                                        remark = "正在审核彩铃";
+                                    }
+                                    kedaRingList.get(i).setRemark(remark);
                                     // 执行修改铃音操作
                                     int count = SpringUtils.getBean(KedaRingMapper.class).updateKedaRing(kedaRingList.get(i));
                                     log.info("疑难杂单刷新铃音修改结果:{}", count);
