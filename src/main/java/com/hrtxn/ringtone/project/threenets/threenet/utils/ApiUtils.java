@@ -1309,7 +1309,7 @@ public class ApiUtils {
     public AjaxResult insertUser(User user) throws NoLoginException, IOException {
         String msg = "创建失败！";
         // 执行添加联通子渠道商
-        loginToUnicom();
+        swxlApi.loginAutoParam("99397000");
         String result = swxlApi.addChild(user);
         if (StringUtils.isNotEmpty(result)) {
             SwxlBaseBackMessage<Object> createUser = SpringUtils.getBean(ObjectMapper.class).readValue(result, SwxlBaseBackMessage.class);
