@@ -19,6 +19,7 @@ import okhttp3.*;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.net.URLEncoder;
 import java.util.*;
 
@@ -49,7 +50,21 @@ public class KedaApi {
      */
     public AjaxResult add(KedaChildOrder kedaChildOrder, KedaOrder order) throws IOException {
         //http://clcy.adsring.cn/meap-web/ring/emp/addRingEmp?r=0.647359152849093
-        String param = "businessId=21&empPhone=" + kedaChildOrder.getLinkTel() + "&empName=" + order.getCompanyName() + "&groupId=" + Constant.OPERATEID + "&businessType=ring";
+        //转义名称
+        String name = "";
+        if (order.getCompanyName().matches("[0-9]+")){
+            name = order.getCompanyName();
+        }else{
+            String encodeURL = URLEncoder.encode(order.getCompanyName());
+            String[] split = encodeURL.split("%");
+            for (int i = 0; i < split.length; i++) {
+                if (StringUtils.isEmpty(split[i])){
+                    continue;
+                }
+                name = name + "%2525" + split[i];
+            }
+        }
+        String param = "businessId=21&empPhone=" + kedaChildOrder.getLinkTel() + "&empName=" + name + "&groupId=" + Constant.OPERATEID + "&businessType=ring";
         double rm = (new Random()).nextDouble();
         String res = sendPost(ADD_URL + "?r=" + rm, param);
         log.info("疑难杂单创建订单结果：" + res);
