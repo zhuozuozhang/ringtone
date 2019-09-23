@@ -65,10 +65,11 @@ public class ThreenetsChildOrder implements Serializable {
     private Integer miguPrice;
     //移动高资费
     private Integer specialPrice;
-    // 联通支付价格
+    //联通支付价格
     private Integer swxlPrice;
+    //资费信息
+    private Integer price;
 
-    //
     private String month;
 
     private String year;

@@ -341,8 +341,10 @@
     </update>
     <!-- 查询父级订单信息 -->
     <select id="selectThreeNetsTaskList" resultMap="BaseResultMap">
-        select p.*,c.company_name as companyLinkman from tb_threenets_order c
-        left join tb_threenets_child_order p on c.id = p.parent_order_id
+        select p.*,c.company_name as companyLinkman,
+        (SELECT CASE WHEN p.operator = 1 THEN migu_price WHEN p.operator = 2 THEN mcard_price WHEN p.operator = 3 THEN swxl_price END FROM tb_threenets_order_attached WHERE parent_order_id = p.parent_order_id) price
+        from tb_threenets_child_order p
+        LEFT JOIN tb_threenets_order c ON c.id = p.parent_order_id
         where 1=1
         <include refid="parameters"/>
         order by create_date desc
