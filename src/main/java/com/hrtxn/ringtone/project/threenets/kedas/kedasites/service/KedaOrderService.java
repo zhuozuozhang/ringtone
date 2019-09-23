@@ -128,10 +128,6 @@ public class KedaOrderService {
         List<KedaOrder> linkTel = kedaOrderMapper.getKeDaOrderList(null, baseRequest);
         if (linkTel.size() > 0) return AjaxResult.error("联系电话已被使用！");
 
-        baseRequest.setTel(null);
-        baseRequest.setLinkMan(kedaOrder.getLinkMan());
-        List<KedaOrder> linkMan = kedaOrderMapper.getKeDaOrderList(null, baseRequest);
-        if (linkMan.size() > 0) return AjaxResult.error("联系人已被使用！");
         // 添加父级订单
         kedaOrder.setCerateTime(new Date());
         kedaOrder.setUserId(ShiroUtils.getSysUser().getId());

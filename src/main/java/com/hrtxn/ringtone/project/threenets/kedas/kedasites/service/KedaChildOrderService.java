@@ -191,11 +191,6 @@ public class KedaChildOrderService {
 
         // 查重
         BaseRequest b = new BaseRequest();
-        // 联系人
-        b.setCompanyName(null);
-        b.setLinkMan(kedaChildOrder.getLinkMan());
-        List<KedaChildOrder> linkMan = kedaChildOrderMapper.getKeDaChildOrderBacklogList(null, b);
-        if (linkMan.size() > 0) return AjaxResult.error("员工姓名重复！");
         // 联系电话
         b.setLinkMan(null);
         b.setTel(kedaChildOrder.getLinkTel());
