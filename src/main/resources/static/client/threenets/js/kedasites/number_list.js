@@ -18,30 +18,7 @@ function showTable() {
         {"data": "status"},
         {"data": "ringName"},
         {"data": "isRingtoneUser"},
-        {
-            "data": "isMonthly", render: function (data, type, row, meta) {
-                // 0.未开通/1.开通成功/2.开通失败/3.已退订/4.开通中/5.删除中/6.删除失败
-                var status = '';
-                if (data == 0) {
-                    status = '未包月';
-                } else if (data == 1) {
-                    status = '已包月';
-                } else if (data == 2) {
-                    status = '包月失败';
-                } else if (data == 3) {
-                    status = '已退订';
-                } else if (data == 4) {
-                    status = '包月中';
-                } else if (data == 5) {
-                    status = '删除中';
-                } else if (data == 6) {
-                    status = '删除失败';
-                } else {
-                    status = '已回短信';
-                }
-                return status;
-            }
-        },
+        {"data": "isMonthly"},
         {"data": "remark"}
     ];
     var columnDefs = [{
@@ -58,13 +35,41 @@ function showTable() {
     }, {
         targets: [7],
         render: function (data, type, row, meta) {
+            var id = row.id;
+            var status = "是";
             if (data == 1) {
-                return "否";
+                status = "否";
             } else if (data == 2) {
-                return "是";
+                status = "是";
             } else {
-                return "开通失败"
+                status = "开通失败"
             }
+            return status + "<i onclick='getPhoneInfo(" + id + ")' class='layui-icon' title='刷新' data-rowindex='" + meta.row + "'><img src='../../../../client/threenets/images/refresh.png'></i>";
+        }
+    }, {
+        targets: [8],
+        render: function (data, type, row, meta) {
+            // 0.未开通/1.开通成功/2.开通失败/3.已退订/4.开通中/5.删除中/6.删除失败
+            var status = '';
+            if (data == 0) {
+                status = '未包月';
+            } else if (data == 1) {
+                status = '已包月';
+            } else if (data == 2) {
+                status = '包月失败';
+            } else if (data == 3) {
+                status = '已退订';
+            } else if (data == 4) {
+                status = '包月中';
+            } else if (data == 5) {
+                status = '删除中';
+            } else if (data == 6) {
+                status = '删除失败';
+            } else {
+                status = '已回短信';
+            }
+            var id = row.id;
+            return status + "<i onclick='getPhoneInfo(" + id + ")' class='layui-icon' title='刷新' data-rowindex='" + meta.row + "'><img src='../../../../client/threenets/images/refresh.png'></i>";
         }
     }, {
         targets: [9],
@@ -80,6 +85,9 @@ function showTable() {
             var linkMan = row.linkMan;
             var linkTel = row.linkTel;
             var employeeId = row.employeeId;
+            var operate = row.operate;
+            console.log(operate)
+            var note = "<i onclick='sendMessage();' class='layui-icon layui-icon-reply-fill' title='下发短信'></i>";
             var setRing = "<a href='javascript:;' onclick='ringSet(\"" + linkMan + "\",\"" + linkTel + "\"," + employeeId + "," + id + ");'><i class='layui-icon layui-icon-set' title='设置铃音'></i></a>";
             var refresh = "<i onclick='getPhoneInfo(" + id + ")' class='layui-icon layui-icon-refresh-3' title='刷新'></i>";
             var del = "<i class='layui-icon layui-icon-delete' title='删除' onclick='deleteTel(" + id + ")'></i>";
@@ -201,4 +209,10 @@ function deleteTel(id) {
         layer.closeAll('dialog');//关闭弹层
     }, function () {
     });
+}
+
+function sendMessage() {
+    //window.open("http://t.cn/R1BRf4e?_phoneNo=15150013617");
+    ///window.location.href="http://www.baidu.com";
+    layer.open({type: 2, area: ['1366px', '768px'], content: 'http://www.baidu.com'});
 }

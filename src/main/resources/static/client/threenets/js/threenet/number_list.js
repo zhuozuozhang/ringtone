@@ -96,7 +96,6 @@ function showTable() {
 // type 标识是否是批量操作 1、批量操作/2、单个操作
 // data 数据 type为1时，data为父级订单ID；type为2时，data为子订单ID
 function getPhoneInfo(type,data) {
-    window.location.reload();
     if (type == 1){
         data  = $('#parentOrderId').val();
     }
@@ -107,8 +106,14 @@ function getPhoneInfo(type,data) {
         if (res.code == 200 && res.data) {
             layer.msg('更新成功！', {icon: 6, time: 3000});
             $("#set").DataTable().ajax.reload(null, false);
+            setTimeout(function () {
+                window.location.reload();
+            },2000);
         } else {
             layer.msg(res.msg, {icon: 5, time: 3000});
+            setTimeout(function () {
+                window.location.reload();
+            },2000);
         }
     });
 }
