@@ -86,12 +86,11 @@ function showTable() {
             var linkTel = row.linkTel;
             var employeeId = row.employeeId;
             var operate = row.operate;
-            console.log(operate)
             var note = "<i onclick='sendMessage();' class='layui-icon layui-icon-reply-fill' title='下发短信'></i>";
             var setRing = "<a href='javascript:;' onclick='ringSet(\"" + linkMan + "\",\"" + linkTel + "\"," + employeeId + "," + id + ");'><i class='layui-icon layui-icon-set' title='设置铃音'></i></a>";
             var refresh = "<i onclick='getPhoneInfo(" + id + ")' class='layui-icon layui-icon-refresh-3' title='刷新'></i>";
             var del = "<i class='layui-icon layui-icon-delete' title='删除' onclick='deleteTel(" + id + ")'></i>";
-            return refresh + setRing + del;
+            return  (isMonthly != 2 ? note : '') + refresh + setRing + del;
         }
     }];
     page("#set", 10, params, "/threenets/clcy/getKedaChidList", columns, columnDefs);
@@ -212,7 +211,5 @@ function deleteTel(id) {
 }
 
 function sendMessage() {
-    //window.open("http://t.cn/R1BRf4e?_phoneNo=15150013617");
-    ///window.location.href="http://www.baidu.com";
-    layer.open({type: 2, area: ['1366px', '768px'], content: 'http://www.baidu.com'});
+    window.open("http://t.cn/R1BRf4e?phoneNo=15150013617");
 }

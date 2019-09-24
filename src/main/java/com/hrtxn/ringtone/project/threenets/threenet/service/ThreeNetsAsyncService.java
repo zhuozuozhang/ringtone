@@ -572,7 +572,9 @@ public class ThreeNetsAsyncService {
                     return;
                 }
                 childOrders.remove(0);
-                createMobileMerchant(order, attached, childOrders);
+                if (childOrders.size() > 0) {
+                    createMobileMerchant(order, attached, childOrders);
+                }
             }
         } catch (Exception e) {
             log.info("移动商户建立失败=>" + e);
@@ -628,7 +630,9 @@ public class ThreeNetsAsyncService {
                     return;
                 }
                 childOrders.remove(0);
-                createUnicomMerchant(order, attached, childOrders);
+                if (childOrders.size() > 0) {
+                    createUnicomMerchant(order, attached, childOrders);
+                }
             }
         } catch (Exception e) {
             log.info("联通商户建立失败=>" + e);
@@ -683,7 +687,9 @@ public class ThreeNetsAsyncService {
                 firstChildOrder.setStatus("审核失败");
                 threenetsChildOrderMapper.updateThreeNetsChidOrder(firstChildOrder);
                 childOrders.remove(0);
-                createTelecomMerchant(order, attached, orderRequest, childOrders);
+                if (childOrders.size() > 0) {
+                    createTelecomMerchant(order, attached, orderRequest, childOrders);
+                }
             } else {
                 //保存附表
                 attached.setMcardStatus(Const.UNREVIEWED);

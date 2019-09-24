@@ -126,6 +126,10 @@ public class ApiUtils {
                 }
                 mcardApi.toUserList(threenetsChildOrder.getOperateId(), attached.getMcardDistributorId());
                 String result = mcardApi.getUserInfo(attached.getMcardDistributorId());
+                if (StringUtils.isEmpty(result)){
+                    log.info("[" + threenetsChildOrder.getLinkmanTel() + "：获取信息失败！]");
+                    break;
+                }
                 Document doc = Jsoup.parse(result);
                 Elements contents = doc.getElementsByTag("tbody");
                 if (contents.size() == 0) {
@@ -1295,6 +1299,11 @@ public class ApiUtils {
             if (mcardAddPhoneRespone.getCode().equals("0000")) {
                 childOrder.setStatus("审核成功");
                 childOrder.setRemark("添加成功");
+                newList.add(childOrder);
+            }
+            if (mcardAddPhoneRespone.getCode().equals("error")){
+                childOrder.setStatus(Const.FAILURE_REVIEW);
+                childOrder.setRemark("添加失败");
                 newList.add(childOrder);
             }
         }

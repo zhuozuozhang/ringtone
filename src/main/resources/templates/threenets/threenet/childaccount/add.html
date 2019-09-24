@@ -214,6 +214,7 @@
                 layer.close(layuiLoding);
                 //上传成功
                 if (res.code == 200){
+                    layer.msg("上传成功", {icon: 1, time: 1000});
                     $("#cardz").val(res.data);
                 }else{
                     layer.msg(res.msg,{icon: 6,time:1000});
@@ -257,6 +258,7 @@
                 layer.close(layuiLoding);
                 //上传成功
                 if (res.code == 200){
+                    layer.msg("上传成功", {icon: 1, time: 1000});
                     $("#cardf").val(res.data);
                 }else{
                     layer.msg(res.msg,{icon: 6,time:1000});

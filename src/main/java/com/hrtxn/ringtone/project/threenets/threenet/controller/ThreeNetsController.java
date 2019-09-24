@@ -452,4 +452,13 @@ public class ThreeNetsController {
             return AjaxResult.error(e.getMessage());
         }
     }
+
+    /**
+     * 跳转到移动商户页
+     * @return
+     */
+    @GetMapping("/threenets/toMiguPage")
+    public String toMiguPage() {
+        return "threenets/threenet/merchants/miguPage";
+    }
 }
