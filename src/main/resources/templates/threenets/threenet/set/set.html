@@ -58,7 +58,7 @@
                         <div class="layui-form-item">
                             <label class="layui-form-label">手机</label>
                             <div class="layui-input-inline">
-                                <input type="text" disabled th:value="${user.userTel}" required lay-verify="userTel" autocomplete="off" id="userTel" class="layui-input">
+                                <input type="text" th:value="${user.userTel}" required lay-verify="userTel" autocomplete="off" id="userTel" name="userTel" class="layui-input">
                             </div>
                         </div>
                         <div class="layui-form-item">
@@ -89,9 +89,11 @@
         form.on('submit(formDemo)', function(data){
             var userEmail = $("#userEmail").val();
             var userGuhua = $("#userGuhua").val();
+            var userTel = $("#userTel").val();
             AjaxPut("/threenets/personalInformation",{
                 userEmail:userEmail,
                 userGuhua:userGuhua,
+                userTel,userTel
             },function (res) {
                 if (res.code == 200 && res.data){
                     layer.msg("修改成功",{icon: 1,time:1000});

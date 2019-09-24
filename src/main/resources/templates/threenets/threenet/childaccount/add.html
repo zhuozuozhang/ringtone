@@ -183,6 +183,7 @@
     });
     //照片上传
     layui.use('upload', function(){
+        var layuiLoding;
         var upload = layui.upload;
         //上传身份证正面照
         var uploadInst = upload.render({
@@ -193,12 +194,24 @@
             }
             ,url: '/system/upload/cardImage'
             ,before: function(obj){
+                layuiLoding = layer.load(0, { //icon支持传入0-2
+                    time:false,
+                    shade: [0.5, '#9c9c9c'], //0.5透明度的灰色背景
+                    content: '文件上传中...',
+                    success: function (layero) {
+                        layero.find('.layui-layer-content').css({
+                            'padding': '39px 10px',
+                            'width': '100px'
+                        });
+                    }
+                });
                 //预读本地文件示例，不支持ie8
                 obj.preview(function(index, file, result){
                     $('#IDpositive_img').attr('src', result); //图片链接（base64）
                 });
             }
             ,done: function(res){
+                layer.close(layuiLoding);
                 //上传成功
                 if (res.code == 200){
                     $("#cardz").val(res.data);
@@ -207,6 +220,7 @@
                 }
             }
             ,error: function(){
+                layer.close(layuiLoding);
                 //演示失败状态，并实现重传
                 return layer.msg("上传失败,请重新上传");
                 demoText.find('.demo-reload').on('click', function(){
@@ -223,12 +237,24 @@
                 radom:timestamp
             }
             ,before: function(obj){
+                layuiLoding = layer.load(0, { //icon支持传入0-2
+                    time:false,
+                    shade: [0.5, '#9c9c9c'], //0.5透明度的灰色背景
+                    content: '文件上传中...',
+                    success: function (layero) {
+                        layero.find('.layui-layer-content').css({
+                            'padding': '39px 10px',
+                            'width': '100px'
+                        });
+                    }
+                });
                 //预读本地文件示例，不支持ie8
                 obj.preview(function(index, file, result){
                     $('#IDreverse_img').attr('src', result); //图片链接（base64）
                 });
             }
             ,done: function(res){
+                layer.close(layuiLoding);
                 //上传成功
                 if (res.code == 200){
                     $("#cardf").val(res.data);
@@ -237,6 +263,7 @@
                 }
             }
             ,error: function(){
+                layer.close(layuiLoding);
                 //演示失败状态，并实现重传
                 return layer.msg("上传失败,请重新上传");
                 demoText.find('.demo-reload').on('click', function(){
