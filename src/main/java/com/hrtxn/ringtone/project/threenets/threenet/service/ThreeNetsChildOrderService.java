@@ -265,6 +265,7 @@ public class ThreeNetsChildOrderService {
             List<PlotBarPhone> fiveData = threenetsChildOrderMapper.getFiveData(id);
             ThreenetsChildOrder threenetsChildOrder = new ThreenetsChildOrder();
             threenetsChildOrder.setUserId(id);
+            threenetsChildOrder.setIsMonthly(2);
             Integer count = threenetsChildOrderMapper.getCount(threenetsChildOrder);
             for (PlotBarPhone plotBarPhone : fiveData) {
                 plotBarPhone.setCumulativeUser(count);

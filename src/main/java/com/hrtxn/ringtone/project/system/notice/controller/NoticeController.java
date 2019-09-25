@@ -7,6 +7,7 @@ import com.hrtxn.ringtone.freemark.config.logConfig.Log;
 import com.hrtxn.ringtone.freemark.enums.BusinessType;
 import com.hrtxn.ringtone.freemark.enums.OperatorLogType;
 import com.hrtxn.ringtone.project.system.notice.domain.Notice;
+import com.hrtxn.ringtone.project.system.notice.service.NoticeRecordService;
 import com.hrtxn.ringtone.project.system.notice.service.NoticeService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authz.annotation.RequiresRoles;
@@ -29,6 +30,9 @@ public class NoticeController {
 
     @Autowired
     private NoticeService noticeService;
+
+    @Autowired
+    private NoticeRecordService noticeRecordService;
 
     /**
      * 获取公告列表

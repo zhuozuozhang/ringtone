@@ -67,6 +67,7 @@ public class UserService {
     public AjaxResult updateUserById(User user) throws Exception {
         int i = userMapper.updateUserById(user);
         if (i > 0){
+            ShiroUtils.getSysUser().setUserTel(user.getUserTel());
             return AjaxResult.success(true,"修改成功！");
         }
         return AjaxResult.error("修改失败！");

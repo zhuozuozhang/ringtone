@@ -363,7 +363,7 @@ public class SwxlApi implements Serializable {
      * @throws IOException
      */
     public String getSwxlRingFenFaAreaInfo(String ringid) throws NoLoginException, IOException {
-        String getUrl = getSwxlRingFenFa_URL + "/" + ringid;
+        String getUrl = getSwxlRingFenFa_URL + "/" + ringid+"?&maxresult=50";
         String result = sendGet(getUrl);
         log.info("联通获取铃音分发详细 参数：{} 结果：{} ", ringid, result);
         return result;

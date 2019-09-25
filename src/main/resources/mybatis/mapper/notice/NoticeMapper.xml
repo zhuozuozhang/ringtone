@@ -91,7 +91,7 @@
             notice_id = #{id,jdbcType=INTEGER}
     </delete>
     <!-- 添加公告信息 -->
-    <insert id="insertNotice" parameterType="Notice">
+    <insert id="insertNotice" parameterType="com.hrtxn.ringtone.project.system.notice.domain.Notice">
         insert into sys_notice
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="noticeTitle != null">
@@ -141,7 +141,7 @@
         </trim>
     </insert>
     <!-- 修改公告信息 -->
-    <update id="updateNotice" parameterType="Notice">
+    <update id="updateNotice" parameterType="com.hrtxn.ringtone.project.system.notice.domain.Notice">
         update sys_notice
         <set>
             <if test="noticeTitle != null">
