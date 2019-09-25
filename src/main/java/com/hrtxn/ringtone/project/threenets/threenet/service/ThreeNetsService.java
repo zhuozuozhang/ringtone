@@ -214,6 +214,7 @@ public class ThreeNetsService {
         int liantong = 0;
         int sum = 0;
         for (String p : phone) {
+            p = p.replace(" ","");
             //首先验证是固定电话还是手机号
             boolean mobileNO = isMobileNO(p);
             boolean fixedPhone = isFixedPhone(p);

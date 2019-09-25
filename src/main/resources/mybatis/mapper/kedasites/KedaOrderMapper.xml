@@ -137,7 +137,8 @@
             AND user_id = #{param.userId}
         </if>
         <if test="param != null and param.tel != null and param.tel != ''">
-            AND link_tel = #{param.tel}
+            AND (link_tel like '%${param.tel}%'
+            or id in(select order_id from tb_keda_child_order where link_tel like '%${param.tel}%' GROUP BY order_id))
         </if>
         <if test="param != null and param.name != null and param.name != ''">
             AND company_name like CONCAT('%',#{param.name},'%')

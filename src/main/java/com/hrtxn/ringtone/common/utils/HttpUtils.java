@@ -5,10 +5,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.net.ssl.*;
 import java.io.*;
-import java.net.ConnectException;
-import java.net.SocketTimeoutException;
-import java.net.URL;
-import java.net.URLConnection;
+import java.net.*;
 import java.security.cert.X509Certificate;
 
 /**
@@ -121,6 +118,9 @@ public class HttpUtils
         catch (ConnectException e)
         {
             log.error("调用HttpUtils.sendPost ConnectException, url=" + url + ",param=" + param, e);
+        }
+        catch (SocketException e){
+            log.error("调用HttpUtils.sendPost SocketException, url=" + url + ",param=" + param, e);
         }
         catch (SocketTimeoutException e)
         {

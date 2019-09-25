@@ -208,6 +208,7 @@ public class ThreeNetsChildOrderService {
 
         List<ThreenetsChildOrder> list = new ArrayList<>();
         for (String tel : phoneArray) {
+            tel = tel.replace(" ","");
             ThreenetsChildOrder childOrder = new ThreenetsChildOrder();
             if (tel.isEmpty()) {
                 continue;

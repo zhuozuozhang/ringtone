@@ -10,6 +10,7 @@ function showTable() {
         {"data": "linkman"},
         {"data": "linkmanTel"},
         {"data": "operator"},
+        {"data": "price"},
         {"data": "province"},
         {"data": "createDate"},
         {"data": "ringName"},
@@ -35,20 +36,20 @@ function showTable() {
             }
         }
     }, {
-        targets: [6],
+        targets: [7],
         render: function (data, type, row, meta) {
             data = isNotEmpty(data)?data:"";
             return "<div style='text-overflow:ellipsis;overflow:hidden;white-space:nowrap;width:150px;' title='" + data + "'>" + data + "</div>";
         }
     }, {
-        targets: [7],
+        targets: [8],
         render: function (data, type, row, meta) {
             var id = row.id;
             var status = data ? '是' : '否';
             return status + "<i onclick='getPhoneInfo(2," + id + ")' class='layui-icon' title='刷新' data-rowindex='" + meta.row + "'><img src='../../client/threenets/images/refresh.png'></i>";
         }
     }, {
-        targets: [8],
+        targets: [9],
         render: function (data, type, row, meta) {
             var status = '';
             if (data == 1) {
@@ -62,7 +63,7 @@ function showTable() {
             return status + "<i onclick='getPhoneInfo(2," + id + ")' class='layui-icon' title='刷新'><img src='../../client/threenets/images/refresh.png'></i>";
         }
     }, {
-        targets: [9],
+        targets: [10],
         render: function (data, type, row, meta) {
             var operator = row.operator;
             var id = row.id;
@@ -70,13 +71,13 @@ function showTable() {
             return status + (operator == 1 ? "<i onclick='refreshVbrtStatus(" + id + ")' class='layui-icon' title='刷新'><img src='../../client/threenets/images/refresh.png'></i>" : '');
         }
     }, {
-        targets: [10],
+        targets: [11],
         render: function (data, type, row, meta) {
             data = isNotEmpty(data)?data:"";
             return "<div style='text-overflow:ellipsis;overflow:hidden;white-space:nowrap;width:150px;' title='" + data + "'>" + data + "</div>";
         }
     }, {
-        targets: [11],
+        targets: [12],
         render: function (data, type, row, meta) {
             var id = row.id;
             var operator = row.operator;
@@ -96,7 +97,6 @@ function showTable() {
 // type 标识是否是批量操作 1、批量操作/2、单个操作
 // data 数据 type为1时，data为父级订单ID；type为2时，data为子订单ID
 function getPhoneInfo(type,data) {
-    window.location.reload();
     if (type == 1){
         data  = $('#parentOrderId').val();
     }
@@ -107,8 +107,14 @@ function getPhoneInfo(type,data) {
         if (res.code == 200 && res.data) {
             layer.msg('更新成功！', {icon: 6, time: 3000});
             $("#set").DataTable().ajax.reload(null, false);
+            setTimeout(function () {
+                window.location.reload();
+            },2000);
         } else {
             layer.msg(res.msg, {icon: 5, time: 3000});
+            setTimeout(function () {
+                window.location.reload();
+            },2000);
         }
     });
 }

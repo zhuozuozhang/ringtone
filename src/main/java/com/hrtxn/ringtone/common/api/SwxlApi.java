@@ -272,12 +272,16 @@ public class SwxlApi implements Serializable {
 
     @Synchronized
     public boolean loginParam(String vcode, String userName) {
+        String password = PASSWORD2;
+        if (userName.equals(USER_NAME)){
+            password = PASSWORD;
+        }
         boolean isSucess = false;
         DefaultHttpClient httpclient = WebClientDevWrapper.wrapClient(new DefaultHttpClient());
         HttpPost httppost = new HttpPost(SwxlApi.LOGIN_URL);
         List<NameValuePair> formparams = new ArrayList<NameValuePair>();
         formparams.add(new BasicNameValuePair("username", userName));
-        formparams.add(new BasicNameValuePair("password", PASSWORD2));
+        formparams.add(new BasicNameValuePair("password", password));
         formparams.add(new BasicNameValuePair("vcode", vcode));
         if (this.swxlCookie == null) {
             return false;
@@ -291,6 +295,9 @@ public class SwxlApi implements Serializable {
             String s = EntityUtils.toString(resEntity);
             System.out.println("s" + s);
             isSucess = !s.contains("验证码输入错误");
+            if (isSucess){
+                isSucess = !s.contains("验证码不正确");
+            }
             // 获取登录cookie
             if (isSucess) {
                 this.setSwxlCookie(httpclient.getCookieStore());

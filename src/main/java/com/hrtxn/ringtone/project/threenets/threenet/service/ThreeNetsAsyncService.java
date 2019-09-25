@@ -688,6 +688,7 @@ public class ThreeNetsAsyncService {
                 //保存附表
                 attached.setMcardStatus(Const.UNREVIEWED);
                 attached.setMcardId(groupRespone.getAuserId());
+                attached.setMcardPrice(attached.getMcardPrice() == 2 ? 10 : 20);
                 threeNetsOrderAttachedMapper.updateByPrimaryKeySelective(attached);
                 //保存铃音
                 ThreenetsRing ring = threenetsRingMapper.selectByPrimaryKey(firstChildOrder.getRingId());

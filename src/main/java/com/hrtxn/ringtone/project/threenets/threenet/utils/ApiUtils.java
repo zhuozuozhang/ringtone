@@ -10,6 +10,7 @@ import com.hrtxn.ringtone.common.utils.*;
 import com.hrtxn.ringtone.common.utils.json.JsonUtil;
 import com.hrtxn.ringtone.project.system.File.service.FileService;
 import com.hrtxn.ringtone.project.system.user.domain.User;
+import com.hrtxn.ringtone.project.system.user.mapper.RoleRelationMapper;
 import com.hrtxn.ringtone.project.system.user.mapper.UserMapper;
 import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreeNetsOrderAttached;
 import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreenetsChildOrder;
@@ -1309,7 +1310,7 @@ public class ApiUtils {
     public AjaxResult insertUser(User user) throws NoLoginException, IOException {
         String msg = "创建失败！";
         // 执行添加联通子渠道商
-        loginToUnicom();
+        swxlApi.loginAutoParam("99397000");
         String result = swxlApi.addChild(user);
         if (StringUtils.isNotEmpty(result)) {
             SwxlBaseBackMessage<Object> createUser = SpringUtils.getBean(ObjectMapper.class).readValue(result, SwxlBaseBackMessage.class);
@@ -1317,6 +1318,9 @@ public class ApiUtils {
             if (StringUtils.isNotNull(createUser) && "000000".equals(createUser.getRecode()) && createUser.isSuccess()) {
                 // 执行添加到本地数据库
                 int count = SpringUtils.getBean(UserMapper.class).insertUser(user);
+                // 添加权限到本地数据库
+                int[] menu = {1,2,3,4,5,6,7,8,9};
+                SpringUtils.getBean(RoleRelationMapper.class).insertRoleRelation(user.getId(),menu);
                 if (count > 0) {
                     // 修改文件状态
                     SpringUtils.getBean(FileService.class).updateStatus(user.getUserCardFan());
