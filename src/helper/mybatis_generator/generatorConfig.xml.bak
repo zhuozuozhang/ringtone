@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE generatorConfiguration PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN" "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
+<!-- 配置生成器 -->
+<generatorConfiguration>
+	<!-- mysql jar包 -->
+	<classPathEntry location="mysql-connector-java-5.1.36.jar" />
+	<!--  
+    	defaultModelType:指定生成对象的样式
+	    	1 conditional：类似hierarchical；
+	    	2 flat：所有内容（主键，blob）等全部生成在一个对象中
+	    	3 hierarchical：主键生成一个XXKey对象(key class),Blob等单独生成一个对象，其他简单属性在一个对象中(record class)
+    	targetRuntime:
+        	1 MyBatis3：默认的值，生成基于MyBatis3.x以上版本的内容，包括XXXBySample
+        	2 MyBatis3Simple：类似MyBatis3，只是不生成XXXBySample
+    	introspectedColumnImpl：类全限定名，用于扩展MBG
+	-->
+	<context id="DB2Tables" targetRuntime="MyBatis3" defaultModelType="flat">
+		<!-- 格式化java代码 -->
+	    <property name="javaFormatter" value="org.mybatis.generator.api.dom.DefaultJavaFormatter"/>
+	    <!-- 格式化XML代码 -->
+	    <property name="xmlFormatter" value="org.mybatis.generator.api.dom.DefaultXmlFormatter"/>
+		<commentGenerator>
+			<property name="suppressDate" value="true" />
+			<!-- 是否去除自动生成的注释 true：是 ： false:否 -->
+			<property name="suppressAllComments" value="true" />
+		</commentGenerator>
+		<!-- 配置链接数据库 -->
+		<jdbcConnection driverClass="com.mysql.jdbc.Driver" connectionURL="jdbc:mysql://192.168.0.10:3306/grammar" userId="root" password="yemast58" />
+		<!-- 自定义类型转换 -->
+		<javaTypeResolver >
+			<!-- 
+            	true：使用BigDecimal对应DECIMAL和 NUMERIC数据类型
+            	false：默认,
+	                scale>0;length>18：使用BigDecimal
+	                scale=0;length[10,18]：使用Long
+	                scale=0;length[5,9]：使用Integer
+	                scale=0;length<5：使用Short
+         	-->
+	    	<property name="forceBigDecimals" value="false" />
+	    </javaTypeResolver>
+	    <!-- 生成实体类 -->
+	    <javaModelGenerator targetPackage="com.yemast.grammar.core.entity" targetProject="..\..\java">
+	    	<!-- 在targetPackage的基础上，根据数据库的schema再生成一层package，最终生成的类放在这个package下，默认为false -->
+			<property name="enableSubPackages" value="true" />
+			<!-- 设置是否在getter方法中，对String类型字段调用trim()方法 -->
+      		<property name="trimStrings" value="true" />
+		</javaModelGenerator>
+		<!-- 生成Mapper -->
+		<sqlMapGenerator targetPackage="mapper" targetProject="..\..\resources\mybatis">
+			<!-- 在targetPackage的基础上，根据数据库的schema再生成一层package，最终生成的类放在这个package下，默认为false -->
+			<property name="enableSubPackages" value="true" />
+		</sqlMapGenerator>
+		<!-- 生成XML -->
+		<javaClientGenerator targetPackage="com.yemast.grammar.core.repository" targetProject="..\..\java" type="XMLMAPPER">
+			 <property name="enableSubPackages" value="true" />
+		</javaClientGenerator>
+		
+		<!-- 生成的表 -->
+		<!-- schema：数据库的schema -->
+		<!-- tableName（必要）：要生成对象的表名 -->
+		<!-- domainObjectName：生成的domain类的名字，如果不设置，直接使用表名作为domain类的名字；可以设置为somepck.domainName，那么会自动把domainName类再放到somepck包里面 -->
+		<!-- useActualColumnNames 如果设置为true，生成的model类会直接使用column本身的名字，而不会再使用驼峰命名方法，比如BORN_DATE，生成的属性名字就是BORN_DATE,而不会是bornDate -->
+		<!-- <table schema="grammar" tableName="sequence_generator" domainObjectName="SequenceEntity">
+			 <property name="useActualColumnNames" value="false"/>
+		     <generatedKey column="table_name" sqlStatement="MySql" identity="false"  />
+		</table>
+		<table schema="grammar" tableName="tbl_admin" domainObjectName="AdminEntity">
+			 <property name="useActualColumnNames" value="false"/>
+		     <generatedKey column="user_id" sqlStatement="MySql" identity="false"  />
+		</table>
+		<table schema="grammar" tableName="tbl_menu" domainObjectName="MenuEntity">
+			 <property name="useActualColumnNames" value="false"/>
+		     <generatedKey column="menu_id" sqlStatement="MySql" identity="false"  />
+		</table>
+		<table schema="grammar" tableName="tbl_config" domainObjectName="ConfigEntity">
+			 <property name="useActualColumnNames" value="false"/>
+		     <generatedKey column="config_id" sqlStatement="MySql" identity="true"  />
+		</table>
+		<table schema="grammar" tableName="tbl_function" domainObjectName="FunctionEntity">
+			 <property name="useActualColumnNames" value="false"/>
+		     <generatedKey column="function_id" sqlStatement="MySql" identity="true"  />
+		</table>
+		<table schema="grammar" tableName="tbl_organization" domainObjectName="OrganizationEntity">
+			 <property name="useActualColumnNames" value="false"/>
+		     <generatedKey column="id" sqlStatement="MySql" identity="true"  />
+		</table>
+		<table schema="grammar" tableName="tbl_role" domainObjectName="RoleEntity">
+			 <property name="useActualColumnNames" value="false"/>
+		     <generatedKey column="role_id" sqlStatement="MySql" identity="true"  />
+		</table>
+		<table schema="grammar" tableName="tbl_sys_info" domainObjectName="SysInfoEntity">
+			 <property name="useActualColumnNames" value="false"/>
+		     <generatedKey column="info_key" sqlStatement="MySql" identity="false"  />
+		</table>
+		<table schema="grammar" tableName="tbl_role_authority" domainObjectName="RoleAuthorityEntity">
+			 <property name="useActualColumnNames" value="false"/>
+		     <generatedKey column="id" sqlStatement="MySql" identity="false"  />
+		</table>
+		<table schema="grammar" tableName="tbl_admin_role" domainObjectName="AdminRoleEntity">
+			 <property name="useActualColumnNames" value="false"/>
+		     <generatedKey column="admin_id" sqlStatement="MySql" identity="false"  />
+		</table>
+		<table schema="grammar" tableName="tbl_grammar_explain" domainObjectName="GrammarExplainEntity">
+			 <property name="useActualColumnNames" value="false"/>
+		     <generatedKey column="grammar_explain_id" sqlStatement="MySql" identity="true"  />
+		</table>
+		<table schema="grammar" tableName="tbl_grammar_keyword" domainObjectName="GrammarKeywordEntity">
+			 <property name="useActualColumnNames" value="false"/>
+		     <generatedKey column="grammar_keyword_id" sqlStatement="MySql" identity="true"  />
+		</table>
+		<table schema="grammar" tableName="tbl_teacher" domainObjectName="TeacherEntity">
+			 <property name="useActualColumnNames" value="false"/>
+		     <generatedKey column="teacher_id" sqlStatement="MySql" identity="true"  />
+		</table>
+		<table schema="grammar" tableName="tbl_version_seq" domainObjectName="VersionSeqEntity">
+			 <property name="useActualColumnNames" value="false"/>
+		     <generatedKey column="key" sqlStatement="MySql" identity="false"  />
+		</table>
+		<table schema="grammar" tableName="tbl_video" domainObjectName="VideoEntity">
+			 <property name="useActualColumnNames" value="false"/>
+		     <generatedKey column="video_id" sqlStatement="MySql" identity="true"  />
+		</table>
+		<table schema="grammar" tableName="tbl_grammar" domainObjectName="GrammarEntity">
+			 <property name="useActualColumnNames" value="false"/>
+		     <generatedKey column="grammar_id" sqlStatement="MySql" identity="true"  />
+		</table>
+		<table schema="grammar" tableName="tbl_analysis_explain" domainObjectName="AnalysisExplainEntity">
+			 <property name="useActualColumnNames" value="false"/>
+		     <generatedKey column="analysis_explain_id" sqlStatement="MySql" identity="true"  />
+		</table>
+		<table schema="grammar" tableName="tbl_analysis" domainObjectName="AnalysisEntity">
+			 <property name="useActualColumnNames" value="false"/>
+		     <generatedKey column="analysis_id" sqlStatement="MySql" identity="true"  />
+		</table> 
+		<table schema="grammar" tableName="tbl_feedback" domainObjectName="FeedBackEntity">
+			 <property name="useActualColumnNames" value="false"/>
+		     <generatedKey column="feedback_id" sqlStatement="MySql" identity="true"  />
+		</table>
+		<table schema="grammar" tableName="tbl_type" domainObjectName="TypeEntity">
+			 <property name="useActualColumnNames" value="false"/>
+		     <generatedKey column="type_id" sqlStatement="MySql" identity="true"  />
+		</table>
+		<table schema="grammar" tableName="tbl_keyword_other_name" domainObjectName="KeywordOtherNameEntity">
+			 <property name="useActualColumnNames" value="false"/>
+		     <generatedKey column="keyword_other_name_id" sqlStatement="MySql" identity="true"  />
+		</table>
+		<table schema="grammar" tableName="tbl_keyword" domainObjectName="KeywordEntity">
+			 <property name="useActualColumnNames" value="false"/>
+		     <generatedKey column="keyword_id" sqlStatement="MySql" identity="true"  />
+		</table>-->
+		<table schema="grammar" tableName="tbl_grammar" domainObjectName="GrammarEntity">
+			 <property name="useActualColumnNames" value="false"/>
+		     <generatedKey column="grammar_id" sqlStatement="MySql" identity="true"  />
+		</table>
+	</context>
+</generatorConfiguration>
