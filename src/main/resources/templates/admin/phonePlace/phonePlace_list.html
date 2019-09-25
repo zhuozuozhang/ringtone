@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head th:include="admin/common/include :: header"></head>
+<body class="layui-anim layui-anim-up">
+<div class="x-nav">
+    <span class="layui-breadcrumb">
+        <a href="">首页</a>
+        <a href="">固话归属地管理</a>
+        <a>
+            <cite>固话归属地列表</cite>
+        </a>
+    </span>
+    <a class="layui-btn layui-btn-primary layui-btn-small" style="line-height:1.6em;margin-top:3px;float:right"
+       href="javascript:location.replace(location.href);" title="刷新">
+        <i class="layui-icon" style="line-height:38px">ဂ</i>
+    </a>
+</div>
+<div class="x-body">
+    <div class="layui-row">
+        <form class="layui-form layui-col-md12 x-so" action="javascript:void(0);">
+            <input type="text" name="phone" placeholder="号码" autocomplete="off" class="layui-input userName">
+            <input type="text" name="operator" placeholder="运营商" autocomplete="off" class="layui-input userName">
+            <input type="text" name="province" placeholder="请输入省份" autocomplete="off" class="layui-input userName">
+            <input type="text" name="city" placeholder="请输入城市" autocomplete="off" class="layui-input userName">
+
+            <button class="layui-btn" onclick="showPhonePlaceTable()"><i class="layui-icon">&#xe615;查询</i></button>
+            <button class="layui-btn" onclick="changePhonePlace('添加固话归属地','/phonePlace/toPhonePlaceAdd',800,670)">
+                <i class="layui-icon"></i>添加
+            </button>
+        </form>
+    </div>
+    <table class="layui-table" id="PhonePlace_table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>号码</th>
+                <th>运营商</th>
+                <th>省</th>
+                <th>市</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+    </table>
+</div>
+</body>
+<div th:include="admin/common/include :: footer"></div>
+<script th:src="@{/admins/js/my/phonePlace_list.js}"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        //  分页
+        showPhonePlaceTable();
+    });
+</script>
+</html>

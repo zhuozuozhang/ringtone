@@ -8,6 +8,7 @@ import com.hrtxn.ringtone.common.utils.ShiroUtils;
 import com.hrtxn.ringtone.freemark.config.asyncConfig.AsyncConfig;
 import com.hrtxn.ringtone.project.system.log.domain.LoginLog;
 import com.hrtxn.ringtone.project.system.user.domain.LoginParam;
+import com.hrtxn.ringtone.project.system.user.domain.User;
 import com.hrtxn.ringtone.project.system.user.service.UserService;
 import com.hrtxn.ringtone.project.threenets.threenet.mapper.ThreenetsChildOrderMapper;
 import com.hrtxn.ringtone.project.threenets.threenet.service.ThreeNetsRingService;
@@ -136,6 +137,22 @@ public class LoginController {
         model.addAttribute("msg", "安全退出！");
         return "redirect:/";
     }
+
+    /**
+     * 登出操作
+     * @return
+     */
+    @GetMapping("/index")
+    public String index() {
+        User user = ShiroUtils.getSysUser();
+        if(user != null){
+            return "redirect:/system/index";
+        }
+        return "system/login";
+    }
+
+
+
 
     /**
      * 跳转到管理端首页

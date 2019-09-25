@@ -74,6 +74,7 @@ public class ShiroConfig {
         // 配置不会被拦截的链接 顺序判断
         // 配置登录页不被拦截
         filterChainDefinitionMap.put("/login", "anon");
+        filterChainDefinitionMap.put("/index", "anon");
         filterChainDefinitionMap.put("/jsjt/**", "anon");
         // 配置图片验证码不被拦截
         filterChainDefinitionMap.put("/imageCode", "anon");

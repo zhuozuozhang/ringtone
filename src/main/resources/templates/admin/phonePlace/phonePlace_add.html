@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head th:include="admin/common/include :: header"></head>
+<script type="text/javascript" charset="utf-8" th:src="@{/admins/kindeditor/kindeditor-all.js}"></script>
+<script type="text/javascript" charset="utf-8" th:src="@{/admins/kindeditor/lang/zh-CN.js}"> </script>
+<style type="text/css">
+  .layui-input-inline{
+    width: 490px!important;
+  }
+</style>
+<body>
+<div class="x-body layui-anim layui-anim-up">
+  <form class="layui-form">
+     <div class="layui-form-item">
+      <label for="phone" class="layui-form-label">
+        <span class="x-red">*</span>号码
+      </label>
+      <div class="layui-input-inline">
+        <input type="text" id="phone" name="phone" required lay-verify="required" autocomplete="off" class="layui-input">
+      </div>
+    </div>
+    <div class="layui-form-item">
+      <label for="operator" class="layui-form-label">
+        <span class="x-red">*</span>运营商
+      </label>
+      <div class="layui-input-inline">
+        <input type="text" id="operator" name="operator" required lay-verify="required" autocomplete="off" class="layui-input">
+      </div>
+    </div>
+    <div class="layui-form-item">
+      <label for="province" class="layui-form-label">
+        <span class="x-red">*</span>省份
+      </label>
+      <div class="layui-input-inline">
+        <input type="text" id="province" name="province" required lay-verify="required" autocomplete="off" class="layui-input">
+      </div>
+    </div>
+    <div class="layui-form-item">
+      <label for="city" class="layui-form-label">
+        <span class="x-red">*</span>城市
+      </label>
+      <div class="layui-input-inline">
+        <input type="text" id="city" name="city" required lay-verify="required" autocomplete="off" class="layui-input">
+      </div>
+    </div>
+    <div class="layui-form-item">
+      <label class="layui-form-label"></label>
+      <button class="layui-btn" lay-filter="add" lay-submit="">增加</button>
+    </div>
+  </form>
+</div>
+</body>
+<div th:include="admin/common/include :: footer"></div>
+<script type="text/javascript">
+
+    layui.use(['form','layer'], function(){
+        $ = layui.jquery;
+        var form = layui.form,layer = layui.layer;
+        //自定义验证规则
+        //监听提交
+        form.on('submit(add)', function(data){
+            var province = $("#province").val();
+            var city = $("#city").val();
+            var phone = $("#phone").val();
+            var operator = $("#operator").val();
+            AjaxPost("/phonePlace/addPhonePlace",{
+                province:province,
+                city:city,
+                phone:phone,
+                operator:operator
+            },function (res) {
+                if (res.code == 200 && res.data){
+                    //发异步，把数据提交给后台
+                    layer.alert("增加成功", {icon: 6},function () {
+                        // 获得frame索引
+                        var index = parent.layer.getFrameIndex(window.name);
+                        //关闭当前frame
+                        parent.layer.close(index);
+                    });
+                }else{
+                    layer.msg("添加公告出错", {icon: 5, time: 1000});
+                }
+            });
+            return false;
+        });
+    });
+</script>
+</html>

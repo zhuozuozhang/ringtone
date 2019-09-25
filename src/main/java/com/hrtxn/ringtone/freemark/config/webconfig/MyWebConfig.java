@@ -23,7 +23,7 @@ public class MyWebConfig implements WebMvcConfigurer {
     @Override
     public void addViewControllers(ViewControllerRegistry registry) {
         // 设置统一登录入口
-        registry.addViewController("/").setViewName("system/login");
+        registry.addViewController("/").setViewName("forward:/index");
         // 客户端首页
         registry.addViewController("/system/index").setViewName("system/home");
         // 跳转到权限设置页面
@@ -46,6 +46,7 @@ public class MyWebConfig implements WebMvcConfigurer {
         // 设置不被拦截资源
         interceptorRegistry.excludePathPatterns("/");
         interceptorRegistry.excludePathPatterns("/login");
+        interceptorRegistry.excludePathPatterns("/index");
         interceptorRegistry.excludePathPatterns("/admin/**");
         interceptorRegistry.excludePathPatterns("/public/**");
         interceptorRegistry.excludePathPatterns("/system/**");

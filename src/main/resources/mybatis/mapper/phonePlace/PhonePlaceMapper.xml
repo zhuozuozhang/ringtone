@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hrtxn.ringtone.project.system.phonePlace.mapper.PhonePlaceMapper" >
+
+  <resultMap id="BaseResultMap" type="com.hrtxn.ringtone.project.system.phonePlace.domain.PhonePlace" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="phone" property="phone" jdbcType="VARCHAR" />
+    <result column="operator" property="operator" jdbcType="VARCHAR" />
+    <result column="province" property="province" jdbcType="VARCHAR" />
+    <result column="city" property="city" jdbcType="VARCHAR" />
+
+  </resultMap>
+
+  <sql id="Base_Column_List" >
+    id, province, city, phone,operator
+  </sql>
+
+  <!--根也获取号码归属地-->
+  <select id="findAllPhonePlaceList" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from tb_phone_place
+    WHERE 1 = 1
+    <if test="phonePlace != null and phonePlace.province != null and phonePlace.province != '' ">
+      AND province = #{province}
+    </if>
+    <if test="phonePlace != null and phonePlace.city != null and phonePlace.city != '' ">
+      AND province = #{city}
+    </if>
+    <if test="phonePlace != null and phonePlace.phone != null and phonePlace.phone != '' ">
+      AND phone = #{phone}
+    </if>
+    <if test="phonePlace != null and phonePlace.operator != null and phonePlace.operator != '' ">
+      AND operator = #{operator}
+    </if>
+    ORDER BY province DESC
+    LIMIT #{page.page},#{page.pagesize}
+  </select>
+
+
+  <!--获取号码归属地数量-->
+  <select id="getPhonePlaceCount" resultType="Integer">
+    select
+      count(1)
+    from tb_phone_place
+    WHERE 1 = 1
+    <if test="phonePlace != null and phonePlace.province != null and phonePlace.province != '' ">
+      AND province = #{province}
+    </if>
+    <if test="phonePlace != null and phonePlace.city != null and phonePlace.city != '' ">
+      AND province = #{city}
+    </if>
+    <if test="phonePlace != null and phonePlace.phone != null and phonePlace.phone != '' ">
+      AND phone = #{phone}
+    </if>
+    <if test="phonePlace != null and phonePlace.operator != null and phonePlace.operator != '' ">
+      AND operator = #{operator}
+    </if>
+  </select>
+
+
+  <insert id="insertPhonePlace" parameterType="PhonePlace" >
+    insert into tb_phone_place (phone,operator, province, city)
+    values ( #{phone},#{operator},#{province,jdbcType=VARCHAR}, #{city,jdbcType=VARCHAR})
+  </insert>
+
+  <select id="getPhonePlaceById" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from tb_phone_place where id = #{id}
+  </select>
+
+
+  <update id="updatePhonePlace" parameterType="PhonePlace" >
+    update tb_phone_place
+    <set >
+      <if test="phone != null" >
+        phone = #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="operator != null" >
+        operator = #{operator,jdbcType=VARCHAR},
+      </if>
+      <if test="province != null" >
+        province = #{province,jdbcType=VARCHAR},
+      </if>
+      <if test="city != null" >
+        city = #{city,jdbcType=VARCHAR},
+      </if>
+
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+
+  <delete id="deletePhonePlace" parameterType="Integer" >
+    delete from tb_phone_place
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+
+  <select id="getPhonePlaceByPhone" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from tb_phone_place where phone = #{phone}
+  </select>
+
+</mapper>
