@@ -34,8 +34,6 @@ public class NumCertificationController {
      */
     @GetMapping("/toIndex")
     public String toIndex() {
-        NumApi api = new NumApi();
-//        api.yuzjgtz();
         return "400/index";
     }
     /**

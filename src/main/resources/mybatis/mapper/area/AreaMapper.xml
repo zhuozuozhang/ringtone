@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hrtxn.ringtone.project.system.area.mapper.AreaMapper" >
+
+  <resultMap id="BaseResultMap" type="com.hrtxn.ringtone.project.system.area.domain.Area" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="pid" property="pid" jdbcType="VARCHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="type" property="type" jdbcType="VARCHAR" />
+    <result column="pname" property="pname" jdbcType="VARCHAR" />
+    <result column="fourid" property="fourid" jdbcType="VARCHAR" />
+  </resultMap>
+
+  <sql id="Base_Column_List" >
+    a.id, a.pid, a.name, a.type,p.name as "pname"
+  </sql>
+
+  <!--根也获取号码归属地-->
+  <select id="findAllAreaList" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from sys_area a left join sys_area p on a.pid = p.fourid and p.type = 'province'
+    WHERE 1 = 1
+    <if test="area != null and area.name != null and area.name != '' ">
+      AND name = #{name}
+    </if>
+    ORDER BY id
+    LIMIT #{page.page},#{page.pagesize}
+  </select>
+
+
+  <!--获取号码归属地数量-->
+  <select id="getAreaCount" resultType="Integer">
+    select
+      count(1)
+    from tb_phone_place
+    WHERE 1 = 1
+    <if test="area != null and area.name != null and area.name != '' ">
+      AND name = #{name}
+    </if>
+  </select>
+
+
+  <insert id="insertArea" parameterType="Area" >
+    insert into tb_phone_place (phone,operator, province, city)
+    values ( #{phone},#{operator},#{province,jdbcType=VARCHAR}, #{city,jdbcType=VARCHAR})
+  </insert>
+
+  <select id="getAreaById" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from tb_phone_place where id = #{id}
+  </select>
+
+
+  <update id="updateArea" parameterType="Area" >
+    update tb_phone_place
+    <set >
+      <if test="phone != null" >
+        phone = #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="operator != null" >
+        operator = #{operator,jdbcType=VARCHAR},
+      </if>
+      <if test="province != null" >
+        province = #{province,jdbcType=VARCHAR},
+      </if>
+      <if test="city != null" >
+        city = #{city,jdbcType=VARCHAR},
+      </if>
+
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+
+  <delete id="deleteArea" parameterType="Integer" >
+    delete from tb_phone_place
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+
+
+</mapper>
