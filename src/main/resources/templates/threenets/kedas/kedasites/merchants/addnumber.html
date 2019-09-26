@@ -28,16 +28,16 @@
 <body>
 <form action="" name="Form" id="Form" method="post" class="layui-form">
     <input type="hidden" id="orderId" th:value="${orderId}">
-    <div id="newBlocPage">
-        <div class="newBlocPage-con1 clear">
-            <input class="input_css1" type="text" name="apersonnelName" id="apersonnelName" maxlength="32"
-                   autocomplete="off">
-            <h6><i style="color: red">*</i>员工姓名</h6>
-        </div>
-        <div class="newBlocPage-con2 clear" style="position: relative;">
-            <input class="input_css1" type="text" name="apersonnelPhone" id="apersonnelPhone" maxlength="32"
-                   autocomplete="off">
-            <h6><i style="color: red">*</i>员工号码</h6>
+    <div id="newBlocPage" style="padding-bottom: 20px;">
+        <div class="newBlocPage-con4 clear">
+            <div class="right-newBlocPage-con4">
+                <div style="font-size: 12px; color: #333;line-height: 20px;text-align: left;">
+                    温馨提示：</br>
+                    1.若要添加多个号码，号码之间使用“换行符（回车）”分隔，单次最多支持20个用户。</br>
+                    2.当输入框号码后面出现"#错误消息"，比如"#号码不正确"时，代表该行的号码格式错误，需要修改。修改完成后请注意去掉"#错误消息"的标识。
+                </div>
+            </div>
+            <textarea onchange="mykeyup()" name="memberTels" id="member_phone" required lay-verify="required"></textarea>
         </div>
         <div id="tijiao" class="newBlocPage-button" onclick="sub();">确定提交</div>
     </div>
@@ -45,4 +45,20 @@
 </body>
 <div th:include="threenets/kedas/kedasites/common/include::footer"></div>
 <script th:src="@{/client/threenets/js/kedasites/addnumber.js}"></script>
+<script>
+    function mykeyup() {
+        var member_phone = $("#member_phone").val();
+        var phones = member_phone.split(/[\r\n]/g);
+        var myreg = /^[1][3,4,5,7,8,9][0-9]{9}$/;
+        var areg = /^0\d{2,3}-?\d{7,8}$/;
+        for (i = 0; i < phones.length; i++) {
+            if (!myreg.test(phones[i])) {
+                if (!areg.test(phones[i])) {
+                    layer.msg('号码"' + phones[i] + '"不正确!');
+                    break;
+                }
+            }
+        }
+    }
+</script>
 </html>

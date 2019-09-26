@@ -3,7 +3,8 @@ function showTable() {
     var params = {
         "isMonthly": 0,
         "timeType": 0,
-        "id": $('#parentOrderId').val()
+        "id": $('#parentOrderId').val(),
+        "telLinkPhone":$('#telLinkPhone').val()
     }
     var columns = [
         {"data": "id"},

@@ -16,6 +16,7 @@ import reactor.event.Event;
 import reactor.spring.annotation.Selector;
 
 import java.io.IOException;
+import java.util.List;
 
 /**
  * Author:zcy
@@ -49,7 +50,7 @@ public class RectorHandler {
         KedaChildOrder kedaChildOrder = data.getData();
         KedaOrder order = kedaOrderMapper.getKedaOrder(kedaChildOrder.getOrderId());
         // 对接数据，创建父级订单
-        AjaxResult add = kedaApi.add(kedaChildOrder,order);
+        AjaxResult add = kedaApi.add(kedaChildOrder, order);
         if ((int) add.get("code") == 200) {
             kedaChildOrder.setStatus(Const.SUCCESSFUL_REVIEW);
             kedaChildOrder.setRemark("添加成功！");
@@ -62,4 +63,31 @@ public class RectorHandler {
         log.info("异步任务--添加疑难杂单订单--->" + count);
     }
 
+
+    /**
+     * 创建疑难杂单父级订单
+     *
+     * @param data
+     * @throws IOException
+     */
+    @Selector(value = "batchInsertKedaorder", reactor = "@createReactor")
+    public void batchInsertKedaorder(Event<List<KedaChildOrder>> data) throws IOException {
+        List<KedaChildOrder> list = data.getData();
+        for (int i = 0; i < list.size(); i++) {
+            KedaChildOrder kedaChildOrder = list.get(i);
+            KedaOrder order = kedaOrderMapper.getKedaOrder(kedaChildOrder.getId());
+            // 对接数据，创建父级订单
+            AjaxResult add = kedaApi.add(kedaChildOrder, order);
+            if ((int) add.get("code") == 200) {
+                kedaChildOrder.setStatus(Const.SUCCESSFUL_REVIEW);
+                kedaChildOrder.setRemark("添加成功！");
+            } else {
+                kedaChildOrder.setStatus(Const.FAILURE_REVIEW);
+                kedaChildOrder.setRemark(add.get("msg").toString());
+            }
+            // 执行修改子级订单操作
+            int count = kedaChildOrderMapper.updatKedaChildOrder(kedaChildOrder);
+            log.info("异步任务--添加疑难杂单订单--" + kedaChildOrder.getLinkTel() + "-->" + count);
+        }
+    }
 }

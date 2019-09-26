@@ -1,28 +1,14 @@
 //表单提交
 function sub() {
-    var apersonnelName = $("#apersonnelName").val();
-    var apersonnelPhone = $("#apersonnelPhone").val();
-    if (!isNotEmpty(apersonnelName)) {
-        layer.msg('员工姓名不能为空');
-        return;
-    }
-    if (!isNotEmpty(apersonnelPhone)) {
+    var member_phone = $("#member_phone").val();
+    var phones = member_phone.split(/[\r\n]/g);
+    if (!isNotEmpty(member_phone)) {
         layer.msg('员工号码不能为空');
         return;
-    } else {
-        var myreg = /^[1][3,4,5,7,8,9][0-9]{9}$/;
-        var areg = /^0\d{2,3}-?\d{7,8}$/;
-        if (!myreg.test(apersonnelPhone)) {
-            if (!areg.test(apersonnelPhone)) {
-                layer.msg("号码格式不正确");
-                return;
-            }
-        }
     }
     // 执行添加子订单操作
-    AjaxPost("/threenets/clcy/insertKedaChildOrder", {
-        linkMan: apersonnelName,
-        linkTel: apersonnelPhone,
+    AjaxPost("/threenets/clcy/batchInsertKedaChildOrder", {
+        linkTel: member_phone,
         orderId: $("#orderId").val()
     }, function (res) {
         if (res.code == 200) {

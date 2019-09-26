@@ -66,6 +66,20 @@ public class KedaChildOrderController {
     }
 
     /**
+     * 批量添加疑难杂单子级订单
+     *
+     * @param kedaChildOrder
+     * @return
+     * @throws Exception
+     */
+    @ResponseBody
+    @PostMapping("batchInsertKedaChildOrder")
+    @Log(title = "添加疑难杂单子级订单", businessType = BusinessType.INSERT, operatorLogType = OperatorLogType.KEDASITES)
+    public AjaxResult batchInsertKedaChildOrder(KedaChildOrder kedaChildOrder) throws Exception {
+        return kedaChildOrderService.batchInsertKedaChildOrder(kedaChildOrder);
+    }
+
+    /**
      * 刷新用户信息
      *
      * @param id

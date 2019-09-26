@@ -18,6 +18,7 @@ import com.hrtxn.ringtone.project.threenets.kedas.kedasites.domain.KedaRing;
 import com.hrtxn.ringtone.project.threenets.kedas.kedasites.mapper.KedaChildOrderMapper;
 import com.hrtxn.ringtone.project.threenets.kedas.kedasites.mapper.KedaRingMapper;
 import com.hrtxn.ringtone.project.threenets.threenet.domain.PlotBarPhone;
+import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreenetsChildOrder;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -29,6 +30,7 @@ import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -49,7 +51,7 @@ public class KedaChildOrderService {
     private KedaRingMapper kedaRingMapper;
     @Autowired
     @Qualifier("createReactor")
-            Reactor r;
+    Reactor r;
     private KedaApi kedaApi = new KedaApi();
 
     /**
@@ -128,7 +130,7 @@ public class KedaChildOrderService {
         if (baseRequest.getUserId().equals(0)) {
             baseRequest.setUserId(null);
             // 递归查询当前登陆者下的所有子代理商
-            List<UserVo> userVoList = userMapper.findUserByparentId(null, null, ShiroUtils.getSysUser().getId(),null,null);
+            List<UserVo> userVoList = userMapper.findUserByparentId(null, null, ShiroUtils.getSysUser().getId(), null, null);
             List<UserVo> node = getNode(userVoList);
             // 获取当前登陆者下的所有子代理商ID
             Integer[] id = new Integer[node.size()];
@@ -185,8 +187,9 @@ public class KedaChildOrderService {
      * @throws Exception
      */
     public AjaxResult insertKedaChildOrder(KedaChildOrder kedaChildOrder) throws Exception {
-        if (!StringUtils.isNotNull(kedaChildOrder)){ return AjaxResult.error("参数格式不正确!");}
-        if (!StringUtils.isNotEmpty(kedaChildOrder.getLinkMan())) return AjaxResult.error("参数格式不正确!");
+        if (!StringUtils.isNotNull(kedaChildOrder)) {
+            return AjaxResult.error("参数格式不正确!");
+        }
         if (!StringUtils.isNotEmpty(kedaChildOrder.getLinkTel())) return AjaxResult.error("参数格式不正确!");
 
         // 查重
@@ -225,6 +228,81 @@ public class KedaChildOrderService {
     }
 
     /**
+     * 疑难杂单创建子级订单
+     *
+     * @param kedaChildOrder
+     * @return
+     * @throws Exception
+     */
+    public AjaxResult batchInsertKedaChildOrder(KedaChildOrder kedaChildOrder) throws Exception {
+        if (!StringUtils.isNotNull(kedaChildOrder)) {
+            return AjaxResult.error("参数格式不正确!");
+        }
+        if (!StringUtils.isNotEmpty(kedaChildOrder.getLinkTel())) return AjaxResult.error("参数格式不正确!");
+        List<KedaChildOrder> list = formattedPhone(kedaChildOrder.getLinkTel());
+        for (int i = 0; i < list.size(); i++) {
+            // 查重
+            BaseRequest b = new BaseRequest();
+            b.setLinkMan(null);
+            b.setTel(list.get(i).getLinkTel());
+            List<KedaChildOrder> linkTel = kedaChildOrderMapper.getKeDaChildOrderBacklogList(null, b);
+            if (linkTel.size() > 0) return AjaxResult.error(list.get(i).getLinkTel() + "员工号码重复！");
+        }
+        for (int i = 0; i < list.size(); i++) {
+            list.get(i).setOrderId(kedaChildOrder.getOrderId());
+            kedaChildOrderMapper.insertKedaChildOrder(list.get(i));
+        }
+        r.notify("batchInsertKedaorder", Event.wrap(list));
+        // 执行添加子订单操作
+        return AjaxResult.success(true, "创建子订单成功！");
+    }
+
+    /**
+     * 格式化手机号
+     *
+     * @param phones
+     */
+    public List<KedaChildOrder> formattedPhone(String phones) throws Exception{
+        //换行符----
+        String regNR = "\n\r";
+        String regN = "\n";
+        String regR = "\r";
+        //将手机号转为数组
+        phones = phones.replace(regNR, "br").replace(regR, "br").replace(regN, "br");
+        String[] phoneArray = phones.split("br");
+        List<KedaChildOrder> list = new ArrayList<>();
+        for (String tel : phoneArray) {
+            tel = tel.replace(" ", "");
+            KedaChildOrder childOrder = new KedaChildOrder();
+            if (tel.isEmpty()) {
+                continue;
+            }
+            // 根据电话号码获取省市
+            JuhePhone<JuhePhoneResult> phone = JuhePhoneUtils.getPhone(tel);
+            if ("200".equals(phone.getResultcode())) {
+                JuhePhoneResult result = phone.getResult();
+                childOrder.setProvince(result.getProvince());
+                childOrder.setCity(result.getCity());
+                if ("移动".equals(result.getCompany())) {
+                    childOrder.setOperate(1);
+                } else if ("电信".equals(result.getCompany())) {
+                    childOrder.setOperate(2);
+                } else {
+                    childOrder.setOperate(3);
+                }
+            }
+            childOrder.setStatus(Const.KEDA_UNDER_REVIEW);
+            childOrder.setCreateTime(new Date());
+            childOrder.setOperateId(Constant.OPERATEID);
+            childOrder.setUserId(ShiroUtils.getSysUser().getId());
+            childOrder.setLinkTel(tel);
+            childOrder.setLinkMan(tel);
+            list.add(childOrder);
+        }
+        return list;
+    }
+
+    /**
      * 递归获取子账号
      *
      * @param users
@@ -234,7 +312,7 @@ public class KedaChildOrderService {
     public List<UserVo> getNode(List<UserVo> users) throws Exception {
         if (users != null && users.size() != 0) {
             for (int i = 0; i < users.size(); i++) {
-                List<UserVo> list = userMapper.findUserByparentId(null, null, users.get(i).getId(),null,null);
+                List<UserVo> list = userMapper.findUserByparentId(null, null, users.get(i).getId(), null, null);
                 if (list != null && list.size() != 0) {
                     for (UserVo user : list) {
                         users.add(user);
@@ -345,7 +423,9 @@ public class KedaChildOrderService {
      * @return
      */
     public AjaxResult getKedaChildSettingList(Integer orderId) {
-        if (StringUtils.isNull(orderId) || orderId <= 0) {return AjaxResult.error("参数格式不正确！");}
+        if (StringUtils.isNull(orderId) || orderId <= 0) {
+            return AjaxResult.error("参数格式不正确！");
+        }
         // 根据orderId获取已包月子订单
         BaseRequest b = new BaseRequest();
         b.setOrderId(orderId);
@@ -363,27 +443,29 @@ public class KedaChildOrderService {
      * @param childOrderId
      * @return
      */
-    public AjaxResult setKedaChidOrder(Integer ringId, String linkTel, String employeeId,Integer childOrderId) throws IOException {
-        if(StringUtils.isNull(ringId) || ringId <= 0) return AjaxResult.error("参数格式不正确！");
-        if(StringUtils.isNull(childOrderId) || childOrderId <= 0) return AjaxResult.error("参数格式不正确！");
-        if(StringUtils.isEmpty(linkTel)) return AjaxResult.error("参数格式不正确！");
-        if(StringUtils.isEmpty(employeeId)) return AjaxResult.error("参数格式不正确！");
+    public AjaxResult setKedaChidOrder(Integer ringId, String linkTel, String employeeId, Integer childOrderId) throws IOException {
+        if (StringUtils.isNull(ringId) || ringId <= 0) return AjaxResult.error("参数格式不正确！");
+        if (StringUtils.isNull(childOrderId) || childOrderId <= 0) return AjaxResult.error("参数格式不正确！");
+        if (StringUtils.isEmpty(linkTel)) return AjaxResult.error("参数格式不正确！");
+        if (StringUtils.isEmpty(employeeId)) return AjaxResult.error("参数格式不正确！");
 
         // 根据铃音ID获取铃音信息
         BaseRequest b = new BaseRequest();
         b.setId(ringId);
         List<KedaRing> kedaRingList = kedaRingMapper.getKedaRingList(null, b);
-        if (kedaRingList.size() <=0 || StringUtils.isEmpty(kedaRingList.get(0).getRingNum())) return AjaxResult.error("参数格式不正确！");
+        if (kedaRingList.size() <= 0 || StringUtils.isEmpty(kedaRingList.get(0).getRingNum()))
+            return AjaxResult.error("参数格式不正确！");
         AjaxResult ajaxResult = kedaApi.setRing(kedaRingList.get(0).getRingNum(), employeeId, linkTel);
         if ((int) ajaxResult.get("code") == 200) {
             // 执行修改子订单信息
             b.setId(childOrderId);
             List<KedaChildOrder> keDaChildOrderList = kedaChildOrderMapper.getKeDaChildOrderBacklogList(null, b);
-            if (!employeeId.equals(keDaChildOrderList.get(0).getEmployeeId().toString())) return AjaxResult.error("子订单信息与员工编号不匹配！");
+            if (!employeeId.equals(keDaChildOrderList.get(0).getEmployeeId().toString()))
+                return AjaxResult.error("子订单信息与员工编号不匹配！");
             keDaChildOrderList.get(0).setRingName(kedaRingList.get(0).getRingName());
             keDaChildOrderList.get(0).setRingId(kedaRingList.get(0).getId());
             int i = kedaChildOrderMapper.updatKedaChildOrder(keDaChildOrderList.get(0));
-            log.info("疑难杂单子订单设置铃音修改结果：{}",i);
+            log.info("疑难杂单子订单设置铃音修改结果：{}", i);
         }
         return ajaxResult;
     }
