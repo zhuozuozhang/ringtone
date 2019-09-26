@@ -46,7 +46,7 @@
                     <span class="x-red">*</span>加价
                 </label>
                 <div class="layui-input-inline">
-                    <input type="number" id="raisePrice" name="raisePrice" required lay-verify="required" autocomplete="off" class="layui-input" th:value="${numcertificationPrice.raisePrice}">
+                    <input type="number" id="raisePrice" name="raisePrice" onblur="addPrice()" required lay-verify="required" autocomplete="off" class="layui-input" th:value="${numcertificationPrice.raisePrice}">
                 </div>
             </div>
             <div class="layui-form-item">
@@ -54,7 +54,7 @@
                     <span class="x-red">*</span>指导价
                 </label>
                 <div class="layui-input-inline">
-                    <input type="number" id="guidePrice" name="guidePrice" required lay-verify="required" autocomplete="off" class="layui-input" th:value="${numcertificationPrice.guidePrice}">
+                    <input type="number" id="guidePrice" name="guidePrice" readonly="readonly" required lay-verify="required" autocomplete="off" class="layui-input" th:value="${numcertificationPrice.guidePrice}">
                 </div>
             </div>
             <div class="layui-form-item">
@@ -65,5 +65,15 @@
     </div>
 </body>
 <div th:include="admin/common/include :: footer"></div>
-<script type="text/javascript" th:inline="javascript" th:src="@{/admins/js/my/numcertification/price_update.js}"></script>
+
+
+<script type="text/javascript" th:inline="javascript" th:src="@{/admins/js/my/price_update.js}"></script>
+
+<script type="text/javascript">
+    function addPrice(){
+        var costPrice = $("#costPrice").val();
+        var raisePrice = $("#raisePrice").val();
+        $("#guidePrice").val(Number(costPrice) + Number(raisePrice));
+    }
+</script>
 </html>
