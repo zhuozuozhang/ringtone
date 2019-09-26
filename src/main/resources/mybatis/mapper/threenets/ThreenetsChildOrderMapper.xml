@@ -400,7 +400,9 @@
         <if test="param != null and param.status != null and param.status != ''">
             AND p.status = '${param.status}'
         </if>
-
+        <if test="param != null and param.linkmanTel != null and param.linkmanTel != ''">
+            AND p.linkman_tel like '%${param.linkmanTel}%'
+        </if>
     </sql>
 
     <sql id="page">
@@ -441,7 +443,7 @@
     </sql>
 
 
-    <select id="getThreenetsChildOrderByPhone" resultType="Integer">
+    <select id="getThreenetsChildOrderByPhone" resultType="java.lang.Integer">
         select count(1) from tb_threenets_child_order
         where linkman_tel =#{phone}
     </select>

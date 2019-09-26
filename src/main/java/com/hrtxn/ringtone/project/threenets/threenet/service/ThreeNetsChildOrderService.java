@@ -149,6 +149,9 @@ public class ThreeNetsChildOrderService {
                     order.setIsReplyMessage(true);
                 }
             }
+            if (StringUtils.isNotEmpty(request.getTelLinkPhone())){
+                order.setLinkmanTel(request.getTelLinkPhone());
+            }
         }
         return order;
     }
