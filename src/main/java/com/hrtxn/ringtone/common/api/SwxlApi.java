@@ -109,7 +109,7 @@ public class SwxlApi implements Serializable {
         this.connectTime = connectTime;
     }
 
-    public CookieStore getCookieStore() throws NoLoginException{
+    public CookieStore getCookieStore() throws NoLoginException {
         // 为空的话，先去取
         if (this.swxlCookie == null) {
             // 重新登录获取
@@ -273,7 +273,7 @@ public class SwxlApi implements Serializable {
     @Synchronized
     public boolean loginParam(String vcode, String userName) {
         String password = PASSWORD2;
-        if (userName.equals(USER_NAME)){
+        if (userName.equals(USER_NAME)) {
             password = PASSWORD;
         }
         boolean isSucess = false;
@@ -295,7 +295,7 @@ public class SwxlApi implements Serializable {
             String s = EntityUtils.toString(resEntity);
             System.out.println("s" + s);
             isSucess = !s.contains("验证码输入错误");
-            if (isSucess){
+            if (isSucess) {
                 isSucess = !s.contains("验证码不正确");
             }
             // 获取登录cookie
@@ -363,7 +363,7 @@ public class SwxlApi implements Serializable {
      * @throws IOException
      */
     public String getSwxlRingFenFaAreaInfo(String ringid) throws NoLoginException, IOException {
-        String getUrl = getSwxlRingFenFa_URL + "/" + ringid+"?&maxresult=50";
+        String getUrl = getSwxlRingFenFa_URL + "/" + ringid + "?&maxresult=50";
         String result = sendGet(getUrl);
         log.info("联通获取铃音分发详细 参数：{} 结果：{} ", ringid, result);
         return result;
@@ -539,13 +539,20 @@ public class SwxlApi implements Serializable {
             reqEntity.addPart("groupName", new StringBody(ringOrder.getCompanyName(), Charset.forName("UTF-8")));// 集团名称
             reqEntity.addPart("tel", new StringBody(ringOrder.getLinkmanTel()));//
             reqEntity.addPart("payType", new StringBody(ringOrder.getPaymentType()));
-            reqEntity.addPart("applyForSmsNotification", new StringBody("0"));// 免短信
+            String applyForSmsNotification = "0";
             if (StringUtils.isNotEmpty(attached.getAvoidShortAgreement()) && ringOrder.getMianduan().equals("1")) {
-                reqEntity.addPart("applyForSmsNotification", new StringBody("1"));// 免短信
-                File file = new File(RingtoneConfig.getProfile() + attached.getAvoidShortAgreement());
-                reqEntity.addPart("qualificationFile", new FileBody(file));
+                applyForSmsNotification = "1";
+                String[] split = attached.getAvoidShortAgreement().split(";");
+                for (int i = 0; i < split.length; i++) {
+                    if (StringUtils.isEmpty(split[i])){
+                        continue;
+                    }
+                    File file = new File(RingtoneConfig.getProfile() + split[i]);
+                    reqEntity.addPart("smsFile", new FileBody(file));
+                }
             }
-            reqEntity.addPart("smsFile", new StringBody(""));
+            reqEntity.addPart("applyForSmsNotification", new StringBody(applyForSmsNotification));// 免短信
+            reqEntity.addPart("qualificationFile",new StringBody(""));
             if (attached.getSwxlPrice() == 10) {
                 reqEntity.addPart("productId", new StringBody("225"));//价格10元
             } else {

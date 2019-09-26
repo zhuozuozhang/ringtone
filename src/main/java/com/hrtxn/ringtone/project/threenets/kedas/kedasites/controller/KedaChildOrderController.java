@@ -94,6 +94,20 @@ public class KedaChildOrderController {
     }
 
     /**
+     * 刷新用户信息
+     *
+     * @param id
+     * @return
+     * @throws IOException
+     */
+    @PostMapping("listPhoneInfo/{id}")
+    @ResponseBody
+    @Log(title = "疑难杂单刷新子订单", businessType = BusinessType.UPDATE, operatorLogType = OperatorLogType.KEDASITES)
+    public AjaxResult listPhoneInfo(@PathVariable Integer id) throws IOException {
+        return kedaChildOrderService.listPhoneInfo(id);
+    }
+
+    /**
      * 删除疑难杂单子级订单
      *
      * @param id

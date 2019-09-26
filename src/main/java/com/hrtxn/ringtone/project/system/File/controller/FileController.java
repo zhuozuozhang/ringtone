@@ -15,6 +15,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
+
 /**
  * Author:lile
  * Date:2019/7/20 9:16
@@ -92,15 +94,16 @@ public class FileController {
     /**
      * 免短协议
      *
-     * @param protocolFile
+     * @param protocolFiles
      * @param folderName
      * @return
      */
     @PostMapping("/system/upload/protocolFile")
     @ResponseBody
     @Log(title = "上传文件", businessType = BusinessType.INSERT, operatorLogType = OperatorLogType.THREENETS)
-    public AjaxResult uploadProtocolFile(@RequestParam("protocolFile") MultipartFile protocolFile, String folderName) {
-        return fileService.upload(protocolFile, "免短协议", folderName);
+    public AjaxResult uploadProtocolFile(@RequestParam("protocolFile") List<MultipartFile> protocolFiles, String folderName) {
+        return fileService.uploads(protocolFiles, "免短协议", folderName);
+       // return fileService.upload(protocolFile, "免短协议", folderName);
     }
 
     /**

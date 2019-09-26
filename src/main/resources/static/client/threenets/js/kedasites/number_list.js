@@ -213,3 +213,16 @@ function deleteTel(id) {
 function sendMessage() {
     window.open("http://t.cn/R1BRf4e?phoneNo=15150013617");
 }
+
+// 刷新子订单信息
+function listPhoneInfo() {
+    var id = $("#orderId").val();
+    AjaxPost("/threenets/clcy/listPhoneInfo/" + id, {}, function (res) {
+        if (res.code == 200) {
+            layer.msg("刷新成功！", {icon: 6, time: 3000});
+            $('#set').DataTable().ajax.reload(null, false);
+        } else {
+            layer.msg("刷新失败！", {icon: 5, time: 3000});
+        }
+    });
+}

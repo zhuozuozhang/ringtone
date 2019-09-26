@@ -3,6 +3,7 @@ package com.hrtxn.ringtone.project.threenets.threenet.service;
 import com.hrtxn.ringtone.common.constant.AjaxResult;
 import com.hrtxn.ringtone.common.domain.BaseRequest;
 import com.hrtxn.ringtone.common.domain.Page;
+import com.hrtxn.ringtone.common.utils.DateUtils;
 import com.hrtxn.ringtone.common.utils.ShiroUtils;
 import com.hrtxn.ringtone.common.utils.StringUtils;
 import com.hrtxn.ringtone.common.utils.juhe.JuhePhoneUtils;
@@ -26,6 +27,7 @@ import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -131,14 +133,14 @@ public class ThreeNetsService {
         return AjaxResult.success(list, "获取成功");
     }
 
-    public Integer [] getChildUserList() throws Exception {
+    public Integer[] getChildUserList() throws Exception {
         Page page = new Page(0, 9999);
         Integer id = ShiroUtils.getSysUser().getId();
         List<UserVo> list = userMapper.getUserList(null, null);
         Map<Integer, List<UserVo>> map = list.stream().collect(Collectors.groupingBy(User::getParentId));
         List<User> userList = new ArrayList<>();
         recursion(map.get(id), map, userList);
-        Integer [] ids = new Integer[userList.size()+1];
+        Integer[] ids = new Integer[userList.size() + 1];
         for (int i = 0; i < userList.size(); i++) {
             User user = userList.get(i);
             ids[i] = user.getId();
@@ -193,7 +195,18 @@ public class ThreeNetsService {
         Integer count = threenetsChildOrderMapper.getCount(threenetsChildOrder);
         for (PlotBarPhone plotBarPhone : newList) {
             plotBarPhone.setCumulativeUser(count);
-            count = count - plotBarPhone.getAddUser();
+            count = count + plotBarPhone.getUnsubscribeUser();
+        }
+        if (newList.isEmpty()) {
+            String month = DateUtils.getMonth() < 10 ? "0" + DateUtils.getMonth() : DateUtils.getMonth() + "";
+            String day = DateUtils.getDay() < 10 ? "0" + DateUtils.getDay() : DateUtils.getDay() + "";
+            String time = DateUtils.getYear() + "-" + month + (StringUtils.isEmpty(request.getYear()) ? "-" + day : "");
+            PlotBarPhone plotBarPhone = new PlotBarPhone();
+            plotBarPhone.setDateTimes(time);
+            plotBarPhone.setAddUser(0);
+            plotBarPhone.setUnsubscribeUser(0);
+            plotBarPhone.setCumulativeUser(count);
+            newList.add(plotBarPhone);
         }
         return newList;
     }
@@ -204,7 +217,7 @@ public class ThreeNetsService {
      * @param phones
      * @return
      */
-    public AjaxResult matchingOperate(String phones,Integer parentOrderId) throws Exception {
+    public AjaxResult matchingOperate(String phones, Integer parentOrderId) throws Exception {
         String regR = "\n\r";
         String regN = "\n";
         phones = phones.replace(regR, "br").replace(regN, "br");
@@ -214,7 +227,7 @@ public class ThreeNetsService {
         int liantong = 0;
         int sum = 0;
         for (String p : phone) {
-            p = p.replace(" ","");
+            p = p.replace(" ", "");
             //首先验证是固定电话还是手机号
             boolean mobileNO = isMobileNO(p);
             boolean fixedPhone = isFixedPhone(p);
@@ -234,14 +247,14 @@ public class ThreeNetsService {
         }
         ThreeNetsOrderAttached attached = threeNetsOrderAttachedMapper.selectByParentOrderId(parentOrderId);
         JSONObject outData = new JSONObject();
-        outData.put("mobile",yidong);
-        outData.put("telecom",dianxin);
-        outData.put("unicom",liantong);
-        outData.put("total",sum);
-        if (attached != null){
-            outData.put("mobileStatus",StringUtils.isEmpty(attached.getMiguId()));
-            outData.put("telecomStatus",StringUtils.isEmpty(attached.getMcardId()));
-            outData.put("unicomStatus",StringUtils.isEmpty(attached.getSwxlId()));
+        outData.put("mobile", yidong);
+        outData.put("telecom", dianxin);
+        outData.put("unicom", liantong);
+        outData.put("total", sum);
+        if (attached != null) {
+            outData.put("mobileStatus", StringUtils.isEmpty(attached.getMiguId()));
+            outData.put("telecomStatus", StringUtils.isEmpty(attached.getMcardId()));
+            outData.put("unicomStatus", StringUtils.isEmpty(attached.getSwxlId()));
         }
         return AjaxResult.success(outData, "匹配成功");
     }

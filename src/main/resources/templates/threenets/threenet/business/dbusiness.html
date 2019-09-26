@@ -42,7 +42,7 @@
                         <input type="button" value="搜索" onclick="searchEnterprise();">
                     </div>
                     <ul class="lists">
-                        <li class="lists_li" onclick="Sel(this);">
+                        <li class="lists_li" onclick="Sel(this);" id="fullSummary">
                             <span style="display: none">0</span>
                             <span >全部汇总</span>
                         </li>
@@ -115,7 +115,11 @@
     $("#apersonnel").addClass("selected");
 
     $(document).ready(function() {
-        loading();
+        setTimeout(function () {
+            $("#fullSummary").addClass("selecteds")
+            $("#auserid").val(0)
+            loading();
+        },200)
     });
     //选择列表
     function Sel(obj){

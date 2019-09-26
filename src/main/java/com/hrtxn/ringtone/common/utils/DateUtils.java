@@ -267,6 +267,12 @@ public final class DateUtils {
     }
 
     /**
+     * 获取当前月份
+     */
+    public static int getDay() {
+        return Calendar.getInstance().get(Calendar.DATE);
+    }
+    /**
      * 获取指定日期的年份
      *
      * @param date

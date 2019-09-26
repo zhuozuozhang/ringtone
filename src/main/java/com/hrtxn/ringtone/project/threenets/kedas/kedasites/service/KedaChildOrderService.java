@@ -180,6 +180,28 @@ public class KedaChildOrderService {
     }
 
     /**
+     * 刷新用戶信息
+     *
+     * @param id
+     * @return
+     * @throws IOException
+     */
+    public AjaxResult listPhoneInfo(Integer id) throws IOException {
+        if (!StringUtils.isNotNull(id) || id <= 0) return AjaxResult.error("参数格式不正确！");
+        BaseRequest baseRequest = new BaseRequest();
+        baseRequest.setOrderId(id);
+        List<KedaChildOrder> list = kedaChildOrderMapper.getKeDaChildOrderBacklogList(null, baseRequest);
+        if (list.size() <= 0) return AjaxResult.error("无数据！");
+        for (int i = 0; i < list.size(); i++) {
+            AjaxResult msg = kedaApi.getMsg(list.get(i).getLinkTel(), list.get(i).getId());
+            if ("刷新失败！".equals(msg.get("msg").toString())){
+                return msg;
+            }
+        }
+        return AjaxResult.success(true, "修改成功！");
+    }
+
+    /**
      * 疑难杂单创建子级订单
      *
      * @param kedaChildOrder
@@ -262,7 +284,7 @@ public class KedaChildOrderService {
      *
      * @param phones
      */
-    public List<KedaChildOrder> formattedPhone(String phones) throws Exception{
+    public List<KedaChildOrder> formattedPhone(String phones) throws Exception {
         //换行符----
         String regNR = "\n\r";
         String regN = "\n";
