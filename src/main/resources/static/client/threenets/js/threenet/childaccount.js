@@ -7,7 +7,7 @@ var columns = [
     {"data": "userTel"},
     {"data": "province"},
     {"data": "userTime"},
-    {"data": "id"},
+    {"data": "openNum"},
 ];
 var columnDefs = [{
     targets: [8],

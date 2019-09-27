@@ -69,11 +69,13 @@ public class LoginController {
             ip = "127.0.0.1";
         }
         loginLog.setIpAdress(ip);
+        log.info("保存登录IP，共耗时 -- >" + (System.currentTimeMillis() - startTime) + "ms");
         try {
             // 1、检验验证码
             if (loginParam.getCaptchaCode() != null) {
                 String inputCode = loginParam.getCaptchaCode();
                 String captchaSession = (String) session.getAttribute(Constants.KAPTCHA_SESSION_KEY);
+                log.info("获取验证码，共耗时 -- >" + (System.currentTimeMillis() - startTime) + "ms");
                 if (!Objects.equals(inputCode, captchaSession)) {
                     log.info("验证码错误，用户输入：{}, 正确验证码：{}", inputCode, captchaSession);
                     map.put("msg", "验证码不正确!");
@@ -82,13 +84,15 @@ public class LoginController {
                     AsyncConfig.ac().loginLogTask(ShiroUtils.getSysUser(), loginLog);
                     return "system/login";
                 }
+                log.info("验证码验证，共耗时 -- >" + (System.currentTimeMillis() - startTime) + "ms");
             }
             // 2、执行认证、授权操作
             Subject subject = SecurityUtils.getSubject();
+            log.info("执行授权操作，共耗时 -- >" + (System.currentTimeMillis() - startTime) + "ms");
             UsernamePasswordToken token = new UsernamePasswordToken(loginParam.getUsername(), MD5Utils.GetMD5Code(loginParam.getPassword()), false);
             // 执行登录操作
             subject.login(token);
-
+            log.info("执行登录操作，共耗时 -- >" + (System.currentTimeMillis() - startTime) + "ms");
             Boolean status = ShiroUtils.getSysUser().getUserStatus();
             if (status) {
                 // 将用户名存到session中
@@ -96,8 +100,7 @@ public class LoginController {
                 // 异步操作，执行修改登录时间以及添加登录日志
                 loginLog.setLoginLogStatus("登录成功");
                 AsyncConfig.ac().loginLogTask(ShiroUtils.getSysUser(), loginLog);
-                long endTime = System.currentTimeMillis();
-                log.info("用户登录，共耗时 -- >" + (endTime - startTime) + "ms");
+                log.info("用户登录成功，共耗时 -- >" + (System.currentTimeMillis() - startTime) + "ms");
                 return "redirect:/system/index";
             } else {
                 ShiroUtils.getSubject().logout();

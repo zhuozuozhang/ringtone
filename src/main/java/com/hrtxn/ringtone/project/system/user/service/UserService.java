@@ -299,11 +299,11 @@ public class UserService {
             if (StringUtils.isNotNull(userByUserName)){
                 return AjaxResult.error("用户名重复！");
             }
-            // 判断电话号码是否重复
-            User userByUserTel = userMapper.findUserByUserTel(user.getUserTel());
-            if (StringUtils.isNotNull(userByUserTel)){
-                return AjaxResult.error("电话号码重复!");
-            }
+           // 判断电话号码是否重复
+//            User userByUserTel = userMapper.findUserByUserTel(user.getUserTel());
+//            if (StringUtils.isNotNull(userByUserTel)){
+//                return AjaxResult.error("电话号码重复!");
+//            }
             String passwprd = MD5Utils.GetMD5Code(user.getUserPassword());
             user.setUserPassword(passwprd);
 

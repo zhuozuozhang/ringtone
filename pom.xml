@@ -12,6 +12,7 @@
     <artifactId>ring</artifactId>
     <version>0.0.12</version>
     <name>ring</name>
+    <packaging>war</packaging>
     <description>Demo project for Spring Boot</description>
 
     <properties>

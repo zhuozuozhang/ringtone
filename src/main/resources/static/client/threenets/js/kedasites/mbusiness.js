@@ -20,6 +20,7 @@ function loading() {
     }
     AjaxPost("/threenets/clcy/getBusinessData/2", params, function (result) {
         var data = result.data;
+        data = data.reverse();
         showTable(data)
         showEcharts(data)
     });
@@ -37,6 +38,7 @@ function showTable(data) {
 
 //展示图表
 function showEcharts(data){
+    data = data.reverse();
     var myChart = echarts.init(document.getElementById('main'));
     var option = {
         title: {

@@ -37,6 +37,7 @@ function searchEnterprise() {
 
 //展示图表
 function showEcharts(data){
+    data = data.reverse();
     var myChart = echarts.init(document.getElementById('main'));
     var option = {
         title: {
