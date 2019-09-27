@@ -101,6 +101,7 @@
 
         //上传铃音文件
         $("form").on("change", "#file", function (e) {
+            var flga = true;
             $(".choose").html(this.value);
             //上传铃音文件
             var obj_file = document.getElementById("file");
@@ -113,6 +114,7 @@
                 duration = audioElement.duration;//时长,单位(秒)
                 if (duration > 48) {
                     layer.msg("文件时长不能大于48秒");
+                    flga = false;
                 }
             });
             //获取录音大小
@@ -126,15 +128,19 @@
             } else if (ext == "mp3" || ext == "wav") {
                 if (size > 1) {
                     layer.msg("音频文件不能大于1M");
-                    return;
+                    flga = false
                 }
             } else if (ext == "mp4" || ext == "wov") {
-                if (size > 15) {
+                if (size > 40) {
                     layer.msg("视频文件不能大于40M");
-                    return;
+                    flga = false
                 }
             }
-            uploadRing();
+            setTimeout(function () {
+                if(flga){
+                    uploadRing();
+                }
+            },100)
         })
 
         function findbyringname() {}

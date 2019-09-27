@@ -263,7 +263,11 @@ public class McardApi {
         respone.setCode(jsonData.getString("code"));
         respone.setProvince(jsonData.getString("province"));
         respone.setCity(jsonData.getString("city"));
-        respone.setCityCode(jsonData.getString("cityCode"));
+        if (jsonData.containsKey("cityCode")) {
+            respone.setCityCode(jsonData.getString("cityCode"));
+        }else {
+            respone.setCityCode("");
+        }
         respone.setProvinceCode(jsonData.getString("provinceCode"));
         respone.setFeeValue(jsonData.getString("feeValue"));
         respone.setProvince_code(jsonData.getString("province_code"));

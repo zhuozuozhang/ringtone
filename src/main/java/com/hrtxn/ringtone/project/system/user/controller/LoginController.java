@@ -58,6 +58,7 @@ public class LoginController {
      */
     @PostMapping("/login")
     public String login(LoginParam loginParam, Map<String, Object> map, HttpSession session) {
+        long startTime = System.currentTimeMillis();//获取当前时间
         String msg = "";
         // 构造登录记录实体类
         LoginLog loginLog = new LoginLog();
@@ -68,7 +69,6 @@ public class LoginController {
             ip = "127.0.0.1";
         }
         loginLog.setIpAdress(ip);
-        loginLog.setLoginLocation(AddressUtils.getRealAddressByIP(ip));
         try {
             // 1、检验验证码
             if (loginParam.getCaptchaCode() != null) {
@@ -96,6 +96,8 @@ public class LoginController {
                 // 异步操作，执行修改登录时间以及添加登录日志
                 loginLog.setLoginLogStatus("登录成功");
                 AsyncConfig.ac().loginLogTask(ShiroUtils.getSysUser(), loginLog);
+                long endTime = System.currentTimeMillis();
+                log.info("用户登录，共耗时 -- >" + (endTime - startTime) + "ms");
                 return "redirect:/system/index";
             } else {
                 ShiroUtils.getSubject().logout();
@@ -140,18 +142,17 @@ public class LoginController {
 
     /**
      * 登出操作
+     *
      * @return
      */
     @GetMapping("/index")
     public String index() {
         User user = ShiroUtils.getSysUser();
-        if(user != null){
+        if (user != null) {
             return "redirect:/system/index";
         }
         return "system/login";
     }
-
-
 
 
     /**

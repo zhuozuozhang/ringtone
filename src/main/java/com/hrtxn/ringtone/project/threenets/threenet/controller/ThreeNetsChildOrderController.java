@@ -31,6 +31,7 @@ public class ThreeNetsChildOrderController {
 
     /**
      * 号码管理设置铃音
+     *
      * @param orderId
      * @param operate
      * @param ringId
@@ -146,14 +147,16 @@ public class ThreeNetsChildOrderController {
     @ResponseBody
     @Log(title = "添加子订单", businessType = BusinessType.INSERT, operatorLogType = OperatorLogType.THREENETS)
     public AjaxResult insterThreeNetsChildOrder(ThreenetsChildOrder childOrder, BaseRequest request) {
+        long startTime = System.currentTimeMillis();//获取当前时间
         try {
             return threeNetsChildOrderService.insterThreeNetsChildOrder(childOrder, request);
         } catch (Exception e) {
             log.error("批量保存 方法：insterThreeNetsChildOrder 错误信息", e);
             return AjaxResult.error("保存失败");
+        } finally {
+            log.info("保存三网子订单，共耗时 -- >" + (System.currentTimeMillis() - startTime) + "ms");
         }
     }
-
 
     /**
      * 删除子订单
@@ -179,11 +182,14 @@ public class ThreeNetsChildOrderController {
     @ResponseBody
     @Log(title = "获取号码信息功能", businessType = BusinessType.UPDATE, operatorLogType = OperatorLogType.THREENETS)
     public AjaxResult getPhoneInfo(Integer type, Integer data) {
+        long startTime = System.currentTimeMillis();//获取当前时间
         try {
             return threeNetsChildOrderService.getPhoneInfo(type, data);
         } catch (Exception e) {
             log.error("获取号码信息 方法：getPhoneInfo 错误信息", e);
             return AjaxResult.error(e.getMessage());
+        } finally {
+            log.info("刷新三网成员列表，共耗时 -- >" + (System.currentTimeMillis() - startTime) + "ms");
         }
     }
 
@@ -197,11 +203,14 @@ public class ThreeNetsChildOrderController {
     @ResponseBody
     @Log(title = "刷新视频彩铃功能", businessType = BusinessType.UPDATE, operatorLogType = OperatorLogType.THREENETS)
     public AjaxResult refreshVbrtStatus(@PathVariable Integer id) {
+        long startTime = System.currentTimeMillis();//获取当前时间
         try {
             return threeNetsChildOrderService.refreshVbrtStatus(id);
         } catch (Exception e) {
             log.error("刷新视频彩铃功能 方法：refreshIsMonthly 错误信息", e);
             return AjaxResult.error(e.getMessage());
+        } finally {
+            log.info("刷新三网铃音列表，共耗时 -- >" + (System.currentTimeMillis() - startTime) + "ms");
         }
     }
 

@@ -47,13 +47,15 @@ public class FileController {
         String extensionName = FileUtil.getExtensionName(ringFile.getOriginalFilename());
         if (extensionName.equals("mp3") || extensionName.equals("wav")) {
             boolean m = FileUtil.checkFileSize(ringFile.getSize(), 1, "M");
-            if (!m){
+            if (!m) {
                 return AjaxResult.error("文件大小超限");
             }
         }
         if (extensionName.equals("mp4") || extensionName.equals("mov")) {
+            String month = DateUtils.getMonth() < 10 ? "0" : "";
+            ringName = ringName + "_" + DateUtils.getYear() + month + DateUtils.getMonth();
             boolean m = FileUtil.checkFileSize(ringFile.getSize(), 48, "M");
-            if (!m){
+            if (!m) {
                 return AjaxResult.error("文件大小超限");
             }
         }
@@ -103,7 +105,7 @@ public class FileController {
     @Log(title = "上传文件", businessType = BusinessType.INSERT, operatorLogType = OperatorLogType.THREENETS)
     public AjaxResult uploadProtocolFile(@RequestParam("protocolFile") List<MultipartFile> protocolFiles, String folderName) {
         return fileService.uploads(protocolFiles, "免短协议", folderName);
-       // return fileService.upload(protocolFile, "免短协议", folderName);
+        // return fileService.upload(protocolFile, "免短协议", folderName);
     }
 
     /**
@@ -144,6 +146,7 @@ public class FileController {
 
     /**
      * 上传营业执照
+     *
      * @param businessLicense
      * @param folderName
      * @return
@@ -157,6 +160,7 @@ public class FileController {
 
     /**
      * 上传法人身份证正面
+     *
      * @param legalPersonCardZhen
      * @param folderName
      * @return
@@ -170,6 +174,7 @@ public class FileController {
 
     /**
      * 上传法人身份证反面
+     *
      * @param legalPersonCardFan
      * @param folderName
      * @return
@@ -183,6 +188,7 @@ public class FileController {
 
     /**
      * 上传LOGO
+     *
      * @param logo
      * @param folderName
      * @return
@@ -196,6 +202,7 @@ public class FileController {
 
     /**
      * 上传授权书
+     *
      * @param authorization
      * @param
      * @return
@@ -209,6 +216,7 @@ public class FileController {
 
     /**
      * 上传号码证明
+     *
      * @param numberProve
      * @param folderName
      * @return

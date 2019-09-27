@@ -39,7 +39,7 @@
 
 
   <!--获取号码归属地数量-->
-  <select id="getPhonePlaceCount" resultType="Integer">
+  <select id="getPhonePlaceCount" resultType="java.lang.Integer">
     select
       count(1)
     from tb_phone_place

@@ -78,12 +78,15 @@ public class ThreeNetsRingController {
     @PostMapping("/threenets/getThreeNetsRingList")
     @ResponseBody
     public AjaxResult getThreeNetsRingList(Page page, BaseRequest request) {
+        long startTime = System.currentTimeMillis();//获取当前时间
         try {
             List<ThreenetsRing> list = threeNetsRingService.getChildOrderList(page, request);
             int totalCount = threeNetsRingService.getCount(request);
             return AjaxResult.success(list, "查询成功", totalCount);
         } catch (Exception e) {
             log.error("获取铃音列表数据 方法：getThreeNetsRingList 错误信息", e);
+        } finally {
+            log.info("刷新三网铃音列表，共耗时 -- >" + (System.currentTimeMillis() - startTime) + "ms");
         }
         return null;
     }
@@ -95,12 +98,12 @@ public class ThreeNetsRingController {
      */
     @GetMapping("/threenets/toAddMerchantsRingPage")
     public String toAddMerchantsRingPage(ModelMap map, BaseRequest request) {
-        try{
+        try {
             ThreenetsOrder order = threenetsOrderMapper.selectByPrimaryKey(request.getOrderId());
             map.put("orderId", request.getOrderId());
             map.put("operate", request.getOperator());
             map.put("folderName", order.getFolderName());
-        }catch(Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return "threenets/threenet/merchants/addring";
@@ -115,11 +118,14 @@ public class ThreeNetsRingController {
     @ResponseBody
     @Log(title = "添加铃音", businessType = BusinessType.INSERT, operatorLogType = OperatorLogType.THREENETS)
     public AjaxResult insterThreeNetsRing(ThreenetsRing ring) {
+        long startTime = System.currentTimeMillis();//获取当前时间
         try {
             return threeNetsRingService.saveRing(ring);
         } catch (Exception e) {
             log.error("添加铃音失败 方法：insterThreeNetsRing 错误信息", e);
             return AjaxResult.error("保存失败！");
+        } finally {
+            log.info("添加铃音，共耗时 -- >" + (System.currentTimeMillis() - startTime) + "ms");
         }
     }
 
@@ -178,7 +184,7 @@ public class ThreeNetsRingController {
             outStream.write(data); //输出数据
         } catch (Exception e) {
             log.error("播放铃音失败 方法：playRing 错误信息", e);
-        }finally {
+        } finally {
             outStream.flush();
             outStream.close();
             fileIs.close();
@@ -269,7 +275,7 @@ public class ThreeNetsRingController {
         try {
             return threeNetsRingService.getThreeNetsRingSetingList(page, orderId, operate);
         } catch (Exception e) {
-            log.error("获取设置铃音激活成功铃音数据 方法：getThreeNetsRingSetingList 错误信息：",e);
+            log.error("获取设置铃音激活成功铃音数据 方法：getThreeNetsRingSetingList 错误信息：", e);
         }
         return AjaxResult.error("获取数据失败！");
     }

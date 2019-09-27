@@ -30,11 +30,11 @@ public interface PhonePlaceMapper {
 
     int insertPhonePlace(PhonePlace phonePlace);
 
-    public PhonePlace getPhonePlaceById(Integer id);
+    PhonePlace getPhonePlaceById(Integer id);
 
-    public int updatePhonePlace(PhonePlace phonePlace);
+    int updatePhonePlace(PhonePlace phonePlace);
 
-    public int deletePhonePlace(Integer id);
+    int deletePhonePlace(Integer id);
 
-    public PhonePlace getPhonePlaceByPhone(String phone);
+    PhonePlace getPhonePlaceByPhone(String phone);
 }

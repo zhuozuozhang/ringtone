@@ -8,6 +8,7 @@ import com.hrtxn.ringtone.freemark.enums.BusinessType;
 import com.hrtxn.ringtone.freemark.enums.OperatorLogType;
 import com.hrtxn.ringtone.project.threenets.kedas.kedasites.domain.KedaChildOrder;
 import com.hrtxn.ringtone.project.threenets.kedas.kedasites.service.KedaChildOrderService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -20,6 +21,7 @@ import java.io.IOException;
  * Date:2019-08-14 10:04
  * Description:疑难杂单子订单控制层
  */
+@Slf4j
 @Controller
 @RequestMapping("/threenets/clcy/")
 public class KedaChildOrderController {
@@ -61,8 +63,17 @@ public class KedaChildOrderController {
     @ResponseBody
     @PostMapping("insertKedaChildOrder")
     @Log(title = "添加疑难杂单子级订单", businessType = BusinessType.INSERT, operatorLogType = OperatorLogType.KEDASITES)
-    public AjaxResult insertKedaChildOrder(KedaChildOrder kedaChildOrder) throws Exception {
-        return kedaChildOrderService.insertKedaChildOrder(kedaChildOrder);
+    public AjaxResult insertKedaChildOrder(KedaChildOrder kedaChildOrder){
+        long startTime = System.currentTimeMillis();//获取当前时间
+        AjaxResult result = new AjaxResult();
+        try {
+            result = kedaChildOrderService.insertKedaChildOrder(kedaChildOrder);
+        } catch (Exception e) {
+            log.error("添加疑难杂单子级订单失败------>", e);
+        } finally {
+            log.info("添加疑难杂单子级订单，共耗时 -- >" + (System.currentTimeMillis() - startTime) + "ms");
+        }
+        return result;
     }
 
     /**
@@ -74,9 +85,18 @@ public class KedaChildOrderController {
      */
     @ResponseBody
     @PostMapping("batchInsertKedaChildOrder")
-    @Log(title = "添加疑难杂单子级订单", businessType = BusinessType.INSERT, operatorLogType = OperatorLogType.KEDASITES)
-    public AjaxResult batchInsertKedaChildOrder(KedaChildOrder kedaChildOrder) throws Exception {
-        return kedaChildOrderService.batchInsertKedaChildOrder(kedaChildOrder);
+    @Log(title = "批量添加疑难杂单子级订单", businessType = BusinessType.INSERT, operatorLogType = OperatorLogType.KEDASITES)
+    public AjaxResult batchInsertKedaChildOrder(KedaChildOrder kedaChildOrder){
+        long startTime = System.currentTimeMillis();//获取当前时间
+        AjaxResult result = new AjaxResult();
+        try {
+            result = kedaChildOrderService.batchInsertKedaChildOrder(kedaChildOrder);
+        } catch (Exception e) {
+            log.error("批量添加疑难杂单子级订单失败------>", e);
+        } finally {
+            log.info("批量添加疑难杂单子级订单，共耗时 -- >" + (System.currentTimeMillis() - startTime) + "ms");
+        }
+        return result;
     }
 
     /**
@@ -89,8 +109,17 @@ public class KedaChildOrderController {
     @PostMapping("getPhoneInfo/{id}")
     @ResponseBody
     @Log(title = "疑难杂单刷新子订单", businessType = BusinessType.UPDATE, operatorLogType = OperatorLogType.KEDASITES)
-    public AjaxResult getPhoneInfo(@PathVariable Integer id) throws IOException {
-        return kedaChildOrderService.getPhoneInfo(id);
+    public AjaxResult getPhoneInfo(@PathVariable Integer id){
+        long startTime = System.currentTimeMillis();//获取当前时间
+        AjaxResult result = new AjaxResult();
+        try {
+            result = kedaChildOrderService.getPhoneInfo(id);
+        } catch (IOException e) {
+            log.error("刷新科大成员列表失败------>", e);
+        } finally {
+            log.info("刷新科大成员列表，共耗时 -- >" + (System.currentTimeMillis() - startTime) + "ms");
+        }
+        return result;
     }
 
     /**
@@ -103,8 +132,17 @@ public class KedaChildOrderController {
     @PostMapping("listPhoneInfo/{id}")
     @ResponseBody
     @Log(title = "疑难杂单刷新子订单", businessType = BusinessType.UPDATE, operatorLogType = OperatorLogType.KEDASITES)
-    public AjaxResult listPhoneInfo(@PathVariable Integer id) throws IOException {
-        return kedaChildOrderService.listPhoneInfo(id);
+    public AjaxResult listPhoneInfo(@PathVariable Integer id){
+        long startTime = System.currentTimeMillis();//获取当前时间
+        AjaxResult result = new AjaxResult();
+        try {
+            result = kedaChildOrderService.listPhoneInfo(id);
+        } catch (IOException e) {
+            log.error("批量刷新科大成员列表失败------>", e);
+        } finally {
+            log.info("批量刷新科大成员列表，共耗时 -- >" + (System.currentTimeMillis() - startTime) + "ms");
+        }
+        return result;
     }
 
     /**
@@ -139,8 +177,8 @@ public class KedaChildOrderController {
      */
     @ResponseBody
     @PutMapping("setKedaChidOrder")
-    @Log(title = "疑难杂单子订单设置铃音",businessType = BusinessType.UPDATE,operatorLogType = OperatorLogType.KEDASITES)
-    public AjaxResult setKedaChidOrder(Integer ringId,String linkTel,String employeeId,Integer childOrderId) throws IOException {
-        return kedaChildOrderService.setKedaChidOrder(ringId,linkTel,employeeId,childOrderId);
+    @Log(title = "疑难杂单子订单设置铃音", businessType = BusinessType.UPDATE, operatorLogType = OperatorLogType.KEDASITES)
+    public AjaxResult setKedaChidOrder(Integer ringId, String linkTel, String employeeId, Integer childOrderId) throws IOException {
+        return kedaChildOrderService.setKedaChidOrder(ringId, linkTel, employeeId, childOrderId);
     }
 }

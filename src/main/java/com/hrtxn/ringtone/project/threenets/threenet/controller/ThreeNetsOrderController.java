@@ -100,13 +100,15 @@ public class ThreeNetsOrderController {
     @ResponseBody
     @Log(title = "添加三网订单", businessType = BusinessType.INSERT, operatorLogType = OperatorLogType.THREENETS)
     public AjaxResult saveThreeNetsOrder(OrderRequest order) {
+        long startTime = System.currentTimeMillis();//获取当前时间
         try {
             return threeNetsOrderService.save(order);
         }catch (Exception e){
             log.error("保存三网订单失败 方法：saveThreeNetsOrder 错误信息", e);
             return AjaxResult.error("添加失败");
+        } finally {
+            log.info("保存三网订单，共耗时 -- >" + (System.currentTimeMillis() - startTime) + "ms");
         }
-
     }
 
 
