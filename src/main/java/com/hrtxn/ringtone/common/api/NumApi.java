@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hrtxn.ringtone.common.constant.AjaxResult;
 import com.hrtxn.ringtone.common.domain.Page;
 import com.hrtxn.ringtone.common.utils.*;
+import com.hrtxn.ringtone.project.numcertification.domain.FourcertificationOrder;
 import com.hrtxn.ringtone.project.numcertification.domain.NumOrder;
 import com.hrtxn.ringtone.project.numcertification.domain.NumcertificationOrder;
 import com.hrtxn.ringtone.project.numcertification.json.NumBaseDataResult;
@@ -44,7 +45,9 @@ public class NumApi {
 
     //预占接口
     public final static String CGIOCCUPYADD = NumApi.URLPREFIX + "/cgi/occupy/add";
+    //接口模板
     public final static String DOWNLOADTEMPLATE = NumApi.URLPREFIX +  "cgi/material/downloadTemplate";
+    //提交资料
     public final static String CGIMATERIALSUBMIT = NumApi.URLPREFIX + "/cgi/material/submit";
 
     public static String cgiToken = null;
@@ -81,13 +84,13 @@ public class NumApi {
      * @date 2019-8-29 13:42
      */
     public AjaxResult getData(Page page, NumOrder numOrder) throws IOException {
-        if(StringUtils.isEmpty(cgiToken)){
-            AjaxResult ajaxResult = getCgiToken();
-            if ((Integer) ajaxResult.get("code") == 200) {
-                cgiToken = ajaxResult.get("data").toString();
-                log.info("执行刷新cgiToken结果{}", cgiToken);
-            }
-        }
+//        if(StringUtils.isEmpty(cgiToken)){
+//            AjaxResult ajaxResult = getCgiToken();
+//            if ((Integer) ajaxResult.get("code") == 200) {
+//                cgiToken = ajaxResult.get("data").toString();
+//                log.info("执行刷新cgiToken结果{}", cgiToken);
+//            }
+//        }
 
         HashMap map = new HashMap();
         map.put("pageSize", page.getPagesize());
@@ -158,13 +161,44 @@ public class NumApi {
     }
 
     /**
+     * 预占
+     */
+    public String preoccupation(FourcertificationOrder fourcertificationOrder){
+
+        String result = "";
+        try {
+            HashMap map = new HashMap();
+            if(StringUtils.isNotEmpty(fourcertificationOrder.getApplyNumber())){
+                map.put("applyNumber",fourcertificationOrder.getApplyNumber());
+            }
+            if(StringUtils.isNotEmpty(fourcertificationOrder.getCompanyName())){
+                map.put("occupyCompany",fourcertificationOrder.getCompanyName());
+            }
+            if(StringUtils.isNotEmpty(fourcertificationOrder.getUserProvince())){
+                map.put("useProvince",fourcertificationOrder.getUserProvince());
+            }
+            if(StringUtils.isNotEmpty(fourcertificationOrder.getUserCity())){
+                map.put("useCity",fourcertificationOrder.getUserCity());
+            }
+            result = sendPost(CGIOCCUPYADD + "?cgiToken=" + NumApi.cgiToken, map, Const.CONTENT_TYPE_JSON);
+            log.info("获取数据结果{}", result);
+            JSONObject jsonObject = JSONObject.fromObject(result);
+            return jsonObject.get("code").toString();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
+
+    /**
      * 下载模板
-     * @param numcertificationOrder
+     * @param fourcertificationOrder
      * @return
      * @throws IOException
      */
-     public String downloadTemplate(NumcertificationOrder numcertificationOrder) throws IOException {
-         HashMap map = buildMap(numcertificationOrder);
+     public String downloadTemplate(FourcertificationOrder fourcertificationOrder) throws IOException {
+         HashMap map = buildMap(fourcertificationOrder);
          String result = sendPost(DOWNLOADTEMPLATE + "?cgiToken=" + NumApi.cgiToken, map,Const.CONTENT_TYPE_FORM_DATA);
          log.info("获取数据结果{}", result);
          JSONObject jsonObject = JSONObject.fromObject(result);
@@ -180,18 +214,18 @@ public class NumApi {
          return jsonObject.get("code").toString();
      }
 
-    public HashMap buildMap(NumcertificationOrder numcertificationOrder){
+    public HashMap buildMap(FourcertificationOrder fourcertificationOrder){
         HashMap map = new HashMap();
         map.put("cgiToken",cgiToken);
-        map.put("numberCode",numcertificationOrder.getPhoneNum());
-        map.put("companyName",numcertificationOrder.getCompanyName());
-        map.put("otherLinkMobile",numcertificationOrder.getFixPhone());
-        map.put("otherLinkPhone",numcertificationOrder.getLegalPersionPhone());
-        map.put("otherLinkEmail",numcertificationOrder.getEmail());
-        map.put("otherBindPhone",numcertificationOrder.getBindPhone());
-        map.put("otherValidPhone",numcertificationOrder.getLegalPersionPhone());
-        map.put("legalCardFileClientUrl",profileUrl+numcertificationOrder.getLegalPersionCardFUrl());
-        map.put("operatorCardFileClientUrl",profileUrl+numcertificationOrder.getHandlerPersionCardZUrl());
+        map.put("numberCode",fourcertificationOrder.getApplyNumber());
+        map.put("companyName",fourcertificationOrder.getCompanyName());
+        map.put("otherLinkMobile",fourcertificationOrder.getOtherLinkMobile());
+        map.put("otherLinkPhone",fourcertificationOrder.getOtherLinkPhone());
+        map.put("otherLinkEmail",fourcertificationOrder.getOtherLinkEmail());
+        map.put("otherBindPhone",fourcertificationOrder.getOtherBindPhone());
+        map.put("otherValidPhone",fourcertificationOrder.getOtherValidPhone());
+        map.put("legalCardFileClientUrl",profileUrl+fourcertificationOrder.getLegalCardUrl());
+        map.put("operatorCardFileClientUrl",profileUrl+fourcertificationOrder.getOperatorCardUrl());
         return map;
     }
 

@@ -142,7 +142,27 @@ public final class Const implements Serializable {
     public static final String CONTENT_TYPE_JSON = "application/json";
     public static final String CONTENT_TYPE_FORM_DATA="multipart/form-data";
 
-
+    /**
+     * 400订单状态
+     */
+    /** 预占申请中 */
+    public static final String FOUR_ORDER_PREOCCUPATION_NEW = "1";
+    /** 预占成功 */
+    public static final String FOUR_ORDER_PREOCCUPATION_SUCCESS = "2";
+    /** 预占失败 */
+    public static final String FOUR_ORDER_PREOCCUPATION_FAIL = "3";
+    /** 资料模板申请中 */
+    public static final String FOUR_ORDER_TEMPLATE_NEW = "4";
+    /** 资料模板申请成功 */
+    public static final String FOUR_ORDER_TEMPLATE_SUCCESS = "5";
+    /** 资料模板申请失败 */
+    public static final String FOUR_ORDER_TEMPLATE_FAIL = "6";
+    /** 资料审核中 */
+    public static final String FOUR_ORDER_SUBMIT_NEW = "7";
+    /** 资料审核成功 */
+    public static final String FOUR_ORDER_SUBMIT_SUCCESS = "8";
+    /** 资料审核失败 */
+    public static final String FOUR_ORDER_SUBMIT_FAIL = "9";
 
     /**
      * 接口编码对照

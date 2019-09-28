@@ -1,0 +1,342 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hrtxn.ringtone.project.numcertification.mapper.FourcertificationOrderMapper" >
+  <resultMap id="BaseResultMap" type="com.hrtxn.ringtone.project.numcertification.domain.FourcertificationOrder" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="user_id" property="userId" jdbcType="INTEGER" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="provider" property="provider" jdbcType="VARCHAR" />
+    <result column="apply_number" property="applyNumber" jdbcType="VARCHAR" />
+    <result column="combo_pattern" property="comboPattern" jdbcType="VARCHAR" />
+    <result column="price" property="price" jdbcType="DECIMAL" />
+    <result column="age_limit" property="ageLimit" jdbcType="INTEGER" />
+    <result column="company_name" property="companyName" jdbcType="VARCHAR" />
+    <result column="user_province" property="userProvince" jdbcType="VARCHAR" />
+    <result column="user_city" property="userCity" jdbcType="VARCHAR" />
+    <result column="other_link_mobile" property="otherLinkMobile" jdbcType="VARCHAR" />
+    <result column="other_link_phone" property="otherLinkPhone" jdbcType="VARCHAR" />
+    <result column="other_link_email" property="otherLinkEmail" jdbcType="VARCHAR" />
+    <result column="other_bind_phone" property="otherBindPhone" jdbcType="VARCHAR" />
+    <result column="other_valid_phone" property="otherValidPhone" jdbcType="VARCHAR" />
+    <result column="legal_card_url" property="legalCardUrl" jdbcType="VARCHAR" />
+    <result column="operator_card_url" property="operatorCardUrl" jdbcType="VARCHAR" />
+    <result column="corp_society_no" property="corpSocietyNo" jdbcType="VARCHAR" />
+    <result column="corp_business_scope" property="corpBusinessScope" jdbcType="VARCHAR" />
+    <result column="corp_company_city" property="corpCompanyCity" jdbcType="VARCHAR" />
+    <result column="corp_company_province" property="corpCompanyProvince" jdbcType="VARCHAR" />
+    <result column="corp_company_detail" property="corpCompanyDetail" jdbcType="VARCHAR" />
+    <result column="corp_office_province" property="corpOfficeProvince" jdbcType="VARCHAR" />
+    <result column="corp_office_city" property="corpOfficeCity" jdbcType="VARCHAR" />
+    <result column="corp_office_detail" property="corpOfficeDetail" jdbcType="VARCHAR" />
+    <result column="corp_nunmber_usage" property="corpNunmberUsage" jdbcType="VARCHAR" />
+    <result column="corp_account_type" property="corpAccountType" jdbcType="VARCHAR" />
+    <result column="corp_bank_name" property="corpBankName" jdbcType="VARCHAR" />
+    <result column="corp_bank_no" property="corpBankNo" jdbcType="VARCHAR" />
+    <result column="legal_name" property="legalName" jdbcType="VARCHAR" />
+    <result column="legal_identity_id" property="legalIdentityId" jdbcType="VARCHAR" />
+    <result column="legal_effective" property="legalEffective" jdbcType="VARCHAR" />
+    <result column="legal_long_effective" property="legalLongEffective" jdbcType="VARCHAR" />
+    <result column="legal_handler_name" property="legalHandlerName" jdbcType="VARCHAR" />
+    <result column="legal_handler_identity_id" property="legalHandlerIdentityId" jdbcType="VARCHAR" />
+    <result column="legal_handler_effective" property="legalHandlerEffective" jdbcType="VARCHAR" />
+    <result column="legal_handler_long_effective" property="legalHandlerLongEffective" jdbcType="VARCHAR" />
+    <result column="legal_address" property="legalAddress" jdbcType="VARCHAR" />
+    <result column="legal_handler_address" property="legalHandlerAddress" jdbcType="VARCHAR" />
+    <result column="yyzz" property="yyzz" jdbcType="VARCHAR" />
+    <result column="khxkz" property="khxkz" jdbcType="VARCHAR" />
+    <result column="frsfz" property="frsfz" jdbcType="VARCHAR" />
+    <result column="frsq" property="frsq" jdbcType="VARCHAR" />
+    <result column="jbrsfz" property="jbrsfz" jdbcType="VARCHAR" />
+    <result column="jbrsq" property="jbrsq" jdbcType="VARCHAR" />
+    <result column="jffp" property="jffp" jdbcType="VARCHAR" />
+    <result column="sld" property="sld" jdbcType="VARCHAR" />
+    <result column="fwxy" property="fwxy" jdbcType="VARCHAR" />
+    <result column="aqcns" property="aqcns" jdbcType="VARCHAR" />
+    <result column="scsfz" property="scsfz" jdbcType="VARCHAR" />
+    <result column="jyyczm" property="jyyczm" jdbcType="VARCHAR" />
+    <result column="ccyyzz" property="ccyyzz" jdbcType="VARCHAR" />
+    <result column="dxxy" property="dxxy" jdbcType="VARCHAR" />
+    <result column="gswjt" property="gswjt" jdbcType="VARCHAR" />
+    <result column="qt" property="qt" jdbcType="VARCHAR" />
+    <result column="status" property="status" jdbcType="VARCHAR" />
+    <result column="del_flag" property="delFlag" jdbcType="VARCHAR" />
+    <result column="availability" property="availability" jdbcType="VARCHAR" />
+    <result column="template_url" property="templateUrl" jdbcType="VARCHAR" />
+    <result column="remarks" property="remarks" jdbcType="VARCHAR" />
+    <result column="task_id" property="taskId" jdbcType="VARCHAR" />
+  </resultMap>
+
+  <sql id="Base_Column_List" >
+    id, user_id, create_time, provider, apply_number, combo_pattern, price, age_limit, 
+    company_name, user_province, user_city, other_link_mobile, other_link_phone, other_link_email, 
+    other_bind_phone, other_valid_phone, legal_card_url, operator_card_url, corp_society_no, 
+    corp_business_scope, corp_company_city, corp_company_province, corp_company_detail, 
+    corp_office_province, corp_office_city, corp_office_detail, corp_nunmber_usage, corp_account_type, 
+    corp_bank_name, corp_bank_no, legal_name, legal_identity_id, legal_effective, legal_long_effective, 
+    legal_handler_name, legal_handler_identity_id, legal_handler_effective, legal_handler_long_effective, 
+    legal_address, legal_handler_address, yyzz, khxkz, frsfz, frsq, jbrsfz, jbrsq, jffp, 
+    sld, fwxy, aqcns, scsfz, jyyczm, ccyyzz, dxxy, gswjt, qt, status,del_lag,availability,template_url,remarks,task_id
+  </sql>
+
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from tb_fourcertification_order
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+
+  <select id="getOrderByApplyNumber" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select
+    <include refid="Base_Column_List" />
+    from tb_fourcertification_order
+    where apply_number = #{applyNumber} and availability = '1'
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from tb_fourcertification_order
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+
+
+  <insert id="insert" parameterType="FourcertificationOrder" >
+    insert into tb_fourcertification_order (id, user_id, create_time, 
+      provider, apply_number, combo_pattern, 
+      price, age_limit, company_name, 
+      user_province, user_city, other_link_mobile, 
+      other_link_phone, other_link_email, other_bind_phone, 
+      other_valid_phone, legal_card_url, operator_card_url, 
+      corp_society_no, corp_business_scope, corp_company_city, 
+      corp_company_province, corp_company_detail, 
+      corp_office_province, corp_office_city, corp_office_detail, 
+      corp_nunmber_usage, corp_account_type, corp_bank_name, 
+      corp_bank_no, legal_name, legal_identity_id, 
+      legal_effective, legal_long_effective, legal_handler_name, 
+      legal_handler_identity_id, legal_handler_effective, 
+      legal_handler_long_effective, legal_address, 
+      legal_handler_address, yyzz, khxkz, 
+      frsfz, frsq, jbrsfz, 
+      jbrsq, jffp, sld, fwxy, 
+      aqcns, scsfz, jyyczm, 
+      ccyyzz, dxxy, gswjt, 
+      qt, status,del_flag,availability,template_url,remarks,task_id)
+    values (#{id,jdbcType=BIGINT}, #{userId,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{provider,jdbcType=VARCHAR}, #{applyNumber,jdbcType=VARCHAR}, #{comboPattern,jdbcType=VARCHAR}, 
+      #{price,jdbcType=DECIMAL}, #{ageLimit,jdbcType=INTEGER}, #{companyName,jdbcType=VARCHAR}, 
+      #{userProvince,jdbcType=VARCHAR}, #{userCity,jdbcType=VARCHAR}, #{otherLinkMobile,jdbcType=VARCHAR}, 
+      #{otherLinkPhone,jdbcType=VARCHAR}, #{otherLinkEmail,jdbcType=VARCHAR}, #{otherBindPhone,jdbcType=VARCHAR}, 
+      #{otherValidPhone,jdbcType=VARCHAR}, #{legalCardUrl,jdbcType=VARCHAR}, #{operatorCardUrl,jdbcType=VARCHAR}, 
+      #{corpSocietyNo,jdbcType=VARCHAR}, #{corpBusinessScope,jdbcType=VARCHAR}, #{corpCompanyCity,jdbcType=VARCHAR}, 
+      #{corpCompanyProvince,jdbcType=VARCHAR}, #{corpCompanyDetail,jdbcType=VARCHAR}, 
+      #{corpOfficeProvince,jdbcType=VARCHAR}, #{corpOfficeCity,jdbcType=VARCHAR}, #{corpOfficeDetail,jdbcType=VARCHAR}, 
+      #{corpNunmberUsage,jdbcType=VARCHAR}, #{corpAccountType,jdbcType=VARCHAR}, #{corpBankName,jdbcType=VARCHAR}, 
+      #{corpBankNo,jdbcType=VARCHAR}, #{legalName,jdbcType=VARCHAR}, #{legalIdentityId,jdbcType=VARCHAR}, 
+      #{legalEffective,jdbcType=VARCHAR}, #{legalLongEffective,jdbcType=VARCHAR}, #{legalHandlerName,jdbcType=VARCHAR}, 
+      #{legalHandlerIdentityId,jdbcType=VARCHAR}, #{legalHandlerEffective,jdbcType=VARCHAR}, 
+      #{legalHandlerLongEffective,jdbcType=VARCHAR}, #{legalAddress,jdbcType=VARCHAR}, 
+      #{legalHandlerAddress,jdbcType=VARCHAR}, #{yyzz,jdbcType=VARCHAR}, #{khxkz,jdbcType=VARCHAR}, 
+      #{frsfz,jdbcType=VARCHAR}, #{frsq,jdbcType=VARCHAR}, #{jbrsfz,jdbcType=VARCHAR}, 
+      #{jbrsq,jdbcType=VARCHAR}, #{jffp,jdbcType=VARCHAR}, #{sld,jdbcType=VARCHAR}, #{fwxy,jdbcType=VARCHAR}, 
+      #{aqcns,jdbcType=VARCHAR}, #{scsfz,jdbcType=VARCHAR}, #{jyyczm,jdbcType=VARCHAR}, 
+      #{ccyyzz,jdbcType=VARCHAR}, #{dxxy,jdbcType=VARCHAR}, #{gswjt,jdbcType=VARCHAR}, 
+      #{qt,jdbcType=VARCHAR}, #{status,jdbcType=VARCHAR},#{delFlag},#{availability},#{templateUrl},#{remarks},#{taskId})
+  </insert>
+
+
+  <update id="update" parameterType="FourcertificationOrder" >
+    update tb_fourcertification_order
+    <set >
+      <if test="userId != null" >
+        user_id = #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="provider != null" >
+        provider = #{provider,jdbcType=VARCHAR},
+      </if>
+      <if test="applyNumber != null" >
+        apply_number = #{applyNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="comboPattern != null" >
+        combo_pattern = #{comboPattern,jdbcType=VARCHAR},
+      </if>
+      <if test="price != null" >
+        price = #{price,jdbcType=DECIMAL},
+      </if>
+      <if test="ageLimit != null" >
+        age_limit = #{ageLimit,jdbcType=INTEGER},
+      </if>
+      <if test="companyName != null" >
+        company_name = #{companyName,jdbcType=VARCHAR},
+      </if>
+      <if test="userProvince != null" >
+        user_province = #{userProvince,jdbcType=VARCHAR},
+      </if>
+      <if test="userCity != null" >
+        user_city = #{userCity,jdbcType=VARCHAR},
+      </if>
+      <if test="otherLinkMobile != null" >
+        other_link_mobile = #{otherLinkMobile,jdbcType=VARCHAR},
+      </if>
+      <if test="otherLinkPhone != null" >
+        other_link_phone = #{otherLinkPhone,jdbcType=VARCHAR},
+      </if>
+      <if test="otherLinkEmail != null" >
+        other_link_email = #{otherLinkEmail,jdbcType=VARCHAR},
+      </if>
+      <if test="otherBindPhone != null" >
+        other_bind_phone = #{otherBindPhone,jdbcType=VARCHAR},
+      </if>
+      <if test="otherValidPhone != null" >
+        other_valid_phone = #{otherValidPhone,jdbcType=VARCHAR},
+      </if>
+      <if test="legalCardUrl != null" >
+        legal_card_url = #{legalCardUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="operatorCardUrl != null" >
+        operator_card_url = #{operatorCardUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="corpSocietyNo != null" >
+        corp_society_no = #{corpSocietyNo,jdbcType=VARCHAR},
+      </if>
+      <if test="corpBusinessScope != null" >
+        corp_business_scope = #{corpBusinessScope,jdbcType=VARCHAR},
+      </if>
+      <if test="corpCompanyCity != null" >
+        corp_company_city = #{corpCompanyCity,jdbcType=VARCHAR},
+      </if>
+      <if test="corpCompanyProvince != null" >
+        corp_company_province = #{corpCompanyProvince,jdbcType=VARCHAR},
+      </if>
+      <if test="corpCompanyDetail != null" >
+        corp_company_detail = #{corpCompanyDetail,jdbcType=VARCHAR},
+      </if>
+      <if test="corpOfficeProvince != null" >
+        corp_office_province = #{corpOfficeProvince,jdbcType=VARCHAR},
+      </if>
+      <if test="corpOfficeCity != null" >
+        corp_office_city = #{corpOfficeCity,jdbcType=VARCHAR},
+      </if>
+      <if test="corpOfficeDetail != null" >
+        corp_office_detail = #{corpOfficeDetail,jdbcType=VARCHAR},
+      </if>
+      <if test="corpNunmberUsage != null" >
+        corp_nunmber_usage = #{corpNunmberUsage,jdbcType=VARCHAR},
+      </if>
+      <if test="corpAccountType != null" >
+        corp_account_type = #{corpAccountType,jdbcType=VARCHAR},
+      </if>
+      <if test="corpBankName != null" >
+        corp_bank_name = #{corpBankName,jdbcType=VARCHAR},
+      </if>
+      <if test="corpBankNo != null" >
+        corp_bank_no = #{corpBankNo,jdbcType=VARCHAR},
+      </if>
+      <if test="legalName != null" >
+        legal_name = #{legalName,jdbcType=VARCHAR},
+      </if>
+      <if test="legalIdentityId != null" >
+        legal_identity_id = #{legalIdentityId,jdbcType=VARCHAR},
+      </if>
+      <if test="legalEffective != null" >
+        legal_effective = #{legalEffective,jdbcType=VARCHAR},
+      </if>
+      <if test="legalLongEffective != null" >
+        legal_long_effective = #{legalLongEffective,jdbcType=VARCHAR},
+      </if>
+      <if test="legalHandlerName != null" >
+        legal_handler_name = #{legalHandlerName,jdbcType=VARCHAR},
+      </if>
+      <if test="legalHandlerIdentityId != null" >
+        legal_handler_identity_id = #{legalHandlerIdentityId,jdbcType=VARCHAR},
+      </if>
+      <if test="legalHandlerEffective != null" >
+        legal_handler_effective = #{legalHandlerEffective,jdbcType=VARCHAR},
+      </if>
+      <if test="legalHandlerLongEffective != null" >
+        legal_handler_long_effective = #{legalHandlerLongEffective,jdbcType=VARCHAR},
+      </if>
+      <if test="legalAddress != null" >
+        legal_address = #{legalAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="legalHandlerAddress != null" >
+        legal_handler_address = #{legalHandlerAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="yyzz != null" >
+        yyzz = #{yyzz,jdbcType=VARCHAR},
+      </if>
+      <if test="khxkz != null" >
+        khxkz = #{khxkz,jdbcType=VARCHAR},
+      </if>
+      <if test="frsfz != null" >
+        frsfz = #{frsfz,jdbcType=VARCHAR},
+      </if>
+      <if test="frsq != null" >
+        frsq = #{frsq,jdbcType=VARCHAR},
+      </if>
+      <if test="jbrsfz != null" >
+        jbrsfz = #{jbrsfz,jdbcType=VARCHAR},
+      </if>
+      <if test="jbrsq != null" >
+        jbrsq = #{jbrsq,jdbcType=VARCHAR},
+      </if>
+      <if test="jffp != null" >
+        jffp = #{jffp,jdbcType=VARCHAR},
+      </if>
+      <if test="sld != null" >
+        sld = #{sld,jdbcType=VARCHAR},
+      </if>
+      <if test="fwxy != null" >
+        fwxy = #{fwxy,jdbcType=VARCHAR},
+      </if>
+      <if test="aqcns != null" >
+        aqcns = #{aqcns,jdbcType=VARCHAR},
+      </if>
+      <if test="scsfz != null" >
+        scsfz = #{scsfz,jdbcType=VARCHAR},
+      </if>
+      <if test="jyyczm != null" >
+        jyyczm = #{jyyczm,jdbcType=VARCHAR},
+      </if>
+      <if test="ccyyzz != null" >
+        ccyyzz = #{ccyyzz,jdbcType=VARCHAR},
+      </if>
+      <if test="dxxy != null" >
+        dxxy = #{dxxy,jdbcType=VARCHAR},
+      </if>
+      <if test="gswjt != null" >
+        gswjt = #{gswjt,jdbcType=VARCHAR},
+      </if>
+      <if test="qt != null" >
+        qt = #{qt,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="availability != null" >
+        availability = #{availability,jdbcType=VARCHAR},
+      </if>
+      <if test="templateUrl != null" >
+        template_url = #{templateUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="remarks != null" >
+        remarks = #{remarks,jdbcType=VARCHAR},
+      </if>
+      <if test="taskId != null" >
+        task_id = #{taskId,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+
+
+  <update id="delete">
+    update tb_fourcertification_order set status = '1' where id = #{id,jdbcType=BIGINT}
+  </update>
+
+  <update id="updateAvailability">
+    update tb_fourcertification_order set availability = '1' where id = #{id,jdbcType=BIGINT}
+  </update>
+
+
+</mapper>

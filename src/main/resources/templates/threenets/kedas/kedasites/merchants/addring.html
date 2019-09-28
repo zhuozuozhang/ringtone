@@ -54,7 +54,7 @@
                             </div>
                         </div>
                     </li>
-                    铃音文件上传 （<span style="color: red">铃音文件&lt;800K，时长&lt;60秒，格式需为mp3或wav</span>）
+                    铃音文件上传 （<span style="color: red">铃音文件&lt;1M，时长&lt;48秒，格式需为mp3或wav</span>）
                 </div>
                 <li class="clearfix bellContent">
                     <span class="fl" style="margin-right: 5px;"><i style="color: red">*</i>铃音内容</span>
@@ -83,8 +83,8 @@
         var duration;
         audioElement.addEventListener("loadedmetadata", function (_event) {
             duration = audioElement.duration;//时长,单位(秒)
-            if (duration >= 60) {
-                layer.msg("文件时长不能大于60秒");
+            if (duration >= 48) {
+                layer.msg("文件时长不能大于48秒");
                 return;
             }
         });
@@ -97,8 +97,8 @@
             layer.msg("铃音文件格式为mp3或wav");
             return;
         } else if (ext == "mp3" || ext == "wav") {
-            if (size >= 800) {
-                layer.msg("音频文件不能大于800K");
+            if (size >= 1024) {
+                layer.msg("音频文件不能大于1M");
                 return;
             }
         }

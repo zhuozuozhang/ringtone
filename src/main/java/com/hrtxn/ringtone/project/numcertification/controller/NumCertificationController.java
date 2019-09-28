@@ -3,8 +3,10 @@ package com.hrtxn.ringtone.project.numcertification.controller;
 import com.hrtxn.ringtone.common.api.NumApi;
 import com.hrtxn.ringtone.common.constant.AjaxResult;
 import com.hrtxn.ringtone.common.domain.Page;
+import com.hrtxn.ringtone.project.numcertification.domain.FourcertificationOrder;
 import com.hrtxn.ringtone.project.numcertification.domain.NumOrder;
 import com.hrtxn.ringtone.project.numcertification.domain.NumcertificationOrder;
+import com.hrtxn.ringtone.project.numcertification.service.FourCertificationService;
 import com.hrtxn.ringtone.project.numcertification.service.NumCertificationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -25,6 +27,9 @@ public class NumCertificationController {
 
     @Autowired
     private NumCertificationService numCertificationService;
+
+    @Autowired
+    private FourCertificationService fourCertificationService;
 
     /**
      * 跳转400首页
@@ -83,9 +88,9 @@ public class NumCertificationController {
      */
     @PostMapping("/order")
     @ResponseBody
-    public AjaxResult order(NumcertificationOrder numcertificationOrder) {
-
-        return numCertificationService.order(numcertificationOrder);
+    public AjaxResult order(FourcertificationOrder fourcertificationOrder) {
+          return fourCertificationService.preoccupation(fourcertificationOrder);
+//        return numCertificationService.order(numcertificationOrder);
 
     }
     /**
