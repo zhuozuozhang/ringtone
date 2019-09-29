@@ -76,6 +76,7 @@ public class ShiroConfig {
         filterChainDefinitionMap.put("/login", "anon");
         filterChainDefinitionMap.put("/index", "anon");
         filterChainDefinitionMap.put("/jsjt/**", "anon");
+        filterChainDefinitionMap.put("/profile/**", "anon");
         // 配置图片验证码不被拦截
         filterChainDefinitionMap.put("/imageCode", "anon");
         // 配置静态资源不被拦截
