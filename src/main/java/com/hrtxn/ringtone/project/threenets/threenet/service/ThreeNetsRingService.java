@@ -144,7 +144,6 @@ public class ThreeNetsRingService {
             ring.setRingType(isVideo ? "视频" : "音频");
             ring.setRingStatus(2);
             ring.setCreateTime(new Date());
-            ring.setRingName(ring.getRingName() + DateUtils.getTimeRadom() + extensionsName);
             ring.setOperate(operator);
             if (ring.getRingType().equals("视频") && operator != 1) {
                 continue;
@@ -152,6 +151,9 @@ public class ThreeNetsRingService {
             if (num > 1) {
                 String path = fileService.cloneFile(ring);
                 ring.setRingWay(path);
+                ring.setRingName(path.substring(path.lastIndexOf("\\") + 1));
+            }else{
+                ring.setRingName(ring.getRingName() + DateUtils.getTimeRadom() + extensionsName);
             }
             if (operator == 1) {
                 threenetsRingMapper.insertThreeNetsRing(ring);

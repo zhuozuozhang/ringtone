@@ -106,7 +106,7 @@ public class ThreeNetsService {
             request.setUserId(ShiroUtils.getSysUser().getId());
         }
         if (request.getUserId().equals(0)) {
-            request.setUserId(null);
+            request.setUserId(ShiroUtils.getSysUser().getUserRole().equals(1) ? null : ShiroUtils.getSysUser().getId());
             request.setArrayById(getChildUserList());
         }
         List<PlotBarPhone> list = threenetsChildOrderMapper.getMonthData(request);
@@ -125,7 +125,7 @@ public class ThreeNetsService {
             request.setUserId(ShiroUtils.getSysUser().getId());
         }
         if (request.getUserId().equals(0)) {
-            request.setUserId(null);
+            request.setUserId(ShiroUtils.getSysUser().getUserRole().equals(1) ? null : ShiroUtils.getSysUser().getId());
             request.setArrayById(getChildUserList());
         }
         List<PlotBarPhone> list = threenetsChildOrderMapper.getYearData(request);
@@ -195,6 +195,7 @@ public class ThreeNetsService {
         Integer count = threenetsChildOrderMapper.getCount(threenetsChildOrder);
         for (PlotBarPhone plotBarPhone : newList) {
             plotBarPhone.setCumulativeUser(count);
+            count = count - plotBarPhone.getAddUser();
             count = count + plotBarPhone.getUnsubscribeUser();
         }
         if (newList.isEmpty()) {

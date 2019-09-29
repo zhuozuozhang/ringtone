@@ -320,8 +320,8 @@ public class McardApi {
             map.put("unifyPayPhone", "");
             map.put("imageCode", getCodeString(attached.getMcardDistributorId()));
             map.put("auserBlicencePath", attached.getBusinessLicense());
-            map.put("auserCardidPath", attached.getConfirmLetter());
-            map.put("auserFilePath", attached.getSubjectProve() == null ? "" : attached.getSubjectProve());
+            map.put("auserFilePath", attached.getConfirmLetter());
+            map.put("auserCardidPath", attached.getSubjectProve() == null ? "" : attached.getSubjectProve());
             String result = sendPost(map, add_user_url, attached.getMcardDistributorId());
             log.info("电信创建集团结果--->" + result);
             JSONObject jsonObject = JSONObject.fromObject(result);

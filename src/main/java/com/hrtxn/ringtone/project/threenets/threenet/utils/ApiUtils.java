@@ -51,7 +51,7 @@ public class ApiUtils {
     /**
      * 登录联通商户
      */
-    public void loginToUnicom(){
+    public void loginToUnicom() {
         swxlApi.loginAutoParam(ShiroUtils.getSysUser().getUserName());
     }
 
@@ -126,7 +126,7 @@ public class ApiUtils {
                 }
                 mcardApi.toUserList(threenetsChildOrder.getOperateId(), attached.getMcardDistributorId());
                 String result = mcardApi.getUserInfo(attached.getMcardDistributorId());
-                if (StringUtils.isEmpty(result)){
+                if (StringUtils.isEmpty(result)) {
                     log.info("[" + threenetsChildOrder.getLinkmanTel() + "：获取信息失败！]");
                     break;
                 }
@@ -159,7 +159,15 @@ public class ApiUtils {
                         } else {
                             threenetsChildOrder.setIsMonthly(2);
                         }
-                        threenetsChildOrder.setRemark(tds.get(9).text());
+                        if (tds.get(9).text().contains("?")) {
+                            Elements lable = tds.get(9).getElementsByTag("lable");
+                            String l1 = lable.attr("onclick").split(",")[0];
+                            String re = l1.substring(l1.indexOf("'") + 1, l1.lastIndexOf("'"));
+                            String ti = tds.get(9).text();
+                            threenetsChildOrder.setRemark(ti.substring(0, ti.length() - 1) + "- " + re);
+                        } else {
+                            threenetsChildOrder.setRemark(tds.get(9).text());
+                        }
                         f = true;
                     }
                 }
@@ -560,8 +568,15 @@ public class ApiUtils {
                     Elements contents = doc.getElementsByClass("tbody_lis");
                     Elements trs = contents.get(0).getElementsByTag("tr");
                     for (int i = 0; i < trs.size(); i++) {
+                        String ringId = "";
                         Elements tds = trs.get(i).getElementsByTag("td");
-                        if (tds.get(0).text().equals(ringName)) {
+                        if (tds.get(8).childNodes().size() > 5) {
+                            Elements temp = tds.get(8).child(2).getElementsByTag("a");
+                            String t = temp.attr("onclick");
+                            t = t.replace("showConfirm('", "").replace("');", "");
+                            ringId = t;
+                        }
+                        if (tds.get(0).text().equals(ringName) || ringId.equals(threenetsRing.getOperateRingId())) {
                             Element el2 = tds.get(4);
                             String ringCheckmsg = el2.attr("title");
                             ringCheckmsg = ringCheckmsg.replace("激活", "下发");
@@ -590,7 +605,7 @@ public class ApiUtils {
                                     Elements temp = el.child(2).getElementsByTag("a");
                                     String t = temp.attr("onclick");
                                     log.info("移动铃音id-------------->" + t);
-                                    t = t.replace("showConfirm('","").replace("');","");
+                                    t = t.replace("showConfirm('", "").replace("');", "");
                                     threenetsRing.setOperateRingId(t);
                                 }
                             } else {
@@ -779,7 +794,14 @@ public class ApiUtils {
                             Elements trs = contents.get(j).getElementsByTag("tr");
                             for (int i = 0; i < trs.size(); i++) {
                                 Elements tds = trs.get(i).getElementsByTag("td");
-                                if (tds.get(0).text().equals(ringName)) {
+                                String ringId = "";
+                                if (tds.get(8).childNodes().size() > 5) {
+                                    Elements temp = tds.get(8).child(2).getElementsByTag("a");
+                                    String t = temp.attr("onclick");
+                                    t = t.replace("showConfirm('", "").replace("');", "");
+                                    ringId = t;
+                                }
+                                if (tds.get(0).text().equals(ringName) || ringId.equals(threenetsRing.getOperateRingId())) {
                                     Element el2 = tds.get(4);
                                     String ringCheckmsg = el2.attr("title");
                                     ringCheckmsg = ringCheckmsg.replace("激活", "下发");
@@ -1039,6 +1061,8 @@ public class ApiUtils {
                         }
                     }
                 }
+                threenetsRing.setOperateRingId(ringId);
+                SpringUtils.getBean(ThreenetsRingMapper.class).updateByPrimaryKeySelective(threenetsRing);
             } else {
                 ringId = threenetsRing.getOperateRingId();
             }
@@ -1058,7 +1082,7 @@ public class ApiUtils {
                             Element element = tag.get(2);
                             apersonnelId = element.attributes().get("data-id");
                             String text = element.attributes().get("data-name");
-                            String result = mcardApi.settingRing(ringId, apersonnelId, "61204");
+                            String result = mcardApi.settingRing(ringId, apersonnelId, attached.getMcardDistributorId());
                             if (StringUtils.isNotEmpty(result) && result.indexOf("0000") > 0) {
                                 String ringName = StringUtils.subString(threenetsRing.getRingName(), '.');
                                 threenetsChildOrder.setRingName(ringName);
@@ -1245,7 +1269,25 @@ public class ApiUtils {
      */
     public boolean addRingByDx(ThreenetsRing ring, ThreeNetsOrderAttached attached) {
         mcardApi.toUserList(attached.getMcardId(), attached.getMcardDistributorId());
-        return mcardApi.uploadRing(ring);
+        boolean flag = mcardApi.uploadRing(ring);
+        //获取铃音id
+        String ringList = mcardApi.toRingList(attached.getMcardDistributorId());
+        if (StringUtils.isNotEmpty(ringList)) {
+            Document doc = Jsoup.parse(ringList);
+            Elements contents = doc.getElementsByTag("tbody");
+            Elements trs = contents.get(0).getElementsByTag("tr");
+            for (int i = 0; i < trs.size(); i++) {
+                Elements tds = trs.get(i).getElementsByTag("td");
+                if (tds.size() <= 0) {
+                    continue;
+                }
+                if (tds.get(1).text().equals(ring.getRingName())) {
+                    ring.setOperateRingId(trs.get(i).attributes().get("id"));
+                }
+            }
+        }
+        SpringUtils.getBean(ThreenetsRingMapper.class).updateByPrimaryKeySelective(ring);
+        return flag;
     }
 
     /**
@@ -1301,7 +1343,7 @@ public class ApiUtils {
                 childOrder.setRemark("添加成功");
                 newList.add(childOrder);
             }
-            if (mcardAddPhoneRespone.getCode().equals("error")){
+            if (mcardAddPhoneRespone.getCode().equals("error")) {
                 childOrder.setStatus(Const.FAILURE_REVIEW);
                 childOrder.setRemark("添加失败");
                 newList.add(childOrder);
@@ -1328,8 +1370,8 @@ public class ApiUtils {
                 // 执行添加到本地数据库
                 int count = SpringUtils.getBean(UserMapper.class).insertUser(user);
                 // 添加权限到本地数据库
-                int[] menu = {1,2,3,4,5,6,7,8,9};
-                SpringUtils.getBean(RoleRelationMapper.class).insertRoleRelation(user.getId(),menu);
+                int[] menu = {1, 2, 3, 4, 5, 6, 7, 8, 9};
+                SpringUtils.getBean(RoleRelationMapper.class).insertRoleRelation(user.getId(), menu);
                 if (count > 0) {
                     // 修改文件状态
                     SpringUtils.getBean(FileService.class).updateStatus(user.getUserCardFan());
