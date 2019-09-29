@@ -9,7 +9,7 @@ spring:
 #    password: zgjc123!
     url: jdbc:mysql://localhost:3306/ringtone?useUnicode=true&characterEncoding=utf-8&useSSL=true&serverTimezone=GMT%2B8
     username: root
-    password: root
+    password: root123
     type: com.alibaba.druid.pool.DruidDataSource
     # 数据源其他配置
     initialSize: 5

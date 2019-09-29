@@ -34,7 +34,7 @@ function showTable() {
         {"data": "createTime"},
         {"data": "ringName"},
         {"data": "ringType"},
-        {"data": "ringWay"},
+        {"data": "fileUrl"},
         {"data": "ringStatus"},
         {"data": "remark"}
     ];
@@ -58,7 +58,8 @@ function showTable() {
     }, {
         targets: [5],
         render: function (data, type, row, meta) {
-            return '<a><span onclick="openPlayer(' + row.id + ');">试听</span></a>';
+            var result = "<a><span onclick=\"openPlayer('"+data+"');\">试听</span></a>";
+            return result;
         }
     }, {
         targets: [6],
@@ -116,12 +117,12 @@ function addRing() {
 }
 
 //在线试听
-function openPlayer(id) {
+function openPlayer(url) {
     layer.open({
         type: 1,
         title: '在线试听',
         area: ['800px', '560px'],
-        content: '<video id="ovideo" autoplay loop src="/threenets/playRing/' + id + '" controls="controls " allowfullscreen="true" quality="high" width="800px" height="514px" align="middle" allowscriptaccess="always" flashvars="isAutoPlay=true" type="application/x-shockwave-flash"></video>'
+        content: '<video id="ovideo" autoplay loop src="' + url + '" controls="controls " allowfullscreen="true" quality="high" width="800px" height="514px" align="middle" allowscriptaccess="always" flashvars="isAutoPlay=true" type="application/x-shockwave-flash"></video>'
     });
 }
 

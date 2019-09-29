@@ -48,4 +48,6 @@ public class ThreenetsRing implements Serializable {
     //
     private File file;
 
+    private String fileUrl;
+
 }

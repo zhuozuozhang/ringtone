@@ -16,6 +16,7 @@ import com.hrtxn.ringtone.project.threenets.threenet.mapper.ThreenetsRingMapper;
 import com.hrtxn.ringtone.project.threenets.threenet.utils.ApiUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -52,6 +53,8 @@ public class ThreeNetsRingService {
     private ThreeNetsAsyncService threeNetsAsyncService;
 
     private ApiUtils apiUtils = new ApiUtils();
+    @Value("${ringtone.profile-url}")
+    private String url;
 
     /**
      * 增
@@ -96,6 +99,9 @@ public class ThreeNetsRingService {
         List<ThreenetsRing> ringList = threenetsRingMapper.getRingList(page, request);
         // 刷新当前铃音列表
         ringList = apiUtils.getRingInfo(ringList);
+        for(ThreenetsRing ts : ringList){
+            ts.setFileUrl(url+"profile/"+ts.getRingWay().replace("\\","/"));
+        }
         return ringList;
     }
 
