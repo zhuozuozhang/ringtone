@@ -75,7 +75,7 @@
     corp_bank_name, corp_bank_no, legal_name, legal_identity_id, legal_effective, legal_long_effective, 
     legal_handler_name, legal_handler_identity_id, legal_handler_effective, legal_handler_long_effective, 
     legal_address, legal_handler_address, yyzz, khxkz, frsfz, frsq, jbrsfz, jbrsq, jffp, 
-    sld, fwxy, aqcns, scsfz, jyyczm, ccyyzz, dxxy, gswjt, qt, status,del_lag,availability,template_url,remarks,task_id
+    sld, fwxy, aqcns, scsfz, jyyczm, ccyyzz, dxxy, gswjt, qt, status,del_flag,availability,template_url,remarks,task_id
   </sql>
 
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
@@ -85,12 +85,48 @@
     where id = #{id,jdbcType=BIGINT}
   </select>
 
+
+
+
   <select id="getOrderByApplyNumber" resultMap="BaseResultMap" parameterType="java.lang.Long" >
     select
     <include refid="Base_Column_List" />
     from tb_fourcertification_order
     where apply_number = #{applyNumber} and availability = '1'
   </select>
+
+
+  <select id="queryOrderPage" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"/>
+    from tb_fourcertification_order
+    where 1 = 1
+    <if test="param != null and param.id != null">
+      AND id = #{param.id}
+    </if>
+    <if test="param != null and param.userId != null">
+      AND user_id = #{param.userId}
+    </if>
+    ORDER BY create_time DESC
+    <if test="page != null and page.page != null and page.pagesize != null">
+      LIMIT #{page.page},#{page.pagesize}
+    </if>
+  </select>
+
+  <select id="getCount"  resultType="java.lang.Integer">
+    select
+    count(1)
+    from tb_fourcertification_order
+    where 1 = 1
+    <if test="param != null and param.id != null">
+      AND id = #{param.id}
+    </if>
+    <if test="param != null and param.userId != null">
+      AND user_id = #{param.userId}
+    </if>
+
+  </select>
+
 
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
     delete from tb_fourcertification_order

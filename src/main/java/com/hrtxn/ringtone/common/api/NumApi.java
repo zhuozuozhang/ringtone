@@ -12,6 +12,7 @@ import com.hrtxn.ringtone.project.numcertification.json.NumBaseResult;
 import com.hrtxn.ringtone.project.numcertification.json.NumCgiTokenResult;
 import com.hrtxn.ringtone.project.numcertification.json.NumDataResult;
 import lombok.extern.slf4j.Slf4j;
+import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import okhttp3.*;
 import org.springframework.beans.factory.annotation.Value;
@@ -230,79 +231,104 @@ public class NumApi {
     }
 
 
-    public String submit(NumcertificationOrder numcertificationOrder){
-        String result = "";
+    public String submit(FourcertificationOrder fourcertificationOrder) throws IOException{
 
         //准备数据
-        HashMap<String,String> map = buildSubmitMap(numcertificationOrder);
-
-        return result;
+        HashMap<String,String> map = buildSubmitMap(fourcertificationOrder);
+        String result = sendPost(DOWNLOADTEMPLATE + "?cgiToken=" + NumApi.cgiToken, map,Const.CONTENT_TYPE_FORM_DATA);
+        log.info("获取数据结果{}", result);
+        JSONObject jsonObject = JSONObject.fromObject(result);
+        String code = jsonObject.get("code").toString();
+        if("0".equals(jsonObject.get("code").toString())){
+            String data = jsonObject.get("data").toString();
+            if(StringUtils.isNotEmpty(data)){
+                JSONObject dataObject = JSONObject.fromObject(data);
+                String taskId = dataObject.get("taskId").toString();
+                return taskId;
+            }
+        }
+        return jsonObject.get("code").toString();
     }
 
-    public HashMap buildSubmitMap(NumcertificationOrder num){
+    public HashMap buildSubmitMap(FourcertificationOrder four){
         HashMap<String,String> map = new HashMap();
-        map.put("corpSocietyNo",num.getCorpSocietyNo());
-        map.put("corpBusinessScope",num.getBusinessScope());
+        map.put("corpSocietyNo",four.getCorpSocietyNo());
+        map.put("corpBusinessScope",four.getCorpBusinessScope());
         //企业注册地省份主键
-        map.put("corpCompanyProvince","");
+        map.put("corpCompanyProvince",four.getCorpCompanyProvince());
         //企业注册地城市代码
-        map.put("corpCompanyCity","");
-        map.put("corpCompanyDetail",num.getCompanyAddress());
-        map.put("corpOfficeProvince","");
-        map.put("corpOfficeCity","");
-        map.put("corpOfficeDetail","");
-        map.put("corpNunmberUsage",num.getCorpNunmberUsage());
-        map.put("corpAccountType",num.getCorpAccountType());
-        map.put("corpBankName",num.getOpenAccountBank());
-        map.put("corpBankNo",num.getBankAccount());
-        map.put("legalName",num.getLegalPersionName());
-        map.put("legalIdentityId",num.getLegalPersionCardNum());
-        map.put("legalEffective",num.getLegalEffective());
-        map.put("legalLongEffective",num.getLegalLongEffective());
-        map.put("legalHandlerName",num.getLegalHandlerName());
-        map.put("legalHandlerIdentityId",num.getLegalHandlerIdentityId());
-        map.put("legalHandlerEffective",num.getLegalHandlerEffective());
-        map.put("legalHandlerLongEffective",num.getLegalHandlerLongEffective());
-        map.put("legalAddress",num.getLegalAddress());
-        map.put("legalHandlerAddress",num.getLegalHandlerAddress());
-        map.put("otherLinkMobile",num.getFixPhone());
-        map.put("otherLinkPhone",num.getLegalPersionPhone());
-        map.put("otherLinkEmail",num.getEmail());
-        map.put("otherBindPhone",num.getBindPhone());
-        map.put("otherValidPhone",num.getLegalPersionPhone());
+        map.put("corpCompanyCity",four.getCorpCompanyCity());
+        map.put("corpCompanyDetail",four.getCorpCompanyDetail());
+        map.put("corpOfficeProvince",four.getCorpOfficeProvince());
+        map.put("corpOfficeCity",four.getCorpOfficeCity());
+        map.put("corpOfficeDetail",four.getCorpOfficeDetail());
+        map.put("corpNunmberUsage",four.getCorpNunmberUsage());
+        map.put("corpAccountType",four.getCorpAccountType());
+        map.put("corpBankName",four.getCorpBankName());
+        map.put("corpBankNo",four.getCorpBankNo());
+        map.put("legalName",four.getLegalName());
+        map.put("legalIdentityId",four.getLegalIdentityId());
+        map.put("legalEffective",four.getLegalEffective());
+        map.put("legalLongEffective",four.getLegalLongEffective());
+        map.put("legalHandlerName",four.getLegalHandlerName());
+        map.put("legalHandlerIdentityId",four.getLegalHandlerIdentityId());
+        map.put("legalHandlerEffective",four.getLegalHandlerEffective());
+        map.put("legalHandlerLongEffective",four.getLegalHandlerLongEffective());
+        map.put("legalAddress",four.getLegalAddress());
+        map.put("legalHandlerAddress",four.getLegalHandlerAddress());
+        map.put("otherLinkMobile",four.getOtherLinkMobile());
+        map.put("otherLinkPhone",four.getOtherLinkPhone());
+        map.put("otherLinkEmail",four.getOtherLinkEmail());
+        map.put("otherBindPhone",four.getOtherBindPhone());
+        map.put("otherValidPhone",four.getOtherValidPhone());
         //营业执照文件
-        map.put("yyzz","");
+        map.put("yyzz",formatFileUrl(four.getYyzz()));
         //开户许可证文件
-        map.put("khxkz","");
+        map.put("khxkz",formatFileUrl(four.getKhxkz()));
         //法人身份证文件，
-        map.put("frsfz","");
+        map.put("frsfz",formatFileUrl(four.getFrsfz()));
         //法人授权证明文件
-        map.put("frsq","");
+        map.put("frsq",formatFileUrl(four.getFrsq()));
         //经办人身份证文件
-        map.put("jbrsfz","");
+        map.put("jbrsfz",formatFileUrl(four.getJbrsfz()));
         //经办人授权证明文
-        map.put("jbrsq","");
+        map.put("jbrsq",formatFileUrl(four.getJbrsq()));
         //缴费发票文件
-        map.put("jffp","");
+        map.put("jffp",formatFileUrl(four.getJffp()));
         //受理单文件
-        map.put("sld","");
+        map.put("sld",formatFileUrl(four.getSld()));
         //服务协议文件
-        map.put("fwxy","");
+        map.put("fwxy",formatFileUrl(four.getFwxy()));
         //安全承诺书文件
-        map.put("aqcns","");
+        map.put("aqcns",formatFileUrl(four.getAqcns()));
         //手持身份证照片文件
-        map.put("scsfz","");
+        map.put("scsfz",formatFileUrl(four.getScsfz()));
         //经营异常证明文件
-        map.put("scsfz","");
+        map.put("jyyczm",formatFileUrl(four.getJyyczm()));
         //手持营业执照文件
-        map.put("ccyyzz","");
+        map.put("ccyyzz",formatFileUrl(four.getCcyyzz()));
         //低消协议文件
-        map.put("dxxy","");
+        map.put("dxxy",formatFileUrl(four.getDxxy()));
         //工商网截图文件
-        map.put("gswjt","");
+        map.put("gswjt",formatFileUrl(four.getGswjt()));
         //其他文件
-        map.put("qt","");
+        map.put("qt",formatFileUrl(four.getQt()));
         return map;
+    }
+
+    public String formatFileUrl(String fileUrl){
+        if(StringUtils.isBlank(fileUrl)){
+            return "";
+        }
+        String[] files = fileUrl.split("\\|");
+        List<String> strList = new ArrayList<>();
+        for(String str : files){
+            String fUrl = profileUrl + "profile"+str.replace("\\","/");
+            strList.add(fUrl);
+        }
+        JSONArray jsonArray = JSONArray.fromObject(strList);
+
+        return jsonArray.toString();
     }
 
     /**
