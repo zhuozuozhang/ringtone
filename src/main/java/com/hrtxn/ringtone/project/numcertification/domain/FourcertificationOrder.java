@@ -17,6 +17,7 @@ public class FourcertificationOrder {
     private Integer id;
     /***/
     private Integer userId;
+    private String userName;
     /***/
     private Date createTime;
     /** 400号码*/

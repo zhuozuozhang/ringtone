@@ -64,6 +64,11 @@
     from tb_tel_ascription where id = #{id}
   </select>
 
+  <select id="getTelAscriptionByTel" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from tb_tel_ascription where area_code = #{areaCode}
+  </select>
 
   <update id="updateTelAscription" parameterType="TelAscription" >
     update tb_tel_ascription

@@ -126,7 +126,7 @@ public class NumCertificationController {
     @PostMapping("/selectOrder")
     @ResponseBody
     public AjaxResult selectOrder(Page page) {
-        return numCertificationService.selectOrder(page);
+        return fourCertificationService.selectOrder(page);
     }
     /**
      * 跳转到订单详情页

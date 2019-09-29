@@ -86,4 +86,26 @@ public class FourCertificationService {
         fourcertificationOrderMapper.update(fourcertificationOrder);
     }
 
+
+    /**
+     * 获取订单列表
+     *
+     * @author zcy
+     * @date 2019-9-2 14:07
+     */
+    public AjaxResult selectOrder(Page page) {
+        page.setPage((page.getPage() - 1) * page.getPagesize());
+        // 获取订单
+        BaseRequest b = new BaseRequest();
+        b.setUserId(ShiroUtils.getSysUser().getId());
+        List<FourcertificationOrder> fourcertificationOrders = fourcertificationOrderMapper.queryOrderPage(page, b);
+        for (int i = 0; i < fourcertificationOrders.size(); i++) {
+            fourcertificationOrders.get(i).setUserName(ShiroUtils.getSysUser().getUserName());
+        }
+        // 获取数量
+        int count = fourcertificationOrderMapper.getCount(b);
+        return AjaxResult.success(fourcertificationOrders, "", count);
+    }
+
+
 }

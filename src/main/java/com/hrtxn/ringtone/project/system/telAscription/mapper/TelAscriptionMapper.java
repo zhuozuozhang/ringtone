@@ -36,4 +36,6 @@ public interface TelAscriptionMapper {
     public int updateTelAscription(TelAscription telAscription);
 
     public int deleteTelAscription(Integer id);
+
+    public TelAscription getTelAscriptionByTel(@Param("areaCode") String areaCode);
 }

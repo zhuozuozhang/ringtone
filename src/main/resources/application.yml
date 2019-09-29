@@ -21,6 +21,8 @@ server:
   servlet:
     # tomcate 访问跟路径
     context-path: /
+    session:
+      timeout: 1800s
 
 
 # 日志配置

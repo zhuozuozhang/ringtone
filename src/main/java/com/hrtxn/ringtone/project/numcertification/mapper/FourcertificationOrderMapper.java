@@ -18,7 +18,7 @@ import java.util.List;
 public interface FourcertificationOrderMapper {
     int insert(FourcertificationOrder fourcertificationOrder);
 
-    List<FourcertificationOrder> selectOrder(@Param("page") Page page, @Param("param") BaseRequest b);
+    List<FourcertificationOrder> queryOrderPage(@Param("page") Page page, @Param("param") BaseRequest b);
 
     int getCount(@Param("param") BaseRequest b);
 
