@@ -10,9 +10,9 @@
     </parent>
     <groupId>com.hrtxn</groupId>
     <artifactId>ring</artifactId>
-    <version>0.0.12</version>
+    <version>0.0.16</version>
     <name>ring</name>
-    <packaging>war</packaging>
+<!--    <packaging>war</packaging>-->
     <description>Demo project for Spring Boot</description>
 
     <properties>
@@ -38,6 +38,12 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
+<!--            <exclusions>-->
+<!--                <exclusion>-->
+<!--                    <groupId>org.springframework.boot</groupId>-->
+<!--                    <artifactId>spring-boot-starter-tomcat</artifactId>-->
+<!--                </exclusion>-->
+<!--            </exclusions>-->
         </dependency>
         <!-- springboot starter -->
         <dependency>
@@ -194,6 +200,7 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
         </plugins>
+        <finalName>ringtone</finalName>
     </build>
 
 </project>

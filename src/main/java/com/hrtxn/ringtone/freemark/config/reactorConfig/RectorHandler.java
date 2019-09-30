@@ -75,7 +75,7 @@ public class RectorHandler {
         List<KedaChildOrder> list = data.getData();
         for (int i = 0; i < list.size(); i++) {
             KedaChildOrder kedaChildOrder = list.get(i);
-            KedaOrder order = kedaOrderMapper.getKedaOrder(kedaChildOrder.getId());
+            KedaOrder order = kedaOrderMapper.getKedaOrder(kedaChildOrder.getOrderId());
             // 对接数据，创建父级订单
             AjaxResult add = kedaApi.add(kedaChildOrder, order);
             if ((int) add.get("code") == 200) {
