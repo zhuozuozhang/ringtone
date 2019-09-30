@@ -866,9 +866,6 @@ public class ThreeNetsAsyncService {
                 //保存铃音
                 ring.setOperateRingId(ringRespone.getRingId());
                 fileService.updateStatus(ring.getRingWay());
-            } else {
-                threenetsRingMapper.deleteByPrimaryKey(ring.getId());
-                fileService.deleteFile(ring.getRingWay());
             }
             if (ring.getRingType().equals("视频")){
                 String extensionsName = ring.getRingName().substring(ring.getRingName().indexOf("."));
@@ -915,9 +912,6 @@ public class ThreeNetsAsyncService {
             if (ringByLt) {
                 threenetsRingMapper.updateByPrimaryKeySelective(ring);
                 fileService.updateStatus(ring.getRingWay());
-            } else {
-                threenetsRingMapper.deleteByPrimaryKey(ring.getId());
-                fileService.deleteFile(ring.getRingWay());
             }
         } catch (IOException e) {
             log.info("联通铃音接口数据读写失败:" + e);
@@ -943,9 +937,6 @@ public class ThreeNetsAsyncService {
             if (flag) {
                 threenetsRingMapper.updateByPrimaryKeySelective(ring);
                 fileService.updateStatus(ring.getRingWay());
-            } else {
-                threenetsRingMapper.deleteByPrimaryKey(ring.getId());
-                fileService.deleteFile(ring.getRingWay());
             }
         } catch (Exception e) {
             log.info("电信上传铃音失败:" + e);

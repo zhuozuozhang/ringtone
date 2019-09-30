@@ -3,10 +3,17 @@ package com.hrtxn.ringtone.common.utils.juhe;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hrtxn.ringtone.common.utils.Const;
+import com.hrtxn.ringtone.common.utils.SpringUtils;
 import com.hrtxn.ringtone.common.utils.StringUtils;
 import com.hrtxn.ringtone.project.system.json.JuhePhone;
 import com.hrtxn.ringtone.project.system.json.JuhePhoneResult;
+import com.hrtxn.ringtone.project.system.phonePlace.domain.PhonePlace;
+import com.hrtxn.ringtone.project.system.phonePlace.mapper.PhonePlaceMapper;
+import com.hrtxn.ringtone.project.system.telAscription.domain.TelAscription;
+import com.hrtxn.ringtone.project.system.telAscription.mapper.TelAscriptionMapper;
 import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreenetsOrder;
+import com.hrtxn.ringtone.project.threenets.threenet.mapper.ThreenetsChildOrderMapper;
+import lombok.extern.slf4j.Slf4j;
 import net.sf.json.JSONObject;
 
 import java.io.*;
@@ -22,6 +29,7 @@ import java.util.regex.Pattern;
  * Date:2019-07-20 9:30
  * Description:聚合根据手机号获取该手机号归属地以及运营商
  */
+@Slf4j
 public class JuhePhoneUtils {
     public static final String DEF_CHATSET = "UTF-8";
     public static final int DEF_CONN_TIMEOUT = 30000;
@@ -171,25 +179,29 @@ public class JuhePhoneUtils {
      * @throws Exception
      */
     public static JuhePhone getPhone(String phone) throws Exception {
-        Map<String, String> params = new HashMap<String, String>();
-        params.put("phone", phone);//需要查询的手机号码或手机号码前7位
-        params.put("key", APPKEY);//应用APPKEY(应用详细页查询)
-        params.put("dtype", "");//返回数据的格式,xml或json，默认json
-        String result = net(params);
-        ObjectMapper mapper = new ObjectMapper();
-        JuhePhone<JuhePhoneResult> resultJuhePhone = mapper.readValue(result, new TypeReference<JuhePhone<JuhePhoneResult>>() {
-        });
-        System.out.println(resultJuhePhone.toString());
-        if (isFixedPhone(phone)) {
-            resultJuhePhone = getTel(phone);
-        }
-        if (StringUtils.isEmpty(resultJuhePhone.getResult().getCompany())) {
-            //验证手机号是哪个运营商的
-            JuhePhoneResult juhePhoneResult = resultJuhePhone.getResult();
-            juhePhoneResult.setCompany(isChinaMobilePhoneNum(phone));
-            resultJuhePhone.setResult(juhePhoneResult);
-        }
-        return resultJuhePhone;
+        return acquiringAttribution(phone);
+//        Map<String, String> params = new HashMap<String, String>();
+//        params.put("phone", phone);//需要查询的手机号码或手机号码前7位
+//        params.put("key", APPKEY);//应用APPKEY(应用详细页查询)
+//        params.put("dtype", "");//返回数据的格式,xml或json，默认json
+//        String result = net(params);
+//        ObjectMapper mapper = new ObjectMapper();
+//        JuhePhone<JuhePhoneResult> resultJuhePhone = mapper.readValue(result, new TypeReference<JuhePhone<JuhePhoneResult>>() {
+//        });
+//        if (isFixedPhone(phone)) {
+//            resultJuhePhone = getTel(phone);
+//        }
+//        if (resultJuhePhone.getResult() == null ||StringUtils.isEmpty(resultJuhePhone.getResult().getCompany())) {
+//            if (resultJuhePhone.getResult() == null){
+//                JuhePhoneResult juhePhoneResult = new JuhePhoneResult();
+//                resultJuhePhone.setResult(juhePhoneResult);
+//            }
+//            //验证手机号是哪个运营商的
+//            JuhePhoneResult juhePhoneResult = resultJuhePhone.getResult();
+//            juhePhoneResult.setCompany(isChinaMobilePhoneNum(phone));
+//            resultJuhePhone.setResult(juhePhoneResult);
+//        }
+//        return resultJuhePhone;
     }
 
     public static JuhePhone getTel(String tel) throws Exception {
@@ -213,14 +225,101 @@ public class JuhePhoneUtils {
             resultJuhePhone.setError_code(201103);
         }
         resultJuhePhone.setResult(juhePhoneResult);
-        System.out.println(resultJuhePhone.toString());
         return resultJuhePhone;
     }
 
+    /**
+     * 是否固定电话
+     * @param fixedPhone
+     * @return
+     */
     private static boolean isFixedPhone(String fixedPhone) {
         String reg = "(?:(\\(\\+?86\\))(0[0-9]{2,3}\\-?)?([2-9][0-9]{6,7})+(\\-[0-9]{1,4})?)|" +
                 "(?:(86-?)?(0[0-9]{2,3}\\-?)?([2-9][0-9]{6,7})+(\\-[0-9]{1,4})?)";
         return Pattern.matches(reg, fixedPhone);
+    }
+
+
+    /**
+     * 获取归属地
+     */
+    private static JuhePhone acquiringAttribution(String tel){
+        JuhePhone<JuhePhoneResult> juhePhone = new JuhePhone<>();
+        JuhePhoneResult phoneResult = new JuhePhoneResult();
+        juhePhone.setResultcode("200");
+        try{
+            if (isFixedPhone(tel)){
+                String telephone = tel.substring(0, tel.length() - 8);
+                TelAscription telAscriptionByTel = SpringUtils.getBean(TelAscriptionMapper.class).getTelAscriptionByTel(telephone);
+                if (telAscriptionByTel == null){
+                    Map<String, String> params = new HashMap<String, String>();
+                    params.put("tel", tel);//需要查询的手机号码或手机号码前7位
+                    params.put("key", TELKEY);//应用APPKEY(应用详细页查询)
+                    params.put("dtype", "");//返回数据的格式,xml或json，默认json
+                    String result = netTel(params);
+                    JSONObject jsonObject = JSONObject.fromObject(result);
+                    String reason = jsonObject.getString("reason");
+                    if ("查询成功".equals(reason)) {
+                        JSONObject jsonData = jsonObject.getJSONObject("result");
+                        phoneResult.setProvince(jsonData.getString("province"));
+                        phoneResult.setCity(jsonData.getString("city"));
+                        phoneResult.setCompany("电信");
+                        telAscriptionByTel = new TelAscription();
+                        telAscriptionByTel.setCity(phoneResult.getCity());
+                        telAscriptionByTel.setAreaCode(telephone);
+                        telAscriptionByTel.setProvince(phoneResult.getProvince());
+                        SpringUtils.getBean(TelAscriptionMapper.class).insertTelAscription(telAscriptionByTel);
+                    }
+                }else {
+                    phoneResult.setCompany("电信");
+                    phoneResult.setProvince(telAscriptionByTel.getProvince());
+                    phoneResult.setCity(telAscriptionByTel.getCity());
+                }
+            }else{
+                //手机
+                String phone = tel.substring(0,7);
+                //从本地查询，获取归属地
+                PhonePlace place = SpringUtils.getBean(PhonePlaceMapper.class).getPhonePlaceByPhone(phone);
+                //本地不存在，从接口获取归属地
+                if (place == null){
+                    place = new PhonePlace();
+                    Map<String, String> params = new HashMap<String, String>();
+                    params.put("phone", phone);//需要查询的手机号码或手机号码前7位
+                    params.put("key", APPKEY);//应用APPKEY(应用详细页查询)
+                    params.put("dtype", "");//返回数据的格式,xml或json，默认json
+                    String result = net(params);
+                    JSONObject jsonObject = JSONObject.fromObject(result);
+                    String reason = jsonObject.getString("reason");
+                    if ("Return Successd!".equals(reason)) {
+                        juhePhone.setResultcode("200");
+                        JSONObject jsonData = jsonObject.getJSONObject("result");
+                        //本地储存
+                        place.setPhone(phone);
+                        place.setProvince(jsonData.getString("province"));
+                        place.setCity(jsonData.getString("city"));
+                        if (StringUtils.isEmpty(jsonData.getString("company"))){
+                            place.setOperator(isChinaMobilePhoneNum(phone));
+                        }else{
+                            place.setOperator(jsonData.getString("company"));
+                        }
+                        SpringUtils.getBean(PhonePlaceMapper.class).insertPhonePlace(place);
+                    }else{
+                        place.setOperator(isChinaMobilePhoneNum(phone));
+                    }
+                }
+                //返回
+                phoneResult.setProvince(place.getProvince());
+                phoneResult.setCity(place.getCity());
+                phoneResult.setCompany(place.getOperator());
+            }
+        }catch(Exception e) {
+            juhePhone.setResultcode("203");
+            juhePhone.setError_code(201103);
+            log.info("获取号码归属地失败----->",e);
+        }finally {
+            juhePhone.setResult(phoneResult);
+            return juhePhone;
+        }
     }
 
     /**
@@ -293,7 +392,10 @@ public class JuhePhoneUtils {
 
 
     public static void main(String[] args) throws Exception {
-        JuhePhone phone = getTel("08328829669");
-        System.out.println(phone);
+        //JuhePhone phone = getTel("08328829669");
+//        JuhePhone phone = acquiringAttribution("15150013617");
+        String tel = "01010000000";
+        String telephone = tel.substring(0, tel.length() - 8);
+        System.out.println(telephone);
     }
 }
