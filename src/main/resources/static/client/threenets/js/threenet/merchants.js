@@ -26,7 +26,7 @@ function showTable() {
             if(!isNaN(number)){
                 companyName = data.substring(0,data.length-6);
             }
-            return "<div style='text-overflow:ellipsis;overflow:hidden;white-space:nowrap;width:150px;' title='"+data+"'><a href='/threenets/toMerchantsPhonePage/" + id + "'>"+companyName+"</a></div>";
+            return "<div style='text-overflow:ellipsis;overflow:hidden;white-space:nowrap;width:150px;' title='"+data+"'><a href='/threenets/toMerchantsPhonePage/" + id + "' style='color:#0569FD'>"+companyName+"</a></div>";
         }
     },{
         targets:[3],
