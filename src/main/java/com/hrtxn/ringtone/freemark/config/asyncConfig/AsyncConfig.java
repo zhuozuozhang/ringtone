@@ -77,6 +77,7 @@ public class AsyncConfig {
     @Async(value = "logTaskExecutor")
     public void loginLogTask(User user , LoginLog loginLog){
 //        loginLog.setLoginLocation(AddressUtils.getRealAddressByIP(loginLog.getIpAdress()));
+        loginLog.setLoginLocation("--");
         if(StringUtils.isNotNull(loginLog)){
             try {
                 log.info(" 开始执行添加登录记录操作 -->");
