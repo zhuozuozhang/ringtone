@@ -52,8 +52,6 @@ public class FileController {
             }
         }
         if (extensionName.equals("mp4") || extensionName.equals("mov")) {
-            String month = DateUtils.getMonth() < 10 ? "0" : "";
-            ringName = ringName + "_" + DateUtils.getYear() + month + DateUtils.getMonth();
             boolean m = FileUtil.checkFileSize(ringFile.getSize(), 48, "M");
             if (!m) {
                 return AjaxResult.error("文件大小超限");

@@ -553,10 +553,12 @@ public class SwxlApi implements Serializable {
             }
             reqEntity.addPart("applyForSmsNotification", new StringBody(applyForSmsNotification));// 免短信
             reqEntity.addPart("qualificationFile",new StringBody(""));
-            if (attached.getSwxlPrice() == 10) {
+            if (attached.getSwxlPrice() == 5){
+                reqEntity.addPart("productId", new StringBody("0000003165"));//价格5元
+            }else if (attached.getSwxlPrice() == 10){
                 reqEntity.addPart("productId", new StringBody("225"));//价格10元
-            } else {
-                reqEntity.addPart("productId", new StringBody("224"));//价格20元99
+            }else {
+                reqEntity.addPart("productId", new StringBody("224"));//价格20元
             }
             reqEntity.addPart("ringName", new StringBody(ringOrder.getRingName(), Charset.forName("UTF-8")));// 铃音名称
             if (ringOrder.getUpLoadAgreement() != null) {

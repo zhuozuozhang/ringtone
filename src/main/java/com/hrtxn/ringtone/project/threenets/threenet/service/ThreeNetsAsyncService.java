@@ -31,10 +31,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -801,6 +798,9 @@ public class ThreeNetsAsyncService {
                     if (rings.get(i).getOperate() != 2) {
                         continue;
                     }
+                    if (StringUtils.isNotEmpty(rings.get(i).getOperateRingId())) {
+                        continue;
+                    }
                     ThreenetsRing ring = rings.get(i);
                     ring.setFile(new File(RingtoneConfig.getProfile() + ring.getRingWay()));
                     apiUtils.addRingByDx(rings.get(i), attached);
@@ -860,14 +860,19 @@ public class ThreeNetsAsyncService {
             ring.setFile(new File(RingtoneConfig.getProfile() + ring.getRingWay()));
             ThreeNetsOrderAttached attached = threeNetsOrderAttachedMapper.selectByParentOrderId(ring.getOrderId());
             ring.setOperateId(attached.getMiguId());
+            ring.setOperate(Const.OPERATORS_MOBILE);
             ringRespone = apiUtils.saveMiguRing(ring);
             if (ringRespone != null && ringRespone.isSuccess()) {
                 //保存铃音
                 ring.setOperateRingId(ringRespone.getRingId());
                 fileService.updateStatus(ring.getRingWay());
-            } else {
-                threenetsRingMapper.deleteByPrimaryKey(ring.getId());
-                fileService.deleteFile(ring.getRingWay());
+            }
+            if (ring.getRingType().equals("视频")){
+                String extensionsName = ring.getRingName().substring(ring.getRingName().indexOf("."));
+                String ringName = ring.getRingName().substring(0,ring.getRingName().lastIndexOf("."));
+                String month = DateUtils.getMonth() < 10 ? "0" : "";
+                String time = "_" + DateUtils.getYear() + month + DateUtils.getMonth();
+                ring.setRingName(ringName+time+extensionsName);
             }
             ring.setRemark(ringRespone.getMsg());
             threenetsRingMapper.updateByPrimaryKeySelective(ring);
@@ -877,6 +882,15 @@ public class ThreeNetsAsyncService {
             log.info("移动铃音接口登录移动商户失败:" + e);
         }
         return ringRespone;
+    }
+
+    public static void main(String[] args) {
+        String rn = "新宇装饰207739.mp4";
+        String extensionsName = rn.substring(rn.indexOf("."));
+        String ringName = rn.substring(0,rn.lastIndexOf("."));
+        String month = DateUtils.getMonth() < 10 ? "0" : "";
+        String time = "_" + DateUtils.getYear() + month + DateUtils.getMonth();
+        String name = ringName+time+extensionsName;
     }
 
     /**
@@ -893,13 +907,11 @@ public class ThreeNetsAsyncService {
             ring.setFile(new File(RingtoneConfig.getProfile() + ring.getRingWay()));
             ThreeNetsOrderAttached attached = threeNetsOrderAttachedMapper.selectByParentOrderId(ring.getOrderId());
             ring.setOperateId(attached.getSwxlId());
+            ring.setOperate(Const.OPERATORS_UNICOM);
             boolean ringByLt = apiUtils.addRingByLt(ring, attached.getSwxlId());
             if (ringByLt) {
                 threenetsRingMapper.updateByPrimaryKeySelective(ring);
                 fileService.updateStatus(ring.getRingWay());
-            } else {
-                threenetsRingMapper.deleteByPrimaryKey(ring.getId());
-                fileService.deleteFile(ring.getRingWay());
             }
         } catch (IOException e) {
             log.info("联通铃音接口数据读写失败:" + e);
@@ -920,13 +932,11 @@ public class ThreeNetsAsyncService {
             ring.setFile(new File(RingtoneConfig.getProfile() + ring.getRingWay()));
             ThreeNetsOrderAttached attached = threeNetsOrderAttachedMapper.selectByParentOrderId(ring.getOrderId());
             ring.setOperateId(attached.getMcardId());
+            ring.setOperate(Const.OPERATORS_TELECOM);
             boolean flag = apiUtils.addRingByDx(ring, attached);
             if (flag) {
                 threenetsRingMapper.updateByPrimaryKeySelective(ring);
                 fileService.updateStatus(ring.getRingWay());
-            } else {
-                threenetsRingMapper.deleteByPrimaryKey(ring.getId());
-                fileService.deleteFile(ring.getRingWay());
             }
         } catch (Exception e) {
             log.info("电信上传铃音失败:" + e);
