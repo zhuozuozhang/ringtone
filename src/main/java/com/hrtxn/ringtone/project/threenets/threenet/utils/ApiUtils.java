@@ -574,7 +574,7 @@ public class ApiUtils {
                             Elements temp = tds.get(8).child(2).getElementsByTag("a");
                             String t = temp.attr("onclick");
                             t = t.replace("showConfirm('", "").replace("');", "");
-                            ringId = t;
+                            ringId = StringUtils.isEmpty(t) ? "0000" : t;
                         }
                         if (tds.get(0).text().equals(ringName) || ringId.equals(threenetsRing.getOperateRingId())) {
                             Element el2 = tds.get(4);
@@ -596,6 +596,7 @@ public class ApiUtils {
                             } else if ("部分省份激活成功".equals(remark)) {
                                 threenetsRing.setRingStatus(5);
                             } else {
+                                threenetsRing.setRemark(remark + "->" + ringCheckmsg);
                                 threenetsRing.setRingStatus(6);
                             }
                             if (threenetsRing.getRingStatus() != 5) {
@@ -644,6 +645,8 @@ public class ApiUtils {
                         String remark = el2.text();
                         if (remark.equals("审核通过")) {
                             threenetsRing.setRingStatus(2);
+                        } else if (remark.equals("等待审核")) {
+                            threenetsRing.setRingStatus(1);
                         } else {
                             Elements lable = tds.get(4).getElementsByTag("lable");
                             String title = lable.attr("title");
@@ -799,7 +802,7 @@ public class ApiUtils {
                                     Elements temp = tds.get(8).child(2).getElementsByTag("a");
                                     String t = temp.attr("onclick");
                                     t = t.replace("showConfirm('", "").replace("');", "");
-                                    ringId = t;
+                                    ringId = StringUtils.isEmpty(t) ? "0000" : t;
                                 }
                                 if (tds.get(0).text().equals(ringName) || ringId.equals(threenetsRing.getOperateRingId())) {
                                     Element el2 = tds.get(4);
@@ -821,6 +824,7 @@ public class ApiUtils {
                                     } else if ("部分省份激活成功".equals(remark)) {
                                         threenetsRing.setRingStatus(5);
                                     } else {
+                                        threenetsRing.setRemark(remark + "->" + ringCheckmsg);
                                         threenetsRing.setRingStatus(6);
                                     }
                                     if (threenetsRing.getRingStatus() == 3 || threenetsRing.getRingStatus() == 4) {
@@ -868,6 +872,8 @@ public class ApiUtils {
                         String remark = el2.text();
                         if (remark.equals("审核通过")) {
                             threenetsRing.setRingStatus(2);
+                        } else if (remark.equals("等待审核")) {
+                            threenetsRing.setRingStatus(1);
                         } else {
                             Elements lable = tds.get(4).getElementsByTag("lable");
                             String title = lable.attr("title");

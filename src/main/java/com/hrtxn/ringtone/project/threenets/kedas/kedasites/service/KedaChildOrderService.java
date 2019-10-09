@@ -6,6 +6,7 @@ import com.hrtxn.ringtone.common.constant.Constant;
 import com.hrtxn.ringtone.common.domain.BaseRequest;
 import com.hrtxn.ringtone.common.domain.Page;
 import com.hrtxn.ringtone.common.utils.Const;
+import com.hrtxn.ringtone.common.utils.DateUtils;
 import com.hrtxn.ringtone.common.utils.ShiroUtils;
 import com.hrtxn.ringtone.common.utils.StringUtils;
 import com.hrtxn.ringtone.common.utils.juhe.JuhePhoneUtils;
@@ -159,6 +160,18 @@ public class KedaChildOrderService {
         for (int i = 0; i < plotBarPhoneList.size(); i++) {
             plotBarPhoneList.get(i).setCumulativeUser(count);
             count = count - plotBarPhoneList.get(i).getAddUser();
+            count = count + plotBarPhoneList.get(i).getUnsubscribeUser();
+        }
+        if (plotBarPhoneList.isEmpty()){
+            String month = DateUtils.getMonth() < 10 ? "0" + DateUtils.getMonth() : DateUtils.getMonth() + "";
+            String day = DateUtils.getDay() < 10 ? "0" + DateUtils.getDay() : DateUtils.getDay() + "";
+            String time = DateUtils.getYear() + "-" + month + (StringUtils.isEmpty(baseRequest.getYear()) ? "-" + day : "");
+            PlotBarPhone plotBarPhone = new PlotBarPhone();
+            plotBarPhone.setDateTimes(time);
+            plotBarPhone.setAddUser(0);
+            plotBarPhone.setUnsubscribeUser(0);
+            plotBarPhone.setCumulativeUser(count);
+            plotBarPhoneList.add(plotBarPhone);
         }
         return AjaxResult.success(plotBarPhoneList, "获取数据成功！");
     }

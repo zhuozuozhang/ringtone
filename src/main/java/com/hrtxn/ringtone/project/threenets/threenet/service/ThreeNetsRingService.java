@@ -217,6 +217,9 @@ public class ThreeNetsRingService {
      */
     public void cloneRing(Integer id) throws Exception {
         ThreenetsRing ring = threenetsRingMapper.selectByPrimaryKey(id);
+        String path = fileService.cloneFile(ring);
+        ring.setRingName(path.substring(path.lastIndexOf("\\") + 1));
+        ring.setRingWay(path);
         ring.setRingStatus(2);
         ring.setRemark("");
         threenetsRingMapper.insertThreeNetsRing(ring);

@@ -378,6 +378,10 @@ public class SwxlApi implements Serializable {
      * @throws NoLoginException
      */
     public String getPhoneInfo(String phone, String groupId) throws NoLoginException, IOException {
+        //刷新彩铃状态
+        swxlrefreshCrbtStatus(phone,1);
+        swxlrefreshCrbtStatus(phone,2);
+        //
         List<NameValuePair> formparams = new ArrayList<NameValuePair>();
         formparams.add(new BasicNameValuePair("msisdn", phone));
         formparams.add(new BasicNameValuePair("groupId", groupId));

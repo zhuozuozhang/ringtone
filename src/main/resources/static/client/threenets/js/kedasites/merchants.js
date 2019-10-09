@@ -28,7 +28,7 @@ function showTable() {
         targets: [1],
         render: function (data, type, row, meta) {
             var id = row.id;
-            return "<div style='text-overflow:ellipsis;overflow:hidden;white-space:nowrap;width:150px;' title='"+data+"'><a href='/threenets/clcy/toNumberList/" + id + "/"+data+"'>"+data+"</a></div>";
+            return "<div style='text-overflow:ellipsis;overflow:hidden;white-space:nowrap;width:150px;' title='"+data+"'><a href='/threenets/clcy/toNumberList/" + id + "/"+data+"' style='color: #0569FD'>"+data+"</a></div>";
         }
     },{
         targets:[3],
