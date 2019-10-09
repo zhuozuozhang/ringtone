@@ -74,17 +74,21 @@ public class LoginController {
             // 1、检验验证码
             if (loginParam.getCaptchaCode() != null) {
                 String inputCode = loginParam.getCaptchaCode();
-                String captchaSession = (String) session.getAttribute(Constants.KAPTCHA_SESSION_KEY);
-                log.info("获取验证码，共耗时 -- >" + (System.currentTimeMillis() - startTime) + "ms");
-                if (!Objects.equals(inputCode, captchaSession)) {
-                    log.info("验证码错误，用户输入：{}, 正确验证码：{}", inputCode, captchaSession);
-                    map.put("msg", "验证码不正确!");
-                    // 异步操作，执行修改登录时间以及添加登录日志
-                    loginLog.setLoginLogStatus("验证码错误");
-                    AsyncConfig.ac().loginLogTask(ShiroUtils.getSysUser(), loginLog);
-                    return "system/login";
+                if(session.getAttribute(Constants.KAPTCHA_SESSION_KEY) != null){//有时候取值是null，真是奇怪，没找到原因
+                    String captchaSession = session.getAttribute(Constants.KAPTCHA_SESSION_KEY).toString();
+                    log.info("获取验证码，共耗时 -- >" + (System.currentTimeMillis() - startTime) + "ms");
+                    if(captchaSession != null){//如果缓存中没有验证码，则直接不验证验证码
+                        if (!Objects.equals(inputCode, captchaSession)) {
+                            log.info("验证码错误，用户输入：{}, 正确验证码：{}", inputCode, captchaSession);
+                            map.put("msg", "验证码不正确!");
+                            // 异步操作，执行修改登录时间以及添加登录日志
+                            loginLog.setLoginLogStatus("验证码错误");
+                            AsyncConfig.ac().loginLogTask(ShiroUtils.getSysUser(), loginLog);
+                            return "system/login";
+                        }
+                        log.info("验证码验证，共耗时 -- >" + (System.currentTimeMillis() - startTime) + "ms");
+                    }
                 }
-                log.info("验证码验证，共耗时 -- >" + (System.currentTimeMillis() - startTime) + "ms");
             }
             // 2、执行认证、授权操作
             Subject subject = SecurityUtils.getSubject();

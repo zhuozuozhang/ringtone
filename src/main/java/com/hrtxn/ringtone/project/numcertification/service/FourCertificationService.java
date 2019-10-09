@@ -54,13 +54,15 @@ public class FourCertificationService {
         }
         String result =  numApi.preoccupation(fourcertificationOrder);
         if(!"0".equals(result)){
-            return AjaxResult.error("预占申请失败！");
+            return AjaxResult.error(result);
         }
         //预占申请中
         fourcertificationOrder.setStatus(Const.FOUR_ORDER_PREOCCUPATION_NEW);
         fourcertificationOrder.setDelFlag("0");
+        fourcertificationOrder.setCreateTime(new Date());
+        fourcertificationOrder.setUserId(ShiroUtils.getSysUser().getId());
         fourcertificationOrderMapper.insert(fourcertificationOrder);
-        return AjaxResult.error("预占申请成功！");
+        return AjaxResult.success("预占申请成功！");
     }
 
     public AjaxResult ApplyTemplate(FourcertificationOrder fourcertificationOrder){
@@ -101,11 +103,40 @@ public class FourCertificationService {
         List<FourcertificationOrder> fourcertificationOrders = fourcertificationOrderMapper.queryOrderPage(page, b);
         for (int i = 0; i < fourcertificationOrders.size(); i++) {
             fourcertificationOrders.get(i).setUserName(ShiroUtils.getSysUser().getUserName());
+            fourcertificationOrders.get(i).setStatus(getStatus(fourcertificationOrders.get(i).getStatus()));
         }
         // 获取数量
         int count = fourcertificationOrderMapper.getCount(b);
         return AjaxResult.success(fourcertificationOrders, "", count);
     }
 
+
+
+    public String getStatus(String status){
+        if("1".equals(status)){
+            return "预占申请中";
+        }else if("2".equals(status)){
+            return "预占成功";
+        }else if("3".equals(status)){
+            return "预占失败";
+        }else if("4".equals(status)){
+            return "资料模板申请中";
+        }else if("5".equals(status)){
+            return "资料模板申请成功";
+        }else if("6".equals(status)){
+            return "资料模板申请失败";
+        }else if("7".equals(status)){
+            return "资料审核中";
+        }else if("8".equals(status)){
+            return "资料审核成功";
+        }else if("9".equals(status)){
+            return "资料审核失败";
+        }
+        return "";
+    }
+
+    public FourcertificationOrder selectByPrimaryKey(Long id){
+        return fourcertificationOrderMapper.selectByPrimaryKey(id);
+    }
 
 }

@@ -15,6 +15,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 /**
  * Author:zcy
  * Date:2019-07-09 16:26
@@ -57,6 +59,17 @@ public class AreaController {
             return AjaxResult.error(e.getMessage());
         }
     }
+
+    /**
+     * 地区
+     * @return
+     */
+    @ResponseBody
+    @PostMapping("/area/queryAreaCons")
+    public List<Area> queryAreaCons(String type, String pid){
+        return areaService.queryAreaByCons(type,pid);
+    }
+
 
     @GetMapping("/area/toAreaAdd")
     public String toNoticeAddPage(){

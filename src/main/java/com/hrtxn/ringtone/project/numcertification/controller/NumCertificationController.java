@@ -8,12 +8,15 @@ import com.hrtxn.ringtone.project.numcertification.domain.NumOrder;
 import com.hrtxn.ringtone.project.numcertification.domain.NumcertificationOrder;
 import com.hrtxn.ringtone.project.numcertification.service.FourCertificationService;
 import com.hrtxn.ringtone.project.numcertification.service.NumCertificationService;
+import com.hrtxn.ringtone.project.system.area.domain.Area;
+import com.hrtxn.ringtone.project.system.area.service.AreaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.util.List;
 
 /**
  * @param
@@ -30,6 +33,9 @@ public class NumCertificationController {
 
     @Autowired
     private FourCertificationService fourCertificationService;
+
+    @Autowired
+    private AreaService areaService;
 
     /**
      * 跳转400首页
@@ -75,9 +81,11 @@ public class NumCertificationController {
         if ("4008".equals(s) || "4009".equals(s)) {
             provider = "电信";
         }
+        List<Area> areaList = areaService.queryAreaByCons("province","0");
         map.put("agentCost", agentCost);
-        map.put("phoneNum", phoneNum);
+        map.put("applyNumber", phoneNum);
         map.put("provider", provider);
+        map.put("areaList",areaList);
         return "400/order";
     }
     /**
@@ -94,18 +102,18 @@ public class NumCertificationController {
 
     }
     /**
-     * 调转到填写订单信息页面
+     * 跳转到订单列表
      *
      * @author zcy
      * @date 2019-9-2 14:03
      */
     @GetMapping("/next/{orderId}")
-    public String next(@PathVariable Integer orderId, ModelMap map) {
+    public String next(@PathVariable Long orderId, ModelMap map) {
         map.put("orderId", orderId);
-        // 根据订单ID获取订单信息
-        NumcertificationOrder numcertificationOrder = numCertificationService.selectById(orderId);
-        map.put("numcertificationOrder", numcertificationOrder);
-        return "400/order_next";
+
+        FourcertificationOrder fourcertificationOrder = fourCertificationService.selectByPrimaryKey(orderId);
+        map.put("fourcertificationOrder", fourcertificationOrder);
+        return "/400/order_perfect";
     }
     /***
      * 跳转到订单列表
@@ -141,4 +149,7 @@ public class NumCertificationController {
         map.put("numcertificationOrder",numcertificationOrder);
         return "400/order_details";
     }
+
+
+
 }

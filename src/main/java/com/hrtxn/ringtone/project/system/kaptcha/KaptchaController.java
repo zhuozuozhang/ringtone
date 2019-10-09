@@ -46,19 +46,22 @@ public class KaptchaController {
             String type = request.getParameter("type");
             String capStr = null;
             String code = null;
+//            String code = captchaProducer.createText();
             BufferedImage bi = null;
             if ("math".equals(type)) {
                 String capText = captchaProducerMath.createText();
                 capStr = capText.substring(0, capText.lastIndexOf("@"));
                 code = capText.substring(capText.lastIndexOf("@") + 1);
                 bi = captchaProducerMath.createImage(capStr);
+                session.setAttribute(Constants.KAPTCHA_SESSION_KEY, code);
                 log.info("验证码：{},结果：{},原始记录：{}", capStr,code,capText);
             } else if ("char".equals(type)) {
-                capStr = code = captchaProducer.createText();
-                bi = captchaProducer.createImage(capStr);
-                log.info("验证码：{},结果：{}", capStr,code);
+                code = captchaProducer.createText();
+                bi = captchaProducer.createImage(code);
+                session.setAttribute(Constants.KAPTCHA_SESSION_KEY, code);
+                System.out.println(session.getAttribute(Constants.KAPTCHA_SESSION_KEY));
             }
-            session.setAttribute(Constants.KAPTCHA_SESSION_KEY, code);
+
             out = response.getOutputStream();
             ImageIO.write(bi, "jpg", out);
             out.flush();

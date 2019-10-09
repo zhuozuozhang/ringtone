@@ -184,7 +184,12 @@ public class NumApi {
             result = sendPost(CGIOCCUPYADD + "?cgiToken=" + NumApi.cgiToken, map, Const.CONTENT_TYPE_JSON);
             log.info("获取数据结果{}", result);
             JSONObject jsonObject = JSONObject.fromObject(result);
-            return jsonObject.get("code").toString();
+            String code = jsonObject.get("code").toString();
+            if("0".equals(code)){
+                return code;
+            }else{
+                return jsonObject.get("msg").toString();
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }

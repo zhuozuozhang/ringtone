@@ -68,5 +68,12 @@ public class AreaService {
     }
 
 
+    public List<Area> queryAreaByCons(String type,String pid){
+        return AreaMapper.queryAreaByCons(type,pid);
+    }
+
+
+
+
 
 }

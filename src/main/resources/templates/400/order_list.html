@@ -168,7 +168,7 @@
                                             <th>运营商</th>
                                             <th>充值时长</th>
                                             <th>价格</th>
-                                            <th>提交时间</th>
+                                            <th>更新时间</th>
                                             <th>订单状态</th>
                                             <th>备注</th>
                                             <th>操作</th>
@@ -210,12 +210,14 @@
         }
         var columns = [
             {"data": null},
-            {"data": "phoneNum"},
+            {"data": "applyNumber"},
             {"data": "userName"},
             {"data": "provider"},
             {"data": "ageLimit"},
             {"data": "price"},
-            {"data": "createTime"}
+            {"data": "createTime"},
+            {"data": "status"},
+            {"data": "remarks"}
         ];
         var columnDefs = [{
             targets: [4],
@@ -223,16 +225,13 @@
                 return data + "年";
             }
         },{
-            targets: [7],
+            targets: [9],
             render: function (data, type, row, meta) {
                 var id = row.id;
                 return "<div class=\"cell\">\n" +
-                            "<button data-v-ecae308c=\"\" type=\"button\" class=\"el-button el-button--text\" onclick=\"Details("+id+")\">\n" +
-                                "<span>详情</span>\n" +
-                            "</button>\n" +
-                            "<button data-v-ecae308c=\"\" type=\"button\" class=\"el-button el-button--text\" onclick=\"Edits()\">\n" +
-                                "<span>修改</span>\n" +
-                            "</button>\n" +
+                            "<button data-v-ecae308c=\"\" type=\"button\" class=\"el-button el-button--text\" onclick=\"perfect("+id+")\">完善资料</button>" +
+                            "<button data-v-ecae308c=\"\" type=\"button\" class=\"el-button el-button--text\" onclick=\"Details("+id+")\">详情</button>" +
+                            "<button data-v-ecae308c=\"\" type=\"button\" class=\"el-button el-button--text\" onclick=\"Edits()\">修改</button>" +
                         "</div>";
             }
         }]
@@ -267,6 +266,11 @@
             content: '/400/toOrderDetail/'+id,
             area: ['1100px', '600px'],
         });
+    }
+
+    //完善资料
+    function perfect(id) {
+        window.location.href = "/400/next/"+id;
     }
     //订单详情
     function Edits() {

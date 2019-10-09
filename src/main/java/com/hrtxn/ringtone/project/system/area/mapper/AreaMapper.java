@@ -23,7 +23,7 @@ public interface AreaMapper {
     /**
      * 获取公告数量
      *
-     * @param Area
+     * @param
      * @return
      */
     int getAreaCount(@Param("area") Area area);
@@ -35,4 +35,7 @@ public interface AreaMapper {
     public int updateArea(Area area);
 
     public int deleteArea(Integer id);
+
+    public List<Area> queryAreaByCons(@Param("type") String type,@Param("pid") String pid);
+
 }

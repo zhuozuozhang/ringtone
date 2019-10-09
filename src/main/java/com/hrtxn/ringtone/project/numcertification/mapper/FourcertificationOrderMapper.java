@@ -31,4 +31,6 @@ public interface FourcertificationOrderMapper {
     FourcertificationOrder getOrderByApplyNumber(String applyNumber);
 
     void updateAvailability(FourcertificationOrder FourcertificationOrder);
+
+    FourcertificationOrder selectByPrimaryKey(@Param("id") Long id);
 }
