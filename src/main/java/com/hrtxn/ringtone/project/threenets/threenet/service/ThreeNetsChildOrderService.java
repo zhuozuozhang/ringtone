@@ -9,7 +9,6 @@ import com.hrtxn.ringtone.common.utils.DateUtils;
 import com.hrtxn.ringtone.common.utils.ShiroUtils;
 import com.hrtxn.ringtone.common.utils.StringUtils;
 import com.hrtxn.ringtone.common.utils.juhe.JuhePhoneUtils;
-import com.hrtxn.ringtone.freemark.config.systemConfig.RingtoneConfig;
 import com.hrtxn.ringtone.project.system.File.service.FileService;
 import com.hrtxn.ringtone.project.system.json.JuhePhone;
 import com.hrtxn.ringtone.project.system.json.JuhePhoneResult;
@@ -18,12 +17,10 @@ import com.hrtxn.ringtone.project.threenets.threenet.mapper.ThreenetsChildOrderM
 import com.hrtxn.ringtone.project.threenets.threenet.mapper.ThreenetsOrderMapper;
 import com.hrtxn.ringtone.project.threenets.threenet.mapper.ThreenetsRingMapper;
 import com.hrtxn.ringtone.project.threenets.threenet.utils.ApiUtils;
-import lombok.Synchronized;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
@@ -81,7 +78,7 @@ public class ThreeNetsChildOrderService {
      * @param childOrder
      * @return
      */
-    public Integer update(ThreenetsChildOrder childOrder){
+    public Integer update(ThreenetsChildOrder childOrder) {
         return threenetsChildOrderMapper.updateThreeNetsChidOrder(childOrder);
     }
 
@@ -118,9 +115,9 @@ public class ThreeNetsChildOrderService {
     private ThreenetsChildOrder getParameters(BaseRequest request) {
         ThreenetsChildOrder order = new ThreenetsChildOrder();
         if (StringUtils.isNotNull(request)) {
-            if (request.getParentOrderId() != null){
+            if (request.getParentOrderId() != null) {
                 order.setParentOrderId(request.getParentOrderId());
-            }else {
+            } else {
                 order.setParentOrderId(request.getId());
             }
             Integer userRole = ShiroUtils.getSysUser().getUserRole();
@@ -149,7 +146,7 @@ public class ThreeNetsChildOrderService {
                     order.setIsReplyMessage(true);
                 }
             }
-            if (StringUtils.isNotEmpty(request.getTelLinkPhone())){
+            if (StringUtils.isNotEmpty(request.getTelLinkPhone())) {
                 order.setLinkmanTel(request.getTelLinkPhone());
             }
         }
@@ -177,10 +174,9 @@ public class ThreeNetsChildOrderService {
             attached.setSwxlPrice(threenetsChildOrder.getSwxlPrice());
         }
         threenetsChildOrderMapper.batchChindOrder(list);
-        threeNetsAsyncService.saveThreenetsPhone(attached,request);
+        threeNetsAsyncService.saveThreenetsPhone(attached, request);
         return AjaxResult.success(true, "保存成功");
     }
-
 
 
     /**
@@ -192,7 +188,6 @@ public class ThreeNetsChildOrderService {
     public Integer batchChindOrder(List<ThreenetsChildOrder> orders) {
         return threenetsChildOrderMapper.batchChindOrder(orders);
     }
-
 
 
     /**
@@ -211,7 +206,7 @@ public class ThreeNetsChildOrderService {
 
         List<ThreenetsChildOrder> list = new ArrayList<>();
         for (String tel : phoneArray) {
-            tel = tel.replace(" ","");
+            tel = tel.replace(" ", "");
             ThreenetsChildOrder childOrder = new ThreenetsChildOrder();
             if (tel.isEmpty()) {
                 continue;
@@ -574,5 +569,49 @@ public class ThreeNetsChildOrderService {
      */
     public Integer getPhoneCount(Integer operate, Integer isMonthly) {
         return threenetsChildOrderMapper.getPhoneCount(operate, isMonthly);
+    }
+
+    /**
+     * 刷新彩铃开通状态
+     *
+     * @param id
+     * @return
+     * @throws Exception
+     */
+    public AjaxResult refreshUserStatus(String type, Integer id) throws Exception {
+        if (StringUtils.isNull(id) || id == 0) {
+            return AjaxResult.error("查询不到数据！");
+        }
+        if (type.equals(Const.UPDATE_STATUS_ALL)) {
+            ThreenetsChildOrder threenetsChildOrder = new ThreenetsChildOrder();
+            threenetsChildOrder.setParentOrderId(id);
+            List<ThreenetsChildOrder> childOrders = threenetsChildOrderMapper.listByParamNoPage(threenetsChildOrder);
+            for (int i = 0; i < childOrders.size(); i++) {
+                ThreenetsChildOrder childOrder = childOrders.get(i);
+                childOrder = apiUtils.refreshAloneStatus(childOrder);
+                threenetsChildOrderMapper.updateThreeNetsChidOrder(childOrder);
+            }
+            return AjaxResult.success("更新完成！");
+        } else {
+            //查询单独
+            ThreenetsChildOrder threenetsChildOrder = threenetsChildOrderMapper.selectByPrimaryKey(id);
+            if (threenetsChildOrder == null){
+                return AjaxResult.error("查询不到数据！");
+            }
+            if (type.equals(Const.UPDATE_STATUS_RING)) {
+                threenetsChildOrder = apiUtils.refreshRingStatus(threenetsChildOrder);
+            }
+            if (type.equals(Const.UPDATE_STATUS_VIDEO_RING)) {
+                threenetsChildOrder = apiUtils.refreshVideoRingStatus(threenetsChildOrder);
+            }
+            if (type.equals(Const.UPDATE_STATUS_MONTHLY)) {
+                threenetsChildOrder = apiUtils.refreshMonthlyStatus(threenetsChildOrder);
+            }
+            if (type.equals(Const.UPDATE_STATUS_ALONE)) {
+                threenetsChildOrder = apiUtils.refreshAloneStatus(threenetsChildOrder);
+            }
+            threenetsChildOrderMapper.updateThreeNetsChidOrder(threenetsChildOrder);
+            return AjaxResult.success("更新完成！");
+        }
     }
 }

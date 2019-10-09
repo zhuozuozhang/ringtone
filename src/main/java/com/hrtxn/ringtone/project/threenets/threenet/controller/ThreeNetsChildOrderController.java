@@ -180,7 +180,6 @@ public class ThreeNetsChildOrderController {
      */
     @PutMapping("/threenets/getPhoneInfo")
     @ResponseBody
-    @Log(title = "获取号码信息功能", businessType = BusinessType.UPDATE, operatorLogType = OperatorLogType.THREENETS)
     public AjaxResult getPhoneInfo(Integer type, Integer data) {
         long startTime = System.currentTimeMillis();//获取当前时间
         try {
@@ -201,7 +200,6 @@ public class ThreeNetsChildOrderController {
      */
     @PutMapping("/threenets/refreshVbrtStatus/{id}")
     @ResponseBody
-    @Log(title = "刷新视频彩铃功能", businessType = BusinessType.UPDATE, operatorLogType = OperatorLogType.THREENETS)
     public AjaxResult refreshVbrtStatus(@PathVariable Integer id) {
         long startTime = System.currentTimeMillis();//获取当前时间
         try {
@@ -224,7 +222,6 @@ public class ThreeNetsChildOrderController {
      */
     @PutMapping("/threenets/sendMessage")
     @ResponseBody
-    @Log(title = "发送短信", businessType = BusinessType.UPDATE, operatorLogType = OperatorLogType.THREENETS)
     public AjaxResult sendMessage(Integer type, Integer flag, Integer data) {
         try {
             return threeNetsChildOrderService.sendMessage(type, flag, data);
@@ -242,7 +239,6 @@ public class ThreeNetsChildOrderController {
      */
     @PutMapping("/threenets/getUserInfoByRingMsisdn/{ringMsisdn}")
     @ResponseBody
-    @Log(title = "移动工具箱-->获取用户信息", operatorLogType = OperatorLogType.THREENETS)
     public AjaxResult getUserInfo(String ringMsisdn) {
         try {
             return threeNetsChildOrderService.getUserInfoByRingMsisdn(ringMsisdn);
@@ -260,7 +256,6 @@ public class ThreeNetsChildOrderController {
      */
     @PutMapping("/threenets/findRingInfoByMsisdn/{msisdn}")
     @ResponseBody
-    @Log(title = "移动工具箱-->删除铃音-->搜索", operatorLogType = OperatorLogType.THREENETS)
     public AjaxResult findRingInfoByMsisdn(@PathVariable String msisdn) {
         try {
             return threeNetsChildOrderService.findRingInfoByMsisdn(msisdn);
@@ -382,6 +377,27 @@ public class ThreeNetsChildOrderController {
         } catch (Exception e) {
             log.error("联通工具箱-->用户信息-->删除某条用户信息 方法：deleteSilentMemberByMsisdn 错误信息", e);
             return AjaxResult.error(e.getMessage());
+        }
+    }
+
+
+    /**
+     * 刷新用户状态
+     *
+     * @param id
+     * @return
+     */
+    @PutMapping("/threenets/refreshUserStatus/{type}")
+    @ResponseBody
+    public AjaxResult refreshUserStatus(@PathVariable String type,Integer id) {
+        long startTime = System.currentTimeMillis();//获取当前时间
+        try {
+            return threeNetsChildOrderService.refreshUserStatus(type,id);
+        } catch (Exception e) {
+            log.error("刷新彩铃开通状态 方法：refreshRingStatus 错误信息", e);
+            return AjaxResult.error("更新数据失败！");
+        } finally {
+            log.info("刷新彩铃开通状态，共耗时 -- >" + (System.currentTimeMillis() - startTime) + "ms");
         }
     }
 }

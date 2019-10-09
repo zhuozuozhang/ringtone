@@ -1581,4 +1581,174 @@ public class ApiUtils {
         map.put("cricle_msg_list", miguApi.findCricleMsgList(migu_id));
         return AjaxResult.success(map, "通过migu_id找到了处理信息");
     }
+
+    /**
+     * 刷新彩铃开通状态
+     *
+     * @param childOrder
+     * @return
+     */
+    public ThreenetsChildOrder refreshRingStatus(ThreenetsChildOrder childOrder){
+        try{
+            //移动
+            if (childOrder.getOperator() == 1 && StringUtils.isNotEmpty(childOrder.getLinkmanTel())) {
+                miguApi.refreshCrbtStatus(childOrder.getLinkmanTel());
+                String result = miguApi.updatePhoneInfo(childOrder.getLinkmanTel(), childOrder.getOperateId());
+                Document doc = Jsoup.parse(result);
+                Elements contents = doc.getElementsByClass("tbody_lis");
+                Elements datas = contents.get(0).getElementsByClass("tbody_lis");
+                Element ele = datas.get(0);
+                Elements trs = ele.getElementsByTag("tr");
+                if (trs.size() > 0) {// 没值的话，跳过
+                    Elements tds = trs.get(0).getElementsByTag("td");
+                    String whetherRingUser = tds.get(2).text();
+                    if ("彩铃用户".equals(whetherRingUser)) {
+                        childOrder.setIsRingtoneUser(true);
+                    } else {
+                        childOrder.setIsRingtoneUser(false);
+                    }
+                }
+            }
+            //联通
+            if (childOrder.getOperator() == 3 && StringUtils.isNotEmpty(childOrder.getLinkmanTel())) {
+
+            }
+        }catch(IOException e) {
+            log.info("刷新彩铃开通状态IO异常",e);
+        }catch (NoLoginException e){
+            log.info("刷新彩铃开通状态登录异常",e);
+        }finally {
+            return childOrder;
+        }
+    }
+
+    public ThreenetsChildOrder refreshVideoRingStatus(ThreenetsChildOrder childOrder){
+        try{
+            //移动
+            if (childOrder.getOperator() == 1 && StringUtils.isNotEmpty(childOrder.getLinkmanTel())) {
+                miguApi.refreshVbrtStatus(childOrder.getLinkmanTel());
+                String result = miguApi.updatePhoneInfo(childOrder.getLinkmanTel(), childOrder.getOperateId());
+                Document doc = Jsoup.parse(result);
+                Elements contents = doc.getElementsByClass("tbody_lis");
+                Elements datas = contents.get(0).getElementsByClass("tbody_lis");
+                Element ele = datas.get(0);
+                Elements trs = ele.getElementsByTag("tr");
+                if (trs.size() > 0) {// 没值的话，跳过
+                    Elements tds = trs.get(0).getElementsByTag("td");
+                    String whetherVideoRingUser = tds.get(3).text();// 视频彩铃功能
+                    if ("视频彩铃用户".equals(whetherVideoRingUser)) {
+                        childOrder.setIsVideoUser(true);
+                    } else {
+                        childOrder.setIsVideoUser(false);
+                    }
+                }
+            }
+            //联通
+            if (childOrder.getOperator() == 3 && StringUtils.isNotEmpty(childOrder.getLinkmanTel())) {
+
+            }
+        }catch(IOException e) {
+            log.info("刷新彩铃开通状态IO异常",e);
+        }catch (NoLoginException e){
+            log.info("刷新彩铃开通状态登录异常",e);
+        }finally {
+            return childOrder;
+        }
+    }
+
+    public ThreenetsChildOrder refreshMonthlyStatus(ThreenetsChildOrder childOrder){
+        try{
+            //移动
+            if (childOrder.getOperator() == 1 && StringUtils.isNotEmpty(childOrder.getLinkmanTel())) {
+                miguApi.refreshIsMonthly(childOrder.getLinkmanTel());
+                String result = miguApi.updatePhoneInfo(childOrder.getLinkmanTel(), childOrder.getOperateId());
+                Document doc = Jsoup.parse(result);
+                Elements contents = doc.getElementsByClass("tbody_lis");
+                Elements datas = contents.get(0).getElementsByClass("tbody_lis");
+                Element ele = datas.get(0);
+                Elements trs = ele.getElementsByTag("tr");
+                if (trs.size() > 0) {// 没值的话，跳过
+                    Elements tds = trs.get(0).getElementsByTag("td");
+                    String whetherMonthlyUser = tds.get(8).text();
+                    if ("包月".equals(whetherMonthlyUser)) {
+                        childOrder.setIsMonthly(2);
+                    } else if ("未包月".equals(whetherMonthlyUser)) {
+                        childOrder.setIsMonthly(1);
+                    } else {
+                        childOrder.setIsMonthly(3);
+                    }
+                }
+            }
+            //联通
+            if (childOrder.getOperator() == 3 && StringUtils.isNotEmpty(childOrder.getLinkmanTel())) {
+
+            }
+        }catch(IOException e) {
+            log.info("刷新彩铃开通状态IO异常",e);
+        }catch (NoLoginException e){
+            log.info("刷新彩铃开通状态登录异常",e);
+        }finally {
+            return childOrder;
+        }
+    }
+
+    public ThreenetsChildOrder refreshAloneStatus(ThreenetsChildOrder childOrder){
+        try{
+            //移动
+            if (childOrder.getOperator() == 1 && StringUtils.isNotEmpty(childOrder.getLinkmanTel())) {
+                miguApi.refreshCrbtStatus(childOrder.getLinkmanTel());
+                miguApi.refreshVbrtStatus(childOrder.getLinkmanTel());
+                miguApi.refreshIsMonthly(childOrder.getLinkmanTel());
+                String result = miguApi.updatePhoneInfo(childOrder.getLinkmanTel(), childOrder.getOperateId());
+                Document doc = Jsoup.parse(result);
+                Elements contents = doc.getElementsByClass("tbody_lis");
+                Elements datas = contents.get(0).getElementsByClass("tbody_lis");
+                Element ele = datas.get(0);
+                Elements trs = ele.getElementsByTag("tr");
+                if (trs.size() > 0) {// 没值的话，跳过
+                    Elements tds = trs.get(0).getElementsByTag("td");
+                    String telNoOrId = tds.get(0).child(0).attr("value");
+                    String mcardApersonId = telNoOrId.substring(telNoOrId.indexOf("|") + 1);
+                    if (StringUtils.isNotEmpty(mcardApersonId)) {
+                        childOrder.setOperateOrderId(mcardApersonId);
+                    }
+                    String whetherRingUser = tds.get(2).text();
+                    if ("彩铃用户".equals(whetherRingUser)) {
+                        childOrder.setIsRingtoneUser(true);
+                    } else {
+                        childOrder.setIsRingtoneUser(false);
+                    }
+                    String whetherVideoRingUser = tds.get(3).text();// 视频彩铃功能
+                    if ("视频彩铃用户".equals(whetherVideoRingUser)) {
+                        childOrder.setIsVideoUser(true);
+                    } else {
+                        childOrder.setIsVideoUser(false);
+                    }
+                    String whetherMonthlyUser = tds.get(8).text();
+                    if ("包月".equals(whetherMonthlyUser)) {
+                        childOrder.setIsMonthly(2);
+                    } else if ("未包月".equals(whetherMonthlyUser)) {
+                        childOrder.setIsMonthly(1);
+                    } else {
+                        childOrder.setIsMonthly(3);
+                    }
+                    String ringName = tds.get(9).text();// 铃音名称
+                    if (!"暂无".equals(ringName)) {
+                        childOrder.setRingName(ringName);
+                    }
+                    childOrder.setRemark(tds.get(10).text());// 备注
+                }
+            }
+            //联通
+            if (childOrder.getOperator() == 3 && StringUtils.isNotEmpty(childOrder.getLinkmanTel())) {
+
+            }
+        }catch(IOException e) {
+            log.info("刷新彩铃开通状态IO异常",e);
+        }catch (NoLoginException e){
+            log.info("刷新彩铃开通状态登录异常",e);
+        }finally {
+            return childOrder;
+        }
+    }
 }
