@@ -19,10 +19,17 @@ server:
   # tomcate 端口号
   port: 80
   servlet:
-    # tomcate 访问跟路径
+    # tomcat 访问跟路径
     context-path: /
     session:
       timeout: 1800s
+  tomcat:
+    #tomcat 工作线程的最大数量
+    max-threads: 200
+    # tomcat 辅助线程的最小数量
+    min-spare-threads: 10
+    # 服务器在任何给定时间接受和处理的最大连接数
+    max-connections: 1000
 
 
 # 日志配置
