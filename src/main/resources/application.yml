@@ -22,7 +22,7 @@ server:
     # tomcat 访问跟路径
     context-path: /
     session:
-      timeout: 1800s
+      timeout: 7200s
   tomcat:
     #tomcat 工作线程的最大数量
     max-threads: 200
@@ -80,10 +80,10 @@ spring:
 shiro:
   session:
     # Session超时时间（默认30分钟）
-    expireTime: 30
+    expireTime: 120
   cookie:
     # 设置Cookie的过期时间，天为单位
-    maxAge: 30
+    maxAge: 120
 
 http:
   maxTotal: 100

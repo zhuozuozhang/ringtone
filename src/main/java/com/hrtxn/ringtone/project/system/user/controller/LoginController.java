@@ -3,6 +3,7 @@ package com.hrtxn.ringtone.project.system.user.controller;
 import com.google.code.kaptcha.Constants;
 import com.hrtxn.ringtone.common.domain.BaseRequest;
 import com.hrtxn.ringtone.common.utils.AddressUtils;
+import com.hrtxn.ringtone.common.utils.Const;
 import com.hrtxn.ringtone.common.utils.MD5Utils;
 import com.hrtxn.ringtone.common.utils.ShiroUtils;
 import com.hrtxn.ringtone.freemark.config.asyncConfig.AsyncConfig;
@@ -74,20 +75,25 @@ public class LoginController {
             // 1、检验验证码
             if (loginParam.getCaptchaCode() != null) {
                 String inputCode = loginParam.getCaptchaCode();
-                if(session.getAttribute(Constants.KAPTCHA_SESSION_KEY) != null){//有时候取值是null，真是奇怪，没找到原因
-                    String captchaSession = session.getAttribute(Constants.KAPTCHA_SESSION_KEY).toString();
-                    log.info("获取验证码，共耗时 -- >" + (System.currentTimeMillis() - startTime) + "ms");
-                    if(captchaSession != null){//如果缓存中没有验证码，则直接不验证验证码
-                        if (!Objects.equals(inputCode, captchaSession)) {
-                            log.info("验证码错误，用户输入：{}, 正确验证码：{}", inputCode, captchaSession);
-                            map.put("msg", "验证码不正确!");
-                            // 异步操作，执行修改登录时间以及添加登录日志
-                            loginLog.setLoginLogStatus("验证码错误");
-                            AsyncConfig.ac().loginLogTask(ShiroUtils.getSysUser(), loginLog);
-                            return "system/login";
-                        }
-                        log.info("验证码验证，共耗时 -- >" + (System.currentTimeMillis() - startTime) + "ms");
+                if (session.getAttribute(Const.SESSION_VERIFICATION_CODE) == null) {//有时候取值是null，真是奇怪，没找到原因
+                    map.put("msg", "验证码错误!");
+                    // 异步操作，执行修改登录时间以及添加登录日志
+                    loginLog.setLoginLogStatus("验证码错误");
+                    AsyncConfig.ac().loginLogTask(ShiroUtils.getSysUser(), loginLog);
+                    return "system/login";
+                }
+                String captchaSession = session.getAttribute(Const.SESSION_VERIFICATION_CODE).toString();
+                log.info("获取验证码，共耗时 -- >" + (System.currentTimeMillis() - startTime) + "ms");
+                if (captchaSession != null) {//如果缓存中没有验证码，则直接不验证验证码
+                    if (!Objects.equals(inputCode, captchaSession)) {
+                        log.info("验证码错误，用户输入：{}, 正确验证码：{}", inputCode, captchaSession);
+                        map.put("msg", "验证码不正确!");
+                        // 异步操作，执行修改登录时间以及添加登录日志
+                        loginLog.setLoginLogStatus("验证码错误");
+                        AsyncConfig.ac().loginLogTask(ShiroUtils.getSysUser(), loginLog);
+                        return "system/login";
                     }
+                    log.info("验证码验证，共耗时 -- >" + (System.currentTimeMillis() - startTime) + "ms");
                 }
             }
             // 2、执行认证、授权操作
@@ -144,11 +150,11 @@ public class LoginController {
         Subject subject = SecurityUtils.getSubject();
         subject.logout();
         model.addAttribute("msg", "安全退出！");
-        return "redirect:/";
+        return "system/login";
     }
 
     /**
-     * 登出操作
+     * 验证是否登录
      *
      * @return
      */

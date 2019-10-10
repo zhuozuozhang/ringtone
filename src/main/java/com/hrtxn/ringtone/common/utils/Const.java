@@ -186,5 +186,8 @@ public final class Const implements Serializable {
     public static final String UPDATE_STATUS_MONTHLY = "monthly";
     public static final String UPDATE_STATUS_ALONE = "alone";
 
+    public static final String SESSION_VERIFICATION_CODE = "session_verification_code";
+
+
 
 }

@@ -140,4 +140,8 @@ public class FourcertificationOrder {
     private String taskId;
     /** 备注 */
     private String remarks;
+
+    private String province;
+
+    private String city;
 }

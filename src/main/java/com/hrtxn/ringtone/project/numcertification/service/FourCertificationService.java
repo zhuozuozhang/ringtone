@@ -65,6 +65,31 @@ public class FourCertificationService {
         return AjaxResult.success("预占申请成功！");
     }
 
+    /**
+     * 模板申请
+     * @return
+     */
+    public AjaxResult perfect(FourcertificationOrder fourcertificationOrder){
+        try {
+            if (StringUtils.isNull(fourcertificationOrder)) {
+                return AjaxResult.error();
+            }
+//            String result =  numApi.downloadTemplate(fourcertificationOrder);
+//            if(!"0".equals(result)){
+//                return AjaxResult.error(result);
+//            }
+            //预占申请中
+            fourcertificationOrder.setStatus(Const.FOUR_ORDER_TEMPLATE_NEW);
+            fourcertificationOrder.setCreateTime(new Date());
+            fourcertificationOrder.setUserId(ShiroUtils.getSysUser().getId());
+            fourcertificationOrderMapper.update(fourcertificationOrder);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return AjaxResult.success("预占申请成功！");
+    }
+
+
     public AjaxResult ApplyTemplate(FourcertificationOrder fourcertificationOrder){
         try {
             String result = numApi.downloadTemplate(fourcertificationOrder);

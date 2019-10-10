@@ -2,6 +2,7 @@ package com.hrtxn.ringtone.project.system.kaptcha;
 
 import com.google.code.kaptcha.Constants;
 import com.google.code.kaptcha.Producer;
+import com.hrtxn.ringtone.common.utils.Const;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -58,8 +59,7 @@ public class KaptchaController {
             } else if ("char".equals(type)) {
                 code = captchaProducer.createText();
                 bi = captchaProducer.createImage(code);
-                session.setAttribute(Constants.KAPTCHA_SESSION_KEY, code);
-                System.out.println(session.getAttribute(Constants.KAPTCHA_SESSION_KEY));
+                session.setAttribute(Const.SESSION_VERIFICATION_CODE, code);
             }
 
             out = response.getOutputStream();

@@ -87,12 +87,7 @@
                             <div data-v-15e66472="" class="c-container" style="width: 1200px;">
                                 <div data-v-15e66472="" class="title">基本信息</div>
                                 <div data-v-15e66472="" class="base-info">
-                                    <div data-v-27737a5a="" data-v-3cb507e4="" data-v-15e66472="" class="wrap" style="width: 360px;">
-                                        <div data-v-27737a5a="" class="label" style="width: 130px;"><span data-v-27737a5a="">绑定号码</span></div>
-                                        <div class="layui-input-block">
-                                            <input type="text" name="title" autocomplete="off" class="layui-input">
-                                        </div>
-                                    </div>
+                                    <input type="hidden" id="id" name="id" th:value="${fourcertificationOrder.id}"/>
                                     <div data-v-27737a5a="" data-v-3cb507e4="" data-v-15e66472="" class="wrap" style="width: 360px;">
                                         <div data-v-27737a5a="" class="label" style="width: 130px;"><span>号码使用地</span></div>
                                         <div class="layui-input-block">
@@ -102,81 +97,70 @@
                                     <div data-v-27737a5a="" data-v-3cb507e4="" data-v-15e66472="" class="wrap" style="width: 360px;">
                                         <div data-v-27737a5a="" class="label" style="width: 130px;"><span>公司名</span></div>
                                         <div class="layui-input-block">
-                                            <input type="text" name="title" autocomplete="off" class="layui-input" th:value="${fourcertificationOrder.companyName}">
+                                            <input type="text" name="companyName" readonly="readonly" autocomplete="off" class="layui-input" th:value="${fourcertificationOrder.companyName}">
                                         </div>
                                     </div>
                                     <div data-v-27737a5a="" data-v-3cb507e4="" data-v-15e66472="" class="wrap" style="width: 360px;">
-                                        <div data-v-27737a5a="" class="label" style="width: 130px;"><span data-v-27737a5a="">法人姓名</span></div>
+                                        <div data-v-27737a5a="" class="label" style="width: 130px;"><span data-v-27737a5a="">联系手机</span></div>
                                         <div class="layui-input-block">
-                                            <input type="text" name="title" autocomplete="off" class="layui-input">
-                                        </div>
-                                    </div>
-                                    <div data-v-27737a5a="" data-v-3cb507e4="" data-v-15e66472="" class="wrap" style="width: 360px;">
-                                        <div data-v-27737a5a="" class="label" style="width: 130px;"><span data-v-27737a5a="">法人电话</span></div>
-                                        <div class="layui-input-block">
-                                            <input type="text" name="title" autocomplete="off" class="layui-input">
-                                        </div>
-                                    </div>
-                                    <div data-v-27737a5a="" data-v-3cb507e4="" data-v-15e66472="" class="wrap" style="width: 360px;">
-                                        <div data-v-27737a5a="" class="label" style="width: 130px;"><span data-v-27737a5a="">法人身份证号码</span></div>
-                                        <div class="layui-input-block">
-                                            <input type="text" name="title" autocomplete="off" class="layui-input">
-                                        </div>
-                                    </div>
-                                    <div data-v-27737a5a="" data-v-3cb507e4="" data-v-15e66472="" class="wrap" style="width: 360px;">
-                                        <div data-v-27737a5a="" class="label" style="width: 130px;"><span data-v-27737a5a="">公司地址</span></div>
-                                        <div class="layui-input-block">
-                                            <input type="text" name="title" autocomplete="off" class="layui-input">
-                                        </div>
-                                    </div>
-                                    <div data-v-27737a5a="" data-v-3cb507e4="" data-v-15e66472="" class="wrap" style="width: 360px;">
-                                        <div data-v-27737a5a="" class="label" style="width: 130px;"><span data-v-27737a5a="">电子邮箱</span></div>
-                                        <div class="layui-input-block">
-                                            <input type="text" name="title" autocomplete="off" class="layui-input">
-                                        </div>
-                                    </div>
-                                    <div data-v-27737a5a="" data-v-3cb507e4="" data-v-15e66472="" class="wrap" style="width: 360px;">
-                                        <div data-v-27737a5a="" class="label" style="width: 130px;"><span data-v-27737a5a="">经营许可证号</span></div>
-                                        <div class="layui-input-block">
-                                            <input type="text" name="title" autocomplete="off" class="layui-input">
-                                        </div>
-                                    </div>
-                                    <div data-v-27737a5a="" data-v-3cb507e4="" data-v-15e66472="" class="wrap" style="width: 360px;">
-                                        <div data-v-27737a5a="" class="label" style="width: 130px;"><span data-v-27737a5a="">行业</span></div>
-                                        <div class="layui-input-block">
-                                            <input type="text" name="title" autocomplete="off" class="layui-input">
-                                        </div>
-                                    </div>
-                                    <div data-v-27737a5a="" data-v-3cb507e4="" data-v-15e66472="" class="wrap" style="width: 360px;">
-                                        <div data-v-27737a5a="" class="label" style="width: 130px;"><span data-v-27737a5a="">经营范围</span></div>
-                                        <div class="layui-input-block">
-                                            <input type="text" name="title" autocomplete="off" class="layui-input">
-                                        </div>
-                                    </div>
-                                    <div data-v-27737a5a="" data-v-3cb507e4="" data-v-15e66472="" class="wrap" style="width: 360px;">
-                                        <div data-v-27737a5a="" class="label" style="width: 130px;"><span data-v-27737a5a="">法人身份证地址</span></div>
-                                        <div class="layui-input-block">
-                                            <input type="text" name="title" autocomplete="off" class="layui-input">
+                                            <input type="text" name="otherLinkMobile" autocomplete="off" class="layui-input">
                                         </div>
                                     </div>
                                     <div data-v-27737a5a="" data-v-3cb507e4="" data-v-15e66472="" class="wrap" style="width: 360px;">
                                         <div data-v-27737a5a="" class="label" style="width: 130px;"><span data-v-27737a5a="">固定电话</span></div>
                                         <div class="layui-input-block">
-                                            <input type="text" name="title" autocomplete="off" class="layui-input">
+                                            <input type="text" name="otherLinkPhone" autocomplete="off" class="layui-input">
                                         </div>
                                     </div>
                                     <div data-v-27737a5a="" data-v-3cb507e4="" data-v-15e66472="" class="wrap" style="width: 360px;">
-                                        <div data-v-27737a5a="" class="label" style="width: 130px;"><span data-v-27737a5a="">开户银行</span></div>
+                                        <div data-v-27737a5a="" class="label" style="width: 130px;"><span data-v-27737a5a="">联系邮箱</span></div>
                                         <div class="layui-input-block">
-                                            <input type="text" name="title" autocomplete="off" class="layui-input">
+                                            <input type="text" name="otherLinkEmail" autocomplete="off" class="layui-input">
                                         </div>
                                     </div>
                                     <div data-v-27737a5a="" data-v-3cb507e4="" data-v-15e66472="" class="wrap" style="width: 360px;">
-                                        <div data-v-27737a5a="" class="label" style="width: 130px;"><span data-v-27737a5a="">银行账户</span></div>
+                                        <div data-v-27737a5a="" class="label" style="width: 130px;"><span data-v-27737a5a="">验证手机</span></div>
                                         <div class="layui-input-block">
-                                            <input type="text" name="title" autocomplete="off" class="layui-input">
+                                            <input type="text" name="otherValidPhone" autocomplete="off" class="layui-input">
                                         </div>
                                     </div>
+                                    <div data-v-27737a5a="" data-v-3cb507e4="" data-v-15e66472="" class="wrap" style="width: 360px;">
+                                        <div data-v-27737a5a="" class="label" style="width: 130px;"><span data-v-27737a5a="">绑定手机</span></div>
+                                        <div class="layui-input-block">
+                                            <!--<input type="text" name="otherBindPhone" autocomplete="off" class="layui-input">-->
+                                            <textarea  name="otherBindPhone" id="otherBindPhone" rows="4" maxlength="200"
+                                                      required lay-verify="required"></textarea>
+                                        </div>
+                                    </div>
+                                    <div data-v-27737a5a="" data-v-6608c108="" data-v-15e66472="" class="wrap" style="width: 1111px; margin-bottom: 2px;">
+                                        <div data-v-27737a5a="" class="label" style="width: 180px;">
+                                            <div data-v-6608c108="" data-v-27737a5a="">法人身份证</div>
+                                            <div data-v-6608c108="" data-v-27737a5a="" style="font-size: 12px; color: rgb(170, 170, 170);">(格式支持jpg、png, 且大小不超过20M)</div>
+                                        </div>
+                                        <div data-v-27737a5a="" class="input">
+                                            <div data-v-5e9a5ea3="" data-v-6608c108="" class="select-image" data-v-27737a5a="">
+                                                <label data-v-5e9a5ea3="" style="width: 170px; height: 90px;">
+                                                    <input data-v-5e9a5ea3="" hidden="hidden" type="file"style="display: none;" onchange="changepic(this,'legalCardUrl')" accept="image/jpg,image/png,image/PNG" id="legalCardUrl">
+                                                    <img th:src="@{/client/400/images/111.jpg}" alt="" width="100%" height="100%" id="img_legalCardUrl">
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div data-v-27737a5a="" data-v-6608c108="" data-v-15e66472="" class="wrap" style="width: 1111px; margin-bottom: 2px;">
+                                        <div data-v-27737a5a="" class="label" style="width: 180px;">
+                                            <div data-v-6608c108="" data-v-27737a5a="">经办人身份证</div>
+                                            <div data-v-6608c108="" data-v-27737a5a="" style="font-size: 12px; color: rgb(170, 170, 170);">(格式支持jpg、png, 且大小不超过20M)</div>
+                                        </div>
+                                        <div data-v-27737a5a="" class="input">
+                                            <div data-v-5e9a5ea3="" data-v-6608c108="" class="select-image" data-v-27737a5a="">
+                                                <label data-v-5e9a5ea3="" style="width: 170px; height: 90px;">
+                                                    <input data-v-5e9a5ea3="" hidden="hidden" type="file"style="display: none;" onchange="changepic(this,'operatorCardUrl')" accept="image/jpg,image/png,image/PNG" id="operatorCardUrl">
+                                                    <img th:src="@{/client/400/images/111.jpg}" alt="" width="100%" height="100%" id="img_operatorCardUrl">
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+
                                 </div>
                             </div>
 
@@ -184,7 +168,7 @@
                                 <button data-v-15e66472="" type="button" class="el-button el-button--default" style="width: 200px;">
                                     <span>取消</span>
                                 </button>
-                                <button data-v-15e66472="" type="button" class="el-button el-button--primary" style="width: 200px;" lay-submit lay-filter="formDemo">
+                                <button data-v-15e66472="" onclick="perfect();" type="button" class="el-button el-button--primary" style="width: 200px;" lay-submit lay-filter="formDemo">
                                     <span>保存</span>
                                 </button>
                             </div>
@@ -206,24 +190,39 @@
             elem: '#date'
         });
     });
-    //省市选择
-    // layui.use(['form', 'code'], function() {
-    //     var province = [[${numcertificationOrder.province}]];
-    //     var city = [[${numcertificationOrder.city}]];
-    //     form = layui.form;
-    //     layui.code();
-    //     // $('#x-city').xcity('广东', '广州市', '东山区');
-    //     $('#x-city').xcity(province, city);
-    // });
     //表单提交
-    layui.use('form', function(){
-        var form = layui.form;
-        //监听提交
-        form.on('submit(formDemo)', function(data){
-            layer.msg(JSON.stringify(data.field));
-            return false;
+    function perfect(){
+        var otherLinkMobile = $("#otherLinkMobile").val();
+        var otherLinkEmail = $("#otherLinkEmail").val();
+        var otherLinkPhone = $("#otherLinkPhone").val();
+        var otherValidPhone = $("#otherValidPhone").val();
+        var otherBindPhone = $(".otherBindPhone").val();
+        var legalCardUrl = $("#legalCardUrl").html();
+        var operatorCardUrl = $("#operatorCardUrl").html();
+        var id = $("#id").html();
+
+        if (!isNotEmpty(otherLinkMobile)) {layer.msg("联系手机不能为空！", {icon: 5, time: 2500});return;}
+        if (!isNotEmpty(otherValidPhone)) {layer.msg("验证手机不能为空！", {icon: 5, time: 2500});return;}
+        AjaxPost("/400/perfect",{
+            otherLinkMobile:otherLinkMobile,
+            otherLinkEmail:otherLinkEmail,
+            otherLinkPhone:otherLinkPhone,
+            otherValidPhone:otherValidPhone,
+            otherBindPhone:otherBindPhone,
+            legalCardUrl:legalCardUrl,
+            operatorCardUrl:operatorCardUrl,
+            id:id
+        },function (res) {
+            if (res.code == 200){
+                layer.alert("预占成功!", {icon: 6},function () {
+                    window.location.href = "/400/order_list";
+                });
+            } else {
+                layer.msg(res.msg, {icon: 5, time: 2500});
+            }
         });
-    });
+    }
+
     //图片上传预览
     function changepic(obj,id) {
         var reads = new FileReader();

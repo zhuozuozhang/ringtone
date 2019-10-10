@@ -98,9 +98,20 @@ public class NumCertificationController {
     @ResponseBody
     public AjaxResult order(FourcertificationOrder fourcertificationOrder) {
           return fourCertificationService.preoccupation(fourcertificationOrder);
-//        return numCertificationService.order(numcertificationOrder);
-
     }
+
+    /**
+     * 创建订单
+     *
+     * @author zcy
+     * @date 2019-8-30 11:40
+     */
+    @PostMapping("/perfect")
+    @ResponseBody
+    public AjaxResult perfect(FourcertificationOrder fourcertificationOrder) {
+        return fourCertificationService.perfect(fourcertificationOrder);
+    }
+
     /**
      * 跳转到订单列表
      *
@@ -113,7 +124,7 @@ public class NumCertificationController {
 
         FourcertificationOrder fourcertificationOrder = fourCertificationService.selectByPrimaryKey(orderId);
         map.put("fourcertificationOrder", fourcertificationOrder);
-        return "/400/order_perfect";
+            return "/400/order_perfect";
     }
     /***
      * 跳转到订单列表
