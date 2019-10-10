@@ -75,21 +75,10 @@ public class LoginController {
             // 1、检验验证码
             if (loginParam.getCaptchaCode() != null) {
                 String inputCode = loginParam.getCaptchaCode();
-                System.out.println("=========================================================================================");
-                System.out.println(session.getAttribute(Const.SESSION_VERIFICATION_CODE));
-                System.out.println(session.getAttribute(Const.SESSION_VERIFICATION_CODE));
-                System.out.println(session.getAttribute(Const.SESSION_VERIFICATION_CODE));
-                System.out.println(session.getAttribute(Const.SESSION_VERIFICATION_CODE));
-                System.out.println(session.getAttribute(Const.SESSION_VERIFICATION_CODE));
-                System.out.println(session.getAttribute(Const.SESSION_VERIFICATION_CODE));
-                System.out.println(session.getAttribute(Const.SESSION_VERIFICATION_CODE));
-                System.out.println(session.getAttribute(Const.SESSION_VERIFICATION_CODE));
-                System.out.println(session.getAttribute(Const.SESSION_VERIFICATION_CODE));
-                System.out.println("=========================================================================================");
                 if (session.getAttribute(Const.SESSION_VERIFICATION_CODE) == null) {//有时候取值是null，真是奇怪，没找到原因
-                    map.put("msg", "验证码失效!");
+                    map.put("msg", "验证码错误!");
                     // 异步操作，执行修改登录时间以及添加登录日志
-                    loginLog.setLoginLogStatus("验证码失效");
+                    loginLog.setLoginLogStatus("验证码错误");
                     AsyncConfig.ac().loginLogTask(ShiroUtils.getSysUser(), loginLog);
                     return "system/login";
                 }
