@@ -49,6 +49,9 @@ public class FileService {
             uploadfile.setStatus(1);
             uploadfile.setCreatetime(new Date());
             uploadfileMapper.insertSelective(uploadfile);
+            if(StringUtils.isNotBlank(path)){
+                path = path.replace("\\","/");
+            }
             return AjaxResult.success(path, "文件上传成功");
         } catch (Exception e) {
             e.printStackTrace();

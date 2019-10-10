@@ -225,4 +225,32 @@ public class FileController {
     public AjaxResult numberProve(@RequestParam("numberProve") MultipartFile numberProve, String folderName) {
         return fileService.upload(numberProve, "号码证明", folderName);
     }
+
+
+    /**
+     * 400文件
+     * @param legalCardUrl
+     * @param folderName
+     * @return
+     */
+    @PostMapping("/system/upload/legalCardUrl")
+    @ResponseBody
+    public AjaxResult legalCardUrl(@RequestParam("legalCardUrl") MultipartFile legalCardUrl, String folderName) {
+        return fileService.upload(legalCardUrl, legalCardUrl.getOriginalFilename(), folderName);
+    }
+
+    /**
+     * 400文件
+     * @param operatorCardUrl
+     * @param folderName
+     * @return
+     */
+    @PostMapping("/system/upload/operatorCardUrl")
+    @ResponseBody
+    public AjaxResult operatorCardUrl(@RequestParam("operatorCardUrl") MultipartFile operatorCardUrl, String folderName) {
+        operatorCardUrl.getName();
+        return fileService.upload(operatorCardUrl, operatorCardUrl.getOriginalFilename(), folderName);
+    }
+
+
 }

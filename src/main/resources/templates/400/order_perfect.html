@@ -58,7 +58,7 @@
                         </div>
                     </div>
                 </header>
-                <form class="layui-form layui-col-md12  layui-form-pane">
+                <form class="layui-form layui-col-md12  layui-form-pane" name="Form" id="Form" method="post">
                     <main data-v-04d52060="" class="el-main">
                         <div data-v-15e66472="" data-v-ecae308c="" style="background: rgb(244, 246, 252); z-index: 10;">
                             <div data-v-15e66472="" class="c-container" style="width: 1200px;">
@@ -103,25 +103,25 @@
                                     <div data-v-27737a5a="" data-v-3cb507e4="" data-v-15e66472="" class="wrap" style="width: 360px;">
                                         <div data-v-27737a5a="" class="label" style="width: 130px;"><span data-v-27737a5a="">联系手机</span></div>
                                         <div class="layui-input-block">
-                                            <input type="text" name="otherLinkMobile" autocomplete="off" class="layui-input">
+                                            <input type="text" th:value="${fourcertificationOrder.otherLinkMobile}" name="otherLinkMobile" id="otherLinkMobile" autocomplete="off" class="layui-input">
                                         </div>
                                     </div>
                                     <div data-v-27737a5a="" data-v-3cb507e4="" data-v-15e66472="" class="wrap" style="width: 360px;">
                                         <div data-v-27737a5a="" class="label" style="width: 130px;"><span data-v-27737a5a="">固定电话</span></div>
                                         <div class="layui-input-block">
-                                            <input type="text" name="otherLinkPhone" autocomplete="off" class="layui-input">
+                                            <input type="text" th:value="${fourcertificationOrder.otherLinkPhone}" name="otherLinkPhone" id="otherLinkPhone" autocomplete="off" class="layui-input">
                                         </div>
                                     </div>
                                     <div data-v-27737a5a="" data-v-3cb507e4="" data-v-15e66472="" class="wrap" style="width: 360px;">
                                         <div data-v-27737a5a="" class="label" style="width: 130px;"><span data-v-27737a5a="">联系邮箱</span></div>
                                         <div class="layui-input-block">
-                                            <input type="text" name="otherLinkEmail" autocomplete="off" class="layui-input">
+                                            <input type="text" th:value="${fourcertificationOrder.otherLinkEmail}" name="otherLinkEmail" id="otherLinkEmail" autocomplete="off" class="layui-input">
                                         </div>
                                     </div>
                                     <div data-v-27737a5a="" data-v-3cb507e4="" data-v-15e66472="" class="wrap" style="width: 360px;">
                                         <div data-v-27737a5a="" class="label" style="width: 130px;"><span data-v-27737a5a="">验证手机</span></div>
                                         <div class="layui-input-block">
-                                            <input type="text" name="otherValidPhone" autocomplete="off" class="layui-input">
+                                            <input type="text" th:value="${fourcertificationOrder.otherValidPhone}" name="otherValidPhone" id="otherValidPhone" autocomplete="off" class="layui-input">
                                         </div>
                                     </div>
                                     <div data-v-27737a5a="" data-v-3cb507e4="" data-v-15e66472="" class="wrap" style="width: 360px;">
@@ -140,7 +140,9 @@
                                         <div data-v-27737a5a="" class="input">
                                             <div data-v-5e9a5ea3="" data-v-6608c108="" class="select-image" data-v-27737a5a="">
                                                 <label data-v-5e9a5ea3="" style="width: 170px; height: 90px;">
-                                                    <input data-v-5e9a5ea3="" hidden="hidden" type="file"style="display: none;" onchange="changepic(this,'legalCardUrl')" accept="image/jpg,image/png,image/PNG" id="legalCardUrl">
+                                                    <input type="file" id="legalCardUrl_file" style="display: none;" name="businessLicense"
+                                                           onchange="changepic(this,'legalCardUrl','legalCardUrl_file')">
+                                                    <input type="hidden" th:value="${fourcertificationOrder.legalCardUrl}" id="legalCardUrl" name="legalCardUrl" value="" />
                                                     <img th:src="@{/client/400/images/111.jpg}" alt="" width="100%" height="100%" id="img_legalCardUrl">
                                                 </label>
                                             </div>
@@ -154,13 +156,15 @@
                                         <div data-v-27737a5a="" class="input">
                                             <div data-v-5e9a5ea3="" data-v-6608c108="" class="select-image" data-v-27737a5a="">
                                                 <label data-v-5e9a5ea3="" style="width: 170px; height: 90px;">
-                                                    <input data-v-5e9a5ea3="" hidden="hidden" type="file"style="display: none;" onchange="changepic(this,'operatorCardUrl')" accept="image/jpg,image/png,image/PNG" id="operatorCardUrl">
+                                                    <input data-v-5e9a5ea3="" hidden="hidden" type="file"style="display: none;" onchange="changepic(this,'operatorCardUrl','operatorCardUrl_file')"
+                                                           accept="image/jpg,image/png,image/PNG" id="operatorCardUrl_file">
+                                                    <input type="hidden" id="operatorCardUrl" name="operatorCardUrl" value="" />
                                                     <img th:src="@{/client/400/images/111.jpg}" alt="" width="100%" height="100%" id="img_operatorCardUrl">
                                                 </label>
                                             </div>
                                         </div>
                                     </div>
-
+                                    <!--<input id="input-id" type="file" class="file" data-preview-file-type="text" >-->
                                 </div>
                             </div>
 
@@ -181,7 +185,18 @@
 </body>
 <div th:include="admin/common/include :: footer"></div>
 <script th:src="@{/client/400/js/xcity.js}"></script>
+<script th:src="@{/public/js/jquery-2.1.4.min.js}"></script>
+<script th:src="@{/public/layui/layui.js}"></script>
+<script th:src="@{/public/layui/lay/modules/laydate.js}"></script>
+<script th:src="@{/public/layui/lay/modules/layer.js}"></script>
+<script th:src="@{/public/js/regular.js}"></script>
+<script type="text/javascript" th:src="@{/public/dataTables/jquery.dataTables.min.js}"></script>
+<script type="text/javascript" th:src="@{/public/js/datatables.js}"></script>
+<script type="text/javascript" th:src="@{/public/js/ajax.js}"></script>
+<script type="text/javascript" th:src="@{/public/js/ajaxfileupload.js}"></script>
 <script th:inline="javascript">
+
+
     //日期选择
     layui.use('laydate', function(){
         var laydate = layui.laydate;
@@ -197,9 +212,9 @@
         var otherLinkPhone = $("#otherLinkPhone").val();
         var otherValidPhone = $("#otherValidPhone").val();
         var otherBindPhone = $(".otherBindPhone").val();
-        var legalCardUrl = $("#legalCardUrl").html();
-        var operatorCardUrl = $("#operatorCardUrl").html();
-        var id = $("#id").html();
+        var legalCardUrl = $("#legalCardUrl").val();
+        var operatorCardUrl = $("#operatorCardUrl").val();
+        var id = $("#id").val();
 
         if (!isNotEmpty(otherLinkMobile)) {layer.msg("联系手机不能为空！", {icon: 5, time: 2500});return;}
         if (!isNotEmpty(otherValidPhone)) {layer.msg("验证手机不能为空！", {icon: 5, time: 2500});return;}
@@ -223,10 +238,9 @@
         });
     }
 
-    //图片上传预览
-    function changepic(obj,id) {
+    function changepic(obj,id,file) {
         var reads = new FileReader();
-        f = document.getElementById(id).files[0];
+        f = document.getElementById(file).files[0];
         if (f != null && f != "" && f != undefined && f != "null") {
             if (!/.(jpg|png|JPG|PNG)$/.test(obj.value)) {
                 layer.msg('图片类型必须是jpg,png中的一种!');
@@ -236,12 +250,73 @@
                 layer.msg('请上传小于20M的图片!');
                 return;
             }
-            reads.readAsDataURL(f);
-            reads.onload = function(e) {
-                document.getElementById('img_'+id).src = this.result;
-            };
+
+            var objUrl = getObjectURL(f); //获取图片的路径，该路径不是图片在本地的路径
+            if (objUrl) {
+                $("#img_"+id).children().attr("src", objUrl); //将图片路径存入src中，显示出图片
+            }
+
+            uploadFile(id,'/400/'+$("#id").val(),file);
+
         }
     }
+
+
+    /*上传图片预览*/
+    //建立一個可存取到該file的url
+    function getObjectURL(file) {
+        if (file != null && file != "" && file != undefined) {
+            var url = null;
+            if (window.createObjectURL != undefined) { // basic
+                url = window.createObjectURL(file);
+            } else if (window.URL != undefined) { // mozilla(firefox)
+                url = window.URL.createObjectURL(file);
+            } else if (window.webkitURL != undefined) { // webkit or chrome
+                url = window.webkitURL.createObjectURL(file);
+            }
+            return url;
+        }
+    }
+
+    //上传文件
+    function uploadFile(url,folderName,file) {
+
+        var layuiLoding = layer.load(0, { //icon支持传入0-2
+            time:false,
+            shade: [0.5, '#9c9c9c'], //0.5透明度的灰色背景
+            content: '文件上传中...',
+            success: function (layero) {
+                layero.find('.layui-layer-content').css({
+                    'padding': '39px 10px',
+                    'width': '100px'
+                });
+            }
+        });
+
+        var formData = new FormData();
+
+        formData.append(url, document.getElementById(file).files[0]);
+        formData.append("folderName", "400/"+$("#id").val());
+
+        $.ajax({
+            url: '/system/upload/' + url,
+            type: 'POST',
+            cache: false,
+            data: formData,
+            processData: false,
+            contentType: false
+        }).done(function (res) {
+            layer.close(layuiLoding);
+            layer.msg(res.msg, {icon: 1, time: 1000});
+            $("#"+url).val(res.data);
+            document.getElementById('img_'+url).src = "/profile"+res.data;
+
+        }).fail(function (res) {
+            layer.msg(res.msg, {icon: 2, time: 1000});
+        });
+        return false;
+    }
+
 </script>
 
 </html>
