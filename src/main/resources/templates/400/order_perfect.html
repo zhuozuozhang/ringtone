@@ -143,7 +143,8 @@
                                                     <input type="file" id="legalCardUrl_file" style="display: none;" name="businessLicense"
                                                            onchange="changepic(this,'legalCardUrl','legalCardUrl_file')">
                                                     <input type="hidden" th:value="${fourcertificationOrder.legalCardUrl}" id="legalCardUrl" name="legalCardUrl" value="" />
-                                                    <img th:src="@{/client/400/images/111.jpg}" alt="" width="100%" height="100%" id="img_legalCardUrl">
+                                                    <img th:if="${fourcertificationOrder.legalCardUrl == null}" th:src="@{/client/400/images/111.jpg}" alt="" width="100%" height="100%" id="img_legalCardUrl">
+                                                    <img th:if="${fourcertificationOrder.legalCardUrl != null}" th:src="${fourcertificationOrder.legalCardUrl}" alt="" width="100%" height="100%" id="img_legalCardUrl">
                                                 </label>
                                             </div>
                                         </div>
@@ -159,7 +160,9 @@
                                                     <input data-v-5e9a5ea3="" hidden="hidden" type="file"style="display: none;" onchange="changepic(this,'operatorCardUrl','operatorCardUrl_file')"
                                                            accept="image/jpg,image/png,image/PNG" id="operatorCardUrl_file">
                                                     <input type="hidden" id="operatorCardUrl" name="operatorCardUrl" value="" />
-                                                    <img th:src="@{/client/400/images/111.jpg}" alt="" width="100%" height="100%" id="img_operatorCardUrl">
+                                                    <img  th:if="${fourcertificationOrder.legalCardUrl == null}" th:src="@{/client/400/images/111.jpg}" alt="" width="100%" height="100%" id="img_operatorCardUrl">
+                                                    <img  th:if="${fourcertificationOrder.operatorCardUrl != null}" th:src="${fourcertificationOrder.operatorCardUrl}" alt="" width="100%" height="100%" id="img_operatorCardUrl">
+
                                                 </label>
                                             </div>
                                         </div>
@@ -308,7 +311,7 @@
         }).done(function (res) {
             layer.close(layuiLoding);
             layer.msg(res.msg, {icon: 1, time: 1000});
-            $("#"+url).val(res.data);
+            $("#"+url).val("/profile"+res.data);
             document.getElementById('img_'+url).src = "/profile"+res.data;
 
         }).fail(function (res) {
