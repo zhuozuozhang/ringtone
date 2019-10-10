@@ -75,7 +75,7 @@ function showTable() {
         targets: [9],
         render: function (data, type, row, meta) {
             data = isNotEmpty(data) ? data : "";
-            return "<div style='text-overflow:ellipsis;overflow:hidden;white-space:nowrap;width:150px;' title='" + data + "'>" + data + "</div>";
+            return "<div style='width:150px;' title='" + data + "'>" + data + "</div>";
         }
     }, {
         targets: [10],

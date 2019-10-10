@@ -54,7 +54,6 @@ public class KedaRingController {
      */
     @PostMapping("getKedaRingList")
     @ResponseBody
-    @Log(title = "铃音刷新", businessType = BusinessType.UPDATE, operatorLogType = OperatorLogType.KEDASITES)
     public AjaxResult getKedaRingList(Page page, BaseRequest baseRequest) throws IOException {
         return kedaRingService.getKedaRingList(page, baseRequest);
     }

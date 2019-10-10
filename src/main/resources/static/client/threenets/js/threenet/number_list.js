@@ -4,7 +4,7 @@ function showTable() {
         "isMonthly": 0,
         "timeType": 0,
         "id": $('#parentOrderId').val(),
-        "telLinkPhone":$('#telLinkPhone').val()
+        "telLinkPhone": $('#telLinkPhone').val()
     }
     var columns = [
         {"data": "id"},
@@ -33,13 +33,13 @@ function showTable() {
             } else if (data == 2) {
                 return '电信'
             } else {
-                return '联通'
+                return row.isExemptSms == 1 ? '联通（免短）' : "联通";
             }
         }
     }, {
         targets: [7],
         render: function (data, type, row, meta) {
-            data = isNotEmpty(data)?data:"";
+            data = isNotEmpty(data) ? data : "";
             return "<div style='text-overflow:ellipsis;overflow:hidden;white-space:nowrap;width:150px;' title='" + data + "'>" + data + "</div>";
         }
     }, {
@@ -74,48 +74,95 @@ function showTable() {
     }, {
         targets: [11],
         render: function (data, type, row, meta) {
-            data = isNotEmpty(data)?data:"";
-            return "<div style='text-overflow:ellipsis;overflow:hidden;white-space:nowrap;width:150px;' title='" + data + "'>" + data + "</div>";
+            data = isNotEmpty(data) ? data : "";
+            return "<div style='width:150px;' title='" + data + "'>" + data + "</div>";
         }
     }, {
         targets: [12],
         render: function (data, type, row, meta) {
+            console.log(row.isExemptSms)
             var id = row.id;
             var operator = row.operator;
             var isMonthly = row.isMonthly;
-            var setRing = "<a href='/threenets/toUserSetingRing/"+id+"/"+operator+"/"+$("#companyName").val()+"/"+$("#parentOrderId").val()+"'><i class='layui-icon layui-icon-set' title='设置铃音'></i></a>";
+            var setRing = "<a href='/threenets/toUserSetingRing/" + id + "/" + operator + "/" + $("#companyName").val() + "/" + $("#parentOrderId").val() + "'><i class='layui-icon layui-icon-set' title='设置铃音'></i></a>";
             var refresh = "<i onclick='getPhoneInfo(2," + id + ")' class='layui-icon layui-icon-refresh-3' title='刷新'></i>";
             var note = "<i onclick='sendMessage(2,1," + id + ");' class='layui-icon' title='下发短信'><img src='../../client/threenets/images/message.png'></i>";
             var linkNote = "<i onclick='sendMessage(2,2," + id + ");' class='layui-icon' title='下发链接短信'><img src='../../client/threenets/images/link.png'></i>";
             var del = "<i class='layui-icon layui-icon-delete' title='删除' onclick='deleteTel(" + id + ")'></i>";
+            if (row.isExemptSms){
+                var open  = "<i onclick='openingBusiness(" + id + ");' class='layui-icon layui-icon-auz' title='开通业务'></i>"
+                return refresh +open+ (isMonthly == 2 ? setRing : '')  + del;
+            }
             return refresh + (isMonthly != 2 ? note : '') + (isMonthly == 2 ? setRing : '') + (operator == 3 && isMonthly == 1 ? linkNote : '') + del;
         }
     }];
     page("#set", 15, params, "/threenets/getThreeNetsTaskList", columns, columnDefs);
 }
 
+function refreshRingStatus(id) {
+    refresh("/threenets/refreshUserStatus/ring", id);
+}
+
+function refreshMonthlyStatus(id) {
+    refresh("/threenets/refreshUserStatus/monthly", id);
+}
+
+function refreshVideoRingStatus(id) {
+    refresh("/threenets/refreshUserStatus/videoRing", id);
+}
+
+function refreshStatus(id) {
+    refresh("/threenets/refreshUserStatus/alone", id);
+}
+
+function batchRefresh() {
+    refresh("/threenets/refreshUserStatus/all", $('#parentOrderId').val());
+}
+
+function openingBusiness(id) {
+    AjaxPut("/threenets/openingBusiness/"+id, {}, function (res) {
+        if (res.code == 200 && res.data) {
+            layer.msg('更新成功！', {icon: 6, time: 3000});
+            $("#set").DataTable().ajax.reload(null, false);
+        } else {
+            layer.msg(res.msg, {icon: 5, time: 3000});
+        }
+    });
+}
+
+function refresh(url, id) {
+    AjaxPut(url, {}, function (res) {
+        if (res.code == 200 && res.data) {
+            layer.msg('更新成功！', {icon: 6, time: 3000});
+            $("#set").DataTable().ajax.reload(null, false);
+        } else {
+            layer.msg(res.msg, {icon: 5, time: 3000});
+        }
+    });
+}
+
 // 获取号码信息 批量刷新、彩铃功能、企业彩铃以及操作刷新都使用此方法
 // type 标识是否是批量操作 1、批量操作/2、单个操作
 // data 数据 type为1时，data为父级订单ID；type为2时，data为子订单ID
-function getPhoneInfo(type,data) {
-    if (type == 1){
-        data  = $('#parentOrderId').val();
+function getPhoneInfo(type, data) {
+    if (type == 1) {
+        data = $('#parentOrderId').val();
     }
     AjaxPut("/threenets/getPhoneInfo", {
-        data:data,
-        type:type
+        data: data,
+        type: type
     }, function (res) {
         if (res.code == 200 && res.data) {
             layer.msg('更新成功！', {icon: 6, time: 3000});
             $("#set").DataTable().ajax.reload(null, false);
             setTimeout(function () {
                 window.location.reload();
-            },2000);
+            }, 2000);
         } else {
             layer.msg(res.msg, {icon: 5, time: 3000});
             setTimeout(function () {
                 window.location.reload();
-            },2000);
+            }, 2000);
         }
     });
 }
@@ -139,7 +186,7 @@ function addUser() {
         type: 2,
         title: '添加号码',
         area: ['650px', '650px'],
-        content: '/threenets/toAddMerchantsPhonePage/'+orderId
+        content: '/threenets/toAddMerchantsPhonePage/' + orderId
     });
 }
 
@@ -150,11 +197,11 @@ function batch() {
         title: '批量下发短信',
         area: ['500px', '300px'],
         content: "<div class='sendMes'>" +
-        "<input type='button' class='btn btn-primary' value='给所有未包月用户下发短信' id='SMS' onclick='sendMessage(1,1,);'>" +
-        "<span>(运营商下的所有未包月用户)</span></br></br></br></br>" +
-        "<input type='button' class='btn btn-primary' value='给所有未包月用户下发链接短信' id='links' onclick='sendMessage(1,2,);'>" +
-        "<span>(仅联通下的所有未包月用户)</span>" +
-        "</div>"
+            "<input type='button' class='btn btn-primary' value='给所有未包月用户下发短信' id='SMS' onclick='sendMessage(1,1,);'>" +
+            "<span>(运营商下的所有未包月用户)</span></br></br></br></br>" +
+            "<input type='button' class='btn btn-primary' value='给所有未包月用户下发链接短信' id='links' onclick='sendMessage(1,2,);'>" +
+            "<span>(仅联通下的所有未包月用户)</span>" +
+            "</div>"
     });
 }
 

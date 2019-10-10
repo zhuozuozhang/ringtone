@@ -61,7 +61,8 @@ public class AsyncConfig {
         try {
             log.info("日志添加到数据库开始====================");
             // 远程查询操作地点
-            operateLog.setOperateLogLocation(AddressUtils.getRealAddressByIP(operateLog.getIpAddress()));
+            //operateLog.setOperateLogLocation(AddressUtils.getRealAddressByIP(operateLog.getIpAddress()));
+            operateLog.setOperateLogLocation("--");
             boolean b = SpringUtils.getBean(OperateLogService.class).insertOperateLog(operateLog);
             log.info("日志添加到数据库结束，结果：===================="+b);
         } catch (BeansException e) {

@@ -337,7 +337,6 @@ public class MiguApi implements Serializable {
 
     /**
      * 查看企业彩铃状态
-     * （废弃 使用getPhoneInfo替代）
      *
      * @param msisdn
      * @return
@@ -354,7 +353,6 @@ public class MiguApi implements Serializable {
 
     /**
      * 查看包月状态
-     * （废弃 使用getPhoneInfo替代）
      *
      * @param msisdn
      * @return
@@ -389,6 +387,13 @@ public class MiguApi implements Serializable {
         String getUrl = getPhonePage_url + "?provinceCode=&phoneNoOrName=" + linkmanTel + "&groupId=" + operateId + "&groupName=&freezeStatus=-1&payType=0&pageView.currentpage=1";
         String result = sendGet(getUrl);
         log.info("移动获取铃音列表页面 参数：{},{} 结果：{}--->", linkmanTel, operateId, result);
+        return result;
+    }
+
+    public String updatePhoneInfo(String tel,String operateId) throws NoLoginException ,IOException{
+        String getUrl = getPhonePage_url + "?provinceCode=&phoneNoOrName=" + tel + "&groupId=" + operateId + "&groupName=&freezeStatus=-1&payType=0&pageView.currentpage=1";
+        String result = sendGet(getUrl);
+        log.info("移动获取铃音列表页面 参数：{},{} 结果：{}--->", tel, operateId, result);
         return result;
     }
 

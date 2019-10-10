@@ -180,9 +180,17 @@ public final class Const implements Serializable {
      */
     public static final String EXAMINE_RESULT = "80001003";
 
+    public static final String UPDATE_STATUS_RING = "ring";
+    public static final String UPDATE_STATUS_VIDEO_RING = "videoRing";
+    public static final String UPDATE_STATUS_ALL = "all";
+    public static final String UPDATE_STATUS_MONTHLY = "monthly";
+    public static final String UPDATE_STATUS_ALONE = "alone";
 
     public static final String SESSION_VERIFICATION_CODE = "session_verification_code";
 
+
+    public static final Integer IS_EXEMPT_SMS_YES = 1;
+    public static final Integer IS_EXEMPT_SMS_NO = 0;
 
 
 }
