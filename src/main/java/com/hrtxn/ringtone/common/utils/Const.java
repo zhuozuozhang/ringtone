@@ -181,5 +181,8 @@ public final class Const implements Serializable {
     public static final String EXAMINE_RESULT = "80001003";
 
 
+    public static final String SESSION_VERIFICATION_CODE = "session_verification_code";
+
+
 
 }

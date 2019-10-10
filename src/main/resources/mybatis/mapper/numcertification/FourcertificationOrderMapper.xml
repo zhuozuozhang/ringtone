@@ -67,22 +67,26 @@
   </resultMap>
 
   <sql id="Base_Column_List" >
-    id, user_id, create_time, provider, apply_number, combo_pattern, price, age_limit, 
-    company_name, user_province, user_city, other_link_mobile, other_link_phone, other_link_email, 
-    other_bind_phone, other_valid_phone, legal_card_url, operator_card_url, corp_society_no, 
-    corp_business_scope, corp_company_city, corp_company_province, corp_company_detail, 
-    corp_office_province, corp_office_city, corp_office_detail, corp_nunmber_usage, corp_account_type, 
-    corp_bank_name, corp_bank_no, legal_name, legal_identity_id, legal_effective, legal_long_effective, 
-    legal_handler_name, legal_handler_identity_id, legal_handler_effective, legal_handler_long_effective, 
-    legal_address, legal_handler_address, yyzz, khxkz, frsfz, frsq, jbrsfz, jbrsq, jffp, 
-    sld, fwxy, aqcns, scsfz, jyyczm, ccyyzz, dxxy, gswjt, qt, status,del_flag,availability,template_url,remarks,task_id
+    a.id, a.user_id, a.create_time, a.provider, a.apply_number, a.combo_pattern, a.price, a.age_limit,
+    a.company_name, a.user_province, a.user_city, a.other_link_mobile, a.other_link_phone, a.other_link_email,
+    a.other_bind_phone, a.other_valid_phone, a.legal_card_url, a.operator_card_url, a.corp_society_no,
+    a.corp_business_scope, a.corp_company_city, a.corp_company_province, a.corp_company_detail,
+    a.corp_office_province, a.corp_office_city, a.corp_office_detail, a.corp_nunmber_usage, a.corp_account_type,
+    a.corp_bank_name, a.corp_bank_no, a.legal_name, a.legal_identity_id, a.legal_effective, a.legal_long_effective,
+    a.legal_handler_name, a.legal_handler_identity_id, a.legal_handler_effective, a.legal_handler_long_effective,
+    a.legal_address, a.legal_handler_address, a.yyzz, a.khxkz, a.frsfz, a.frsq, a.jbrsfz, a.jbrsq, a.jffp,
+    a.sld, a.fwxy, a.aqcns, a.scsfz, a.jyyczm, a.ccyyzz, a.dxxy, a.gswjt, a.qt, a.status,a.del_flag,a.availability,a.template_url,a.remarks,a.task_id
   </sql>
 
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
     select 
-    <include refid="Base_Column_List" />
-    from tb_fourcertification_order
-    where id = #{id,jdbcType=BIGINT}
+    <include refid="Base_Column_List" />,
+    p.name as "province",
+    c.name as "city"
+    from tb_fourcertification_order a
+    left join sys_area p on p.fourid = a.user_province and p.type = 'province'
+    left join sys_area c on c.fourid = a.user_city and c.type = 'city'
+    where a.id = #{id,jdbcType=BIGINT}
   </select>
 
 
@@ -90,24 +94,32 @@
 
   <select id="getOrderByApplyNumber" resultMap="BaseResultMap" parameterType="java.lang.Long" >
     select
-    <include refid="Base_Column_List" />
-    from tb_fourcertification_order
-    where apply_number = #{applyNumber} and availability = '1'
+    <include refid="Base_Column_List" />,
+    p.name as "province",
+    c.name as "city"
+    from tb_fourcertification_order a
+    left join sys_area p on p.fourid = a.user_province and p.type = 'province'
+    left join sys_area c on c.fourid = a.user_city and c.type = 'city'
+    where a.apply_number = #{applyNumber} and a.availability = '1'
   </select>
 
 
   <select id="queryOrderPage" resultMap="BaseResultMap">
     select
-    <include refid="Base_Column_List"/>
-    from tb_fourcertification_order
+    <include refid="Base_Column_List"/>,
+    p.name as "province",
+    c.name as "city"
+    from tb_fourcertification_order a
+    left join sys_area p on p.fourid = a.user_province and p.type = 'province'
+    left join sys_area c on c.fourid = a.user_city and c.type = 'city'
     where 1 = 1
     <if test="param != null and param.id != null">
-      AND id = #{param.id}
+      AND a.id = #{param.id}
     </if>
     <if test="param != null and param.userId != null">
-      AND user_id = #{param.userId}
+      AND a.user_id = #{param.userId}
     </if>
-    ORDER BY create_time DESC
+    ORDER BY a.create_time DESC
     <if test="page != null and page.page != null and page.pagesize != null">
       LIMIT #{page.page},#{page.pagesize}
     </if>
@@ -116,13 +128,13 @@
   <select id="getCount"  resultType="java.lang.Integer">
     select
     count(1)
-    from tb_fourcertification_order
+    from tb_fourcertification_order a
     where 1 = 1
     <if test="param != null and param.id != null">
-      AND id = #{param.id}
+      AND a.id = #{param.id}
     </if>
     <if test="param != null and param.userId != null">
-      AND user_id = #{param.userId}
+      AND a.user_id = #{param.userId}
     </if>
 
   </select>
