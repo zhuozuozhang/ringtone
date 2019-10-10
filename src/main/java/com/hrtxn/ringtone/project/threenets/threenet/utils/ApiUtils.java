@@ -22,6 +22,7 @@ import com.hrtxn.ringtone.project.threenets.threenet.json.migu.*;
 import com.hrtxn.ringtone.project.threenets.threenet.json.swxl.*;
 import com.hrtxn.ringtone.project.threenets.threenet.mapper.ThreeNetsOrderAttachedMapper;
 import com.hrtxn.ringtone.project.threenets.threenet.mapper.ThreenetsChildOrderMapper;
+import com.hrtxn.ringtone.project.threenets.threenet.mapper.ThreenetsOrderMapper;
 import com.hrtxn.ringtone.project.threenets.threenet.mapper.ThreenetsRingMapper;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.json.JSONObject;
@@ -510,10 +511,15 @@ public class ApiUtils {
      * @return
      */
     public AjaxResult sendMessage(List<ThreenetsChildOrder> threenetsChildOrderList, Integer flag) throws IOException, NoLoginException {
-        String msg = "发送成功！";
         String msg2 = "错误信息：";
+        String telErrorMessage = "";
         int failure = 0; // 发送失败数量
         for (ThreenetsChildOrder t : threenetsChildOrderList) {
+            if (t.getStatus().equals(Const.FAILURE_REVIEW)) {
+
+                telErrorMessage = "[" + t.getLinkmanTel() + ":发送失败，号码已存在，请先删除咪咕记录！]";
+                continue;
+            }
             if (flag == 1) {
                 if (t.getOperator() == 1) { // 移动普通短信
                     miguApi.remindOrderCrbtAndMonth(t.getLinkmanTel(), t.getOperateOrderId(), t.getOperateId(), false);
@@ -543,9 +549,9 @@ public class ApiUtils {
             }
         }
         if (failure == 0) {
-            return AjaxResult.success(true, msg);
+            return AjaxResult.success(true, "发送成功！"+telErrorMessage);
         } else {
-            return AjaxResult.success(false, msg2);
+            return AjaxResult.success(false, msg2 + telErrorMessage);
         }
     }
 
@@ -1313,15 +1319,18 @@ public class ApiUtils {
      * 联通 添加成员
      *
      * @param childOrder
-     * @param circleId
+     * @param attached
      * @return
      * @throws IOException
      * @throws NoLoginException
      */
-    public SwxlBaseBackMessage addPhoneByLt(ThreenetsChildOrder childOrder, String circleId) throws IOException, NoLoginException {
-        return swxlApi.addPhone(childOrder.getLinkmanTel(), circleId);
+    public SwxlBaseBackMessage addPhoneByLt(ThreenetsChildOrder childOrder, ThreeNetsOrderAttached attached) throws NoLoginException {
+        if (StringUtils.isNotEmpty(attached.getAvoidShortAgreement())){
+            return swxlApi.addPhoneBy2B(childOrder.getLinkmanTel(), attached.getSwxlId(),attached.getAvoidShortAgreement());
+        }else {
+            return swxlApi.addPhone(childOrder.getLinkmanTel(), attached.getSwxlId());
+        }
     }
-
     /**
      * 电信添加成员
      *
@@ -1588,8 +1597,8 @@ public class ApiUtils {
      * @param childOrder
      * @return
      */
-    public ThreenetsChildOrder refreshRingStatus(ThreenetsChildOrder childOrder){
-        try{
+    public ThreenetsChildOrder refreshRingStatus(ThreenetsChildOrder childOrder) {
+        try {
             //移动
             if (childOrder.getOperator() == 1 && StringUtils.isNotEmpty(childOrder.getLinkmanTel())) {
                 miguApi.refreshCrbtStatus(childOrder.getLinkmanTel());
@@ -1613,17 +1622,17 @@ public class ApiUtils {
             if (childOrder.getOperator() == 3 && StringUtils.isNotEmpty(childOrder.getLinkmanTel())) {
 
             }
-        }catch(IOException e) {
-            log.info("刷新彩铃开通状态IO异常",e);
-        }catch (NoLoginException e){
-            log.info("刷新彩铃开通状态登录异常",e);
-        }finally {
+        } catch (IOException e) {
+            log.info("刷新彩铃开通状态IO异常", e);
+        } catch (NoLoginException e) {
+            log.info("刷新彩铃开通状态登录异常", e);
+        } finally {
             return childOrder;
         }
     }
 
-    public ThreenetsChildOrder refreshVideoRingStatus(ThreenetsChildOrder childOrder){
-        try{
+    public ThreenetsChildOrder refreshVideoRingStatus(ThreenetsChildOrder childOrder) {
+        try {
             //移动
             if (childOrder.getOperator() == 1 && StringUtils.isNotEmpty(childOrder.getLinkmanTel())) {
                 miguApi.refreshVbrtStatus(childOrder.getLinkmanTel());
@@ -1647,17 +1656,17 @@ public class ApiUtils {
             if (childOrder.getOperator() == 3 && StringUtils.isNotEmpty(childOrder.getLinkmanTel())) {
 
             }
-        }catch(IOException e) {
-            log.info("刷新彩铃开通状态IO异常",e);
-        }catch (NoLoginException e){
-            log.info("刷新彩铃开通状态登录异常",e);
-        }finally {
+        } catch (IOException e) {
+            log.info("刷新彩铃开通状态IO异常", e);
+        } catch (NoLoginException e) {
+            log.info("刷新彩铃开通状态登录异常", e);
+        } finally {
             return childOrder;
         }
     }
 
-    public ThreenetsChildOrder refreshMonthlyStatus(ThreenetsChildOrder childOrder){
-        try{
+    public ThreenetsChildOrder refreshMonthlyStatus(ThreenetsChildOrder childOrder) {
+        try {
             //移动
             if (childOrder.getOperator() == 1 && StringUtils.isNotEmpty(childOrder.getLinkmanTel())) {
                 miguApi.refreshIsMonthly(childOrder.getLinkmanTel());
@@ -1683,17 +1692,17 @@ public class ApiUtils {
             if (childOrder.getOperator() == 3 && StringUtils.isNotEmpty(childOrder.getLinkmanTel())) {
 
             }
-        }catch(IOException e) {
-            log.info("刷新彩铃开通状态IO异常",e);
-        }catch (NoLoginException e){
-            log.info("刷新彩铃开通状态登录异常",e);
-        }finally {
+        } catch (IOException e) {
+            log.info("刷新彩铃开通状态IO异常", e);
+        } catch (NoLoginException e) {
+            log.info("刷新彩铃开通状态登录异常", e);
+        } finally {
             return childOrder;
         }
     }
 
-    public ThreenetsChildOrder refreshAloneStatus(ThreenetsChildOrder childOrder){
-        try{
+    public ThreenetsChildOrder refreshAloneStatus(ThreenetsChildOrder childOrder) {
+        try {
             //移动
             if (childOrder.getOperator() == 1 && StringUtils.isNotEmpty(childOrder.getLinkmanTel())) {
                 miguApi.refreshCrbtStatus(childOrder.getLinkmanTel());
@@ -1743,12 +1752,37 @@ public class ApiUtils {
             if (childOrder.getOperator() == 3 && StringUtils.isNotEmpty(childOrder.getLinkmanTel())) {
 
             }
-        }catch(IOException e) {
-            log.info("刷新彩铃开通状态IO异常",e);
-        }catch (NoLoginException e){
-            log.info("刷新彩铃开通状态登录异常",e);
-        }finally {
+        } catch (IOException e) {
+            log.info("刷新彩铃开通状态IO异常", e);
+        } catch (NoLoginException e) {
+            log.info("刷新彩铃开通状态登录异常", e);
+        } finally {
             return childOrder;
+        }
+    }
+
+    /**
+     * 免短商户开通业务
+     *
+     * @param childOrder
+     * @return
+     */
+    public AjaxResult openingBusiness(ThreenetsChildOrder childOrder) {
+        String message = "开通业务成功!";
+        try {
+            String result = swxlApi.remindOrderCrbtAndMonth(childOrder.getLinkmanTel(), childOrder.getOperateId(), false);
+            if (StringUtils.isNotEmpty(result)) {
+                SwxlPubBackData info = (SwxlPubBackData) JsonUtil.getObject4JsonString(result, SwxlPubBackData.class);
+                if (!"000000".equals(info.getRecode()) || !info.isSuccess()) {
+                    message = "开通业务失败!";
+                }
+            }
+        } catch (IOException e) {
+            log.info("刷新彩铃开通状态IO异常", e);
+        } catch (NoLoginException e) {
+            log.info("刷新彩铃开通状态登录异常", e);
+        } finally {
+            return AjaxResult.success(message);
         }
     }
 }

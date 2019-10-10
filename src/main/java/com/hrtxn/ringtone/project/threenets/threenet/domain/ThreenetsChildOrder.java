@@ -42,6 +42,8 @@ public class ThreenetsChildOrder implements Serializable {
     private Boolean isRingtoneUser;
     // 是否回复短信（0.否/1.是）
     private Boolean isReplyMessage;
+    // 是否免短用户 联通专属 0.否/1.是
+    private Integer isExemptSms;
     // 所在省
     private String province;
     // 所在市

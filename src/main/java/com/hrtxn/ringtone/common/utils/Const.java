@@ -189,5 +189,8 @@ public final class Const implements Serializable {
     public static final String SESSION_VERIFICATION_CODE = "session_verification_code";
 
 
+    public static final Integer IS_EXEMPT_SMS_YES = 1;
+    public static final Integer IS_EXEMPT_SMS_NO = 0;
+
 
 }

@@ -18,6 +18,7 @@
         <result column="is_video_user" property="isVideoUser" jdbcType="BIT"/>
         <result column="is_ringtone_user" property="isRingtoneUser" jdbcType="BIT"/>
         <result column="is_reply_message" property="isReplyMessage" jdbcType="BIT"/>
+        <result column="is_exempt_sms" property="isExemptSms" jdbcType="INTEGER"/>
         <result column="province" property="province" jdbcType="VARCHAR"/>
         <result column="city" property="city" jdbcType="VARCHAR"/>
         <result column="operator" property="operator" jdbcType="INTEGER"/>
@@ -27,7 +28,7 @@
 
     <sql id="Base_Column_List">
         id, linkman, linkman_tel, status, create_date, ring_name, ring_id, parent_order_id,operate_order_id,payment_type,
-        operate_id, is_monthly, is_video_user, is_ringtone_user, is_reply_message, province,city, operator, user_id,remark
+        operate_id, is_monthly, is_video_user, is_ringtone_user, is_reply_message, is_exempt_sms, province,city, operator, user_id,remark
     </sql>
     <!--管理端首页  根据条件获取子账号数量-->
     <select id="getPhoneCount" resultType="int">
@@ -202,6 +203,9 @@
             <if test="isReplyMessage != null">
                 is_reply_message,
             </if>
+            <if test="isExemptSms != null">
+                is_exempt_sms,
+            </if>
             <if test="province != null">
                 province,
             </if>
@@ -257,6 +261,9 @@
             </if>
             <if test="isReplyMessage != null">
                 #{isReplyMessage,jdbcType=BIT},
+            </if>
+            <if test="isExemptSms != null">
+                #{isExemptSms,jdbcType=INTEGER},
             </if>
             <if test="province != null">
                 #{province,jdbcType=VARCHAR},
@@ -321,6 +328,9 @@
             <if test="isReplyMessage != null">
                 is_reply_message = #{isReplyMessage,jdbcType=BIT},
             </if>
+            <if test="isExemptSms != null">
+                is_exempt_sms = #{isExemptSms,jdbcType=INTEGER},
+            </if>
             <if test="province != null">
                 province = #{province,jdbcType=VARCHAR},
             </if>
@@ -360,13 +370,13 @@
     <!-- 批量添加子订单 -->
     <insert id="batchChindOrder" parameterType="java.util.List">
         insert into tb_threenets_child_order
-        (linkman, linkman_tel, status, create_date, ring_name, ring_id, parent_order_id,operate_order_id,operate_id,payment_type, is_monthly, is_video_user, is_ringtone_user, is_reply_message, province,city, operator, user_id,remark)
+        (linkman, linkman_tel, status, create_date, ring_name, ring_id, parent_order_id,operate_order_id,operate_id,payment_type, is_monthly, is_video_user, is_ringtone_user, is_reply_message, is_exempt_sms,province,city, operator, user_id,remark)
         values
         <foreach collection="list" item="child" index="index" separator=",">
             (
             #{child.linkman}, #{child.linkmanTel},#{child.status},#{child.createDate},#{child.ringName},
             #{child.ringId},#{child.parentOrderId},#{child.operateOrderId},#{child.operateId},#{child.paymentType},#{child.isMonthly},
-            #{child.isVideoUser},#{child.isRingtoneUser},#{child.isReplyMessage},#{child.province},
+            #{child.isVideoUser},#{child.isRingtoneUser},#{child.isReplyMessage},#{child.isExemptSms},#{child.province},
             #{child.city}, #{child.operator}, #{child.userId}, #{child.remark}
             )
         </foreach>

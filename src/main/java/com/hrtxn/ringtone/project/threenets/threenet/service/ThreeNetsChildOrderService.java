@@ -614,4 +614,22 @@ public class ThreeNetsChildOrderService {
             return AjaxResult.success("更新完成！");
         }
     }
+
+    /**
+     * 免短商户开通业务
+     *
+     * @param id
+     * @return
+     * @throws Exception
+     */
+    public AjaxResult openingBusiness(Integer id) throws Exception{
+        if (StringUtils.isNull(id) || id == 0) {
+            return AjaxResult.error("查询不到数据！");
+        }
+        ThreenetsChildOrder threenetsChildOrder = threenetsChildOrderMapper.selectByPrimaryKey(id);
+        if (threenetsChildOrder == null){
+            return AjaxResult.error("查询不到数据！");
+        }
+        return apiUtils.openingBusiness(threenetsChildOrder);
+    }
 }

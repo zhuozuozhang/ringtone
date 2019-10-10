@@ -726,7 +726,7 @@ public class SwxlApi implements Serializable {
      * @throws IOException
      * @throws NoLoginException
      */
-    public SwxlBaseBackMessage addPhone(String members, String groupId) throws IOException, NoLoginException {
+    public SwxlBaseBackMessage addPhone(String members, String groupId) throws NoLoginException {
         String result = null;
         SwxlBaseBackMessage<SwxlAddPhoneNewResult> info = null;
         DefaultHttpClient httpclient = WebClientDevWrapper.wrapClient(new DefaultHttpClient());
@@ -738,6 +738,50 @@ public class SwxlApi implements Serializable {
         try {
             UrlEncodedFormEntity entity = new UrlEncodedFormEntity(formparams, "utf-8");
             httppost.setEntity(entity);
+            HttpResponse response = httpclient.execute(httppost);
+            HttpEntity resEntity = response.getEntity();
+            result = EntityUtils.toString(resEntity);
+            //{"recode":"200015","message":"成员属于其他企业,无法操作","data":null,"success":false}
+            info = SpringUtils.getBean(ObjectMapper.class).readValue(result, SwxlBaseBackMessage.class);
+            System.out.println("result:" + result);
+        } catch (Exception e) {
+            System.out.println(e);
+        } finally {
+            httppost.abort();
+            httpclient.getConnectionManager().shutdown();
+        }
+        return info;
+    }
+
+    /**
+     * 添加成员信息，免短专用
+     * @param members
+     * @param groupId
+     * @param avoidShortAgreement
+     * @return
+     * @throws NoLoginException
+     */
+    public SwxlBaseBackMessage addPhoneBy2B(String members, String groupId,String avoidShortAgreement) throws NoLoginException {
+        String result = null;
+        SwxlBaseBackMessage<SwxlAddPhoneNewResult> info = null;
+        DefaultHttpClient httpclient = WebClientDevWrapper.wrapClient(new DefaultHttpClient());
+        HttpPost httppost = new HttpPost(ADD_PHONE_URL);
+        httpclient.setCookieStore(this.getCookieStore());
+        try {
+            MultipartEntity reqEntity = new MultipartEntity();
+            HttpParams params = httpclient.getParams();
+            params.setParameter(CoreProtocolPNames.HTTP_CONTENT_CHARSET, Charset.forName("UTF-8"));
+            reqEntity.addPart("groupId", new StringBody(groupId, Charset.forName("UTF-8")));// 集团名称
+            reqEntity.addPart("msisdns", new StringBody(members, Charset.forName("UTF-8")));//
+            String[] split = avoidShortAgreement.split(";");
+            for (int i = 0; i < split.length; i++) {
+                if (StringUtils.isEmpty(split[i])){
+                    continue;
+                }
+                File file = new File(RingtoneConfig.getProfile() + split[i]);
+                reqEntity.addPart("smsFile", new FileBody(file));
+            }
+            httppost.setEntity(reqEntity);
             HttpResponse response = httpclient.execute(httppost);
             HttpEntity resEntity = response.getEntity();
             result = EntityUtils.toString(resEntity);

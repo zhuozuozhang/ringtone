@@ -400,4 +400,24 @@ public class ThreeNetsChildOrderController {
             log.info("刷新彩铃开通状态，共耗时 -- >" + (System.currentTimeMillis() - startTime) + "ms");
         }
     }
+
+    /**
+     * 刷新用户状态
+     *
+     * @param id
+     * @return
+     */
+    @PutMapping("/threenets/openingBusiness/{id}")
+    @ResponseBody
+    public AjaxResult openingBusiness(@PathVariable Integer id) {
+        long startTime = System.currentTimeMillis();//获取当前时间
+        try {
+            return threeNetsChildOrderService.openingBusiness(id);
+        } catch (Exception e) {
+            log.error("刷新彩铃开通状态 方法：refreshRingStatus 错误信息", e);
+            return AjaxResult.error("更新数据失败！");
+        } finally {
+            log.info("刷新彩铃开通状态，共耗时 -- >" + (System.currentTimeMillis() - startTime) + "ms");
+        }
+    }
 }
