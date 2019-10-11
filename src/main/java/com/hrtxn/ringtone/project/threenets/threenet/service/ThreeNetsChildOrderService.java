@@ -196,20 +196,21 @@ public class ThreeNetsChildOrderService {
      * @param phones
      */
     public List<ThreenetsChildOrder> formattedPhone(String phones, Integer orderId) throws Exception {
-        //换行符----
-        String regNR = "\n\r";
-        String regN = "\n";
-        String regR = "\r";
         //将手机号转为数组
-        phones = phones.replace(regNR, "br").replace(regR, "br").replace(regN, "br");
+        phones = phones.replace("\n\r", "br").replace("\r", "br").replace("\n", "br");
         String[] phoneArray = phones.split("br");
-
         List<ThreenetsChildOrder> list = new ArrayList<>();
         for (String tel : phoneArray) {
+            //去除空格
             tel = tel.replace(" ", "");
             ThreenetsChildOrder childOrder = new ThreenetsChildOrder();
             if (tel.isEmpty()) {
                 continue;
+            }
+            if (tel.contains("-")) {
+                String number = tel.substring(tel.indexOf("-") + 1);
+                String areaCode = tel.substring(0, tel.indexOf("-"));
+                tel = areaCode + number;
             }
             childOrder.setLinkmanTel(tel);
             if (orderId != null) {
@@ -595,7 +596,7 @@ public class ThreeNetsChildOrderService {
         } else {
             //查询单独
             ThreenetsChildOrder threenetsChildOrder = threenetsChildOrderMapper.selectByPrimaryKey(id);
-            if (threenetsChildOrder == null){
+            if (threenetsChildOrder == null) {
                 return AjaxResult.error("查询不到数据！");
             }
             if (type.equals(Const.UPDATE_STATUS_RING)) {
@@ -622,12 +623,12 @@ public class ThreeNetsChildOrderService {
      * @return
      * @throws Exception
      */
-    public AjaxResult openingBusiness(Integer id) throws Exception{
+    public AjaxResult openingBusiness(Integer id) throws Exception {
         if (StringUtils.isNull(id) || id == 0) {
             return AjaxResult.error("查询不到数据！");
         }
         ThreenetsChildOrder threenetsChildOrder = threenetsChildOrderMapper.selectByPrimaryKey(id);
-        if (threenetsChildOrder == null){
+        if (threenetsChildOrder == null) {
             return AjaxResult.error("查询不到数据！");
         }
         return apiUtils.openingBusiness(threenetsChildOrder);

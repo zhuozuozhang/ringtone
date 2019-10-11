@@ -368,6 +368,13 @@ public class ThreeNetsAsyncService {
                 if (ringRespone.isSuccess()) {
                     ring.setOperateRingId(ringRespone.getRingId());
                     fileService.updateStatus(ring.getRingWay());
+                    if (ring.getRingType().equals("视频")){
+                        String extensionsName = ring.getRingName().substring(ring.getRingName().indexOf("."));
+                        String ringName = ring.getRingName().substring(0,ring.getRingName().lastIndexOf("."));
+                        String month = DateUtils.getMonth() < 10 ? "0" : "";
+                        String time = "_" + DateUtils.getYear() + month + DateUtils.getMonth();
+                        ring.setRingName(ringName+time+extensionsName);
+                    }
                 }
                 ring.setRemark(ringRespone.getMsg());
                 threenetsRingMapper.updateByPrimaryKeySelective(ring);

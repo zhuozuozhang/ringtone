@@ -441,7 +441,7 @@ public class ApiUtils {
     public McardAddGroupRespone normalBusinessInfo(ThreenetsOrder order) {
         McardAddGroupRespone respone = new McardAddGroupRespone();
         ThreeNetsOrderAttached attached = SpringUtils.getBean(ThreeNetsOrderAttachedMapper.class).selectByParentOrderId(order.getId());
-        String result = mcardApi.refreshBusinessInfo(order, attached.getMcardDistributorId());
+        String result = mcardApi.refreshBusinessInfo(order.getCompanyName(), attached.getMcardDistributorId());
         if (StringUtils.isNotEmpty(result)) {
             Document doc = Jsoup.parse(result);
             Elements contents = doc.getElementsByTag("tbody");
@@ -638,6 +638,9 @@ public class ApiUtils {
                 ThreeNetsOrderAttached attached = SpringUtils.getBean(ThreeNetsOrderAttachedMapper.class).selectByParentOrderId(threenetsRing.getOrderId());
                 mcardApi.toUserList(threenetsRing.getOperateId(), attached.getMcardDistributorId());
                 String result = mcardApi.getRingInfo(attached.getMcardDistributorId());
+                if (StringUtils.isEmpty(result)){
+                    break;
+                }
                 Document doc = Jsoup.parse(result);
                 Elements contents = doc.getElementsByTag("tbody");
                 Elements trs = contents.get(0).getElementsByTag("tr");

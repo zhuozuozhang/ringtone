@@ -46,6 +46,7 @@ public final class Const implements Serializable {
      */
     public final static String ILLEFAL_AREA = "illegal_area";
     public final static String NUMBER_REPEAT = "number_repeat";
+    public final static String TIME_OUT = "time_out";
 
     /**
      * 电信资费

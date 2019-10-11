@@ -139,7 +139,12 @@ public class FileService {
             } else {
                 fileName = ring.getRingName();
             }
-            String folderName = ring.getRingWay().substring(ring.getRingWay().indexOf("\\") + 1, ring.getRingWay().lastIndexOf("\\"));
+            String folderName;
+            if (ring.getRingWay().lastIndexOf("\\") == -1){
+                folderName = ring.getRingWay().substring(ring.getRingWay().indexOf("/") + 1, ring.getRingWay().lastIndexOf("/"));
+            }else{
+                folderName = ring.getRingWay().substring(ring.getRingWay().indexOf("\\") + 1, ring.getRingWay().lastIndexOf("\\"));
+            }
             return FileUtil.uploadFile(multipartFile, folderName, fileName);
         } catch (Exception e) {
             return null;

@@ -14,12 +14,18 @@ import com.hrtxn.ringtone.project.threenets.threenet.json.mcard.McardAddPhoneRes
 import com.hrtxn.ringtone.project.threenets.threenet.json.mcard.McardPhoneAddressRespone;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.json.JSONArray;
+import net.sf.json.JSONException;
 import net.sf.json.JSONObject;
 import okhttp3.*;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.SocketTimeoutException;
 import java.util.*;
 
 /**
@@ -97,6 +103,9 @@ public class McardApi {
         try {
             Response response = client.newCall(request).execute();
             result = response.body().string();
+        }catch (SocketTimeoutException e){
+            result = Const.TIME_OUT;
+            log.info("POST请求失败：" + e);
         } catch (IOException e) {
             log.info("POST请求失败：" + e);
         }
@@ -156,18 +165,18 @@ public class McardApi {
     /**
      * 获取信息
      *
-     * @param order
+     * @param companyName
      * @return
      */
-    public String refreshBusinessInfo(ThreenetsOrder order, String distributorId) {
+    public String refreshBusinessInfo(String companyName, String distributorId) {
         Map<String, String> map = new HashMap<>();
         map.put("pageSize", "100");
         map.put("pageNo", "1");
         map.put("auserParent", "61203");
         map.put("startTime", DateUtils.getPastDate(7));
         map.put("endTime", DateUtils.getFetureDate(1));
-        if (order.getCompanyName() != null) {
-            map.put("auserName", order.getCompanyName());
+        if (StringUtils.isNotEmpty(companyName)) {
+            map.put("auserName",companyName);
         }
         return sendPost(map, normal_list, distributorId);
     }
@@ -323,6 +332,25 @@ public class McardApi {
             map.put("auserFilePath", attached.getConfirmLetter());
             map.put("auserCardidPath", attached.getSubjectProve() == null ? "" : attached.getSubjectProve());
             String result = sendPost(map, add_user_url, attached.getMcardDistributorId());
+            if (result.equals(Const.TIME_OUT)){
+                result = refreshBusinessInfo(order.getCompanyName(), attached.getMcardDistributorId());
+                if (StringUtils.isNotEmpty(result)) {
+                    Document doc = Jsoup.parse(result);
+                    Elements contents = doc.getElementsByTag("tbody");
+                    Elements trs = contents.get(0).getElementsByTag("tr");
+                    for (int i = 0; i < trs.size(); i++) {
+                        Elements tds = trs.get(i).getElementsByTag("td");
+                        if (tds.get(1).text().equals(order.getCompanyName())) {
+                            Element temp = tds.get(12).child(1);
+                            String t = temp.attr("onclick");
+                            String id = t.substring(t.indexOf("(")+1,t.indexOf(")"));
+                            groupRespone.setCode(id);
+                            groupRespone.setMessage("成功");
+                            return groupRespone;
+                        }
+                    }
+                }
+            }
             log.info("电信创建集团结果--->" + result);
             JSONObject jsonObject = JSONObject.fromObject(result);
             String code = jsonObject.getString("code");
@@ -331,11 +359,11 @@ public class McardApi {
                 groupRespone = (McardAddGroupRespone) JSONObject.toBean(data, McardAddGroupRespone.class);
                 groupRespone.setCode(jsonObject.getString("code"));
                 groupRespone.setMessage(jsonObject.getString("message"));
-            }else{
+            } else {
                 String message = jsonObject.getString("message");
-                if (message.equals("图像验证码错误,请刷新后输入")){
+                if (message.equals("图像验证码错误,请刷新后输入")) {
                     groupRespone.setCode("");
-                }else{
+                } else {
                     groupRespone.setCode(Const.ILLEFAL_AREA);
                     groupRespone.setMessage(jsonObject.getString("message"));
                 }
