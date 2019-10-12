@@ -385,7 +385,9 @@ public class ThreeNetsChildOrderService {
             // 获取已包月子订单
             ThreenetsChildOrder threenetsChildOrder = new ThreenetsChildOrder();
             threenetsChildOrder.setParentOrderId(orderId);
-            threenetsChildOrder.setIsMonthly(2);
+            if (!operate.equals(Const.OPERATORS_TELECOM)){
+                threenetsChildOrder.setIsMonthly(2);
+            }
             threenetsChildOrder.setOperator(operate);
             List<ThreenetsChildOrder> threenetsChildOrderList = threenetsChildOrderMapper.selectThreeNetsTaskList(page, threenetsChildOrder);
             // 获取总数
