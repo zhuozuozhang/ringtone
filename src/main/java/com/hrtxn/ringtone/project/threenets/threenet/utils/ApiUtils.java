@@ -25,6 +25,7 @@ import com.hrtxn.ringtone.project.threenets.threenet.mapper.ThreenetsChildOrderM
 import com.hrtxn.ringtone.project.threenets.threenet.mapper.ThreenetsOrderMapper;
 import com.hrtxn.ringtone.project.threenets.threenet.mapper.ThreenetsRingMapper;
 import lombok.extern.slf4j.Slf4j;
+import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -67,6 +68,9 @@ public class ApiUtils {
         String msg = "错误消息：";
         int failure = 0;
         for (ThreenetsChildOrder threenetsChildOrder : threenetsChildOrderList) {
+            if (threenetsChildOrder.getStatus().equals(Const.FAILURE_REVIEW)){
+                continue;
+            }
             // 判断运营商
             Integer operate = threenetsChildOrder.getOperator();
             if (operate == 1) {// 移动
@@ -143,7 +147,7 @@ public class ApiUtils {
                     if (tds.size() <= 0) {
                         continue;
                     }
-                    if (tds.get(1).text().equals(threenetsChildOrder.getLinkmanTel())) {
+                    if (tds.get(2).text().equals(threenetsChildOrder.getLinkmanTel())) {
                         //threenetsChildOrder.setRingName(tds.get(5).text());
                         threenetsChildOrder.setStatus(tds.get(6).text());
                         String value = tds.get(12).childNode(0).attr("value");
@@ -155,10 +159,10 @@ public class ApiUtils {
                             threenetsChildOrder.setIsRingtoneUser(false);
                         }
                         //是否包月
-                        if (tds.get(8).text().equals("未开通")) {
-                            threenetsChildOrder.setIsMonthly(1);
-                        } else {
+                        if (tds.get(8).text().equals("已开通")) {
                             threenetsChildOrder.setIsMonthly(2);
+                        } else {
+                            threenetsChildOrder.setIsMonthly(1);
                         }
                         if (tds.get(9).text().contains("?")) {
                             Elements lable = tds.get(9).getElementsByTag("lable");
@@ -173,6 +177,7 @@ public class ApiUtils {
                     }
                 }
             } else {// 联通
+                loginToUnicom();
                 String phoneInfo = swxlApi.getPhoneInfo(threenetsChildOrder.getLinkmanTel(), threenetsChildOrder.getOperateId());
                 if (StringUtils.isNotEmpty(phoneInfo)) {
                     // 分发实体详情转换
@@ -267,6 +272,9 @@ public class ApiUtils {
         boolean f1 = miguApi1.loginAutoParam(userName);
         Boolean f = false;
         for (ThreenetsChildOrder threenetsChildOrder : threenetsChildOrderList) {
+            if (threenetsChildOrder.getStatus().equals(Const.FAILURE_REVIEW)){
+                continue;
+            }
             // 判断运营商
             Integer operate = threenetsChildOrder.getOperator();
             if (operate == 1) {// 移动
@@ -336,7 +344,7 @@ public class ApiUtils {
                     if (tds.size() <= 0) {
                         continue;
                     }
-                    if (tds.get(1).text().equals(threenetsChildOrder.getLinkmanTel())) {
+                    if (tds.get(2).text().equals(threenetsChildOrder.getLinkmanTel())) {
                         //threenetsChildOrder.setRingName(tds.get(5).text());
                         threenetsChildOrder.setStatus(tds.get(6).text());
                         String value = tds.get(12).childNode(0).attr("value");
@@ -348,16 +356,17 @@ public class ApiUtils {
                             threenetsChildOrder.setIsRingtoneUser(false);
                         }
                         //是否包月
-                        if (tds.get(8).text().equals("未开通")) {
-                            threenetsChildOrder.setIsMonthly(1);
-                        } else {
+                        if (tds.get(8).text().equals("已开通")) {
                             threenetsChildOrder.setIsMonthly(2);
+                        } else {
+                            threenetsChildOrder.setIsMonthly(1);
                         }
                         threenetsChildOrder.setRemark(tds.get(9).text());
                         f = true;
                     }
                 }
             } else {// 联通
+                loginToUnicom();
                 String phoneInfo = swxlApi.getPhoneInfo(threenetsChildOrder.getLinkmanTel(), threenetsChildOrder.getOperateId());
                 if (StringUtils.isNotEmpty(phoneInfo)) {
                     // 分发实体详情转换
@@ -470,6 +479,32 @@ public class ApiUtils {
     }
 
     /**
+     * 获取商户ID
+     *
+     * @param order
+     * @return
+     */
+    public String normalBusinessID(ThreenetsOrder order) {
+        String ID = "";
+        ThreeNetsOrderAttached attached = SpringUtils.getBean(ThreeNetsOrderAttachedMapper.class).selectByParentOrderId(order.getId());
+        String result = mcardApi.refreshBusinessInfo(order.getCompanyName(), attached.getMcardDistributorId());
+        if (StringUtils.isNotEmpty(result)) {
+            Document doc = Jsoup.parse(result);
+            Elements contents = doc.getElementsByTag("tbody");
+            Elements trs = contents.get(0).getElementsByTag("tr");
+            for (int i = 0; i < trs.size(); i++) {
+                Elements tds = trs.get(i).getElementsByTag("td");
+                if (tds.get(1).text().equals(order.getCompanyName())) {
+                    Element temp = tds.get(12).child(1);
+                    String t = temp.attr("onclick");
+                    ID = t.substring(t.indexOf("(") + 1, t.indexOf(")"));
+                }
+            }
+        }
+        return ID;
+    }
+
+    /**
      * 移动刷新视频彩铃功能
      *
      * @param threenetsChildOrder
@@ -526,6 +561,7 @@ public class ApiUtils {
                 } else if (t.getOperator() == 2) { // 电信普通短信
 
                 } else { // 联通普通短信
+                    loginToUnicom();
                     String result = swxlApi.remindOrderCrbtAndMonth(t.getLinkmanTel(), t.getOperateId(), false);
                     if (StringUtils.isNotEmpty(result)) {
                         SwxlPubBackData info = (SwxlPubBackData) JsonUtil.getObject4JsonString(result, SwxlPubBackData.class);
@@ -537,6 +573,7 @@ public class ApiUtils {
                 }
             } else {
                 if (t.getOperator() == 3) { // 链接短信，联通专属
+                    loginToUnicom();
                     String res = swxlApi.swxlSendSMSByCRBTFail(t.getLinkmanTel());
                     if (StringUtils.isNotEmpty(res)) {
                         SwxlPubBackData info = (SwxlPubBackData) JsonUtil.getObject4JsonString(res, SwxlPubBackData.class);
@@ -549,7 +586,7 @@ public class ApiUtils {
             }
         }
         if (failure == 0) {
-            return AjaxResult.success(true, "发送成功！"+telErrorMessage);
+            return AjaxResult.success(true, "发送成功！" + telErrorMessage);
         } else {
             return AjaxResult.success(false, msg2 + telErrorMessage);
         }
@@ -638,7 +675,7 @@ public class ApiUtils {
                 ThreeNetsOrderAttached attached = SpringUtils.getBean(ThreeNetsOrderAttachedMapper.class).selectByParentOrderId(threenetsRing.getOrderId());
                 mcardApi.toUserList(threenetsRing.getOperateId(), attached.getMcardDistributorId());
                 String result = mcardApi.getRingInfo(attached.getMcardDistributorId());
-                if (StringUtils.isEmpty(result)){
+                if (StringUtils.isEmpty(result)) {
                     break;
                 }
                 Document doc = Jsoup.parse(result);
@@ -653,9 +690,9 @@ public class ApiUtils {
                         Element el2 = tds.get(4);
                         String remark = el2.text();
                         if (remark.equals("审核通过")) {
-                            threenetsRing.setRingStatus(2);
+                            threenetsRing.setRingStatus(3);
                         } else if (remark.equals("等待审核")) {
-                            threenetsRing.setRingStatus(1);
+                            threenetsRing.setRingStatus(2);
                         } else {
                             Elements lable = tds.get(4).getElementsByTag("lable");
                             String title = lable.attr("title");
@@ -670,6 +707,7 @@ public class ApiUtils {
                     }
                 }
             } else { // 联通
+                loginToUnicom();
                 String result = swxlApi.getRingInfo(threenetsRing.getOperateId());
                 if (StringUtils.isNotEmpty(result)) {
                     SwxlPubBackData<SwxlQueryPubRespone<SwxlRingMsg>> backData = SpringUtils.getBean(ObjectMapper.class).readValue(result, SwxlPubBackData.class);
@@ -880,9 +918,9 @@ public class ApiUtils {
                         Element el2 = tds.get(4);
                         String remark = el2.text();
                         if (remark.equals("审核通过")) {
-                            threenetsRing.setRingStatus(2);
+                            threenetsRing.setRingStatus(3);
                         } else if (remark.equals("等待审核")) {
-                            threenetsRing.setRingStatus(1);
+                            threenetsRing.setRingStatus(2);
                         } else {
                             Elements lable = tds.get(4).getElementsByTag("lable");
                             String title = lable.attr("title");
@@ -897,6 +935,7 @@ public class ApiUtils {
                     }
                 }
             } else { // 联通
+                loginToUnicom();
                 String result = swxlApi.getRingInfo(threenetsRing.getOperateId());
                 if (StringUtils.isNotEmpty(result)) {
                     SwxlPubBackData<SwxlQueryPubRespone<SwxlRingMsg>> backData = SpringUtils.getBean(ObjectMapper.class).readValue(result, SwxlPubBackData.class);
@@ -1237,7 +1276,7 @@ public class ApiUtils {
             mcardApi.toNormalUser(Const.child_Distributor_ID_181, Const.parent_Distributor_ID_188);
         }
         //添加商户，同步三次
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < 5; i++) {
             mcardAddGroupRespone = mcardApi.addGroup(order, attached);
             if (mcardAddGroupRespone != null && StringUtils.isNotEmpty(mcardAddGroupRespone.getCode())) {
                 break;
@@ -1284,7 +1323,24 @@ public class ApiUtils {
      */
     public boolean addRingByDx(ThreenetsRing ring, ThreeNetsOrderAttached attached) {
         mcardApi.toUserList(attached.getMcardId(), attached.getMcardDistributorId());
-        boolean flag = mcardApi.uploadRing(ring);
+        String ringResult = mcardApi.ringList(attached.getMcardDistributorId());
+        if (StringUtils.isNotEmpty(ringResult)) {
+            Document doc = Jsoup.parse(ringResult);
+            Elements contents = doc.getElementsByTag("tbody");
+            if (contents.size() > 0){
+                Elements trs = contents.get(0).getElementsByTag("tr");
+                for (int i = 0; i < trs.size(); i++) {
+                    Elements tds = trs.get(i).getElementsByTag("td");
+                    if (tds.size() <= 0) {
+                        continue;
+                    }
+                    if (tds.get(1).text().equals(ring.getRingName())) {
+                        return false;
+                    }
+                }
+            }
+        }
+        boolean flag = mcardApi.uploadRing(ring,attached.getMcardDistributorId());
         //获取铃音id
         String ringList = mcardApi.toRingList(attached.getMcardDistributorId());
         if (StringUtils.isNotEmpty(ringList)) {
@@ -1321,18 +1377,14 @@ public class ApiUtils {
     /**
      * 联通 添加成员
      *
-     * @param childOrder
+     * @param phones
      * @param attached
      * @return
      * @throws IOException
      * @throws NoLoginException
      */
-    public SwxlBaseBackMessage addPhoneByLt(ThreenetsChildOrder childOrder, ThreeNetsOrderAttached attached) throws NoLoginException {
-        if (StringUtils.isNotEmpty(attached.getAvoidShortAgreement())){
-            return swxlApi.addPhoneBy2B(childOrder.getLinkmanTel(), attached.getSwxlId(),attached.getAvoidShortAgreement());
-        }else {
-            return swxlApi.addPhone(childOrder.getLinkmanTel(), attached.getSwxlId());
-        }
+    public SwxlBaseBackMessage addPhoneByLt(String phones, ThreeNetsOrderAttached attached) throws NoLoginException {
+        return swxlApi.addPhone(phones, attached.getSwxlId(),attached.getAvoidShortAgreement());
     }
     /**
      * 电信添加成员
@@ -1431,6 +1483,7 @@ public class ApiUtils {
      * @throws IOException
      */
     public String getSilentMemberByMsisdn(String phoneNumber) throws NoLoginException, IOException {
+        loginToUnicom();
         if (StringUtils.isNotNull(phoneNumber)) {
             return swxlApi.getSilentMemberByMsisdn(phoneNumber);
         } else {
@@ -1447,6 +1500,7 @@ public class ApiUtils {
      * @throws IOException
      */
     public String getSystemLogListByMsisdn(String phoneNumber) throws NoLoginException, IOException {
+        loginToUnicom();
         if (StringUtils.isNotNull(phoneNumber)) {
             return swxlApi.getSystemLogListByMsisdn(phoneNumber);
         } else {
@@ -1562,6 +1616,7 @@ public class ApiUtils {
      * @throws IOException
      */
     public AjaxResult deleteSilentMemberByMsisdn(String msisdn) throws NoLoginException, IOException {
+        loginToUnicom();
         if (StringUtils.isNotNull(msisdn)) {
             Map<String, String> map = new HashMap<String, String>();
             map.put("delSilentMember", swxlApi.deleteSilentMemberByMsisdn(msisdn));
@@ -1576,8 +1631,8 @@ public class ApiUtils {
      * @param file
      * @return
      */
-    public String mcardUploadFile(File file) {
-        return mcardApi.uploadFile(file);
+    public String mcardUploadFile(File file,String parent) {
+        return mcardApi.uploadFile(file,parent);
     }
 
     /**
@@ -1771,6 +1826,7 @@ public class ApiUtils {
      * @return
      */
     public AjaxResult openingBusiness(ThreenetsChildOrder childOrder) {
+        loginToUnicom();
         String message = "开通业务成功!";
         try {
             String result = swxlApi.remindOrderCrbtAndMonth(childOrder.getLinkmanTel(), childOrder.getOperateId(), false);
@@ -1788,4 +1844,37 @@ public class ApiUtils {
             return AjaxResult.success(message);
         }
     }
+
+    /**
+     * 验证联通手机号
+     *
+     * @param list
+     * @return
+     */
+    public List<ThreenetsChildOrder> unicomCheckMobiles(List<ThreenetsChildOrder> list){
+        String phones = "";
+        for (int i = 0; i < list.size(); i++) {
+            phones = list.get(i).getLinkmanTel() + "," + phones;
+        }
+        String result = swxlApi.checkMobiles(phones);
+        JSONObject jsonObject = JSONObject.fromObject(result);
+        JSONArray jsonArray = jsonObject.getJSONArray("data");
+        for (int i = 0; i < jsonArray.size(); i++) {
+            JSONObject partDaily = jsonArray.getJSONObject(i);
+            String msisdn = partDaily.getString("msisdn");
+            String info = partDaily.getString("info");
+            for (int j = 0; j < list.size(); j++) {
+                if (list.get(j).getLinkmanTel().equals(msisdn)){
+                    if (info.equals("成功")){
+                        list.get(j).setStatus(Const.SUCCESSFUL_REVIEW);
+                    }else{
+                        list.get(j).setStatus(Const.FAILURE_REVIEW);
+                        list.get(j).setRemark(info);
+                    }
+                }
+            }
+        }
+        return list;
+    }
+
 }

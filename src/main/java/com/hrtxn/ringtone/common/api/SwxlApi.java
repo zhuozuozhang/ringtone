@@ -77,6 +77,7 @@ public class SwxlApi implements Serializable {
     public static String silentMember_url = "https://swxl.10155.com/swxlapi/web/member/silentMember";//工具箱获取用户信息
     public static String systemLogList_url = "https://swxl.10155.com/swxlapi/web/systemLog/list";//工具箱获取用户信息
     public static String delete_url = "https://swxl.10155.com/swxlapi/web/member/silentMemberDel/";//工具箱删除用户信息
+    public static String check_mobiles = "https://swxl.10155.com/swxlapi/web/group/checkMobiles";//检查手机号
 
     @Getter
     public String USER_NAME = "99397000";// 帐号
@@ -379,8 +380,8 @@ public class SwxlApi implements Serializable {
      */
     public String getPhoneInfo(String phone, String groupId) throws NoLoginException, IOException {
         //刷新彩铃状态
-        swxlrefreshCrbtStatus(phone,1);
-        swxlrefreshCrbtStatus(phone,2);
+        swxlrefreshCrbtStatus(phone, 1);
+        swxlrefreshCrbtStatus(phone, 2);
         //
         List<NameValuePair> formparams = new ArrayList<NameValuePair>();
         formparams.add(new BasicNameValuePair("msisdn", phone));
@@ -548,7 +549,7 @@ public class SwxlApi implements Serializable {
                 applyForSmsNotification = "1";
                 String[] split = attached.getAvoidShortAgreement().split(";");
                 for (int i = 0; i < split.length; i++) {
-                    if (StringUtils.isEmpty(split[i])){
+                    if (StringUtils.isEmpty(split[i])) {
                         continue;
                     }
                     File file = new File(RingtoneConfig.getProfile() + split[i]);
@@ -556,19 +557,19 @@ public class SwxlApi implements Serializable {
                 }
             }
             reqEntity.addPart("applyForSmsNotification", new StringBody(applyForSmsNotification));// 免短信
-            reqEntity.addPart("qualificationFile",new StringBody(""));
-            if (attached.getSwxlPrice() == 5){
+            reqEntity.addPart("qualificationFile", new StringBody(""));
+            if (attached.getSwxlPrice() == 5) {
                 reqEntity.addPart("productId", new StringBody("0000003165"));//价格5元
-            }else if (attached.getSwxlPrice() == 10){
+            } else if (attached.getSwxlPrice() == 10) {
                 reqEntity.addPart("productId", new StringBody("225"));//价格10元
-            }else {
+            } else {
                 reqEntity.addPart("productId", new StringBody("224"));//价格20元
             }
             reqEntity.addPart("ringName", new StringBody(ringOrder.getRingName(), Charset.forName("UTF-8")));// 铃音名称
             if (ringOrder.getUpLoadAgreement() != null) {
                 reqEntity.addPart("ringFile", new FileBody(ringOrder.getUpLoadAgreement())); // 铃音文件
             }
-            reqEntity.addPart("msisdns", new StringBody(ringOrder.getLinkmanTel()));// 号码
+            reqEntity.addPart("msisdns", new StringBody(ringOrder.getPhones()));// 号码
             reqEntity.addPart("bizCodes", new StringBody(""));
             httppost.setEntity(reqEntity);
             HttpResponse response1 = httpclient.execute(httppost);
@@ -755,13 +756,14 @@ public class SwxlApi implements Serializable {
 
     /**
      * 添加成员信息，免短专用
+     *
      * @param members
      * @param groupId
      * @param avoidShortAgreement
      * @return
      * @throws NoLoginException
      */
-    public SwxlBaseBackMessage addPhoneBy2B(String members, String groupId,String avoidShortAgreement) throws NoLoginException {
+    public SwxlBaseBackMessage addPhone(String members, String groupId, String avoidShortAgreement) throws NoLoginException {
         String result = null;
         SwxlBaseBackMessage<SwxlAddPhoneNewResult> info = null;
         DefaultHttpClient httpclient = WebClientDevWrapper.wrapClient(new DefaultHttpClient());
@@ -773,13 +775,15 @@ public class SwxlApi implements Serializable {
             params.setParameter(CoreProtocolPNames.HTTP_CONTENT_CHARSET, Charset.forName("UTF-8"));
             reqEntity.addPart("groupId", new StringBody(groupId, Charset.forName("UTF-8")));// 集团名称
             reqEntity.addPart("msisdns", new StringBody(members, Charset.forName("UTF-8")));//
-            String[] split = avoidShortAgreement.split(";");
-            for (int i = 0; i < split.length; i++) {
-                if (StringUtils.isEmpty(split[i])){
-                    continue;
+            if(StringUtils.isNotEmpty(avoidShortAgreement)){
+                String[] split = avoidShortAgreement.split(";");
+                for (int i = 0; i < split.length; i++) {
+                    if (StringUtils.isEmpty(split[i])) {
+                        continue;
+                    }
+                    File file = new File(RingtoneConfig.getProfile() + split[i]);
+                    reqEntity.addPart("smsFile", new FileBody(file));
                 }
-                File file = new File(RingtoneConfig.getProfile() + split[i]);
-                reqEntity.addPart("smsFile", new FileBody(file));
             }
             httppost.setEntity(reqEntity);
             HttpResponse response = httpclient.execute(httppost);
@@ -989,5 +993,41 @@ public class SwxlApi implements Serializable {
             httpclient.getConnectionManager().shutdown();
         }
         return content;
+    }
+
+
+    /**
+     * 检查手机号是否可以添加
+     *
+     * @param phone
+     * @return
+     */
+    public String checkMobiles(String phone) {
+        String result = null;
+        SwxlBaseBackMessage<SwxlAddPhoneNewResult> info = null;
+        DefaultHttpClient httpclient = WebClientDevWrapper.wrapClient(new DefaultHttpClient());
+        HttpPost httppost = new HttpPost(check_mobiles);
+        List<NameValuePair> formparams = new ArrayList<NameValuePair>();
+        formparams.add(new BasicNameValuePair("msisdns", phone));
+        formparams.add(new BasicNameValuePair("applyForSmsNotification", "0"));
+        formparams.add(new BasicNameValuePair("productId", "225"));
+        try {
+            httpclient.setCookieStore(this.getCookieStore());
+            UrlEncodedFormEntity entity = new UrlEncodedFormEntity(formparams, "utf-8");
+            httppost.setEntity(entity);
+            HttpResponse response = httpclient.execute(httppost);
+            HttpEntity resEntity = response.getEntity();
+            result = EntityUtils.toString(resEntity);
+            //{"recode":"200015","message":"成员属于其他企业,无法操作","data":null,"success":false}
+            System.out.println("result:" + result);
+        } catch (NoLoginException e) {
+            System.out.println(e);
+        } catch (IOException e) {
+            System.out.println(e);
+        } finally {
+            httppost.abort();
+            httpclient.getConnectionManager().shutdown();
+            return result;
+        }
     }
 }

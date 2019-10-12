@@ -93,6 +93,9 @@ function showTable() {
                 var open  = "<i onclick='openingBusiness(" + id + ");' class='layui-icon layui-icon-auz' title='开通业务'></i>"
                 return refresh +open+ (isMonthly == 2 ? setRing : '')  + del;
             }
+            if (operator == 2){
+                return refresh + setRing + del;
+            }
             return refresh + (isMonthly != 2 ? note : '') + (isMonthly == 2 ? setRing : '') + (operator == 3 && isMonthly == 1 ? linkNote : '') + del;
         }
     }];
