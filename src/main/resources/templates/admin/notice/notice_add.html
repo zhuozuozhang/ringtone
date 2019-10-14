@@ -32,7 +32,7 @@
                     <span class="x-red">*</span>发布模块
                 </label>
                 <div class="layui-input-inline">
-                    <select name="noticeModule" id="noticeModule" lay-verify="required" lay-filter="aihao">
+                    <select name="noticeModule" id="noticeModule"  lay-verify="required" lay-filter="aihao">
                         <option value="0" selected>企业彩铃/视频彩铃</option>
                         <option value="1">电话认证/挂机短信/彩印</option>
                         <option value="2">400电话</option>
@@ -42,6 +42,19 @@
                         <option value="6">铃音录制/视频制作</option>
                         <option value="7">流量卡/号卡</option>
                         <option value="8">疑难杂单</option>
+                    </select>
+                </div>
+            </div>
+            <div class="layui-form-item" id="typeDiv">
+                <label for="noticeModule" class="layui-form-label">
+                    <span class="x-red">*</span>公告类型
+                </label>
+                <div class="layui-input-inline">
+                    <select name="noticeType" id="noticeType" lay-verify="required" lay-filter="aihao">
+                        <option value="1" selected>重要公告</option>
+                        <option value="2">电信</option>
+                        <option value="3">移动</option>
+                        <option value="4">联通</option>
                     </select>
                 </div>
             </div>
@@ -93,9 +106,11 @@
         editor = K.create('#noticeContent', options);
     });
 
+
     layui.use(['form','layer'], function(){
         $ = layui.jquery;
-        var form = layui.form,layer = layui.layer;
+        var form = layui.form;
+        var layer = layui.layer;
         //自定义验证规则
         form.verify({
             noticeTile: function(value){
@@ -116,13 +131,15 @@
             var noticeModule = $("#noticeModule").val();
             var noticeWeight = $("#noticeWeight").val();
             var noticeStatus = $("input[name='noticeStatus']:checked").val();
+            var noticeType = $("#noticeType").val();
 
             AjaxPost("/admin/insertNotice",{
                 noticeTitle:noticeTitle,
                 noticeContent:noticeContent,
                 noticeModule:noticeModule,
                 noticeWeight:noticeWeight,
-                noticeStatus:noticeStatus
+                noticeStatus:noticeStatus,
+                noticeType:noticeType
             },function (res) {
                 if (res.code == 200 && res.data){
                     //发异步，把数据提交给后台
@@ -138,6 +155,9 @@
             });
             return false;
         });
+
     });
+
+
 </script>
 </html>

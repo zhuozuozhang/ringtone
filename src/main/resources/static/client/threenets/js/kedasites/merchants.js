@@ -2,8 +2,10 @@
 $(document).ready(function () {
     var f  = sessionStorage.getItem("showKedaAnn")
     if(f == null || f == "true"){
-        layer.open({type: 2, title: '公告', area: ['850px', '500px'], content: '/threenets/threeNetsAnnunciate?type=keda'});
-        sessionStorage.setItem("showKedaAnn","false")
+        // layer.open({type: 2, title: '公告', area: ['850px', '500px'], content: '/threenets/threeNetsAnnunciate?type=keda'});
+        // sessionStorage.setItem("showKedaAnn","false")
+        // layer.open({type: 2, title: '公告', area: ['850px', '500px'], content: '/threenets/threeNotice'});
+        window.location.href = "/threenets/threeNotice/0/1/5/1?noticeTitle=";
     }
     $(".index2").addClass("active");
     showTable();

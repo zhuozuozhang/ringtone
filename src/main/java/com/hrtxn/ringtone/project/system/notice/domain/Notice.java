@@ -28,11 +28,19 @@ public class Notice implements Serializable {
     private String noticeAuthor;
     // 正文
     private String noticeContent;
+    //类型
+    private String noticeType;
+
+    private String timeStr;
 
     /***************************************大大的分割线***********************************************/
     // 开始日期
     private String start;
     // 结束日期
     private String end;
+
+    private String status;
+
+    private Integer userId;
 
 }

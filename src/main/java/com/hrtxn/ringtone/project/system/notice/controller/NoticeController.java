@@ -2,6 +2,7 @@ package com.hrtxn.ringtone.project.system.notice.controller;
 
 import com.hrtxn.ringtone.common.constant.AjaxResult;
 import com.hrtxn.ringtone.common.domain.Page;
+import com.hrtxn.ringtone.common.utils.ShiroUtils;
 import com.hrtxn.ringtone.common.utils.StringUtils;
 import com.hrtxn.ringtone.freemark.config.logConfig.Log;
 import com.hrtxn.ringtone.freemark.enums.BusinessType;
@@ -9,6 +10,7 @@ import com.hrtxn.ringtone.freemark.enums.OperatorLogType;
 import com.hrtxn.ringtone.project.system.notice.domain.Notice;
 import com.hrtxn.ringtone.project.system.notice.service.NoticeRecordService;
 import com.hrtxn.ringtone.project.system.notice.service.NoticeService;
+import com.hrtxn.ringtone.project.system.notice.service.NoticeStatusService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +35,9 @@ public class NoticeController {
 
     @Autowired
     private NoticeRecordService noticeRecordService;
+
+    @Autowired
+    private NoticeStatusService noticeStatusService;
 
     /**
      * 获取公告列表
@@ -197,6 +202,17 @@ public class NoticeController {
             log.error("获取公告列表 方法：toClinetNoticeListPage 错误信息",e);
         }
         return "system/notice";
+    }
+
+    /**
+     * 修改公告状态
+     * @param id
+     * @return
+     */
+    @ResponseBody
+    @GetMapping("/admin/updateNoticeStatus/{id}")
+    public void updateNoticeStatus(@PathVariable Integer id){
+        noticeStatusService.updateNoticeStatus(id, ShiroUtils.getSysUser().getId());
     }
 
 }
