@@ -250,6 +250,9 @@ public class JuhePhoneUtils {
         try{
             if (isFixedPhone(tel)){
                 String telephone = tel.substring(0, tel.length() - 8);
+                if (tel.contains("-")){
+                    telephone = tel.substring(0,tel.indexOf("-"));
+                }
                 TelAscription telAscriptionByTel = SpringUtils.getBean(TelAscriptionMapper.class).getTelAscriptionByTel(telephone);
                 if (telAscriptionByTel == null){
                     Map<String, String> params = new HashMap<String, String>();

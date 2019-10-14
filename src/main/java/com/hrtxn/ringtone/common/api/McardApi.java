@@ -14,12 +14,18 @@ import com.hrtxn.ringtone.project.threenets.threenet.json.mcard.McardAddPhoneRes
 import com.hrtxn.ringtone.project.threenets.threenet.json.mcard.McardPhoneAddressRespone;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.json.JSONArray;
+import net.sf.json.JSONException;
 import net.sf.json.JSONObject;
 import okhttp3.*;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.SocketTimeoutException;
 import java.util.*;
 
 /**
@@ -43,6 +49,8 @@ public class McardApi {
 
     private static String load_ring_url = "https://mcard.imusic.cn/ring/loadRingList";//铃音列表
     private static String load_user_url = "https://mcard.imusic.cn/user/loadUserList";//成员列表
+
+    private static String ring_list = "https://mcard.imusic.cn/ring/ringList";
 
     private static String normal_list = "https://mcard.imusic.cn/user/loadNormalBusinessList";//获取客户列表
     private static String refresh_apersonnel = "http://mcard.imusic.cn/user/refreshApersonnel";//刷新用户信息
@@ -97,6 +105,9 @@ public class McardApi {
         try {
             Response response = client.newCall(request).execute();
             result = response.body().string();
+        }catch (SocketTimeoutException e){
+            result = Const.TIME_OUT;
+            log.info("POST请求失败：" + e);
         } catch (IOException e) {
             log.info("POST请求失败：" + e);
         }
@@ -138,6 +149,14 @@ public class McardApi {
         return sendPost(map, to_ring_list, parent);
     }
 
+
+    public String ringList(String parent){
+        Map<String, String> map = new HashMap<>();
+        map.put("pageSize", "100");
+        map.put("pageNo", "1");
+        return sendPost(map, ring_list, parent);
+    }
+
     /**
      * 铃音弹出框列表
      *
@@ -156,18 +175,18 @@ public class McardApi {
     /**
      * 获取信息
      *
-     * @param order
+     * @param companyName
      * @return
      */
-    public String refreshBusinessInfo(ThreenetsOrder order, String distributorId) {
+    public String refreshBusinessInfo(String companyName, String distributorId) {
         Map<String, String> map = new HashMap<>();
         map.put("pageSize", "100");
         map.put("pageNo", "1");
         map.put("auserParent", "61203");
         map.put("startTime", DateUtils.getPastDate(7));
         map.put("endTime", DateUtils.getFetureDate(1));
-        if (order.getCompanyName() != null) {
-            map.put("auserName", order.getCompanyName());
+        if (StringUtils.isNotEmpty(companyName)) {
+            map.put("auserName",companyName);
         }
         return sendPost(map, normal_list, distributorId);
     }
@@ -323,6 +342,25 @@ public class McardApi {
             map.put("auserFilePath", attached.getConfirmLetter());
             map.put("auserCardidPath", attached.getSubjectProve() == null ? "" : attached.getSubjectProve());
             String result = sendPost(map, add_user_url, attached.getMcardDistributorId());
+            if (result.equals(Const.TIME_OUT)){
+                result = refreshBusinessInfo(order.getCompanyName(), attached.getMcardDistributorId());
+                if (StringUtils.isNotEmpty(result)) {
+                    Document doc = Jsoup.parse(result);
+                    Elements contents = doc.getElementsByTag("tbody");
+                    Elements trs = contents.get(0).getElementsByTag("tr");
+                    for (int i = 0; i < trs.size(); i++) {
+                        Elements tds = trs.get(i).getElementsByTag("td");
+                        if (tds.get(1).text().equals(order.getCompanyName())) {
+                            Element temp = tds.get(12).child(1);
+                            String t = temp.attr("onclick");
+                            String id = t.substring(t.indexOf("(")+1,t.indexOf(")"));
+                            groupRespone.setCode(id);
+                            groupRespone.setMessage("成功");
+                            return groupRespone;
+                        }
+                    }
+                }
+            }
             log.info("电信创建集团结果--->" + result);
             JSONObject jsonObject = JSONObject.fromObject(result);
             String code = jsonObject.getString("code");
@@ -331,11 +369,11 @@ public class McardApi {
                 groupRespone = (McardAddGroupRespone) JSONObject.toBean(data, McardAddGroupRespone.class);
                 groupRespone.setCode(jsonObject.getString("code"));
                 groupRespone.setMessage(jsonObject.getString("message"));
-            }else{
+            } else {
                 String message = jsonObject.getString("message");
-                if (message.equals("图像验证码错误,请刷新后输入")){
+                if (message.equals("图像验证码错误,请刷新后输入")) {
                     groupRespone.setCode("");
-                }else{
+                } else {
                     groupRespone.setCode(Const.ILLEFAL_AREA);
                     groupRespone.setMessage(jsonObject.getString("message"));
                 }
@@ -394,9 +432,10 @@ public class McardApi {
      * @param ring
      * @return
      */
-    public boolean uploadRing(ThreenetsRing ring) {
+    public boolean uploadRing(ThreenetsRing ring,String parent) {
         ConfigUtil util = new ConfigUtil();
-        SystemConfig config = util.getConfigByType("mcard_cookie_other");
+        String type = parent.equals(Const.parent_Distributor_ID_188) ? "mcard_cookie_other" : "mcard_cookie_hn";
+        SystemConfig config = util.getConfigByType(type);
         boolean flag = false;
         String result = null;
         String ringName = ring.getRingName().substring(0, ring.getRingName().indexOf("."));
@@ -430,9 +469,10 @@ public class McardApi {
      * @param file
      * @return
      */
-    public String uploadFile(File file) {
+    public String uploadFile(File file,String parent) {
         ConfigUtil util = new ConfigUtil();
-        SystemConfig config = util.getConfigByType("mcard_cookie_other");
+        String type = parent.equals(Const.parent_Distributor_ID_188) ? "mcard_cookie_other" : "mcard_cookie_hn";
+        SystemConfig config = util.getConfigByType(type);
         OkHttpClient client = new OkHttpClient();
         String result = null;
         RequestBody requestBody = new MultipartBody.Builder()

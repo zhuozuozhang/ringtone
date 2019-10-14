@@ -38,16 +38,13 @@ public class ThreenetsOrder implements Serializable {
     //文件夹地址
     private String folderName;
     /**************************VO**********************************/
-
     private String userName;
-
     //----子订单数
     private Integer childOrderQuantity;
     //----包月子订单数
     private Integer childOrderQuantityByMonthly;
     // 总数/包月
     private String peopleNum;
-
     //----联通保存订单文件
     private File upLoadAgreement;
     //----铃音名称
@@ -56,4 +53,6 @@ public class ThreenetsOrder implements Serializable {
     private String mianduan;
 
     private String paymentType;
+
+    private String phones;
 }
