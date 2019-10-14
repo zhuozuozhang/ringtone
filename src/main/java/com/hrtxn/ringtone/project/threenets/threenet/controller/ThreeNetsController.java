@@ -2,6 +2,7 @@ package com.hrtxn.ringtone.project.threenets.threenet.controller;
 
 import com.hrtxn.ringtone.common.constant.AjaxResult;
 import com.hrtxn.ringtone.common.domain.BaseRequest;
+import com.hrtxn.ringtone.common.domain.Page;
 import com.hrtxn.ringtone.common.utils.Const;
 import com.hrtxn.ringtone.common.utils.MD5Utils;
 import com.hrtxn.ringtone.common.utils.ShiroUtils;
@@ -296,6 +297,52 @@ public class ThreeNetsController {
         }
         return "threenets/threenet/index/announcement";
     }
+
+    /**
+     * 新公告列表
+     * @param map
+     * @param type
+     * @param page
+     * @param pageSize
+     * @param noticeType
+     * @param noticeTitle
+     * @return
+     */
+    @GetMapping("/threenets/threeNotice/{type}/{page}/{pageSize}/{noticeType}")
+    public String threeNotice(ModelMap map, @PathVariable String type, @PathVariable Integer page,@PathVariable Integer pageSize
+            ,@PathVariable String noticeType, String noticeTitle) {
+        try {
+            int pe = page;
+            Page p = new Page(page,pageSize);
+            if(p.getPage() == null){
+                p = new Page(1,5);
+            }
+            String model = StringUtils.isNotEmpty(type)?Const.MODUL_KEDA:Const.MODUL_THREENETS;
+            Notice notice = new Notice();
+            notice.setNoticeModule(0);
+            notice.setNoticeType(noticeType);
+            notice.setNoticeTitle(noticeTitle);
+            notice.setUserId(ShiroUtils.getSysUser().getId());
+            List<Notice> noticeList = noticeService.PageNoticeList(p,notice);
+            map.put("noticeList", noticeList);
+            // 获取公告数量
+            int count = noticeService.pageNoticeCount(notice);
+//            map.put("count", count);
+            int pageCount = count/p.getPagesize();
+            if(count%p.getPagesize() != 0){
+                pageCount = pageCount + 1;
+            }
+            map.put("pageCount", pageCount);
+            map.put("page", pe);
+            map.put("noticeType",noticeType);
+            map.put("noticeTitle",noticeTitle);
+
+        } catch (Exception e) {
+            log.error("获取三网公告列表,方法：getThreeNetsAnnunciate,错误信息", e);
+        }
+        return "threenets/threenet/index/notice_list";
+    }
+
 
     /**
      * 移动工具箱-删除铃音

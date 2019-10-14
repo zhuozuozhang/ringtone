@@ -230,8 +230,9 @@
                 var id = row.id;
                 return "<div class=\"cell\">\n" +
                             "<button data-v-ecae308c=\"\" type=\"button\" class=\"el-button el-button--text\" onclick=\"perfect("+id+")\">申请模板</button>" +
+                    "<button data-v-ecae308c=\"\" type=\"button\" class=\"el-button el-button--text\" onclick=\"commitFile("+id+")\">完善资料</button>" +
                             "<button data-v-ecae308c=\"\" type=\"button\" class=\"el-button el-button--text\" onclick=\"Details("+id+")\">详情</button>" +
-                            "<button data-v-ecae308c=\"\" type=\"button\" class=\"el-button el-button--text\" onclick=\"Edits()\">修改</button>" +
+
                         "</div>";
             }
         }]
@@ -275,6 +276,10 @@
     //订单详情
     function Edits() {
         location.href = "order_edit.html";
+    }
+
+    function commitFile(id){
+        window.location.href = "/400/commitFile/"+id;
     }
 </script>
 </html>

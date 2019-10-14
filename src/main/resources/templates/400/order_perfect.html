@@ -160,7 +160,7 @@
                                                     <input data-v-5e9a5ea3="" hidden="hidden" type="file"style="display: none;" onchange="changepic(this,'operatorCardUrl','operatorCardUrl_file')"
                                                            accept="image/jpg,image/png,image/PNG" id="operatorCardUrl_file">
                                                     <input type="hidden" id="operatorCardUrl" name="operatorCardUrl" value="" />
-                                                    <img  th:if="${fourcertificationOrder.legalCardUrl == null}" th:src="@{/client/400/images/111.jpg}" alt="" width="100%" height="100%" id="img_operatorCardUrl">
+                                                    <img  th:if="${fourcertificationOrder.operatorCardUrl  == null}" th:src="@{/client/400/images/111.jpg}" alt="" width="100%" height="100%" id="img_operatorCardUrl">
                                                     <img  th:if="${fourcertificationOrder.operatorCardUrl != null}" th:src="${fourcertificationOrder.operatorCardUrl}" alt="" width="100%" height="100%" id="img_operatorCardUrl">
 
                                                 </label>
@@ -172,7 +172,7 @@
                             </div>
 
                             <div data-v-15e66472="" style="text-align: center; padding: 10px 30px 30px;">
-                                <button data-v-15e66472="" type="button" class="el-button el-button--default" style="width: 200px;">
+                                <button data-v-15e66472="" type="button" onclick="back()" class="el-button el-button--default" style="width: 200px;">
                                     <span>取消</span>
                                 </button>
                                 <button data-v-15e66472="" onclick="perfect();" type="button" class="el-button el-button--primary" style="width: 200px;" lay-submit lay-filter="formDemo">
@@ -318,6 +318,10 @@
             layer.msg(res.msg, {icon: 2, time: 1000});
         });
         return false;
+    }
+
+    function back(){
+        window.history.back(-1);
     }
 
 </script>
