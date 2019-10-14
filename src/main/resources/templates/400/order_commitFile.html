@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset=utf-8>
+    <meta http-equiv=X-UA-Compatible content="IE=edge">
+    <meta name=viewport content="width=device-width,initial-scale=1">
+    <title>号码订购</title>
+    <link th:href="@{/client/400/css/app.c972703d.css}" rel="stylesheet">
+    <link th:href="@{/client/400/css/chunk-1d18d900.8acebab1.css}" rel="stylesheet">
+    <link th:href="@{/client/400/css/chunk-vendors.753ee7da.css}" rel="stylesheet">
+    <link th:href="@{/client/400/css/chunk-175c044e.5fd6e6b9.css}" rel="stylesheet">
+    <link th:href="@{/client/400/css/chunk-29aab2f7.0fff83d4.css}" rel="stylesheet">
+    <link th:href="@{/client/400/css/chunk-537e6598.7396185f.css}" rel="stylesheet">
+    <link th:href="@{/client/400/css/xadmin.css}" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/client/400/lib/layui/css/layui.css}">
+    <link rel="stylesheet" th:href="@{/client/400/lib/layui/css/modules/layer/default/layer.css}">
+    <style>
+        .layui-form-pane .layui-input {border-radius: 4px;}
+        .layui-form-pane .layui-input-block {
+            left: -1px;
+            width: 230px;
+            margin-left: 0;
+        }
+        .select-image>label[data-v-5e9a5ea3] {border: none; }
+    </style>
+</head>
+
+<body>
+    <div id="app">
+        <div>
+            <div data-v-e907fed4="" class="header">
+                <div data-v-e907fed4="" class="c-container">
+                    <span data-v-e907fed4="" class="user-name">[[${session.username}]]</span>
+                    <a th:href="@{/loginout}"><span data-v-e907fed4="" class="exit">退出</span></a>
+                </div>
+            </div>
+            <section data-v-04d52060="" class="el-container is-vertical">
+                <header data-v-04d52060="" class="el-header main-header" style="height: 65px;">
+                    <div data-v-c11354a6="" data-v-04d52060="" id="homeTop">
+                        <div data-v-c11354a6="" class="el-row">
+                            <div data-v-c11354a6="" class="el-col el-col-6">
+                                <a data-v-c11354a6="" href="#" class="">
+                                    <img data-v-c11354a6="" class="logo-view" th:src="@{/client/400/images/logo.png}">
+                                </a>
+                            </div>
+                            <div data-v-c11354a6="" class="right-nav el-col el-col-18">
+                                <ul data-v-c11354a6="">
+                                    <li data-v-c11354a6="">
+                                        <a data-v-c11354a6="" th:href="@{/400/toIndex}"
+                                           class="">号码选择</a>
+                                    </li>
+                                    <li data-v-c11354a6="">
+                                        <a data-v-c11354a6=""th:href="@{/400/order_list}" class="router-link-exact-active active">订单管理</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </header>
+                <form class="layui-form layui-col-md12  layui-form-pane">
+                    <main data-v-04d52060="" class="el-main">
+                        <div data-v-15e66472="" data-v-ecae308c="" style="background: rgb(244, 246, 252); z-index: 10;">
+                            <div data-v-15e66472="" class="c-container" style="width: 1200px;">
+                                <div data-v-15e66472="" class="title">
+                                    号码详情
+                                    <div style="float: right; padding: 5px 10px; cursor: pointer;"></div>
+                                </div>
+                                <div data-v-15e66472="" class="content">
+                                    <div class="info"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABwAAAAcCAYAAAByDd+UAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyFpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuNi1jMTQyIDc5LjE2MDkyNCwgMjAxNy8wNy8xMy0wMTowNjozOSAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENDIChXaW5kb3dzKSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDo0N0Y0M0RGMzlCQTIxMUU5QTQyM0M5Njk5NTEwRUM0OCIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDo0N0Y0M0RGNDlCQTIxMUU5QTQyM0M5Njk5NTEwRUM0OCI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOjQ3RjQzREYxOUJBMjExRTlBNDIzQzk2OTk1MTBFQzQ4IiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjQ3RjQzREYyOUJBMjExRTlBNDIzQzk2OTk1MTBFQzQ4Ii8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+wZcToAAAAjJJREFUeNrslk1IVFEUx99IJBaSuBBd2CL8QHPRhyEKYmRC0CIhNzUJ0xQ5KQ7hbApdm4ohCKZRE32otWiRi3ChrhQm3BipYGAT0UJCE0MNWo2/A0e4DI/hzYdu9MGPc+45997/vffde99zRSIRaz+fNGufn0PBlD9HYiWrn1jHMTnTAeuHTe4E5ifMwA3qbCY1QzrswGxBGH8DGqKq/IevcBVWyNc4EXTZHQsa+zCD8Asm4bamzjGTuai6jZg3WvSQf53IDAdgncYnwYt/SuM9KpIHU+Al/5ZQAciSviLWlIigxNd2C8Y7LFR7FC5BEIE+8t/x8+A3DBG7Fq+gvJsiGt6HMnih8UEdgGyWHJiCB+Q/ENvGL9V6H4nlxyP4XO1TmIc78i7ptNuY9Spcxh2F6wgMU17Hr9IqE/EIvjT8LrhFZ3V2FYm7MWPgRjRAOYQvG6fYsSCN/mHad5eX8kisjUC+Xo4G9CJ6gbJHV8f5OaRRpx7sUTo57+CIXYHPcEzbtzg+h8YZO41Z0C2fqzPfu7sUgUXdMJk6+liDK4dKyIr7prHp7DHmIYQYRJXNfTsurhG+Sb13CQtqx/2YVvgCF+nwr8bl6quFZ7AM3bpyJdRZSvjzRGO/HpEzspkQKtKUiH0i74Ne/LMab076e0iHjzD3QD5N3xANamrVqPZHbUZSSxq1vDKL93L9GWG52MMgxykbKhjgbEoEDeG7GL8KpxupNsT6UjbDw5+ogy24I8AAoE+7GPPZZTAAAAAASUVORK5CYII=">
+                                        号码: <span th:text="${fourcertificationOrder.applyNumber}">4009998947</span>
+                                    </div>
+                                    <div class="info"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABwAAAAcCAYAAAByDd+UAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyFpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuNi1jMTQyIDc5LjE2MDkyNCwgMjAxNy8wNy8xMy0wMTowNjozOSAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENDIChXaW5kb3dzKSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDo0OTBCMzM4RDlCQTIxMUU5QUEwQUMxOTZCQTNEQ0I0MSIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDo0OTBCMzM4RTlCQTIxMUU5QUEwQUMxOTZCQTNEQ0I0MSI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOjQ5MEIzMzhCOUJBMjExRTlBQTBBQzE5NkJBM0RDQjQxIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjQ5MEIzMzhDOUJBMjExRTlBQTBBQzE5NkJBM0RDQjQxIi8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+nzsZfQAAAetJREFUeNrslk0oRFEYhmf8DJJZkI3ZUCxkYWNB0SjFglI2s5WQzZRCFrYW1IjY2CkrCyQLFrPys2FDWViMpSxQRH4yw/V89anpNnfmnpmahebUM29zzrnfe875zjn3ei3L8uSzFHnyXP6/YYlTQ9eSJ4TMQqlBPC88wtjJlCfm2hCzWmQLXjWASQnCATSZzDAqP4zSb7pkDLYRiaGzPL+YMYd0bEdaYTCbHGFyg+zBgttNsy7LyIP7OeyNcXhxayizW81lJzLYB2TTJIdvtmVuQSQfGwTbsbVFkAYI0ZZIavp0O8MriBCoWgNWIufQD9v8b0oyG0amYEh39V99DzKd8tzY71I6B5BrqNJRlms+ZDOtgQT7AB8UwyRcwJGGkLYKOGbGwYyGairBBqAb7mCFhz+1bUREB7NLfVTrm+XAq+Eh9acpkyWGqeiMWHPgd2pP81wvhJ3aixwObw0yDxNZbNJIul3udHn/qD5nYXgL98aXt23GZcgyyB37bbushVNy5urslmSYeVy1WK+6Oof+30nLmND+RobxZGX070jA5ZL69Fi4zyEGcu6+YMbwTSET6JNjkU0O5WaJEuQJvXThJ3nu0PfnqOMbOt1XG2Zt+pqp181hpVkpWZEzCOsKmRsWvtoKhqnKrwADAADAz8ojg4NsAAAAAElFTkSuQmCC">
+                                        运营商: <span th:text="${fourcertificationOrder.provider}">电信</span>
+                                    </div>
+                                    <div class="info"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABwAAAAcCAYAAAByDd+UAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyFpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuNi1jMTQyIDc5LjE2MDkyNCwgMjAxNy8wNy8xMy0wMTowNjozOSAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENDIChXaW5kb3dzKSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDo0OEIwRTkyRDlCQTIxMUU5OTI0RkMwMUIyNkI5NDFBOSIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDo0OEIwRTkyRTlCQTIxMUU5OTI0RkMwMUIyNkI5NDFBOSI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOjQ4QjBFOTJCOUJBMjExRTk5MjRGQzAxQjI2Qjk0MUE5IiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjQ4QjBFOTJDOUJBMjExRTk5MjRGQzAxQjI2Qjk0MUE5Ii8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+phE/IAAAAmVJREFUeNrslk1IVUEYhu81SRHUVEKE3CRq6EYwdBGCJBQKXUEi/EEwMUG0INy0aenChbhxEYRZ4g+iK8WfIEITN4oLf0ASUnAlqQgqppBcnw8+4XCYc8+517i08MJz33Nmvpl3zplvZo4/GAz6ovmL8UX5F3XDWK+BJV2+FKQciiATjmAdpubbfRte+/G7zSFG2UgPPAkR9gvaMJ651ivFrBnZVLPP8AiS6NiPxkEevId0mCa+N+InpPFHpAm+iGLy12VwrfomNonNDcuQxnXIAHTS+F0Y8yxv4iuM067SkyGNUpEDGKFRtZYlILPwgbJPllgp/w5vKF/UshpkCGopG/Yyh33yd2Wm16fIPtjnaAKKYcUSKyY7aho6aRhdBhKASXsgHVVoTI/qfeSxLBPqzm3h7RpT5vaEL1Q7HaapAVrpSDJ0HOYwWzIMbkwv69wMi1Q3DAnhpyPJ2FVY08UfCJFDp7psQhreVT02dNCL6TYqSZWtu9QCZfMOhr8h2W1rO1BNgj1bXRvc1utDeCXbGlw4GKbBTzfDZZDszDEYSoJIosTr/VN9WtlT+w2GiSZD+yu9muy3hg4k4xqhXu9L4SU8N8x3hV4OeVn4P0RkhCTJicOOIo0C1E841MuT5eie67rwa1RbHDqT3WUB/jjUP9MpaQpnLy2UxGCEW+EcrrR7iCzp+iyN9Dy8h+x6OC1kLkc109OJv4jUUJbAHeiAQevpTp2sWzkV5ETJkjMRqog5u86JL6+mGwosxTL6W5Z7mc/XGEV+ABuMHyCS7vm6I53p18A3jGb/2TfNzXfpf294KcAA593JmzFDWWAAAAAASUVORK5CYII=">
+                                        价格: <span th:text="${fourcertificationOrder.price}">2500</span> 元
+                                    </div>
+                                    <div class="info"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABwAAAAcCAYAAAByDd+UAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyFpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuNi1jMTQyIDc5LjE2MDkyNCwgMjAxNy8wNy8xMy0wMTowNjozOSAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENDIChXaW5kb3dzKSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDo0ODU4NEI5NDlCQTIxMUU5ODY5QkNGMzMwODVDNTExRSIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDo0ODU4NEI5NTlCQTIxMUU5ODY5QkNGMzMwODVDNTExRSI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOjQ4NTg0QjkyOUJBMjExRTk4NjlCQ0YzMzA4NUM1MTFFIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjQ4NTg0QjkzOUJBMjExRTk4NjlCQ0YzMzA4NUM1MTFFIi8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+/fDV1gAAAUlJREFUeNpi/P//PwM9ARMDncHwt5CFVA22vQz1QKqBCKX/gDjlcDHDfLItBFoWCrWsEYivE1AeAcTzgHg+JT4EWfgD6OoGIhy3Gki9pDQOv4AsJFKtFBB/pdTCvyToYQZiRnqm0v/UyBbsNMkWwAhPBlLJ0GCBudYPiO9QPeMDLWsDUnOAmIdQ8JATrNh8WAnEy4BJPxqLY7ShGZoYAEqhv4mNw8s4xL8BsQAJqVSB2KKNF4d4HxAnAH16FUjfwuFgWDC6YgsNkkoaYDBfBlrmDmQuAGIvIP4AxO/QfMIIxSAHRVJceAMt3QUtRUBxCtIvBRR7RK/qKRuI79GzPuREyqsUWfiXSP2ggvwXNSz8SqT+T0DMRmnRBjKkGJggdgLpj3j0cgFxDRC/p9RCeyA+AsT7oRkdX0HOB8SOpFjIONouHfIWAgQYAJKnSv1W6wASAAAAAElFTkSuQmCC">
+                                        套餐模式: 按年
+                                    </div>
+                                    <div class="info"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABwAAAAcCAYAAAByDd+UAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyFpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuNi1jMTQyIDc5LjE2MDkyNCwgMjAxNy8wNy8xMy0wMTowNjozOSAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENDIChXaW5kb3dzKSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDo0OTY0MUYzRDlCQTIxMUU5OUNDQ0M4QTlGQjhBRjRERiIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDo0OTY0MUYzRTlCQTIxMUU5OUNDQ0M4QTlGQjhBRjRERiI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOjQ5NjQxRjNCOUJBMjExRTk5Q0NDQzhBOUZCOEFGNERGIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjQ5NjQxRjNDOUJBMjExRTk5Q0NDQzhBOUZCOEFGNERGIi8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+GArnkgAAAi1JREFUeNrslj1oU1EYhhMpWILWpYHSgjgojU2VFhSh/rSKg4vVoaCLUKgObpYOpe6tKGboINKhg4g0HVIHNyUSGzWFUEFCI6UtXQqKg0GT0CXk9jnwBS6X3HNukhI6eODhJfec873fd3N+rt+yLF8z2yFfk1vTDVu8Drwc8QWRATgLpyEHXyCdnPBteI3jN/2HGIWRJ3BTM+wbjGO83JAhZjPIlPzMwhxk4A8chhCMwlUZM4/p/boMMVtA7sIOjBHovSaxfknmPHxi7FBNhgSYRh7DVxgkQMnWdw65yLNZTZIx+kc8GTLpBLINP6GLiZajP4rcgV761qqYriAX4Dr9cS/b4rXoLaeZtJxowOWtDYtGjfuQ7DqRS6pCzNIuAcuipWqdzPuNLEE78fpMFVZW23MPW+qfpu+F6DXTxg+JpnUrW7SDCn5J0upZmeoK0rcl2mOq8JhoUWPYJvoZClLpX8iTQET68o54rhVWjFoNr0uZHpX5lq3ylGNBFU2GlTPxjBxX1RZFyrYS3dpx0XXTK/0oOtngpfBANO5l42flNjhFNZu1OjE/IK9yl/kBLxv/nui7OquLOuLoDclqFXmjtgjZxmqs7qlcYwnixGq9LRLq4IbvKlsCZDRGXchLMcsyNlzvfVg5qFV7C6/gh+y7I3BSnbnwUMZ8gBsYlhu58W8jz9Qi0gxTJ84jjBYb/sSwGauD+Ap0Q1BWoqo2hVFy375p/n+XHnjDPQEGAMyjtQEUogNAAAAAAElFTkSuQmCC">
+                                        充值年限: <span th:text="${fourcertificationOrder.ageLimit}">1</span> 年
+                                    </div>
+                                </div>
+                            </div>
+                            <div data-v-15e66472="" class="c-container" style="width: 1200px;">
+                                <div data-v-15e66472="" class="title">基本信息</div>
+                                <div data-v-15e66472="" class="base-info">
+                                    <div data-v-27737a5a="" data-v-3cb507e4="" data-v-15e66472="" class="wrap" style="width: 360px;">
+                                        <div data-v-27737a5a="" class="label" style="width: 130px;"><span data-v-27737a5a="">经营范围</span></div>
+                                        <div class="layui-input-block">
+                                            <input type="text" th:value="${fourcertificationOrder.corpBusinessScope}" id="corpBusinessScope" name="corpBusinessScope" autocomplete="off" class="layui-input">
+                                        </div>
+                                    </div>
+                                    <div data-v-27737a5a="" data-v-3cb507e4="" data-v-15e66472="" class="wrap" style="width: 360px;">
+                                        <div data-v-27737a5a="" class="label" style="width: 130px;"><span>号码用途</span></div>
+                                        <div class="layui-input-block">
+                                            <input type="text" name="corpNunmberUsage" id="corpNunmberUsage" autocomplete="off" class="layui-input" th:value="${fourcertificationOrder.corpNunmberUsage}">
+                                        </div>
+                                    </div>
+                                    <div data-v-27737a5a="" data-v-3cb507e4="" data-v-15e66472="" class="wrap" style="width: 360px;">
+                                        <div data-v-27737a5a="" class="label" style="width: 130px;"><span data-v-27737a5a="">经营许可证号</span></div>
+                                        <div class="layui-input-block">
+                                            <input type="text" name="title" autocomplete="off" class="layui-input">
+                                        </div>
+                                    </div>
+                                    <div data-v-27737a5a="" data-v-3cb507e4="" data-v-15e66472="" class="wrap" style="width: 360px;">
+                                        <div data-v-27737a5a="" class="label" style="width: 130px;"><span data-v-27737a5a="">法人姓名</span></div>
+                                        <div class="layui-input-block">
+                                            <input type="text" th:value="${fourcertificationOrder.legalName}" id="legalName" name="legalName" autocomplete="off" class="layui-input">
+                                        </div>
+                                    </div>
+                                    <div data-v-27737a5a="" data-v-3cb507e4="" data-v-15e66472="" class="wrap" style="width: 360px;">
+                                        <div data-v-27737a5a="" class="label" style="width: 130px;"><span data-v-27737a5a="">法人身份证号码</span></div>
+                                        <div class="layui-input-block">
+                                            <input type="text" th:value="${fourcertificationOrder.legalIdentityId}" id="legalIdentityId" name="legalIdentityId" autocomplete="off" class="layui-input">
+                                        </div>
+                                    </div>
+                                    <div data-v-27737a5a="" data-v-3cb507e4="" data-v-15e66472="" class="wrap" style="width: 360px;">
+                                        <div data-v-27737a5a="" class="label" style="width: 130px;"><span data-v-27737a5a="">法人身份证有效期</span></div>
+                                        <div class="layui-input-block">
+                                            <input type="text" th:value="${fourcertificationOrder.legalEffective}" id="legalEffective" name="legalEffective" autocomplete="off" class="layui-input">
+                                        </div>
+                                    </div>
+                                    <div data-v-27737a5a="" data-v-3cb507e4="" data-v-15e66472="" class="wrap" style="width: 360px;">
+                                        <div data-v-27737a5a="" class="label" style="width: 130px;"><span data-v-27737a5a="">法人身份证是否长期有效</span></div>
+                                        <div class="layui-form-item" >
+                                            <select id="isMonthly">
+                                                <option value="1">已包月</option>
+                                                <option value="0">未包月</option>
+                                                <option value="2">包月失败</option>
+                                                <option value="3">已退订</option>
+                                                <option value="4">包月中</option>
+                                                <option value="5">删除中</option>
+                                                <option value="6">删除失败</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div data-v-27737a5a="" data-v-3cb507e4="" data-v-15e66472="" class="wrap" style="width: 360px;">
+                                        <div data-v-27737a5a="" class="label" style="width: 130px;"><span data-v-27737a5a="">经办人名称</span></div>
+                                        <div class="layui-input-block">
+                                            <input type="text" th:value="${fourcertificationOrder.legalHandlerName}" id="legalHandlerName" name="legalHandlerName" autocomplete="off" class="layui-input">
+                                        </div>
+                                    </div>
+                                    <div data-v-27737a5a="" data-v-3cb507e4="" data-v-15e66472="" class="wrap" style="width: 360px;">
+                                        <div data-v-27737a5a="" class="label" style="width: 130px;"><span data-v-27737a5a="">经办人身份证</span></div>
+                                        <div class="layui-input-block">
+                                            <input type="text" th:value="${fourcertificationOrder.legalHandlerIdentityId}" id="legalHandlerIdentityId" name="legalHandlerIdentityId" autocomplete="off" class="layui-input">
+                                        </div>
+                                    </div>
+                                    <div data-v-27737a5a="" data-v-3cb507e4="" data-v-15e66472="" class="wrap" style="width: 360px;">
+                                        <div data-v-27737a5a="" class="label" style="width: 130px;"><span data-v-27737a5a="">经办人身份证有效期</span></div>
+                                        <div class="layui-input-block">
+                                            <input type="text" th:value="${fourcertificationOrder.legalHandlerEffective}" id="legalHandlerEffective" name="legalHandlerEffective" autocomplete="off" class="layui-input">
+                                        </div>
+                                    </div>
+                                    <div data-v-27737a5a="" data-v-3cb507e4="" data-v-15e66472="" class="wrap" style="width: 360px;">
+                                        <div data-v-27737a5a="" class="label" style="width: 130px;"><span data-v-27737a5a="">企业注册地地址</span></div>
+                                        <div class="layui-input-block">
+                                            <input type="text" th:value="${fourcertificationOrder.corpCompanyDetail}" id="corpCompanyDetail" name="corpCompanyDetail" autocomplete="off" class="layui-input">
+                                        </div>
+                                    </div>
+                                    <div data-v-27737a5a="" data-v-3cb507e4="" data-v-15e66472="" class="wrap" style="width: 360px;">
+                                        <div data-v-27737a5a="" class="label" style="width: 130px;"><span data-v-27737a5a="">实际办公地地址</span></div>
+                                        <div class="layui-input-block">
+                                            <input type="text" th:value="${fourcertificationOrder.corpOfficeDetail}" id="corpOfficeDetail" name="corpOfficeDetail" autocomplete="off" class="layui-input">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div data-v-15e66472="" class="c-container" style="width: 1200px;">
+                                <div data-v-27737a5a="" data-v-3cb507e4="" data-v-15e66472="" class="wrap" style="width: 360px;">
+                                    <div data-v-27737a5a="" class="label" style="width: 130px;"><span data-v-27737a5a=""></span></div>
+                                    <div class="layui-input-block">
+                                        <a th:href="${fourcertificationOrder.templateUrl}">下载模板</a>
+                                    </div>
+                                </div>
+                                <div data-v-15e66472="" class="title">附件资料</div>
+                                <div data-v-15e66472="" class="base-info">
+                                    <div data-v-27737a5a="" data-v-6608c108="" data-v-15e66472="" class="wrap" style="width: 1111px; margin-bottom: 2px;">
+                                        <div data-v-27737a5a="" class="label" style="width: 180px;">
+                                            <div data-v-6608c108="" data-v-27737a5a="">营业执照</div>
+                                            <div data-v-6608c108="" data-v-27737a5a="" style="font-size: 12px; color: rgb(170, 170, 170);">(格式支持jpg、png, 且大小不超过20M)</div>
+                                        </div>
+                                        <div data-v-27737a5a="" class="input">
+                                            <div data-v-5e9a5ea3="" data-v-6608c108="" class="select-image" data-v-27737a5a="">
+                                                <label data-v-5e9a5ea3="" style="width: 170px; height: 90px;">
+                                                    <input type="file" id="yyzz_file" style="display: none;" name="yyzz_file"
+                                                           onchange="changepic(this,'yyzz','yyzz_file')">
+                                                    <input type="hidden" th:value="${fourcertificationOrder.yyzz}" id="yyzz" name="yyzz" value="" />
+                                                    <img th:if="${fourcertificationOrder.yyzz == null}" th:src="@{/client/400/images/111.jpg}" alt="" width="100%" height="100%" id="img_yyzz">
+                                                    <img th:if="${fourcertificationOrder.yyzz != null}" th:src="${fourcertificationOrder.yyzz}" alt="" width="100%" height="100%" id="img_yyzz">
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div data-v-27737a5a="" data-v-6608c108="" data-v-15e66472="" class="wrap" style="width: 1111px; margin-bottom: 2px;">
+                                        <div data-v-27737a5a="" class="label" style="width: 180px;">
+                                            <div data-v-6608c108="" data-v-27737a5a="">开户许可证</div>
+                                            <div data-v-6608c108="" data-v-27737a5a="" style="font-size: 12px; color: rgb(170, 170, 170);">(格式支持jpg、png, 且大小不超过20M)</div>
+                                        </div>
+                                        <div data-v-27737a5a="" class="input">
+                                            <div data-v-5e9a5ea3="" data-v-6608c108="" class="select-image" data-v-27737a5a="">
+                                                <label data-v-5e9a5ea3="" style="width: 170px; height: 90px;">
+                                                    <input type="file" id="khxkz_file" style="display: none;" name="khxkz_file"
+                                                           onchange="changepic(this,'khxkz','khxkz_file')">
+                                                    <input type="hidden" th:value="${fourcertificationOrder.khxkz}" id="khxkz" name="khxkz" value="" />
+                                                    <img th:if="${fourcertificationOrder.khxkz == null}" th:src="@{/client/400/images/111.jpg}" alt="" width="100%" height="100%" id="img_khxkz">
+                                                    <img th:if="${fourcertificationOrder.khxkz != null}" th:src="${fourcertificationOrder.khxkz}" alt="" width="100%" height="100%" id="img_khxkz">
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div data-v-27737a5a="" data-v-6608c108="" data-v-15e66472="" class="wrap" style="width: 1111px; margin-bottom: 2px;">
+                                        <div data-v-27737a5a="" class="label" style="width: 180px;">
+                                            <div data-v-6608c108="" data-v-27737a5a="">法人身份证</div>
+                                            <div data-v-6608c108="" data-v-27737a5a="" style="font-size: 12px; color: rgb(170, 170, 170);">(格式支持jpg、png, 且大小不超过20M)</div>
+                                        </div>
+                                        <div data-v-27737a5a="" class="input">
+                                            <div data-v-5e9a5ea3="" data-v-6608c108="" class="select-image" data-v-27737a5a="">
+                                                <label data-v-5e9a5ea3="" style="width: 170px; height: 90px;">
+                                                    <input type="file" id="frsfz_file" style="display: none;" name="frsfz_file"
+                                                           onchange="changepic(this,'frsfz','frsfz_file')">
+                                                    <input type="hidden" th:value="${fourcertificationOrder.frsfz}" id="frsfz" name="frsfz" value="" />
+                                                    <img th:if="${fourcertificationOrder.frsfz == null}" th:src="@{/client/400/images/111.jpg}" alt="" width="100%" height="100%" id="img_frsfz">
+                                                    <img th:if="${fourcertificationOrder.frsfz != null}" th:src="${fourcertificationOrder.frsfz}" alt="" width="100%" height="100%" id="img_frsfz">
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div data-v-27737a5a="" data-v-6608c108="" data-v-15e66472="" class="wrap" style="width: 1111px; margin-bottom: 2px;">
+                                        <div data-v-27737a5a="" class="label" style="width: 180px;">
+                                            <div data-v-6608c108="" data-v-27737a5a="">法人授权证明</div>
+                                            <div data-v-6608c108="" data-v-27737a5a="" style="font-size: 12px; color: rgb(170, 170, 170);">(格式支持jpg、png, 且大小不超过20M)</div>
+                                        </div>
+                                        <div data-v-27737a5a="" class="input">
+                                            <div data-v-5e9a5ea3="" data-v-6608c108="" class="select-image" data-v-27737a5a="">
+                                                <label data-v-5e9a5ea3="" style="width: 170px; height: 90px;">
+                                                    <input type="file" id="frsq_file" style="display: none;" name="frsq_file"
+                                                           onchange="changepic(this,'frsq','frsq_file')">
+                                                    <input type="hidden" th:value="${fourcertificationOrder.frsq}" id="frsq" name="frsq" value="" />
+                                                    <img th:if="${fourcertificationOrder.frsq == null}" th:src="@{/client/400/images/111.jpg}" alt="" width="100%" height="100%" id="img_frsq">
+                                                    <img th:if="${fourcertificationOrder.frsq != null}" th:src="${fourcertificationOrder.frsq}" alt="" width="100%" height="100%" id="img_frsq">
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div data-v-27737a5a="" data-v-6608c108="" data-v-15e66472="" class="wrap" style="width: 1111px; margin-bottom: 2px;">
+                                        <div data-v-27737a5a="" class="label" style="width: 180px;">
+                                            <div data-v-6608c108="" data-v-27737a5a="">经办人身份证</div>
+                                            <div data-v-6608c108="" data-v-27737a5a="" style="font-size: 12px; color: rgb(170, 170, 170);">(格式支持jpg、png, 且大小不超过20M)</div>
+                                        </div>
+                                        <div data-v-27737a5a="" class="input">
+                                            <div data-v-5e9a5ea3="" data-v-6608c108="" class="select-image" data-v-27737a5a="">
+                                                <label data-v-5e9a5ea3="" style="width: 170px; height: 90px;">
+                                                    <input type="file" id="jbrsfz_file" style="display: none;" name="jbrsfz_file"
+                                                           onchange="changepic(this,'jbrsfz','jbrsfz_file')">
+                                                    <input type="hidden" th:value="${fourcertificationOrder.jbrsfz}" id="jbrsfz" name="jbrsfz" value="" />
+                                                    <img th:if="${fourcertificationOrder.jbrsfz == null}" th:src="@{/client/400/images/111.jpg}" alt="" width="100%" height="100%" id="img_jbrsfz">
+                                                    <img th:if="${fourcertificationOrder.jbrsfz != null}" th:src="${fourcertificationOrder.jbrsfz}" alt="" width="100%" height="100%" id="img_jbrsfz">
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div data-v-27737a5a="" data-v-6608c108="" data-v-15e66472="" class="wrap" style="width: 1111px; margin-bottom: 2px;">
+                                        <div data-v-27737a5a="" class="label" style="width: 180px;">
+                                            <div data-v-6608c108="" data-v-27737a5a="">经办人授权证明</div>
+                                            <div data-v-6608c108="" data-v-27737a5a="" style="font-size: 12px; color: rgb(170, 170, 170);">(格式支持jpg、png, 且大小不超过20M)</div>
+                                        </div>
+                                        <div data-v-27737a5a="" class="input">
+                                            <div data-v-5e9a5ea3="" data-v-6608c108="" class="select-image" data-v-27737a5a="">
+                                                <label data-v-5e9a5ea3="" style="width: 170px; height: 90px;">
+                                                    <input type="file" id="jbrsq_file" style="display: none;" name="jbrsq_file"
+                                                           onchange="changepic(this,'jbrsq','jbrsq_file')">
+                                                    <input type="hidden" th:value="${fourcertificationOrder.jbrsq}" id="jbrsq" name="jbrsq" value="" />
+                                                    <img th:if="${fourcertificationOrder.jbrsq == null}" th:src="@{/client/400/images/111.jpg}" alt="" width="100%" height="100%" id="img_jbrsq">
+                                                    <img th:if="${fourcertificationOrder.jbrsq != null}" th:src="${fourcertificationOrder.jbrsq}" alt="" width="100%" height="100%" id="img_jbrsq">
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div data-v-27737a5a="" data-v-6608c108="" data-v-15e66472="" class="wrap" style="width: 1111px; margin-bottom: 2px;">
+                                        <div data-v-27737a5a="" class="label" style="width: 180px;">
+                                            <div data-v-6608c108="" data-v-27737a5a="">缴费发票文件</div>
+                                            <div data-v-6608c108="" data-v-27737a5a="" style="font-size: 12px; color: rgb(170, 170, 170);">(格式支持jpg、png, 且大小不超过20M)</div>
+                                        </div>
+                                        <div data-v-27737a5a="" class="input">
+                                            <div data-v-5e9a5ea3="" data-v-6608c108="" class="select-image" data-v-27737a5a="">
+                                                <label data-v-5e9a5ea3="" style="width: 170px; height: 90px;">
+                                                    <input type="file" id="jffp_file" style="display: none;" name="jffp_file"
+                                                           onchange="changepic(this,'jffp','jffp_file')">
+                                                    <input type="hidden" th:value="${fourcertificationOrder.jffp}" id="jffp" name="jffp" value="" />
+                                                    <img th:if="${fourcertificationOrder.jffp == null}" th:src="@{/client/400/images/111.jpg}" alt="" width="100%" height="100%" id="img_jffp">
+                                                    <img th:if="${fourcertificationOrder.jffp != null}" th:src="${fourcertificationOrder.jffp}" alt="" width="100%" height="100%" id="img_jffp">
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div data-v-27737a5a="" data-v-6608c108="" data-v-15e66472="" class="wrap" style="width: 1111px; margin-bottom: 2px;">
+                                        <div data-v-27737a5a="" class="label" style="width: 180px;">
+                                            <div data-v-6608c108="" data-v-27737a5a="">受理单文件</div>
+                                            <div data-v-6608c108="" data-v-27737a5a="" style="font-size: 12px; color: rgb(170, 170, 170);">(格式支持jpg、png, 且大小不超过20M)</div>
+                                        </div>
+                                        <div data-v-27737a5a="" class="input">
+                                            <div data-v-5e9a5ea3="" data-v-6608c108="" class="select-image" data-v-27737a5a="">
+                                                <label data-v-5e9a5ea3="" style="width: 170px; height: 90px;">
+                                                    <input type="file" id="sld_file" style="display: none;" name="sld_file"
+                                                           onchange="changepic(this,'sld','sld_file')">
+                                                    <input type="hidden" th:value="${fourcertificationOrder.sld}" id="sld" name="sld" value="" />
+                                                    <img th:if="${fourcertificationOrder.sld == null}" th:src="@{/client/400/images/111.jpg}" alt="" width="100%" height="100%" id="img_sld">
+                                                    <img th:if="${fourcertificationOrder.sld != null}" th:src="${fourcertificationOrder.sld}" alt="" width="100%" height="100%" id="img_sld">
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div data-v-27737a5a="" data-v-6608c108="" data-v-15e66472="" class="wrap" style="width: 1111px; margin-bottom: 2px;">
+                                        <div data-v-27737a5a="" class="label" style="width: 180px;">
+                                            <div data-v-6608c108="" data-v-27737a5a="">服务协议文件</div>
+                                            <div data-v-6608c108="" data-v-27737a5a="" style="font-size: 12px; color: rgb(170, 170, 170);">(格式支持jpg、png, 且大小不超过20M)</div>
+                                        </div>
+                                        <div data-v-27737a5a="" class="input">
+                                            <div data-v-5e9a5ea3="" data-v-6608c108="" class="select-image" data-v-27737a5a="">
+                                                <label data-v-5e9a5ea3="" style="width: 170px; height: 90px;">
+                                                    <input type="file" id="fwxy_file" style="display: none;" name="fwxy_file"
+                                                           onchange="changepic(this,'fwxy','fwxy_file')">
+                                                    <input type="hidden" th:value="${fourcertificationOrder.fwxy}" id="fwxy" name="fwxy" value="" />
+                                                    <img th:if="${fourcertificationOrder.fwxy == null}" th:src="@{/client/400/images/111.jpg}" alt="" width="100%" height="100%" id="img_legalCardUrl">
+                                                    <img th:if="${fourcertificationOrder.fwxy != null}" th:src="${fourcertificationOrder.fwxy}" alt="" width="100%" height="100%" id="img_legalCardUrl">
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div data-v-27737a5a="" data-v-6608c108="" data-v-15e66472="" class="wrap" style="width: 1111px; margin-bottom: 2px;">
+                                        <div data-v-27737a5a="" class="label" style="width: 180px;">
+                                            <div data-v-6608c108="" data-v-27737a5a="">安全承诺书</div>
+                                            <div data-v-6608c108="" data-v-27737a5a="" style="font-size: 12px; color: rgb(170, 170, 170);">(格式支持jpg、png, 且大小不超过20M)</div>
+                                        </div>
+                                        <div data-v-27737a5a="" class="input">
+                                            <div data-v-5e9a5ea3="" data-v-6608c108="" class="select-image" data-v-27737a5a="">
+                                                <label data-v-5e9a5ea3="" style="width: 170px; height: 90px;">
+                                                    <input type="file" id="aqcns_file" style="display: none;" name="aqcns_file"
+                                                           onchange="changepic(this,'aqcns','aqcns_file')">
+                                                    <input type="hidden" th:value="${fourcertificationOrder.aqcns}" id="aqcns" name="aqcns" value="" />
+                                                    <img th:if="${fourcertificationOrder.aqcns == null}" th:src="@{/client/400/images/111.jpg}" alt="" width="100%" height="100%" id="img_legalCardUrl">
+                                                    <img th:if="${fourcertificationOrder.aqcns != null}" th:src="${fourcertificationOrder.aqcns}" alt="" width="100%" height="100%" id="img_legalCardUrl">
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div data-v-27737a5a="" data-v-6608c108="" data-v-15e66472="" class="wrap" style="width: 1111px; margin-bottom: 2px;">
+                                        <div data-v-27737a5a="" class="label" style="width: 180px;">
+                                            <div data-v-6608c108="" data-v-27737a5a="">手持身份证照片</div>
+                                            <div data-v-6608c108="" data-v-27737a5a="" style="font-size: 12px; color: rgb(170, 170, 170);">(格式支持jpg、png, 且大小不超过20M)</div>
+                                        </div>
+                                        <div data-v-27737a5a="" class="input">
+                                            <div data-v-5e9a5ea3="" data-v-6608c108="" class="select-image" data-v-27737a5a="">
+                                                <label data-v-5e9a5ea3="" style="width: 170px; height: 90px;">
+                                                    <input type="file" id="scsfz_file" style="display: none;" name="scsfz_file"
+                                                           onchange="changepic(this,'scsfz','scsfzs_file')">
+                                                    <input type="hidden" th:value="${fourcertificationOrder.scsfz}" id="scsfz" name="scsfz" value="" />
+                                                    <img th:if="${fourcertificationOrder.scsfz == null}" th:src="@{/client/400/images/111.jpg}" alt="" width="100%" height="100%" id="img_legalCardUrl">
+                                                    <img th:if="${fourcertificationOrder.scsfz != null}" th:src="${fourcertificationOrder.scsfz}" alt="" width="100%" height="100%" id="img_legalCardUrl">
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div data-v-27737a5a="" data-v-6608c108="" data-v-15e66472="" class="wrap" style="width: 1111px; margin-bottom: 2px;">
+                                        <div data-v-27737a5a="" class="label" style="width: 180px;">
+                                            <div data-v-6608c108="" data-v-27737a5a="">经营异常证明</div>
+                                            <div data-v-6608c108="" data-v-27737a5a="" style="font-size: 12px; color: rgb(170, 170, 170);">(格式支持jpg、png, 且大小不超过20M)</div>
+                                        </div>
+                                        <div data-v-27737a5a="" class="input">
+                                            <div data-v-5e9a5ea3="" data-v-6608c108="" class="select-image" data-v-27737a5a="">
+                                                <label data-v-5e9a5ea3="" style="width: 170px; height: 90px;">
+                                                    <input type="file" id="jyyczm_file" style="display: none;" name="jyyczm_file"
+                                                           onchange="changepic(this,'jyyczm','jyyczm_file')">
+                                                    <input type="hidden" th:value="${fourcertificationOrder.jyyczm}" id="jyyczm" name="jyyczm" value="" />
+                                                    <img th:if="${fourcertificationOrder.jyyczm == null}" th:src="@{/client/400/images/111.jpg}" alt="" width="100%" height="100%" id="img_legalCardUrl">
+                                                    <img th:if="${fourcertificationOrder.jyyczm != null}" th:src="${fourcertificationOrder.jyyczm}" alt="" width="100%" height="100%" id="img_legalCardUrl">
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div data-v-27737a5a="" data-v-6608c108="" data-v-15e66472="" class="wrap" style="width: 1111px; margin-bottom: 2px;">
+                                        <div data-v-27737a5a="" class="label" style="width: 180px;">
+                                            <div data-v-6608c108="" data-v-27737a5a="">手持营业执照</div>
+                                            <div data-v-6608c108="" data-v-27737a5a="" style="font-size: 12px; color: rgb(170, 170, 170);">(格式支持jpg、png, 且大小不超过20M)</div>
+                                        </div>
+                                        <div data-v-27737a5a="" class="input">
+                                            <div data-v-5e9a5ea3="" data-v-6608c108="" class="select-image" data-v-27737a5a="">
+                                                <label data-v-5e9a5ea3="" style="width: 170px; height: 90px;">
+                                                    <input type="file" id="ccyyzz_file" style="display: none;" name="ccyyzz_file"
+                                                           onchange="changepic(this,'ccyyzz','ccyyzz_file')">
+                                                    <input type="hidden" th:value="${fourcertificationOrder.ccyyzz}" id="ccyyzz" name="ccyyzz" value="" />
+                                                    <img th:if="${fourcertificationOrder.ccyyzz == null}" th:src="@{/client/400/images/111.jpg}" alt="" width="100%" height="100%" id="img_legalCardUrl">
+                                                    <img th:if="${fourcertificationOrder.ccyyzz != null}" th:src="${fourcertificationOrder.ccyyzz}" alt="" width="100%" height="100%" id="img_legalCardUrl">
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div data-v-27737a5a="" data-v-6608c108="" data-v-15e66472="" class="wrap" style="width: 1111px; margin-bottom: 2px;">
+                                        <div data-v-27737a5a="" class="label" style="width: 180px;">
+                                            <div data-v-6608c108="" data-v-27737a5a="">低消协议</div>
+                                            <div data-v-6608c108="" data-v-27737a5a="" style="font-size: 12px; color: rgb(170, 170, 170);">(格式支持jpg、png, 且大小不超过20M)</div>
+                                        </div>
+                                        <div data-v-27737a5a="" class="input">
+                                            <div data-v-5e9a5ea3="" data-v-6608c108="" class="select-image" data-v-27737a5a="">
+                                                <label data-v-5e9a5ea3="" style="width: 170px; height: 90px;">
+                                                    <input type="file" id="dxxy_file" style="display: none;" name="dxxy_file"
+                                                           onchange="changepic(this,'dxxy','dxxy_file')">
+                                                    <input type="hidden" th:value="${fourcertificationOrder.dxxy}" id="dxxy" name="dxxy" value="" />
+                                                    <img th:if="${fourcertificationOrder.dxxy == null}" th:src="@{/client/400/images/111.jpg}" alt="" width="100%" height="100%" id="img_legalCardUrl">
+                                                    <img th:if="${fourcertificationOrder.dxxy != null}" th:src="${fourcertificationOrder.dxxy}" alt="" width="100%" height="100%" id="img_legalCardUrl">
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div data-v-27737a5a="" data-v-6608c108="" data-v-15e66472="" class="wrap" style="width: 1111px; margin-bottom: 2px;">
+                                        <div data-v-27737a5a="" class="label" style="width: 180px;">
+                                            <div data-v-6608c108="" data-v-27737a5a="">工商网截图</div>
+                                            <div data-v-6608c108="" data-v-27737a5a="" style="font-size: 12px; color: rgb(170, 170, 170);">(格式支持jpg、png, 且大小不超过20M)</div>
+                                        </div>
+                                        <div data-v-27737a5a="" class="input">
+                                            <div data-v-5e9a5ea3="" data-v-6608c108="" class="select-image" data-v-27737a5a="">
+                                                <label data-v-5e9a5ea3="" style="width: 170px; height: 90px;">
+                                                    <input type="file" id="gswjt_file" style="display: none;" name="gswjt_file"
+                                                           onchange="changepic(this,'gswjt','gswjt_file')">
+                                                    <input type="hidden" th:value="${fourcertificationOrder.gswjt}" id="gswjt" name="gswjt" value="" />
+                                                    <img th:if="${fourcertificationOrder.gswjt == null}" th:src="@{/client/400/images/111.jpg}" alt="" width="100%" height="100%" id="img_legalCardUrl">
+                                                    <img th:if="${fourcertificationOrder.gswjt != null}" th:src="${fourcertificationOrder.gswjt}" alt="" width="100%" height="100%" id="img_legalCardUrl">
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!--<div data-v-15e66472="" class="c-container" style="width: 1200px;">-->
+                                <!--<div data-v-15e66472="" class="title">套餐及合同</div>-->
+                                <!--<div data-v-15e66472="" class="base-info">-->
+                                    <!--<div data-v-27737a5a="" data-v-5d09ca2d="" data-v-15e66472="" class="wrap" style="width: 360px;overflow: inherit;">-->
+                                        <!--<div data-v-27737a5a="" class="label" style="width: 130px;"><span data-v-27737a5a="">套餐类型</span></div>-->
+                                        <!--<div data-v-27737a5a="" class="input">-->
+                                            <!--<div data-v-5d09ca2d="" class="el-select" data-v-27737a5a="" style="width: 100%;position: relative;">-->
+                                                <!--<div class="layui-input-block">-->
+                                                    <!--<select name="city" lay-verify="required">-->
+                                                        <!--<option value="固定套餐">固定套餐</option>-->
+                                                    <!--</select>-->
+                                                <!--</div>-->
+                                            <!--</div>-->
+                                        <!--</div>-->
+                                    <!--</div>-->
+                                    <!--<div data-v-27737a5a="" data-v-3cb507e4="" data-v-15e66472="" class="wrap" style="width: 360px;">-->
+                                        <!--<div data-v-27737a5a="" class="label" style="width: 130px;"><span data-v-27737a5a="">套餐金额</span></div>-->
+                                        <!--<div class="layui-input-block">-->
+                                            <!--<input type="text" name="title" autocomplete="off" class="layui-input">-->
+                                        <!--</div>-->
+                                    <!--</div>-->
+                                    <!--<div data-v-27737a5a="" data-v-3cb507e4="" data-v-15e66472="" class="wrap" style="width: 360px;">-->
+                                        <!--<div data-v-27737a5a="" class="label" style="width: 130px;"><span data-v-27737a5a="">套餐周期</span></div>-->
+                                        <!--<div class="layui-input-block">-->
+                                            <!--<input type="text" name="title" autocomplete="off" class="layui-input">-->
+                                        <!--</div>-->
+                                    <!--</div>-->
+                                    <!--<div data-v-27737a5a="" data-v-3cb507e4="" data-v-15e66472="" class="wrap" style="width: 360px;">-->
+                                        <!--<div data-v-27737a5a="" class="label" style="width: 130px;"><span data-v-27737a5a="">扣费周期</span></div>-->
+                                        <!--<div class="layui-input-block">-->
+                                            <!--<input type="text" name="title" autocomplete="off" class="layui-input">-->
+                                        <!--</div>-->
+                                    <!--</div>-->
+                                    <!--<div data-v-27737a5a="" data-v-3cb507e4="" data-v-15e66472="" class="wrap" style="width: 360px;">-->
+                                        <!--<div data-v-27737a5a="" class="label" style="width: 130px;"><span data-v-27737a5a="">费率</span></div>-->
+                                        <!--<div class="layui-input-block">-->
+                                            <!--<input type="text" name="title" autocomplete="off" class="layui-input">-->
+                                        <!--</div>-->
+                                    <!--</div>-->
+                                    <!--<div data-v-27737a5a="" data-v-3cb507e4="" data-v-15e66472="" class="wrap" style="width: 360px;">-->
+                                        <!--<div data-v-27737a5a="" class="label" style="width: 130px;"><span data-v-27737a5a="">最低消费金额</span></div>-->
+                                        <!--<div class="layui-input-block">-->
+                                            <!--<input type="text" name="title" autocomplete="off" class="layui-input">-->
+                                        <!--</div>-->
+                                    <!--</div>-->
+                                    <!--<div data-v-27737a5a="" data-v-08437baf="" data-v-15e66472="" class="wrap" style="width: 740px;">-->
+                                        <!--<div data-v-27737a5a="" class="label" style="width: 130px;"><span data-v-27737a5a="">签订合同日期</span></div>-->
+                                        <!--<div class="layui-input-block">-->
+                                            <!--<input type="text" name="title" autocomplete="off" class="layui-input" id="date" style="width: 610px;">-->
+                                        <!--</div>-->
+                                    <!--</div>-->
+                                    <!--<div data-v-27737a5a="" data-v-3cb507e4="" data-v-15e66472="" class="wrap" style="width: 740px;">-->
+                                        <!--<div data-v-27737a5a="" class="label" style="width: 130px;"><span data-v-27737a5a="">备注信息</span></div>-->
+                                        <!--<div class="layui-input-block">-->
+                                            <!--<textarea name="desc" placeholder="请输入内容" class="layui-textarea" style="width: 610px;"></textarea>-->
+                                        <!--</div>-->
+                                    <!--</div>-->
+                                    <!--<div data-v-27737a5a="" data-v-6608c108="" data-v-15e66472="" class="wrap" style="width: 1111px; margin-bottom: 2px;">-->
+                                        <!--<div data-v-27737a5a="" class="label" style="width: 130px;">-->
+                                            <!--<div data-v-6608c108="" data-v-27737a5a="">合同附件</div>-->
+                                            <!--<div data-v-6608c108="" data-v-27737a5a="" style="font-size: 12px; color: rgb(170, 170, 170);">(格式支持jpg、png, 且大小不超过20M)</div>-->
+                                        <!--</div>-->
+                                        <!--<div data-v-27737a5a="" class="input">-->
+                                            <!--<div data-v-5e9a5ea3="" data-v-6608c108="" class="select-image" data-v-27737a5a="">-->
+                                                <!--<label data-v-5e9a5ea3="" style="width: 170px; height: 90px;">-->
+                                                    <!--<input data-v-5e9a5ea3="" hidden="hidden" type="file" accept="image/*" style="display: none;">-->
+                                                    <!--<img th:src="@{/client/400/images/111.jpg}" alt="" width="100%" height="100%">-->
+                                                <!--</label>-->
+                                            <!--</div>-->
+                                        <!--</div>-->
+                                    <!--</div>-->
+                                <!--</div>-->
+                            <!--</div>-->
+                            <div data-v-15e66472="" style="text-align: center; padding: 10px 30px 30px;">
+                                <button data-v-15e66472="" type="button" class="el-button el-button--default" style="width: 200px;">
+                                    <span>取消</span>
+                                </button>
+                                <button data-v-15e66472="" type="button" class="el-button el-button--primary" style="width: 200px;" lay-submit lay-filter="formDemo">
+                                    <span>保存</span>
+                                </button>
+                            </div>
+                        </div>
+                    </main>
+                </form>
+            </section>
+        </div>
+    </div>
+</body>
+<div th:include="admin/common/include :: footer"></div>
+<script th:src="@{/client/400/js/xcity.js}"></script>
+<script th:src="@{/public/js/jquery-2.1.4.min.js}"></script>
+<script th:src="@{/public/layui/layui.js}"></script>
+<script th:src="@{/public/layui/lay/modules/laydate.js}"></script>
+<script th:src="@{/public/layui/lay/modules/layer.js}"></script>
+<script th:src="@{/public/js/regular.js}"></script>
+<script type="text/javascript" th:src="@{/public/dataTables/jquery.dataTables.min.js}"></script>
+<script type="text/javascript" th:src="@{/public/js/datatables.js}"></script>
+<script type="text/javascript" th:src="@{/public/js/ajax.js}"></script>
+<script type="text/javascript" th:src="@{/public/js/ajaxfileupload.js}"></script>
+<script th:inline="javascript">
+    //日期选择
+    layui.use('laydate', function(){
+        var laydate = layui.laydate;
+        //常规用法
+        laydate.render({
+            elem: '#date'
+        });
+    });
+    //表单提交
+    layui.use('form', function(){
+        var form = layui.form;
+        form.render("select");
+        //监听提交
+        form.on('submit(formDemo)', function(data){
+            layer.msg(JSON.stringify(data.field));
+            return false;
+        });
+    });
+    //图片上传预览
+    function changepic(obj,id,file) {
+        var reads = new FileReader();
+        f = document.getElementById(file).files[0];
+        if (f != null && f != "" && f != undefined && f != "null") {
+            if (!/.(jpg|png|JPG|PNG)$/.test(obj.value)) {
+                layer.msg('图片类型必须是jpg,png中的一种!');
+                return;
+            }
+            if (((obj.files[0].size).toFixed(2)) >= (20 * 1024 * 1024)) { //返回Byte(B),保留小数点后两位
+                layer.msg('请上传小于20M的图片!');
+                return;
+            }
+
+            var objUrl = getObjectURL(f); //获取图片的路径，该路径不是图片在本地的路径
+            if (objUrl) {
+                $("#img_"+id).children().attr("src", objUrl); //将图片路径存入src中，显示出图片
+            }
+
+            uploadFile(id,'/400/'+$("#id").val(),file);
+            // reads.readAsDataURL(f);
+            // reads.onload = function(e) {
+            //     document.getElementById('img_'+id).src = this.result;
+            // };
+        }
+    }
+
+    /*上传图片预览*/
+    //建立一個可存取到該file的url
+    function getObjectURL(file) {
+        if (file != null && file != "" && file != undefined) {
+            var url = null;
+            if (window.createObjectURL != undefined) { // basic
+                url = window.createObjectURL(file);
+            } else if (window.URL != undefined) { // mozilla(firefox)
+                url = window.URL.createObjectURL(file);
+            } else if (window.webkitURL != undefined) { // webkit or chrome
+                url = window.webkitURL.createObjectURL(file);
+            }
+            return url;
+        }
+    }
+
+    //上传文件
+    function uploadFile(url,folderName,file) {
+
+        var layuiLoding = layer.load(0, { //icon支持传入0-2
+            time:false,
+            shade: [0.5, '#9c9c9c'], //0.5透明度的灰色背景
+            content: '文件上传中...',
+            success: function (layero) {
+                layero.find('.layui-layer-content').css({
+                    'padding': '39px 10px',
+                    'width': '100px'
+                });
+            }
+        });
+
+        var formData = new FormData();
+
+        formData.append("fourFileUpload", document.getElementById(file).files[0]);
+        formData.append("folderName", "400/"+$("#id").val());
+
+        $.ajax({
+            url: '/system/upload/fourFileUpload',
+            type: 'POST',
+            cache: false,
+            data: formData,
+            processData: false,
+            contentType: false
+        }).done(function (res) {
+            layer.close(layuiLoding);
+            layer.msg(res.msg, {icon: 1, time: 1000});
+            $("#"+url).val("/profile"+res.data);
+            document.getElementById('img_'+url).src = "/profile"+res.data;
+
+        }).fail(function (res) {
+            layer.msg(res.msg, {icon: 2, time: 1000});
+        });
+        return false;
+    }
+
+    function back(){
+        window.history.back(-1);
+    }
+
+
+
+</script>
+
+</html>

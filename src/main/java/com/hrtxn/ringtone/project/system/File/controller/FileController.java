@@ -253,4 +253,17 @@ public class FileController {
     }
 
 
+    /**
+     * 400文件
+     * @param fourFileUpload
+     * @param folderName
+     * @return
+     */
+    @PostMapping("/system/upload/fourFileUpload")
+    @ResponseBody
+    public AjaxResult fourFileUpload(@RequestParam("fourFileUpload") MultipartFile fourFileUpload, String folderName) {
+        return fileService.upload(fourFileUpload, fourFileUpload.getOriginalFilename(), folderName);
+    }
+
+
 }

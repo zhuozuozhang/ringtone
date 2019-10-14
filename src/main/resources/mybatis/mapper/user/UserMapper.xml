@@ -312,4 +312,13 @@
             </if>
         </trim>
     </insert>
+
+
+    <select id="findAllUser" resultMap="BaseResultMap" >
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM
+        tb_user u
+    </select>
+
 </mapper>

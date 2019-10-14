@@ -81,4 +81,11 @@ public interface NoticeMapper {
      */
     List<Notice> getNoticeList(@Param("page") Page page, @Param("notice") Notice notice);
 
+    Integer getMaxId();
+
+
+    List<Notice> pageNoticeList(@Param("page") Page page, @Param("notice") Notice notice);
+
+    int pageNoticeCount(@Param("notice") Notice notice);
+
 }

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hrtxn.ringtone.project.system.notice.mapper.NoticeStatusMapper">
+
+    <resultMap id="BaseResultMap" type="com.hrtxn.ringtone.project.system.notice.domain.NoticeStatus">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="notice_id" property="noticeId" jdbcType="INTEGER"/>
+        <result column="user_id" property="userId" jdbcType="INTEGER"/>
+        <result column="status" property="status" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+          id,notice_id,user_id,status
+    </sql>
+
+    <select id="queryNoticeStatusByNoticeId">
+        select id,notice_id,user_id,status
+        from sys_notice_status where notice_id = #{noticeId}
+    </select>
+
+    <insert id="insertNoticeStatus" parameterType="com.hrtxn.ringtone.project.system.notice.domain.NoticeStatus" >
+        insert into sys_notice_status(notice_id,user_id,status)
+        values(#{noticeId},#{userId},#{status})
+    </insert>
+
+    <update id="updateNoticeStatus">
+        update sys_notice_status
+        set status = '2' where notice_id = #{noticeId} and user_id = #{userId}
+    </update>
+
+    <delete id="deleteNoticeStatusByNoticeId">
+        delete from sys_notice_status where notice_id = #{noticeId}
+    </delete>
+
+</mapper>

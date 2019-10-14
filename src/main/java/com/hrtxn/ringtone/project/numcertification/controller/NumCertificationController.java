@@ -101,7 +101,7 @@ public class NumCertificationController {
     }
 
     /**
-     * 创建订单
+     * 申请模板
      *
      * @author zcy
      * @date 2019-8-30 11:40
@@ -111,6 +111,22 @@ public class NumCertificationController {
     public AjaxResult perfect(FourcertificationOrder fourcertificationOrder) {
         return fourCertificationService.perfect(fourcertificationOrder);
     }
+
+    /**
+     * 跳转到
+     *
+     * @author zcy
+     * @date 2019-9-2 14:03
+     */
+    @GetMapping("/commitFile/{orderId}")
+    public String commitFile(@PathVariable Long orderId, ModelMap map) {
+        map.put("orderId", orderId);
+
+        FourcertificationOrder fourcertificationOrder = fourCertificationService.selectByPrimaryKey(orderId);
+        map.put("fourcertificationOrder", fourcertificationOrder);
+            return "/400/order_commitFile";
+    }
+
 
     /**
      * 跳转到订单列表
@@ -124,7 +140,7 @@ public class NumCertificationController {
 
         FourcertificationOrder fourcertificationOrder = fourCertificationService.selectByPrimaryKey(orderId);
         map.put("fourcertificationOrder", fourcertificationOrder);
-            return "/400/order_perfect";
+        return "/400/order_perfect";
     }
     /***
      * 跳转到订单列表

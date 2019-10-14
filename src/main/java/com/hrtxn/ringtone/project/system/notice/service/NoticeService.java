@@ -2,10 +2,16 @@ package com.hrtxn.ringtone.project.system.notice.service;
 
 import com.hrtxn.ringtone.common.constant.AjaxResult;
 import com.hrtxn.ringtone.common.domain.Page;
+import com.hrtxn.ringtone.common.utils.DateUtils;
 import com.hrtxn.ringtone.common.utils.ShiroUtils;
 import com.hrtxn.ringtone.common.utils.StringUtils;
 import com.hrtxn.ringtone.project.system.notice.domain.Notice;
+import com.hrtxn.ringtone.project.system.notice.domain.NoticeStatus;
 import com.hrtxn.ringtone.project.system.notice.mapper.NoticeMapper;
+import com.hrtxn.ringtone.project.system.notice.mapper.NoticeStatusMapper;
+import com.hrtxn.ringtone.project.system.user.domain.User;
+import com.hrtxn.ringtone.project.system.user.mapper.UserMapper;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,6 +29,11 @@ public class NoticeService {
     @Autowired
     private NoticeMapper noticeMapper;
 
+    @Autowired
+    private UserMapper userMapper;
+
+    @Autowired
+    private NoticeStatusMapper noticeStatusMapper;
     /**
      * 查询所有公告信息
      *
@@ -53,12 +64,24 @@ public class NoticeService {
         if (StringUtils.isNotNull(notice)) {
             notice.setNoticeAuthor(ShiroUtils.getSysUser().getUserName());
             notice.setNoticeTime(new Date());
-            int count = noticeMapper.insertNotice(notice);
-            if (count > 0) {
-                return AjaxResult.success(true, "添加公告成功");
-            } else {
-                return AjaxResult.error("添加公告出错");
+            Integer id = noticeMapper.getMaxId();
+            if(id == null){
+                id = 1;
+            }else{
+                id = id + 1;
             }
+            notice.setNoticeId(id);
+            noticeMapper.insertNotice(notice);
+
+            List<User> userList = userMapper.findAllUser();
+            for(User user : userList){
+                NoticeStatus noticeStatus = new NoticeStatus();
+                noticeStatus.setNoticeId(id);
+                noticeStatus.setUserId(user.getId());
+                noticeStatus.setStatus("1");
+                noticeStatusMapper.insertNoticeStatus(noticeStatus);
+            }
+            return  AjaxResult.success("添加成功");
         }
         return AjaxResult.error("参数格式错误");
     }
@@ -152,5 +175,26 @@ public class NoticeService {
             return AjaxResult.success(noticeList, "获取数据成功！", count);
         }
         return AjaxResult.error("无数据！");
+    }
+
+    /**
+     * 分页查询公告
+     * @param page
+     * @param notice
+     * @return
+     * @throws Exception
+     */
+    public List<Notice> PageNoticeList(Page page, Notice notice) throws Exception {
+        page.setPage((page.getPage() - 1) * page.getPagesize());
+        // 获取公告列表
+        List<Notice> noticeList = noticeMapper.pageNoticeList(page, notice);
+        for(Notice ne : noticeList){
+            ne.setTimeStr(DateUtils.format(ne.getNoticeTime(),"yyyy-MM-dd HH:mm:ss"));
+        }
+        return noticeList;
+    }
+
+    public int pageNoticeCount( Notice notice){
+        return noticeMapper.pageNoticeCount(notice);
     }
 }

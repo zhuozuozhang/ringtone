@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head th:include="threenets/threenet/common/head :: linkcss"></head>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <style>
+        #page-aside .selectednotice {
+            background-color: #008CF6;
+            border-right: 0px solid #E3563A;
+            color: #fff;
+            border-radius: 5px;
+            margin: 5px;
+            height: 40px;
+        }
+        #page-aside .selectednotice .aselected{
+            color: #fff;
+            height: 30px;
+        }
+
+        #page-aside .noselected {
+            background-color: #ffffff;
+            border-right: 0px solid #E3563A;
+            color: #fff;
+            border-radius: 5px;
+            margin: 5px;
+            height: 40px;
+        }
+
+        #page-aside .noselected .aselected{
+            color: #fff;
+        }
+
+    </style>
+    <title>商户列表</title>
+</head>
+
+<body>
+<!-- 头部 -->
+<div th:include="threenets/threenet/common/include :: header"></div>
+<div class="layui-row contant" style="width:60%;">
+    <!-- 等待设置铃音 -->
+    <div class="layui-col-md12" id="search">
+        <div class="layui-row" id="mcontent">
+            <div class="layui-col-xs1 mconl" style="width: 15%;">
+                <div class="grid-demo grid-demo-bg1">
+                    <div id="page-aside" class="aside">
+                        <ul class="nav">
+                            <li th:if="${noticeType} ne '1'" class="noselected"><a  th:href="@{'/threenets/threeNotice/0/1/5/1'}">
+                                <img style="height: 25px;" th:src="@{'/public/images/png/01.png'}" /> 重要公告</a></li>
+                            <li th:if="${noticeType} eq '1'" class="selectednotice"><a class="aselected" th:href="@{'/threenets/threeNotice/0/1/5/1'}">
+                                <img style="height: 25px;" th:src="@{'/public/images/png/02.png'}" />重要公告</a></li>
+                            <li th:if="${noticeType} ne '2'" class="noselected"> <a th:href="@{'/threenets/threeNotice/0/1/5/2'}">
+                                <img style="height: 25px;" th:src="@{'/public/images/png/01.png'}" />电信</a></li>
+                            <li th:if="${noticeType} eq '2'" class="selectednotice"><a class="aselected" th:href="@{'/threenets/threeNotice/0/1/5/2'}">
+                                <img style="height: 25px;" th:src="@{'/public/images/png/02.png'}" />电信</a></li>
+                            <li th:if="${noticeType} ne '3'" class="noselected"><a  th:href="@{'/threenets/threeNotice/0/1/5/3'}">
+                                <img style="height: 25px;" th:src="@{'/public/images/png/01.png'}" />移动</a></li>
+                            <li th:if="${noticeType} eq '3'" class="selectednotice"><a class="aselected" th:href="@{'/threenets/threeNotice/0/1/5/3'}">
+                                <img style="height: 25px;" th:src="@{'/public/images/png/02.png'}" />移动</a></li>
+                            <li th:if="${noticeType} ne '4'" class="noselected"><a  th:href="@{'/threenets/threeNotice/0/1/5/4'}">
+                                <img style="height: 25px;" th:src="@{'/public/images/png/01.png'}" />联通</a></li>
+                            <li th:if="${noticeType} eq '4'" class="selectednotice"><a class="aselected" th:href="@{'/threenets/threeNotice/0/1/5/4'}">
+                                <img style="height: 25px;" th:src="@{'/public/images/png/02.png'}" />联通</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="layui-col-xs11 mconr" style="width: 85%;">
+
+                <p style="width: 90%;">
+                    &nbsp;&nbsp;<span style="background-color: #00a0e9;font-size: 18px;">&nbsp;&nbsp;</span>
+                    <span style="font-size: 18px;font-weight: bold">业务公告</span>
+                    <span style="float:right;">
+                    <input type="text" id="noticeTitle" name="noticeTitle" th:value="${noticeTitle}" onblur="queryTitle()"  placeholder="公告标题" />
+                </span>
+                </p>
+
+
+                <div class="panel" style="border: 1px dashed #A7A5A6;width: 90%;" th:each="notice : ${noticeList}">
+                    <div class="panel-heading">
+                        <img th:id="'img'+${notice.noticeId}" th:if="${notice.status eq '1'}" src="/public/images/png/04.png" />
+                        <span style="font-size: 18px;font-weight: bold;color: #444444;" th:text="${notice.noticeTitle}">平台升级公告</span>
+                        <span style="float:right;color: #969696;" th:text="${notice.timeStr}">2019-01-02 12:11:11</span>
+                    </div>
+                    <div class="panel-body">
+                        <div class="container-fluid">
+                            <div class="accordion" id="'accordion'+${notice.noticeId}">
+                                <div class="accordion-group">
+                                    <div class="accordion-heading">
+                                        <p th:id="'p'+${notice.noticeId}" style="white-space: nowrap;text-overflow: ellipsis;overflow: hidden;" th:text="${notice.noticeContent}"></p>
+                                        <div th:id="'collapse'+${notice.noticeId}" class="accordion-body collapse" style="height: 0px; ">
+                                            <div class="accordion-inner">
+                                                <p th:text="${notice.noticeContent}"></p>
+                                            </div>
+                                        </div>
+                                        <p><span th:text="'发布人：'+${notice.noticeAuthor}">发布人：三网端</span>
+                                            <span style="float:right">
+                                            <input type="hidden"  />
+                                            <a class="accordion-toggle" th:onclick="'showAndHide(\''+${notice.noticeId}+'\')'" data-toggle="collapse"
+                                               th:data-parent="'#accordion'+${notice.noticeId}" th:href="'#collapse'+${notice.noticeId}">
+                                                展开
+                                            </a>
+                                        </span>
+                                        </p>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div style="width: 90%;">
+                    <input type="hidden" id="page" th:value="${page}" />
+                    <input type="hidden" id="pageSize" th:value="1" />
+                    <input type="hidden" id="noticeType" th:value="${noticeType}"/>
+                    <input type="hidden" id="pageCount" th:value="${pageCount}"/>
+                    <p style="text-align: center">共 <span th:text="${pageCount}"></span> 页&nbsp;&nbsp;
+                        <a href="javascript:;" onclick="up()" >&lt;</a>  &nbsp;&nbsp;<apsn th:text="${page}" style="width: 10px;background-color: #008CF6;"></apsn>
+                        &nbsp;&nbsp;
+                        <a href="javascript:;" onclick="next()" >&gt;</a> &nbsp;&nbsp;前往第 <input type="text" id="query" onblur="query()" style="width: 20px;" />&nbsp;页</p>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+</div>
+</body>
+<div th:include="threenets/threenet/common/head :: footer"></div>
+<link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+<script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
+<script src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="/try/bootstrap/twitter-bootstrap-v2/docs/assets/js/bootstrap-collapse.js"></script>
+<script>
+    //分页
+    $(document).ready(function () {
+    });
+
+    function next(){
+        var page = $("#page").val();
+        if(page == 1){
+            return;
+        }
+        show(Number(page)+1)
+    }
+    function up(){
+        var page = $("#page").val();
+        var pageCount = $("#pageCount").val();
+        if(page == pageCount){
+            retrun;
+        }
+        show(Number(page)-1)
+    }
+    function show(page){
+        window.location.href = "/threenets/threeNotice/0/"+page+"/5/"+$("noticeType").val();
+    }
+
+    function query(){
+        var page = $("#query").val();
+        if(page == '' || page == null){
+            return;
+        }
+        var pageCount = $("#pageCount").val();
+        if(page > pageCount){
+            layer.msg("当前数据共"+pageCount+"页", {icon: 5, time: 3000});
+            $("#query").val(pageCount);
+            return;
+        }
+        show(page);
+    }
+
+    function queryTitle(){
+        var title =  $("#noticeTitle").val();
+        window.location.href = "/threenets/threeNotice/0/1/5/"+$("#noticeType").val()+"?noticeTitle="+title;
+    }
+
+    function showAndHide(id){
+        var display =$('#p'+id).css('display');
+        if(display == 'none'){
+            $('#p'+id).show();
+        }else{
+            $('#p'+id).hide();
+        }
+        $("#img"+id).hide();
+
+        $.ajax({
+            type: "GET",
+            url: '/admin/updateNoticeStatus/' + id,
+            dataType: "json",
+            success: function(data){
+            }
+        });
+    }
+
+
+
+</script>
+</html>

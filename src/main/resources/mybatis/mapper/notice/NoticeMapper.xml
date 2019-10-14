@@ -11,11 +11,12 @@
         <result column="notice_time" property="noticeTime" jdbcType="TIMESTAMP"/>
         <result column="notice_author" property="noticeAuthor" jdbcType="VARCHAR"/>
         <result column="notice_content" property="noticeContent" jdbcType="LONGVARCHAR"/>
+        <result column="notice_type" property="noticeType" jdbcType="VARCHAR"/>
     </resultMap>
 
     <sql id="Base_Column_List">
           notice_id, notice_title, notice_weight, notice_status, notice_module, notice_time,
-          notice_author,notice_content
+          notice_author,notice_content,notice_type
     </sql>
     <!--获取疑难杂单类型公告-->
     <select id="getNoticeList" resultMap="BaseResultMap">
@@ -91,9 +92,12 @@
             notice_id = #{id,jdbcType=INTEGER}
     </delete>
     <!-- 添加公告信息 -->
-    <insert id="insertNotice" parameterType="com.hrtxn.ringtone.project.system.notice.domain.Notice">
+    <insert id="insertNotice" parameterType="com.hrtxn.ringtone.project.system.notice.domain.Notice"  useGeneratedKeys="true" keyProperty="noticeId">
         insert into sys_notice
         <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="noticeId != null">
+                notice_id,
+            </if>
             <if test="noticeTitle != null">
                 notice_title,
             </if>
@@ -115,8 +119,14 @@
             <if test="noticeContent != null">
                 notice_content,
             </if>
+            <if test="noticeType!= null">
+                notice_type,
+            </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="noticeId != null">
+                #{noticeId},
+            </if>
             <if test="noticeTitle != null">
                 #{noticeTitle,jdbcType=VARCHAR},
             </if>
@@ -137,6 +147,9 @@
             </if>
             <if test="noticeContent != null">
                 #{noticeContent,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="noticeType != null">
+                #{noticeType,jdbcType=LONGVARCHAR},
             </if>
         </trim>
     </insert>
@@ -165,6 +178,9 @@
             <if test="noticeContent != null">
                 notice_content = #{noticeContent,jdbcType=LONGVARCHAR},
             </if>
+            <if test="noticeType != null">
+                notice_type = #{noticeType,jdbcType=LONGVARCHAR},
+            </if>
         </set>
         where notice_id = #{noticeId,jdbcType=INTEGER}
     </update>
@@ -177,6 +193,31 @@
         where notice_status = 1
         and notice_module = #{modul,jdbcType=VARCHAR}
         ORDER BY notice_weight DESC
+    </select>
+
+    <select id="getMaxId" resultType="Integer">
+        select max(notice_id) from sys_notice
+    </select>
+
+
+    <select id="pageNoticeList" resultMap="BaseResultMap" >
+      select a.notice_id, a.notice_title, a.notice_weight, a.notice_status, a.notice_module, a.notice_time,
+          a.notice_author,a.notice_content,a.notice_type,b.status
+          from sys_notice a left join sys_notice_status b on a.notice_id = b.notice_id
+          where b.user_id = #{notice.userId} and a.notice_type = #{notice.noticeType}
+        <if test="notice.noticeTitle != null and notice.noticeTitle != ''">
+          and a.notice_title =#{notice.noticeTitle}
+        </if>
+          order by notice_time desc
+        LIMIT #{page.page},#{page.pagesize}
+    </select>
+
+
+    <select id="pageNoticeCount" resultType="Integer">
+      select count(1)
+          from sys_notice a left join sys_notice_status b on a.notice_id = b.notice_id
+          where b.user_id = #{notice.userId} and a.notice_type = #{notice.noticeType}
+
     </select>
 
 </mapper>
