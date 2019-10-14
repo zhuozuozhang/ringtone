@@ -36,6 +36,9 @@ import org.jsoup.select.Elements;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
+
+import static org.apache.logging.log4j.ThreadContext.isEmpty;
 
 /**
  * Author:zcy
@@ -57,6 +60,23 @@ public class ApiUtils {
         swxlApi.loginAutoParam(ShiroUtils.getSysUser().getUserName());
     }
 
+    public void loginMobile() {
+        try {
+            boolean isZGJC = true;
+            List<User> to022 = SpringUtils.getBean(UserMapper.class).isBelongsTo022();
+            for (int i = 0; i < to022.size(); i++) {
+                if (to022.get(i).getId().equals(ShiroUtils.getSysUser().getId())){
+                    isZGJC = false;
+                }
+            }
+            miguApi.loginAutoParam(isZGJC?ShiroUtils.getSysUser().getUserName():"睿智广告001");
+        } catch (NoLoginException e) {
+            e.printStackTrace();
+        }catch (IOException e){
+            e.printStackTrace();
+        }
+    }
+
     /**
      * 获取号码信息
      *
@@ -68,7 +88,7 @@ public class ApiUtils {
         String msg = "错误消息：";
         int failure = 0;
         for (ThreenetsChildOrder threenetsChildOrder : threenetsChildOrderList) {
-            if (threenetsChildOrder.getStatus().equals(Const.FAILURE_REVIEW)){
+            if (threenetsChildOrder.getStatus().equals(Const.FAILURE_REVIEW)) {
                 continue;
             }
             // 判断运营商
@@ -177,7 +197,6 @@ public class ApiUtils {
                     }
                 }
             } else {// 联通
-                loginToUnicom();
                 String phoneInfo = swxlApi.getPhoneInfo(threenetsChildOrder.getLinkmanTel(), threenetsChildOrder.getOperateId());
                 if (StringUtils.isNotEmpty(phoneInfo)) {
                     // 分发实体详情转换
@@ -272,7 +291,7 @@ public class ApiUtils {
         boolean f1 = miguApi1.loginAutoParam(userName);
         Boolean f = false;
         for (ThreenetsChildOrder threenetsChildOrder : threenetsChildOrderList) {
-            if (threenetsChildOrder.getStatus().equals(Const.FAILURE_REVIEW)){
+            if (threenetsChildOrder.getStatus().equals(Const.FAILURE_REVIEW)) {
                 continue;
             }
             // 判断运营商
@@ -366,7 +385,6 @@ public class ApiUtils {
                     }
                 }
             } else {// 联通
-                loginToUnicom();
                 String phoneInfo = swxlApi.getPhoneInfo(threenetsChildOrder.getLinkmanTel(), threenetsChildOrder.getOperateId());
                 if (StringUtils.isNotEmpty(phoneInfo)) {
                     // 分发实体详情转换
@@ -561,7 +579,6 @@ public class ApiUtils {
                 } else if (t.getOperator() == 2) { // 电信普通短信
 
                 } else { // 联通普通短信
-                    loginToUnicom();
                     String result = swxlApi.remindOrderCrbtAndMonth(t.getLinkmanTel(), t.getOperateId(), false);
                     if (StringUtils.isNotEmpty(result)) {
                         SwxlPubBackData info = (SwxlPubBackData) JsonUtil.getObject4JsonString(result, SwxlPubBackData.class);
@@ -573,7 +590,6 @@ public class ApiUtils {
                 }
             } else {
                 if (t.getOperator() == 3) { // 链接短信，联通专属
-                    loginToUnicom();
                     String res = swxlApi.swxlSendSMSByCRBTFail(t.getLinkmanTel());
                     if (StringUtils.isNotEmpty(res)) {
                         SwxlPubBackData info = (SwxlPubBackData) JsonUtil.getObject4JsonString(res, SwxlPubBackData.class);
@@ -615,6 +631,9 @@ public class ApiUtils {
                         Elements tds = trs.get(i).getElementsByTag("td");
                         if (tds.get(8).childNodes().size() > 5) {
                             Elements temp = tds.get(8).child(2).getElementsByTag("a");
+                            if (temp.size() == 0) {
+                                temp = tds.get(8).child(1).getElementsByTag("a");
+                            }
                             String t = temp.attr("onclick");
                             t = t.replace("showConfirm('", "").replace("');", "");
                             ringId = StringUtils.isEmpty(t) ? "0000" : t;
@@ -707,7 +726,6 @@ public class ApiUtils {
                     }
                 }
             } else { // 联通
-                loginToUnicom();
                 String result = swxlApi.getRingInfo(threenetsRing.getOperateId());
                 if (StringUtils.isNotEmpty(result)) {
                     SwxlPubBackData<SwxlQueryPubRespone<SwxlRingMsg>> backData = SpringUtils.getBean(ObjectMapper.class).readValue(result, SwxlPubBackData.class);
@@ -935,7 +953,6 @@ public class ApiUtils {
                     }
                 }
             } else { // 联通
-                loginToUnicom();
                 String result = swxlApi.getRingInfo(threenetsRing.getOperateId());
                 if (StringUtils.isNotEmpty(result)) {
                     SwxlPubBackData<SwxlQueryPubRespone<SwxlRingMsg>> backData = SpringUtils.getBean(ObjectMapper.class).readValue(result, SwxlPubBackData.class);
@@ -1323,24 +1340,29 @@ public class ApiUtils {
      */
     public boolean addRingByDx(ThreenetsRing ring, ThreeNetsOrderAttached attached) {
         mcardApi.toUserList(attached.getMcardId(), attached.getMcardDistributorId());
-        String ringResult = mcardApi.ringList(attached.getMcardDistributorId());
+        String ringResult = mcardApi.toRingList(attached.getMcardDistributorId());
         if (StringUtils.isNotEmpty(ringResult)) {
             Document doc = Jsoup.parse(ringResult);
             Elements contents = doc.getElementsByTag("tbody");
-            if (contents.size() > 0){
+            if (contents.size() > 0) {
                 Elements trs = contents.get(0).getElementsByTag("tr");
                 for (int i = 0; i < trs.size(); i++) {
                     Elements tds = trs.get(i).getElementsByTag("td");
                     if (tds.size() <= 0) {
                         continue;
                     }
-                    if (tds.get(1).text().equals(ring.getRingName())) {
+                    String ringName = StringUtils.subString(ring.getRingName(), '.');
+                    if (tds.get(1).text().equals(ringName)) {
+                        Element el6 = tds.get(6);
+                        String value = el6.childNodes().get(1).attributes().get("data-id");
+                        ring.setOperateRingId(value);
+                        SpringUtils.getBean(ThreenetsRingMapper.class).updateByPrimaryKeySelective(ring);
                         return false;
                     }
                 }
             }
         }
-        boolean flag = mcardApi.uploadRing(ring,attached.getMcardDistributorId());
+        boolean flag = mcardApi.uploadRing(ring, attached.getMcardDistributorId());
         //获取铃音id
         String ringList = mcardApi.toRingList(attached.getMcardDistributorId());
         if (StringUtils.isNotEmpty(ringList)) {
@@ -1384,8 +1406,9 @@ public class ApiUtils {
      * @throws NoLoginException
      */
     public SwxlBaseBackMessage addPhoneByLt(String phones, ThreeNetsOrderAttached attached) throws NoLoginException {
-        return swxlApi.addPhone(phones, attached.getSwxlId(),attached.getAvoidShortAgreement());
+        return swxlApi.addPhone(phones, attached.getSwxlId(), attached.getAvoidShortAgreement());
     }
+
     /**
      * 电信添加成员
      *
@@ -1483,7 +1506,6 @@ public class ApiUtils {
      * @throws IOException
      */
     public String getSilentMemberByMsisdn(String phoneNumber) throws NoLoginException, IOException {
-        loginToUnicom();
         if (StringUtils.isNotNull(phoneNumber)) {
             return swxlApi.getSilentMemberByMsisdn(phoneNumber);
         } else {
@@ -1500,7 +1522,6 @@ public class ApiUtils {
      * @throws IOException
      */
     public String getSystemLogListByMsisdn(String phoneNumber) throws NoLoginException, IOException {
-        loginToUnicom();
         if (StringUtils.isNotNull(phoneNumber)) {
             return swxlApi.getSystemLogListByMsisdn(phoneNumber);
         } else {
@@ -1616,7 +1637,6 @@ public class ApiUtils {
      * @throws IOException
      */
     public AjaxResult deleteSilentMemberByMsisdn(String msisdn) throws NoLoginException, IOException {
-        loginToUnicom();
         if (StringUtils.isNotNull(msisdn)) {
             Map<String, String> map = new HashMap<String, String>();
             map.put("delSilentMember", swxlApi.deleteSilentMemberByMsisdn(msisdn));
@@ -1631,8 +1651,8 @@ public class ApiUtils {
      * @param file
      * @return
      */
-    public String mcardUploadFile(File file,String parent) {
-        return mcardApi.uploadFile(file,parent);
+    public String mcardUploadFile(File file, String parent) {
+        return mcardApi.uploadFile(file, parent);
     }
 
     /**
@@ -1657,8 +1677,9 @@ public class ApiUtils {
      */
     public ThreenetsChildOrder refreshRingStatus(ThreenetsChildOrder childOrder) {
         try {
+            ThreeNetsOrderAttached attached = SpringUtils.getBean(ThreeNetsOrderAttachedMapper.class).selectByParentOrderId(childOrder.getParentOrderId());
             //移动
-            if (childOrder.getOperator() == 1 && StringUtils.isNotEmpty(childOrder.getLinkmanTel())) {
+            if (childOrder.getOperator().equals(Const.OPERATORS_MOBILE) && StringUtils.isNotEmpty(attached.getMiguId())) {
                 miguApi.refreshCrbtStatus(childOrder.getLinkmanTel());
                 String result = miguApi.updatePhoneInfo(childOrder.getLinkmanTel(), childOrder.getOperateId());
                 Document doc = Jsoup.parse(result);
@@ -1677,18 +1698,67 @@ public class ApiUtils {
                 }
             }
             //联通
-            if (childOrder.getOperator() == 3 && StringUtils.isNotEmpty(childOrder.getLinkmanTel())) {
-
+            if (childOrder.getOperator().equals(Const.OPERATORS_UNICOM) && StringUtils.isNotEmpty(attached.getSwxlId())) {
+                if (!childOrder.getIsRingtoneUser()) {
+                    swxlApi.swxlrefreshCrbtStatus(childOrder.getLinkmanTel(), 1);
+                }
+                String phoneInfo = swxlApi.getPhoneInfo(childOrder.getLinkmanTel(), attached.getSwxlId());
+                System.out.println(phoneInfo);
             }
-        } catch (IOException e) {
+            //电信
+            if (childOrder.getOperator().equals(Const.OPERATORS_TELECOM) && StringUtils.isNotEmpty(attached.getMcardId())) {
+                if (StringUtils.isEmpty(attached.getMcardDistributorId())) {
+                    log.info("电信更新彩铃状态失败，缺少McardDistributorId");
+                    return childOrder;
+                }
+                mcardApi.toUserList(attached.getMcardId(), attached.getMcardDistributorId());
+                String result = mcardApi.getUserInfo(attached.getMcardDistributorId());
+                if (StringUtils.isEmpty(result)) {
+                    log.info("电信更新彩铃状态失败，电信返回信息result为空！");
+                    return childOrder;
+                }
+                Document doc = Jsoup.parse(result);
+                Elements contents = doc.getElementsByTag("tbody");
+                if (contents.size() == 0) {
+                    log.info("电信更新彩铃状态失败，电信返回信息contents为空！");
+                    return childOrder;
+                }
+                Elements trs = contents.get(0).getElementsByTag("tr");
+                for (int i = 0; i < trs.size(); i++) {
+                    Elements tds = trs.get(i).getElementsByTag("td");
+                    if (tds.size() <= 0) {
+                        continue;
+                    }
+                    if (tds.get(2).text().equals(childOrder.getLinkmanTel())) {
+                        childOrder.setStatus(tds.get(6).text());
+                        String value = tds.get(12).childNode(0).attr("value");
+                        childOrder.setOperateOrderId(value);
+                        if (tds.get(7).text().equals("已开通")) {
+                            childOrder.setIsRingtoneUser(true);
+                        } else {
+                            childOrder.setIsRingtoneUser(false);
+                        }
+                    }
+                }
+            }
+        } catch (
+                IOException e) {
             log.info("刷新彩铃开通状态IO异常", e);
-        } catch (NoLoginException e) {
+        } catch (
+                NoLoginException e) {
             log.info("刷新彩铃开通状态登录异常", e);
         } finally {
             return childOrder;
         }
+
     }
 
+    /**
+     * 刷新视频铃音状态
+     *
+     * @param childOrder
+     * @return
+     */
     public ThreenetsChildOrder refreshVideoRingStatus(ThreenetsChildOrder childOrder) {
         try {
             //移动
@@ -1710,10 +1780,6 @@ public class ApiUtils {
                     }
                 }
             }
-            //联通
-            if (childOrder.getOperator() == 3 && StringUtils.isNotEmpty(childOrder.getLinkmanTel())) {
-
-            }
         } catch (IOException e) {
             log.info("刷新彩铃开通状态IO异常", e);
         } catch (NoLoginException e) {
@@ -1725,6 +1791,7 @@ public class ApiUtils {
 
     public ThreenetsChildOrder refreshMonthlyStatus(ThreenetsChildOrder childOrder) {
         try {
+            ThreeNetsOrderAttached attached = SpringUtils.getBean(ThreeNetsOrderAttachedMapper.class).selectByParentOrderId(childOrder.getParentOrderId());
             //移动
             if (childOrder.getOperator() == 1 && StringUtils.isNotEmpty(childOrder.getLinkmanTel())) {
                 miguApi.refreshIsMonthly(childOrder.getLinkmanTel());
@@ -1750,6 +1817,42 @@ public class ApiUtils {
             if (childOrder.getOperator() == 3 && StringUtils.isNotEmpty(childOrder.getLinkmanTel())) {
 
             }
+            if (childOrder.getOperator().equals(Const.OPERATORS_TELECOM) && StringUtils.isNotEmpty(attached.getMcardId())) {
+                if (StringUtils.isEmpty(attached.getMcardDistributorId())) {
+                    log.info("电信更新彩铃状态失败，缺少McardDistributorId");
+                    return childOrder;
+                }
+                mcardApi.toUserList(attached.getMcardId(), attached.getMcardDistributorId());
+                String result = mcardApi.getUserInfo(attached.getMcardDistributorId());
+                if (StringUtils.isEmpty(result)) {
+                    log.info("电信更新彩铃状态失败，电信返回信息result为空！");
+                    return childOrder;
+                }
+                Document doc = Jsoup.parse(result);
+                Elements contents = doc.getElementsByTag("tbody");
+                if (contents.size() == 0) {
+                    log.info("电信更新彩铃状态失败，电信返回信息contents为空！");
+                    return childOrder;
+                }
+                Elements trs = contents.get(0).getElementsByTag("tr");
+                for (int i = 0; i < trs.size(); i++) {
+                    Elements tds = trs.get(i).getElementsByTag("td");
+                    if (tds.size() <= 0) {
+                        continue;
+                    }
+                    if (tds.get(2).text().equals(childOrder.getLinkmanTel())) {
+                        childOrder.setStatus(tds.get(6).text());
+                        String value = tds.get(12).childNode(0).attr("value");
+                        childOrder.setOperateOrderId(value);
+                        //是否彩铃用户
+                        if (tds.get(8).text().equals("已开通")) {
+                            childOrder.setIsMonthly(2);
+                        } else {
+                            childOrder.setIsMonthly(1);
+                        }
+                    }
+                }
+            }
         } catch (IOException e) {
             log.info("刷新彩铃开通状态IO异常", e);
         } catch (NoLoginException e) {
@@ -1761,11 +1864,18 @@ public class ApiUtils {
 
     public ThreenetsChildOrder refreshAloneStatus(ThreenetsChildOrder childOrder) {
         try {
+            ThreeNetsOrderAttached attached = SpringUtils.getBean(ThreeNetsOrderAttachedMapper.class).selectByParentOrderId(childOrder.getParentOrderId());
             //移动
             if (childOrder.getOperator() == 1 && StringUtils.isNotEmpty(childOrder.getLinkmanTel())) {
-                miguApi.refreshCrbtStatus(childOrder.getLinkmanTel());
-                miguApi.refreshVbrtStatus(childOrder.getLinkmanTel());
-                miguApi.refreshIsMonthly(childOrder.getLinkmanTel());
+                if (!childOrder.getIsRingtoneUser() && childOrder.getIsVideoUser()) {
+                    miguApi.refreshCrbtStatus(childOrder.getLinkmanTel());
+                }
+                if (!childOrder.getIsMonthly().equals(2)) {
+                    miguApi.refreshIsMonthly(childOrder.getLinkmanTel());
+                }
+                if (!childOrder.getIsVideoUser() && childOrder.getIsRingtoneUser()) {
+                    miguApi.refreshVbrtStatus(childOrder.getLinkmanTel());
+                }
                 String result = miguApi.updatePhoneInfo(childOrder.getLinkmanTel(), childOrder.getOperateId());
                 Document doc = Jsoup.parse(result);
                 Elements contents = doc.getElementsByClass("tbody_lis");
@@ -1810,12 +1920,163 @@ public class ApiUtils {
             if (childOrder.getOperator() == 3 && StringUtils.isNotEmpty(childOrder.getLinkmanTel())) {
 
             }
+            if (childOrder.getOperator().equals(Const.OPERATORS_TELECOM) && StringUtils.isNotEmpty(attached.getMcardId())) {
+                if (StringUtils.isEmpty(attached.getMcardDistributorId())) {
+                    log.info("电信更新彩铃状态失败，缺少McardDistributorId");
+                    return childOrder;
+                }
+                mcardApi.toUserList(attached.getMcardId(), attached.getMcardDistributorId());
+                String result = mcardApi.getUserInfo(attached.getMcardDistributorId());
+                if (StringUtils.isEmpty(result)) {
+                    log.info("电信更新彩铃状态失败，电信返回信息result为空！");
+                    return childOrder;
+                }
+                Document doc = Jsoup.parse(result);
+                Elements contents = doc.getElementsByTag("tbody");
+                if (contents.size() == 0) {
+                    log.info("电信更新彩铃状态失败，电信返回信息contents为空！");
+                    return childOrder;
+                }
+                Elements trs = contents.get(0).getElementsByTag("tr");
+                for (int i = 0; i < trs.size(); i++) {
+                    Elements tds = trs.get(i).getElementsByTag("td");
+                    if (tds.size() <= 0) {
+                        continue;
+                    }
+                    if (tds.get(2).text().equals(childOrder.getLinkmanTel())) {
+                        childOrder.setStatus(tds.get(6).text());
+                        String value = tds.get(12).childNode(0).attr("value");
+                        childOrder.setOperateOrderId(value);
+                        if (tds.get(7).text().equals("已开通")) {
+                            childOrder.setIsRingtoneUser(true);
+                        } else {
+                            childOrder.setIsRingtoneUser(false);
+                        }
+                        if (tds.get(8).text().equals("已开通")) {
+                            childOrder.setIsMonthly(2);
+                        } else {
+                            childOrder.setIsMonthly(1);
+                        }
+                        if (tds.get(9).text().contains("?")) {
+                            Elements lable = tds.get(9).getElementsByTag("lable");
+                            String l1 = lable.attr("onclick").split(",")[0];
+                            String re = l1.substring(l1.indexOf("'") + 1, l1.lastIndexOf("'"));
+                            String ti = tds.get(9).text();
+                            childOrder.setRemark(ti.substring(0, ti.length() - 1) + "- " + re);
+                        } else {
+                            childOrder.setRemark(tds.get(9).text());
+                        }
+                    }
+                }
+            }
         } catch (IOException e) {
             log.info("刷新彩铃开通状态IO异常", e);
         } catch (NoLoginException e) {
             log.info("刷新彩铃开通状态登录异常", e);
         } finally {
             return childOrder;
+        }
+    }
+
+
+    public List<ThreenetsChildOrder> batchRefresh(List<ThreenetsChildOrder> list, Integer orderId) {
+        List<ThreenetsChildOrder> newList = new ArrayList<>();
+        try {
+            Map<Integer, List<ThreenetsChildOrder>> collect = list.stream().collect(Collectors.groupingBy(ThreenetsChildOrder::getOperator));
+            ThreeNetsOrderAttached attached = SpringUtils.getBean(ThreeNetsOrderAttachedMapper.class).selectByParentOrderId(orderId);
+            for (Integer operator : collect.keySet()) {
+                if (operator.equals(Const.OPERATORS_MOBILE)) {
+                    List<ThreenetsChildOrder> mobOrders = collect.get(Const.OPERATORS_MOBILE);
+                    for (int i = 0; i < mobOrders.size(); i++) {
+                        ThreenetsChildOrder childOrder = mobOrders.get(i);
+                        if (childOrder.getIsVideoUser()) {
+                            miguApi.refreshCrbtStatus(childOrder.getLinkmanTel());
+                            miguApi.refreshVbrtStatus(childOrder.getLinkmanTel());
+                            miguApi.refreshIsMonthly(childOrder.getLinkmanTel());
+                        }
+                    }
+                }
+                if (operator.equals(Const.OPERATORS_UNICOM)) {
+                    List<ThreenetsChildOrder> childOrders = collect.get(Const.OPERATORS_UNICOM);
+                    String phoneInfo = swxlApi.refreshUserStatus(null, attached.getSwxlId());
+                    JSONObject jsonObject = JSONObject.fromObject(phoneInfo);
+                    JSONObject data = jsonObject.getJSONObject("data");
+                    JSONArray jsonArray = data.getJSONArray("data");
+                    for (int j = 0; j < childOrders.size(); j++) {
+                        ThreenetsChildOrder childOrder = childOrders.get(j);
+                        for (int i = 0; i < jsonArray.size(); i++) {
+                            JSONObject partDaily = jsonArray.getJSONObject(i);
+                            String msisdn = partDaily.getString("msisdn");
+                            if (childOrder.getLinkmanTel().equals(msisdn)) {
+
+                            }
+                        }
+                    }
+
+
+                    //System.out.println(phoneInfo);
+                }
+                if (operator.equals(Const.OPERATORS_TELECOM)) {
+                    if (StringUtils.isEmpty(attached.getMcardDistributorId())) {
+                        log.info("电信更新彩铃状态失败，缺少McardDistributorId");
+                        return list;
+                    }
+                    mcardApi.toUserList(attached.getMcardId(), attached.getMcardDistributorId());
+                    String result = mcardApi.getUserInfo(attached.getMcardDistributorId());
+                    if (StringUtils.isEmpty(result)) {
+                        log.info("电信更新彩铃状态失败，电信返回信息result为空！");
+                        return list;
+                    }
+                    Document doc = Jsoup.parse(result);
+                    Elements contents = doc.getElementsByTag("tbody");
+                    if (contents.size() == 0) {
+                        log.info("电信更新彩铃状态失败，电信返回信息contents为空！");
+                        return list;
+                    }
+                    Elements trs = contents.get(0).getElementsByTag("tr");
+                    List<ThreenetsChildOrder> telOrders = collect.get(Const.OPERATORS_TELECOM);
+                    for (int j = 0; j < telOrders.size(); j++) {
+                        ThreenetsChildOrder childOrder = telOrders.get(j);
+                        for (int i = 0; i < trs.size(); i++) {
+                            Elements tds = trs.get(i).getElementsByTag("td");
+                            if (tds.size() <= 0) {
+                                continue;
+                            }
+                            if (tds.get(2).text().equals(childOrder.getLinkmanTel())) {
+                                childOrder.setStatus(tds.get(6).text());
+                                String value = tds.get(12).childNode(0).attr("value");
+                                childOrder.setOperateOrderId(value);
+                                if (tds.get(7).text().equals("已开通")) {
+                                    childOrder.setIsRingtoneUser(true);
+                                } else {
+                                    childOrder.setIsRingtoneUser(false);
+                                }
+                                if (tds.get(8).text().equals("已开通")) {
+                                    childOrder.setIsMonthly(2);
+                                } else {
+                                    childOrder.setIsMonthly(1);
+                                }
+                                if (tds.get(9).text().contains("?")) {
+                                    Elements lable = tds.get(9).getElementsByTag("lable");
+                                    String l1 = lable.attr("onclick").split(",")[0];
+                                    String re = l1.substring(l1.indexOf("'") + 1, l1.lastIndexOf("'"));
+                                    String ti = tds.get(9).text();
+                                    childOrder.setRemark(ti.substring(0, ti.length() - 1) + "- " + re);
+                                } else {
+                                    childOrder.setRemark(tds.get(9).text());
+                                }
+                            }
+                        }
+                        newList.add(childOrder);
+                    }
+                }
+            }
+        } catch (IOException e) {
+            log.info("刷新彩铃开通状态IO异常", e);
+        } catch (NoLoginException e) {
+            log.info("刷新彩铃开通状态登录异常", e);
+        } finally {
+            return newList;
         }
     }
 
@@ -1826,7 +2087,6 @@ public class ApiUtils {
      * @return
      */
     public AjaxResult openingBusiness(ThreenetsChildOrder childOrder) {
-        loginToUnicom();
         String message = "开通业务成功!";
         try {
             String result = swxlApi.remindOrderCrbtAndMonth(childOrder.getLinkmanTel(), childOrder.getOperateId(), false);
@@ -1851,7 +2111,7 @@ public class ApiUtils {
      * @param list
      * @return
      */
-    public List<ThreenetsChildOrder> unicomCheckMobiles(List<ThreenetsChildOrder> list){
+    public List<ThreenetsChildOrder> unicomCheckMobiles(List<ThreenetsChildOrder> list) {
         String phones = "";
         for (int i = 0; i < list.size(); i++) {
             phones = list.get(i).getLinkmanTel() + "," + phones;
@@ -1864,10 +2124,10 @@ public class ApiUtils {
             String msisdn = partDaily.getString("msisdn");
             String info = partDaily.getString("info");
             for (int j = 0; j < list.size(); j++) {
-                if (list.get(j).getLinkmanTel().equals(msisdn)){
-                    if (info.equals("成功")){
+                if (list.get(j).getLinkmanTel().equals(msisdn)) {
+                    if (info.equals("成功")) {
                         list.get(j).setStatus(Const.SUCCESSFUL_REVIEW);
-                    }else{
+                    } else {
                         list.get(j).setStatus(Const.FAILURE_REVIEW);
                         list.get(j).setRemark(info);
                     }

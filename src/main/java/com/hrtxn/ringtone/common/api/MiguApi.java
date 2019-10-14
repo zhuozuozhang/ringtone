@@ -303,7 +303,7 @@ public class MiguApi implements Serializable {
 //        String userName = ShiroUtils.getSysUser().getUserName();
         if ("睿智广告001".equals(userName)) {
             formParams.add(new BasicNameValuePair("manager.loginName", "中高俊聪022"));
-            String password = new Md5Hash(new Md5Hash("Cmcc1mgyy2%").toString() + vcode).toString();
+            String password = new Md5Hash(new Md5Hash("Cl@4006612530").toString() + vcode).toString();
             formParams.add(new BasicNameValuePair("manager.password", password));
         } else {
             formParams.add(new BasicNameValuePair("manager.loginName", USER_NAME));

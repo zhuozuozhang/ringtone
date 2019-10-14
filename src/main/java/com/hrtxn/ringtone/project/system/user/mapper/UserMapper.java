@@ -19,6 +19,7 @@ public interface UserMapper {
 
     /**
      * 根据用户名查询用户信息
+     *
      * @param username
      * @return
      */
@@ -26,6 +27,7 @@ public interface UserMapper {
 
     /**
      * 修改用户信息
+     *
      * @param user
      * @return
      */
@@ -33,13 +35,15 @@ public interface UserMapper {
 
     /**
      * 获取用户列表
+     *
      * @return
      * @throws Exception
      */
-    List<UserVo> getUserList(@Param("page")Page page,@Param("baseRequest")BaseRequest baseRequest) throws Exception;
+    List<UserVo> getUserList(@Param("page") Page page, @Param("baseRequest") BaseRequest baseRequest) throws Exception;
 
     /**
      * 根据ID获取用户信息
+     *
      * @param id
      * @return
      * @throws Exception
@@ -48,6 +52,7 @@ public interface UserMapper {
 
     /**
      * 根据电话号码获取用户信息
+     *
      * @param phone
      * @return
      * @throws Exception
@@ -56,25 +61,29 @@ public interface UserMapper {
 
     /**
      * 根据父级ID获取用户信息
+     *
      * @param id
      * @return
      */
     List<UserVo> findUserByparentId(
-        @Param("page") Integer page,
-        @Param("pagesize") Integer pagesize,
-        @Param("id") Integer id,@Param("userName") String userName,@Param("userTel") String userTel
+            @Param("page") Integer page,
+            @Param("pagesize") Integer pagesize,
+            @Param("id") Integer id, @Param("userName") String userName, @Param("userTel") String userTel
     ) throws Exception;
 
-    List<User> findChildUser(@Param("id") Integer id,@Param("name") String name) throws Exception;
+    List<User> findChildUser(@Param("id") Integer id, @Param("name") String name) throws Exception;
+
     /**
      * 获取子账号总数
+     *
      * @param parentId
      * @return
      */
-    int getUserCount(@Param("parentId") Integer parentId,@Param("userName") String userName,@Param("userTel") String userTel) throws Exception;
+    int getUserCount(@Param("parentId") Integer parentId, @Param("userName") String userName, @Param("userTel") String userTel) throws Exception;
 
     /**
      * 添加账号
+     *
      * @param user
      * @return
      */
@@ -83,4 +92,6 @@ public interface UserMapper {
     int getUserCountByCon(@Param("baseRequest") BaseRequest baseRequest);
 
     List<User> findAllUser();
+
+    List<User> isBelongsTo022();
 }

@@ -53,7 +53,7 @@
                 <li class="clearfix bellType">
                     <span class="fl"><i style="color: red">*</i>铃音名称</span>
                     <div class="fl">
-                        <input style="margin-left: 38px;" required lay-verify="required" type="text" onchange="findbyringname()" name="ringName" id="ringName" autocomplete="off">
+                        <input style="margin-left: 38px;" required lay-verify="required" type="text" oninput="findbyringname()" name="ringName" id="ringName" autocomplete="off">
                     </div>
                 </li>
                 <div id="ringdiv" style="display:block;">
@@ -91,7 +91,9 @@
 </form>
     <script>
         $(document).ready(function () {
+            $("#ringName").focus();
             $("#tijiao").removeClass("disable");
+            $("#file").attr("disabled", true);
         });
         document.getElementById("file").addEventListener("mousedown", function () {
             if ($("#ringName").val() == '') {
@@ -143,7 +145,15 @@
             },100)
         })
 
-        function findbyringname() {}
+        function findbyringname() {
+            if($("#ringName").val() == null || $("#ringName").val() == ""){
+                $("#file").attr("disabled", true);
+                $("#ringName").focus();
+                layer.msg("请输入铃音名称！！");
+            }else{
+                $("#file").attr("disabled", false);
+            }
+        }
 
         //表单提交
         layui.use('form', function() {

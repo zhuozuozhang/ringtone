@@ -321,4 +321,8 @@
         tb_user u
     </select>
 
+    <select id="isBelongsTo022" resultMap="BaseResultMap">
+        SELECT * FROM tb_user
+        WHERE FIND_IN_SET(id,findChildren("24")) > 0;
+    </select>
 </mapper>

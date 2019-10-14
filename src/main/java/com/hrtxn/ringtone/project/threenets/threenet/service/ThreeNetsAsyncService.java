@@ -29,6 +29,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
+import javax.management.remote.rmi._RMIConnection_Stub;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
@@ -217,6 +218,7 @@ public class ThreeNetsAsyncService {
             return list;
         }
         MiguAddPhoneRespone addPhoneRespone = new MiguAddPhoneRespone();
+        apiUtils.loginMobile();
         for (int i = 0; i < list.size(); i++) {
             ThreenetsChildOrder childOrder = list.get(i);
             childOrder.setOperateId(attached.getMiguId());
@@ -271,6 +273,9 @@ public class ThreeNetsAsyncService {
         SwxlBaseBackMessage result = apiUtils.addPhoneByLt(phones, attached);
         for (int i = 0; i < list.size(); i++) {
             ThreenetsChildOrder childOrder = list.get(i);
+            if (StringUtils.isNotEmpty(attached.getAvoidShortAgreement())){
+                childOrder.setIsExemptSms(Const.IS_EXEMPT_SMS_YES);
+            }
             childOrder.setOperateId(attached.getSwxlId());
             childOrder.setRemark(result.getMessage());
             threenetsChildOrderMapper.updateThreeNetsChidOrder(childOrder);
@@ -343,6 +348,7 @@ public class ThreeNetsAsyncService {
     private void createMobileMerchant(ThreenetsOrder order, ThreeNetsOrderAttached attached, List<ThreenetsChildOrder> childOrders) {
         try {
             ApiUtils utils = new ApiUtils();
+            utils.loginMobile();
             //当前手机号是否存在于移动商户，如果存在则顺延下一个手机号
             ThreenetsChildOrder firstChildOrder = childOrders.get(0);
             order.setLinkmanTel(firstChildOrder.getLinkmanTel());
