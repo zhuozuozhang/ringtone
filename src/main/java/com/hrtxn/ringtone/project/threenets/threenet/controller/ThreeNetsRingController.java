@@ -80,9 +80,7 @@ public class ThreeNetsRingController {
     public AjaxResult getThreeNetsRingList(Page page, BaseRequest request) {
         long startTime = System.currentTimeMillis();//获取当前时间
         try {
-            List<ThreenetsRing> list = threeNetsRingService.getChildOrderList(page, request);
-            int totalCount = threeNetsRingService.getCount(request);
-            return AjaxResult.success(list, "查询成功", totalCount);
+            return threeNetsRingService.getChildOrderList(page, request);
         } catch (Exception e) {
             log.error("获取铃音列表数据 方法：getThreeNetsRingList 错误信息", e);
         } finally {

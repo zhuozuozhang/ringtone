@@ -40,10 +40,7 @@ import org.apache.http.util.EntityUtils;
 
 import java.io.*;
 import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 /**
  * Author:zcy
@@ -380,8 +377,8 @@ public class SwxlApi implements Serializable {
      */
     public String getPhoneInfo(String phone, String groupId) throws NoLoginException, IOException {
         //刷新彩铃状态
-        swxlrefreshCrbtStatus(phone, 1);
-        swxlrefreshCrbtStatus(phone, 2);
+        //swxlrefreshCrbtStatus(phone, 1);
+        //swxlrefreshCrbtStatus(phone, 2);
         //
         List<NameValuePair> formparams = new ArrayList<NameValuePair>();
         formparams.add(new BasicNameValuePair("msisdn", phone));
@@ -389,6 +386,31 @@ public class SwxlApi implements Serializable {
         String url = ADD_PHONE_URL + "?" + URLEncodedUtils.format(formparams, "UTF-8");
         String result = sendGet(url);
         log.info("联通查询用户信息--->" + result);
+        return result;
+    }
+
+    /**
+     * 获取成员信息
+     *
+     * @param phone
+     * @param groupId
+     * @return
+     * @throws NoLoginException
+     * @throws IOException
+     */
+    public String refreshUserStatus(String phone, String groupId) throws NoLoginException, IOException {
+        long startTime = System.currentTimeMillis();
+        String url = "https://swxl.10155.com/swxlapi/web/member?order=asc&maxresult=10&offset=0&currentpage=1&draw=1&start=0&msisdn=&crbtStatus=&monthStatus=&groupId=" + groupId + "&_=" + startTime;
+        //String nes = "https://swxl.10155.com/swxlapi/web/member?order=asc&maxresult=10&offset=0&currentpage=1&draw=1&start=0&msisdn=&crbtStatus=&monthStatus=&groupId=c3aa9aa94a1c4da7b94187c4d4392ada&_=1570884087972";
+        String result = sendGet(url);
+//        log.info("联通查询用户信息--->" + result);
+        //
+//        List<NameValuePair> formparams = new ArrayList<NameValuePair>();JSONObject jsonObject
+//        formparams.add(new BasicNameValuePair("msisdn", phone));
+//        formparams.add(new BasicNameValuePair("groupId", groupId));
+//        String url = ADD_PHONE_URL + "?" + URLEncodedUtils.format(formparams, "UTF-8");
+//        String result = sendGet(url);
+//        log.info("联通查询用户信息--->" + result);
         return result;
     }
 
@@ -775,7 +797,7 @@ public class SwxlApi implements Serializable {
             params.setParameter(CoreProtocolPNames.HTTP_CONTENT_CHARSET, Charset.forName("UTF-8"));
             reqEntity.addPart("groupId", new StringBody(groupId, Charset.forName("UTF-8")));// 集团名称
             reqEntity.addPart("msisdns", new StringBody(members, Charset.forName("UTF-8")));//
-            if(StringUtils.isNotEmpty(avoidShortAgreement)){
+            if (StringUtils.isNotEmpty(avoidShortAgreement)) {
                 String[] split = avoidShortAgreement.split(";");
                 for (int i = 0; i < split.length; i++) {
                     if (StringUtils.isEmpty(split[i])) {

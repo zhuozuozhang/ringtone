@@ -1,0 +1,511 @@
+html,
+body,
+p {
+    margin: 0;
+    padding: 0;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5 {
+    margin: 0;
+    padding: 0;
+    font-weight: normal;
+}
+
+ul,
+ol,
+dl,
+li,
+dt,
+dd {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+a {
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+.shade {
+    width: 100%;
+    min-width: 320px;
+    height: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 10000;
+    background-color: rgba(0, 0, 0, .6)
+}
+
+.spinner {
+    top: 50%;
+    position: absolute;
+    width: 40px;
+    height: 40px;
+    left: 50%;
+    margin-left: -20px;
+    margin-top: -20px
+}
+
+.container1>div,
+.container2>div,
+.container3>div {
+    width: 10px;
+    height: 10px;
+    background-color: #fff;
+    border-radius: 100%;
+    position: absolute;
+    -webkit-animation: bouncedelay 1.2s infinite ease-in-out;
+    animation: bouncedelay 1.2s infinite ease-in-out;
+    -webkit-animation-fill-mode: both;
+    animation-fill-mode: both
+}
+
+.spinner .spinner-container {
+    position: absolute;
+    width: 100%;
+    height: 100%
+}
+
+.container2 {
+    -webkit-transform: rotateZ(45deg);
+    transform: rotateZ(45deg)
+}
+
+.container3 {
+    -webkit-transform: rotateZ(90deg);
+    transform: rotateZ(90deg)
+}
+
+.circle1 {
+    top: 0;
+    left: 0
+}
+
+.circle2 {
+    top: 0;
+    right: 0
+}
+
+.circle3 {
+    right: 0;
+    bottom: 0
+}
+
+.circle4 {
+    left: 0;
+    bottom: 0
+}
+
+.container2 .circle1 {
+    -webkit-animation-delay: -1.1s;
+    animation-delay: -1.1s
+}
+
+.container3 .circle1 {
+    -webkit-animation-delay: -1s;
+    animation-delay: -1s
+}
+
+.container1 .circle2 {
+    -webkit-animation-delay: -.9s;
+    animation-delay: -.9s
+}
+
+.container2 .circle2 {
+    -webkit-animation-delay: -.8s;
+    animation-delay: -.8s
+}
+
+.container3 .circle2 {
+    -webkit-animation-delay: -.7s;
+    animation-delay: -.7s
+}
+
+.container1 .circle3 {
+    -webkit-animation-delay: -.6s;
+    animation-delay: -.6s
+}
+
+.container2 .circle3 {
+    -webkit-animation-delay: -.5s;
+    animation-delay: -.5s
+}
+
+.container3 .circle3 {
+    -webkit-animation-delay: -.4s;
+    animation-delay: -.4s
+}
+
+.container1 .circle4 {
+    -webkit-animation-delay: -.3s;
+    animation-delay: -.3s
+}
+
+.container2 .circle4 {
+    -webkit-animation-delay: -.2s;
+    animation-delay: -.2s
+}
+
+.container3 .circle4 {
+    -webkit-animation-delay: -.1s;
+    animation-delay: -.1s
+}
+
+@-webkit-keyframes bouncedelay {
+    0%,
+    100%,
+    80% {
+        -webkit-transform: scale(0)
+    }
+    40% {
+        -webkit-transform: scale(1)
+    }
+}
+
+@keyframes bouncedelay {
+    0%,
+    100%,
+    80% {
+        transform: scale(0);
+        -webkit-transform: scale(0)
+    }
+    40% {
+        transform: scale(1);
+        -webkit-transform: scale(1)
+    }
+}
+
+html {
+    font-family: "微软雅黑";
+}
+
+body {
+    background: #FFF;
+}
+
+.init {
+    width: 60px;
+    height: 60px;
+    margin: 30% auto 0;
+    background-image: url(../images/init.gif);
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: contain;
+}
+
+.init-tip {
+    text-align: center;
+    margin-top: 20px;
+    color: #999;
+}
+
+.btn-ok {
+    width: 40%;
+    height: 40px;
+    line-height: 40px;
+    background-color: #cb4044;
+    text-align: center;
+    color: #fff;
+    font-size: 14px;
+    border-radius: 4px;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.title {
+    width: 100%;
+    height: 46px;
+    background-color: #cb4044;
+    line-height: 46px;
+    text-align: center;
+    color: #fff;
+    font-size: 22px;
+    font-weight: bolder;
+}
+
+.idx-board {
+    width: 90%;
+    margin: 40px auto 0;
+}
+
+.inp-row {
+    height: 40px;
+    margin-top: 30px;
+}
+
+.login-inp {
+    height: 38px;
+    border: 1px solid #bcbcbc;
+    border-radius: 4px;
+    color: #9c9c9c;
+    font-size: 14px;
+    line-height: 38px;
+    text-indent: 4px;
+    padding: 0;
+}
+
+.login-phone {
+    width: 99%;
+}
+
+.login-smscode {
+    width: 56%;
+}
+
+.btn-smscode,
+.btn-smscode-ok,
+.btn-login {
+    height: 40px;
+    line-height: 40px;
+    background-color: #cb4044;
+    text-align: center;
+    color: #fff;
+    font-size: 14px;
+    border-radius: 4px;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.btn-smscode,
+.btn-smscode-ok {
+    width: 40%;
+    margin-left: 2%;
+}
+
+.btn-smscode-ok {
+    background-color: #bcbcbc;
+}
+
+.login-oper {
+    margin-top: 20px;
+}
+
+.btn-login {
+    width: 60%;
+    display: block;
+    margin: 0 auto;
+}
+
+.tip-error {
+    margin-top: 10px;
+    line-height: 30px;
+    min-height: 30px;
+    font-size: 12px;
+    color: red;
+    text-align: center;
+}
+
+.idx-reminder {
+    width: 90%;
+    margin: 40px auto 0;
+    font-size: 14px;
+}
+
+.reminder-title {
+    color: #cb4044;
+    font-size: 16px;
+    font-weight: bolder;
+}
+
+.reminder-cont {
+    margin-top: 10px;
+}
+
+.reminder-cont li {
+    line-height: 24px;
+    text-indent: 28px;
+}
+
+.open-board {
+    width: 90%;
+    margin: 20px auto 0;
+    font-size: 14px;
+}
+
+.open-tip {
+    line-height: 24px;
+    word-break: break-all;
+    word-wrap: break-word;
+}
+
+.open-tip-head {
+    line-height: 30px;
+}
+
+.open-tip-head .phone {
+    color: #cb4044;
+}
+
+.open-tip-body {
+    text-indent: 28px;
+    line-height: 30px;
+}
+
+.open-modal {
+    height: 360px;
+    margin: 0 auto;
+    margin-top: -10%;
+    width: 88%;
+}
+
+@media screen and (max-height: 480px){
+    .open-modal {
+        height: 330px;
+        margin-top: -20%;
+    }
+}
+
+
+
+/*开通彩铃*/
+.open-ring-btn{
+    width: 60%;
+    background: #cb4044;
+    color: #fff;
+    text-align: center;
+    height: 40px;
+    line-height: 40px;
+    font-size: 14px;
+    margin: 50px auto;
+    border-radius: 4px;
+    text-decoration: none;
+}
+
+.open-ring-tips{
+    font-size: 12px;
+    color: #b3b3b3;
+    line-height: 18px;
+}
+
+.open-oper {
+    margin-top: 20px;
+}
+
+.open-btn-confirm {
+    width: 40%;
+    height: 40px;
+    line-height: 40px;
+    background-color: #cb4044;
+    text-align: center;
+    color: #fff;
+    font-size: 14px;
+    border-radius: 4px;
+    text-decoration: none;
+    display: block;
+    margin: 0 auto;
+}
+
+.open-result-tip {
+    font-size: 20px;
+    color: #cb4044;
+    text-align: center;
+    margin: 80px auto 30px;
+}
+
+.open-result-qrcode {
+    margin-top: 20px;
+}
+
+.qrcode-tip {
+    font-size: 12px;
+    color: #999;
+    text-align: center;
+}
+
+.qrcode-pic {
+    width: 150px;
+    margin: 20px auto 0;
+    display: block;
+}
+
+.open-tip-fail {
+    line-height: 24px;
+    word-break: break-all;
+    word-wrap: break-word;
+    text-align: center;
+}
+
+.open-retry {
+    display: inline-block;
+    padding: 1px 10px;
+    background: #cb4044;
+    text-decoration: none;
+    color: #FFF;
+    border-radius: 4px;
+    margin: 0 5px;
+}
+
+/* popbox */
+
+.popbox-wrap {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(86, 86, 86, 0.3);
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-align: center;
+    align-items: center;
+}
+
+.popbox {
+    width: 90%;
+    padding-bottom: 20px;
+    background-color: #FFF;
+    margin: 0 auto;
+}
+
+.popbox .header {
+    width: 100%;
+    height: 40px;
+    background: #cb4044;
+}
+
+.popbox .title {
+    color: #FFF;
+    height: 40px;
+    line-height: 40px;
+    font-size: 16px;
+    margin-left: 15px;
+    float: left;
+}
+
+.popbox .btn-close {
+    float: right;
+    margin-right: 10px;
+    margin-top: 15px;
+    color: #FFF;
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    text-align: center;
+    background: url(../images/btn-popbox-close.png);
+    background-repeat: no-repeat;
+}
+
+.popbox .tip {
+    color: #000;
+    font-size: 14px;
+    text-align: center;
+    padding: 50px 0;
+}
+
+.popbox-btn-wrap {
+    width: 60%;
+    overflow: hidden;
+    margin: 0 auto;
+}
+
+.popbox .btn-ok {
+    width: 100px;
+    display: block;
+    margin: 0 auto;
+}

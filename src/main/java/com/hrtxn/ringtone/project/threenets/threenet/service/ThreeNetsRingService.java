@@ -7,9 +7,11 @@ import com.hrtxn.ringtone.common.exception.NoLoginException;
 import com.hrtxn.ringtone.common.utils.DateUtils;
 import com.hrtxn.ringtone.common.utils.StringUtils;
 import com.hrtxn.ringtone.project.system.File.service.FileService;
+import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreeNetsOrderAttached;
 import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreenetsChildOrder;
 import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreenetsOrder;
 import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreenetsRing;
+import com.hrtxn.ringtone.project.threenets.threenet.mapper.ThreeNetsOrderAttachedMapper;
 import com.hrtxn.ringtone.project.threenets.threenet.mapper.ThreenetsChildOrderMapper;
 import com.hrtxn.ringtone.project.threenets.threenet.mapper.ThreenetsOrderMapper;
 import com.hrtxn.ringtone.project.threenets.threenet.mapper.ThreenetsRingMapper;
@@ -51,6 +53,9 @@ public class ThreeNetsRingService {
 
     @Autowired
     private ThreeNetsAsyncService threeNetsAsyncService;
+
+    @Autowired
+    private ThreeNetsOrderAttachedMapper attachedMapper;
 
     private ApiUtils apiUtils = new ApiUtils();
     @Value("${ringtone.profile-url}")
@@ -94,15 +99,15 @@ public class ThreeNetsRingService {
      * @param request
      * @return
      */
-    public List<ThreenetsRing> getChildOrderList(Page page, BaseRequest request) throws NoLoginException, IOException {
+    public AjaxResult getChildOrderList(Page page, BaseRequest request) throws NoLoginException, IOException {
         page.setPage((page.getPage() - 1) * page.getPagesize());
         List<ThreenetsRing> ringList = threenetsRingMapper.getRingList(page, request);
-        // 刷新当前铃音列表
-        ringList = apiUtils.getRingInfo(ringList);
         for(ThreenetsRing ts : ringList){
             ts.setFileUrl(url+"profile/"+ts.getRingWay().replace("\\","/"));
         }
-        return ringList;
+        // 刷新当前铃音列表
+        ThreeNetsOrderAttached attached = attachedMapper.selectByParentOrderId(request.getId());
+        return apiUtils.refreshRingInfo(ringList, attached);
     }
 
     /**

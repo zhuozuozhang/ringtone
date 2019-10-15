@@ -127,5 +127,13 @@ public class KeDaController {
         }
     }
 
-
+    /**
+     * 跳转到公告列表页
+     *
+     * @return
+     */
+    @GetMapping("sendMessages")
+    public String sendMessages() {
+        return "threenets/kedas/kedasites/merchants/send_messages";
+    }
 }

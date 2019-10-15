@@ -47,7 +47,7 @@ function showTable() {
         render: function (data, type, row, meta) {
             var id = row.id;
             var status = data ? '是' : '否';
-            return status + "<i onclick='getPhoneInfo(2," + id + ")' class='layui-icon' title='刷新' data-rowindex='" + meta.row + "'><img src='../../client/threenets/images/refresh.png'></i>";
+            return status + "<i onclick='refreshRingStatus(" + id + ")' class='layui-icon' title='刷新' data-rowindex='" + meta.row + "'><img src='../../client/threenets/images/refresh.png'></i>";
         }
     }, {
         targets: [9],
@@ -134,7 +134,7 @@ function openingBusiness(id) {
 }
 
 function refresh(url, id) {
-    AjaxPut(url, {}, function (res) {
+    AjaxPut(url, {id:id}, function (res) {
         if (res.code == 200 && res.data) {
             layer.msg('更新成功！', {icon: 6, time: 3000});
             $("#set").DataTable().ajax.reload(null, false);

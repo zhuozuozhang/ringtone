@@ -601,6 +601,9 @@ public class ThreeNetsChildOrderService {
             if (threenetsChildOrder == null) {
                 return AjaxResult.error("查询不到数据！");
             }
+            if (threenetsChildOrder.getStatus().equals(Const.FAILURE_REVIEW)){
+                return AjaxResult.error("当前成员已在其他商户中存在，请在运营商处删除对应号码！");
+            }
             if (type.equals(Const.UPDATE_STATUS_RING)) {
                 threenetsChildOrder = apiUtils.refreshRingStatus(threenetsChildOrder);
             }

@@ -642,7 +642,6 @@ public class ThreeNetsAsyncService {
         }
         try {
             McardAddGroupRespone respone = apiUtils.normalBusinessInfo(order);
-            respone.setCode("0000");
             if (respone.getCode().equals("0000")) {
                 ThreenetsChildOrder param = new ThreenetsChildOrder();
                 param.setParentOrderId(order.getId());

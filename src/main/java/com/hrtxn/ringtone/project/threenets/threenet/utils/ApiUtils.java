@@ -65,14 +65,14 @@ public class ApiUtils {
             boolean isZGJC = true;
             List<User> to022 = SpringUtils.getBean(UserMapper.class).isBelongsTo022();
             for (int i = 0; i < to022.size(); i++) {
-                if (to022.get(i).getId().equals(ShiroUtils.getSysUser().getId())){
+                if (to022.get(i).getId().equals(ShiroUtils.getSysUser().getId())) {
                     isZGJC = false;
                 }
             }
-            miguApi.loginAutoParam(isZGJC?ShiroUtils.getSysUser().getUserName():"睿智广告001");
+            miguApi.loginAutoParam(isZGJC ? ShiroUtils.getSysUser().getUserName() : "睿智广告001");
         } catch (NoLoginException e) {
             e.printStackTrace();
-        }catch (IOException e){
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
@@ -606,233 +606,6 @@ public class ApiUtils {
         } else {
             return AjaxResult.success(false, msg2 + telErrorMessage);
         }
-    }
-
-    /**
-     * 刷新铃音信息
-     *
-     * @param threenetsRings
-     * @return
-     */
-    public List<ThreenetsRing> getRingInfo(List<ThreenetsRing> threenetsRings) throws NoLoginException, IOException {
-        for (ThreenetsRing threenetsRing : threenetsRings) {
-            Boolean f = false;
-            Integer operator = threenetsRing.getOperate();
-            String ringName = threenetsRing.getRingName();
-            ringName = StringUtils.subString(ringName, '.');
-            if (operator == 1) { // 移动
-                String result = miguApi.findCircleRingPageById(threenetsRing.getOperateId());
-                if (StringUtils.isNotEmpty(result)) {
-                    Document doc = Jsoup.parse(result);
-                    Elements contents = doc.getElementsByClass("tbody_lis");
-                    Elements trs = contents.get(0).getElementsByTag("tr");
-                    for (int i = 0; i < trs.size(); i++) {
-                        String ringId = "";
-                        Elements tds = trs.get(i).getElementsByTag("td");
-                        if (tds.get(8).childNodes().size() > 5) {
-                            Elements temp = tds.get(8).child(2).getElementsByTag("a");
-                            if (temp.size() == 0) {
-                                temp = tds.get(8).child(1).getElementsByTag("a");
-                            }
-                            String t = temp.attr("onclick");
-                            t = t.replace("showConfirm('", "").replace("');", "");
-                            ringId = StringUtils.isEmpty(t) ? "0000" : t;
-                        }
-                        if (tds.get(0).text().equals(ringName) || ringId.equals(threenetsRing.getOperateRingId())) {
-                            Element el2 = tds.get(4);
-                            String ringCheckmsg = el2.attr("title");
-                            ringCheckmsg = ringCheckmsg.replace("激活", "下发");
-                            String remark = el2.text();
-                            if (StringUtils.isNotEmpty(ringCheckmsg)) {
-                                threenetsRing.setRemark(ringCheckmsg); // 运营商返回的备注信息
-                            }
-                            // 铃音状态（1.待审核/2.激活中/3.激活成功/4.部分省份激活超时/5.部分省份激活成功/6.激活失败/7.审核不通过/8.分发失败）
-                            if ("待审核".equals(remark)) {
-                                threenetsRing.setRingStatus(1);
-                            } else if ("激活中".equals(remark)) {
-                                threenetsRing.setRingStatus(2);
-                            } else if ("激活成功".equals(remark)) {
-                                threenetsRing.setRingStatus(3);
-                            } else if ("部分省份激活超时".equals(remark)) {
-                                threenetsRing.setRingStatus(4);
-                            } else if ("部分省份激活成功".equals(remark)) {
-                                threenetsRing.setRingStatus(5);
-                            } else {
-                                threenetsRing.setRemark(remark + "->" + ringCheckmsg);
-                                threenetsRing.setRingStatus(6);
-                            }
-                            if (threenetsRing.getRingStatus() != 5) {
-                                Element el = tds.get(8);
-                                List<Node> nodes = el.childNodes();
-                                if (nodes.size() > 5) {
-                                    Elements temp = el.child(2).getElementsByTag("a");
-                                    String t = temp.attr("onclick");
-                                    log.info("移动铃音id-------------->" + t);
-                                    t = t.replace("showConfirm('", "").replace("');", "");
-                                    threenetsRing.setOperateRingId(t);
-                                }
-                            } else {
-                                Element el = tds.get(8);
-                                List<Node> nodes = el.childNodes();
-                                if (nodes.size() > 5) {
-                                    Elements temp = el.child(2).getElementsByTag("a");
-                                    String t = temp.attr("href");
-                                    int begin = t.indexOf("ringID=") + 7;
-                                    int end = begin + 36;
-                                    String t2 = t.substring(begin, end);
-                                    threenetsRing.setOperateRingId(t2);
-                                }
-                            }
-                            // 修改铃音信息
-                            int count = SpringUtils.getBean(ThreenetsRingMapper.class).updateByPrimaryKeySelective(threenetsRing);
-                            log.info("修改铃音信息结果---->" + count);
-                            break;
-                        }
-                    }
-                }
-            } else if (operator == 2) { // 电信
-                ThreeNetsOrderAttached attached = SpringUtils.getBean(ThreeNetsOrderAttachedMapper.class).selectByParentOrderId(threenetsRing.getOrderId());
-                mcardApi.toUserList(threenetsRing.getOperateId(), attached.getMcardDistributorId());
-                String result = mcardApi.getRingInfo(attached.getMcardDistributorId());
-                if (StringUtils.isEmpty(result)) {
-                    break;
-                }
-                Document doc = Jsoup.parse(result);
-                Elements contents = doc.getElementsByTag("tbody");
-                Elements trs = contents.get(0).getElementsByTag("tr");
-                for (int i = 0; i < trs.size(); i++) {
-                    Elements tds = trs.get(i).getElementsByTag("td");
-                    if (tds.size() <= 0) {
-                        continue;
-                    }
-                    if (tds.get(1).text().equals(ringName)) {
-                        Element el2 = tds.get(4);
-                        String remark = el2.text();
-                        if (remark.equals("审核通过")) {
-                            threenetsRing.setRingStatus(3);
-                        } else if (remark.equals("等待审核")) {
-                            threenetsRing.setRingStatus(2);
-                        } else {
-                            Elements lable = tds.get(4).getElementsByTag("lable");
-                            String title = lable.attr("title");
-                            threenetsRing.setRingStatus(6);
-                            threenetsRing.setRemark(title);
-                        }
-                        Element el6 = tds.get(6);
-                        String value = el6.childNodes().get(1).attributes().get("data-id");
-                        threenetsRing.setOperateRingId(value);
-                        int count = SpringUtils.getBean(ThreenetsRingMapper.class).updateByPrimaryKeySelective(threenetsRing);
-                        log.info("修改铃音信息结果---->" + count);
-                    }
-                }
-            } else { // 联通
-                String result = swxlApi.getRingInfo(threenetsRing.getOperateId());
-                if (StringUtils.isNotEmpty(result)) {
-                    SwxlPubBackData<SwxlQueryPubRespone<SwxlRingMsg>> backData = SpringUtils.getBean(ObjectMapper.class).readValue(result, SwxlPubBackData.class);
-                    if ("000000".equals(backData.getRecode()) && backData.isSuccess()) {
-                        SwxlQueryPubRespone<SwxlRingMsg> swxlQueryPubRespone = (SwxlQueryPubRespone) backData.getData();
-                        if (StringUtils.isNotNull(swxlQueryPubRespone)) {
-                            List ringList = swxlQueryPubRespone.getData();
-                            if (StringUtils.isNotNull(ringList)) {
-                                List<SwxlRingMsg> ringMsgs = new ArrayList<>();
-                                for (Object obj : ringList) {
-                                    JSONObject jsonObject = JSONObject.fromObject(obj); // 将数据转成json字符串
-                                    SwxlRingMsg swxlRingMsg = (SwxlRingMsg) JSONObject.toBean(jsonObject, SwxlRingMsg.class); //将json转成需要的对象
-                                    ringMsgs.add(swxlRingMsg);
-                                }
-                                if (ringMsgs.size() > 0) {
-                                    for (SwxlRingMsg swxlRingMsg : ringMsgs) {
-                                        if (StringUtils.isNotNull(swxlRingMsg)) {
-                                            if (ringName.equals(swxlRingMsg.getRingName())) {
-                                                threenetsRing.setRemark(swxlRingMsg.getRemark());
-                                                threenetsRing.setOperateRingId(swxlRingMsg.getId());
-                                                // 1: 审核中 2：审核通过 3：审核不通过  4：分发失败 9：激活成功
-                                                // 对应状态：1.待审核/2.激活中/3.激活成功/4.部分省份激活超时/5.部分省份激活成功/6.激活失败/7.审核不通过/8.分发失败
-                                                if ("1".equals(swxlRingMsg.getStatus())) {
-                                                    threenetsRing.setRingStatus(2);
-                                                } else if ("2".equals(swxlRingMsg.getStatus())) {
-                                                    threenetsRing.setRingStatus(2);
-                                                    String msg = "下发情况：";
-                                                    int falgs = 0;
-                                                    boolean fgla = false;
-                                                    // 获取铃音分发情况
-                                                    String swxlRingFenFaAreaInfo = swxlApi.getSwxlRingFenFaAreaInfo(threenetsRing.getOperateRingId());
-                                                    if (StringUtils.isNotEmpty(swxlRingFenFaAreaInfo)) {
-                                                        // 铃音分发实体详情转换
-                                                        SwxlPubBackData<SwxlQueryPubRespone<SwxlRingAreaFenFaInfo>> info = SpringUtils.getBean(ObjectMapper.class).readValue(swxlRingFenFaAreaInfo, SwxlPubBackData.class);
-                                                        if (StringUtils.isNotNull(info) && info.isSuccess()) {
-                                                            SwxlQueryPubRespone<SwxlRingAreaFenFaInfo> pageData = (SwxlQueryPubRespone) info.getData();
-                                                            if (StringUtils.isNotNull(pageData) && StringUtils.isNotEmpty(pageData.getData())) {
-                                                                List<SwxlRingAreaFenFaInfo> swxlRingAreaFenFaInfoList = pageData.getData();
-                                                                if (StringUtils.isNotNull(swxlRingAreaFenFaInfoList)) {
-                                                                    List<SwxlRingAreaFenFaInfo> swxlRingAreaFenFaInfos = new ArrayList<>();
-                                                                    for (Object obj : swxlRingAreaFenFaInfoList) {
-                                                                        JSONObject jsonObject = JSONObject.fromObject(obj); // 将数据转成json字符串
-                                                                        SwxlRingAreaFenFaInfo swxlRingAreaFenFaInfo = (SwxlRingAreaFenFaInfo) JSONObject.toBean(jsonObject, SwxlRingAreaFenFaInfo.class); //将json转成需要的对象
-                                                                        swxlRingAreaFenFaInfos.add(swxlRingAreaFenFaInfo);
-                                                                    }
-                                                                    if (swxlRingAreaFenFaInfos.size() > 0) {
-                                                                        for (SwxlRingAreaFenFaInfo swxlRingAreaFenFaInfo : swxlRingAreaFenFaInfos) {
-                                                                            //判断deployStatus是否为0,0表示成功1表示激活中2表示失败
-                                                                            //判断铃音是否为激活中，如果是则跳出循环，不再判断，铃音为等待审核状态
-                                                                            if (swxlRingAreaFenFaInfo != null && 1 == swxlRingAreaFenFaInfo.getDeployStatus()) {//激活中
-                                                                                msg += "[" + swxlRingAreaFenFaInfo.getProvinceName() + "]激活中";
-                                                                            }
-                                                                            if (swxlRingAreaFenFaInfo != null && 0 == swxlRingAreaFenFaInfo.getDeployStatus()) {//成功
-                                                                                msg += "[" + swxlRingAreaFenFaInfo.getProvinceName() + "]成功";
-                                                                                if ("集中".equals(swxlRingAreaFenFaInfo.getProvinceName())) {
-                                                                                    fgla = true;
-                                                                                } else {
-                                                                                    falgs++;
-                                                                                }
-                                                                            }
-                                                                            if (swxlRingAreaFenFaInfo != null && 2 == swxlRingAreaFenFaInfo.getDeployStatus()) {//激活失败
-                                                                                if ("集中".equals(swxlRingAreaFenFaInfo.getProvinceName())) {
-                                                                                    msg += "[" + swxlRingAreaFenFaInfo.getProvinceName() + "]激活失败,请重新上传铃音";
-                                                                                } else {
-                                                                                    msg += "[" + swxlRingAreaFenFaInfo.getProvinceName() + "]激活失败";
-                                                                                }
-                                                                            }
-                                                                            if (swxlRingAreaFenFaInfo != null && 3 == swxlRingAreaFenFaInfo.getDeployStatus()) {//重新激活
-                                                                                msg += "[" + swxlRingAreaFenFaInfo.getProvinceName() + "]重新激活";
-                                                                            }
-                                                                        }
-                                                                        threenetsRing.setRemark(msg);
-                                                                    } else {
-                                                                        threenetsRing.setRemark(msg + "无");
-                                                                    }
-                                                                    if (fgla && falgs > 0) {
-                                                                        threenetsRing.setRingStatus(3);
-                                                                    }
-                                                                }
-                                                            }
-                                                        }
-                                                    }
-                                                } else if ("3".equals(swxlRingMsg.getStatus())) {
-                                                    threenetsRing.setRingStatus(7);
-                                                    threenetsRing.setRemark(swxlRingMsg.getRemark());
-                                                } else if ("4".equals(swxlRingMsg.getStatus())) {
-                                                    threenetsRing.setRingStatus(8);
-                                                } else if ("9".equals(swxlRingMsg.getStatus())) {
-                                                    threenetsRing.setRingStatus(3);
-                                                }
-                                                // 修改铃音信息
-                                                int count = SpringUtils.getBean(ThreenetsRingMapper.class).updateByPrimaryKeySelective(threenetsRing);
-                                                log.info("修改铃音信息结果---->" + count);
-                                                break;
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    } else {
-                        log.info("联通 刷新铃音信息出错----->" + backData.getMessage());
-                    }
-                }
-            }
-        }
-        return threenetsRings;
     }
 
     /**
@@ -1441,6 +1214,11 @@ public class ApiUtils {
                 childOrder.setRemark("添加失败");
                 newList.add(childOrder);
             }
+            if (mcardAddPhoneRespone.getCode().equals("1012")) {
+                childOrder.setStatus(Const.FAILURE_REVIEW);
+                childOrder.setRemark("员工已存在于其他商户");
+                newList.add(childOrder);
+            }
         }
         return newList;
     }
@@ -1680,7 +1458,9 @@ public class ApiUtils {
             ThreeNetsOrderAttached attached = SpringUtils.getBean(ThreeNetsOrderAttachedMapper.class).selectByParentOrderId(childOrder.getParentOrderId());
             //移动
             if (childOrder.getOperator().equals(Const.OPERATORS_MOBILE) && StringUtils.isNotEmpty(attached.getMiguId())) {
-                miguApi.refreshCrbtStatus(childOrder.getLinkmanTel());
+                if (!childOrder.getIsRingtoneUser() && childOrder.getIsVideoUser()) {
+                    miguApi.refreshCrbtStatus(childOrder.getLinkmanTel());
+                }
                 String result = miguApi.updatePhoneInfo(childOrder.getLinkmanTel(), childOrder.getOperateId());
                 Document doc = Jsoup.parse(result);
                 Elements contents = doc.getElementsByClass("tbody_lis");
@@ -1703,7 +1483,29 @@ public class ApiUtils {
                     swxlApi.swxlrefreshCrbtStatus(childOrder.getLinkmanTel(), 1);
                 }
                 String phoneInfo = swxlApi.getPhoneInfo(childOrder.getLinkmanTel(), attached.getSwxlId());
-                System.out.println(phoneInfo);
+                //{"recode":"000000","message":"成功","data":{"data":[{"id":"60a3731dd2d541ce8232dec153634932","msisdn":"15516933320","groupId":"4b9dc1422585436ba8681205806f694d","crbtStatus":0,"monthStatus":0,"netType":null,"status":0,"openTime":"2019-10-13 19:48:37","ctime":"2019-10-13 19:47:43","closeTime":null,"provinceId":76,"provinceName":"河南","remark":"铃音[郑州市亚森鞋业213242]设置成功","syncStatus":1,"productName":null}],"recordsTotal":1},"success":true}
+                JSONObject jsonObject = JSONObject.fromObject(phoneInfo);
+                String recode = jsonObject.getString("recode");
+                boolean success = jsonObject.getBoolean("success");
+                if (recode.equals("000000") && success) {
+                    JSONObject data = jsonObject.getJSONObject("data");
+                    JSONArray jsonArray = data.getJSONArray("data");
+                    for (int i = 0; i < jsonArray.size(); i++) {
+                        JSONObject partDaily = jsonArray.getJSONObject(i);
+                        String msisdn = partDaily.getString("msisdn");
+                        String id = partDaily.getString("id");
+                        if (childOrder.getLinkmanTel().equals(msisdn)){
+                            String crbtStatus = partDaily.getString("crbtStatus");
+                            if (crbtStatus.equals("0")){
+                                childOrder.setIsRingtoneUser(true);
+                            }else if (crbtStatus.equals("1")){
+                                childOrder.setIsRingtoneUser(false);
+                            }else if (crbtStatus.equals("2")){
+                                childOrder.setIsRingtoneUser(false);
+                            }
+                        }
+                    }
+                }
             }
             //电信
             if (childOrder.getOperator().equals(Const.OPERATORS_TELECOM) && StringUtils.isNotEmpty(attached.getMcardId())) {
@@ -1750,7 +1552,6 @@ public class ApiUtils {
         } finally {
             return childOrder;
         }
-
     }
 
     /**
@@ -1763,7 +1564,9 @@ public class ApiUtils {
         try {
             //移动
             if (childOrder.getOperator() == 1 && StringUtils.isNotEmpty(childOrder.getLinkmanTel())) {
-                miguApi.refreshVbrtStatus(childOrder.getLinkmanTel());
+                if (!childOrder.getIsVideoUser() && childOrder.getIsRingtoneUser()) {
+                    miguApi.refreshVbrtStatus(childOrder.getLinkmanTel());
+                }
                 String result = miguApi.updatePhoneInfo(childOrder.getLinkmanTel(), childOrder.getOperateId());
                 Document doc = Jsoup.parse(result);
                 Elements contents = doc.getElementsByClass("tbody_lis");
@@ -1794,7 +1597,9 @@ public class ApiUtils {
             ThreeNetsOrderAttached attached = SpringUtils.getBean(ThreeNetsOrderAttachedMapper.class).selectByParentOrderId(childOrder.getParentOrderId());
             //移动
             if (childOrder.getOperator() == 1 && StringUtils.isNotEmpty(childOrder.getLinkmanTel())) {
-                miguApi.refreshIsMonthly(childOrder.getLinkmanTel());
+                if (!childOrder.getIsMonthly().equals(2)) {
+                    miguApi.refreshIsMonthly(childOrder.getLinkmanTel());
+                }
                 String result = miguApi.updatePhoneInfo(childOrder.getLinkmanTel(), childOrder.getOperateId());
                 Document doc = Jsoup.parse(result);
                 Elements contents = doc.getElementsByClass("tbody_lis");
@@ -1815,7 +1620,37 @@ public class ApiUtils {
             }
             //联通
             if (childOrder.getOperator() == 3 && StringUtils.isNotEmpty(childOrder.getLinkmanTel())) {
-
+                if (!childOrder.getIsMonthly().equals(2)){
+                    swxlApi.swxlrefreshCrbtStatus(childOrder.getLinkmanTel(), 2);
+                }
+                String phoneInfo = swxlApi.getPhoneInfo(childOrder.getLinkmanTel(), attached.getSwxlId());
+                //{"recode":"000000","message":"成功","data":{"data":[{"id":"60a3731dd2d541ce8232dec153634932","msisdn":"15516933320","groupId":"4b9dc1422585436ba8681205806f694d","crbtStatus":0,"monthStatus":0,"netType":null,"status":0,"openTime":"2019-10-13 19:48:37","ctime":"2019-10-13 19:47:43","closeTime":null,"provinceId":76,"provinceName":"河南","remark":"铃音[郑州市亚森鞋业213242]设置成功","syncStatus":1,"productName":null}],"recordsTotal":1},"success":true}
+                JSONObject jsonObject = JSONObject.fromObject(phoneInfo);
+                String recode = jsonObject.getString("recode");
+                boolean success = jsonObject.getBoolean("success");
+                if (recode.equals("000000") && success) {
+                    JSONObject data = jsonObject.getJSONObject("data");
+                    JSONArray jsonArray = data.getJSONArray("data");
+                    for (int i = 0; i < jsonArray.size(); i++) {
+                        JSONObject partDaily = jsonArray.getJSONObject(i);
+                        String msisdn = partDaily.getString("msisdn");
+                        String id = partDaily.getString("id");
+                        if (childOrder.getLinkmanTel().equals(msisdn)){
+                            String monthStatus = partDaily.getString("monthStatus");
+                            // 包月状态 0：已包月  1:未包月  2:未知（未包月）  3:已退订
+                            // 对应状态 1.未包月/2.已包月/3.已退订
+                            if (monthStatus.equals("0")){
+                                childOrder.setIsMonthly(2);
+                            }else if (monthStatus.equals("1")){
+                                childOrder.setIsMonthly(1);
+                            }else if (monthStatus.equals("2")){
+                                childOrder.setIsMonthly(1);
+                            }else if (monthStatus.equals("3")){
+                                childOrder.setIsMonthly(3);
+                            }
+                        }
+                    }
+                }
             }
             if (childOrder.getOperator().equals(Const.OPERATORS_TELECOM) && StringUtils.isNotEmpty(attached.getMcardId())) {
                 if (StringUtils.isEmpty(attached.getMcardDistributorId())) {
@@ -1918,7 +1753,60 @@ public class ApiUtils {
             }
             //联通
             if (childOrder.getOperator() == 3 && StringUtils.isNotEmpty(childOrder.getLinkmanTel())) {
-
+                if (!childOrder.getIsRingtoneUser()) {
+                    swxlApi.swxlrefreshCrbtStatus(childOrder.getLinkmanTel(), 1);
+                }
+                if (!childOrder.getIsMonthly().equals(2)){
+                    swxlApi.swxlrefreshCrbtStatus(childOrder.getLinkmanTel(), 2);
+                }
+                String phoneInfo = swxlApi.getPhoneInfo(childOrder.getLinkmanTel(), attached.getSwxlId());
+                //{"recode":"000000","message":"成功","data":{"data":[{"id":"60a3731dd2d541ce8232dec153634932","msisdn":"15516933320","groupId":"4b9dc1422585436ba8681205806f694d","crbtStatus":0,"monthStatus":0,"netType":null,"status":0,"openTime":"2019-10-13 19:48:37","ctime":"2019-10-13 19:47:43","closeTime":null,"provinceId":76,"provinceName":"河南","remark":"铃音[郑州市亚森鞋业213242]设置成功","syncStatus":1,"productName":null}],"recordsTotal":1},"success":true}
+                JSONObject jsonObject = JSONObject.fromObject(phoneInfo);
+                String recode = jsonObject.getString("recode");
+                boolean success = jsonObject.getBoolean("success");
+                if (recode.equals("000000") && success) {
+                    JSONObject data = jsonObject.getJSONObject("data");
+                    JSONArray jsonArray = data.getJSONArray("data");
+                    for (int i = 0; i < jsonArray.size(); i++) {
+                        JSONObject partDaily = jsonArray.getJSONObject(i);
+                        String msisdn = partDaily.getString("msisdn");
+                        String id = partDaily.getString("id");
+                        if (childOrder.getLinkmanTel().equals(msisdn)){
+                            String monthStatus = partDaily.getString("monthStatus");
+                            // 包月状态 0：已包月  1:未包月  2:未知（未包月）  3:已退订
+                            // 对应状态 1.未包月/2.已包月/3.已退订
+                            if (monthStatus.equals("0")){
+                                childOrder.setIsMonthly(2);
+                            }else if (monthStatus.equals("1")){
+                                childOrder.setIsMonthly(1);
+                            }else if (monthStatus.equals("2")){
+                                childOrder.setIsMonthly(1);
+                            }else if (monthStatus.equals("3")){
+                                childOrder.setIsMonthly(3);
+                            }
+                            String crbtStatus = partDaily.getString("crbtStatus");
+                            if (crbtStatus.equals("0")){
+                                childOrder.setIsRingtoneUser(true);
+                            }else if (crbtStatus.equals("1")){
+                                childOrder.setIsRingtoneUser(false);
+                            }else if (crbtStatus.equals("2")){
+                                childOrder.setIsRingtoneUser(false);
+                            }
+                            String remark = partDaily.getString("remark");
+                            childOrder.setRemark(remark);
+                            // 如为彩铃用户且已包月，则设置铃音名称
+                            if (childOrder.getIsRingtoneUser() && childOrder.getIsMonthly().equals(2)) {
+                                if (remark.contains("[")) {
+                                    String splitStr = remark.split("\\[")[1];
+                                    String ringName = splitStr.split("\\]")[0];
+                                    if (childOrder.getRingName() == null || childOrder.getRingName() == "") {
+                                        childOrder.setRingName(ringName);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
             }
             if (childOrder.getOperator().equals(Const.OPERATORS_TELECOM) && StringUtils.isNotEmpty(attached.getMcardId())) {
                 if (StringUtils.isEmpty(attached.getMcardDistributorId())) {
@@ -1989,14 +1877,58 @@ public class ApiUtils {
                     List<ThreenetsChildOrder> mobOrders = collect.get(Const.OPERATORS_MOBILE);
                     for (int i = 0; i < mobOrders.size(); i++) {
                         ThreenetsChildOrder childOrder = mobOrders.get(i);
-                        if (childOrder.getIsVideoUser()) {
-                            miguApi.refreshCrbtStatus(childOrder.getLinkmanTel());
-                            miguApi.refreshVbrtStatus(childOrder.getLinkmanTel());
-                            miguApi.refreshIsMonthly(childOrder.getLinkmanTel());
-                        }
+                        miguApi.refreshCrbtStatus(childOrder.getLinkmanTel());
+                        miguApi.refreshVbrtStatus(childOrder.getLinkmanTel());
+                        miguApi.refreshIsMonthly(childOrder.getLinkmanTel());
+                    }
+                    //http://211.137.107.18:8888/cm/userpay!findGroupMember.action?groupId=c2d87aee-2184-4c49-bbd1-248238af1fca&groupName=%E9%B8%BF%E9%91%AB%E5%AE%B6%E5%B1%85209342
+                    String result = miguApi.getRingPage(attached.getMiguId());
+                    Document doc = Jsoup.parse(result);
+                    Elements contents = doc.getElementsByClass("tbody_lis");
+                    Elements datas = contents.get(0).getElementsByClass("tbody_lis");
+                    Element ele = datas.get(0);
+                    Elements trs = ele.getElementsByTag("tr");
+                    if (trs.size() > 0) {// 没值的话，跳过
+                        Elements tds = trs.get(0).getElementsByTag("td");
+                        String telNoOrId = tds.get(0).child(0).attr("value");
+                        String mcardApersonId = telNoOrId.substring(telNoOrId.indexOf("|") + 1);
+//                        if (StringUtils.isNotEmpty(mcardApersonId)) {
+//                            childOrder.setOperateOrderId(mcardApersonId);
+//                        }
+//                        String whetherRingUser = tds.get(2).text();
+//                        if ("彩铃用户".equals(whetherRingUser)) {
+//                            childOrder.setIsRingtoneUser(true);
+//                        } else {
+//                            childOrder.setIsRingtoneUser(false);
+//                        }
+//                        String whetherVideoRingUser = tds.get(3).text();// 视频彩铃功能
+//                        if ("视频彩铃用户".equals(whetherVideoRingUser)) {
+//                            childOrder.setIsVideoUser(true);
+//                        } else {
+//                            childOrder.setIsVideoUser(false);
+//                        }
+//                        String whetherMonthlyUser = tds.get(8).text();
+//                        if ("包月".equals(whetherMonthlyUser)) {
+//                            childOrder.setIsMonthly(2);
+//                        } else if ("未包月".equals(whetherMonthlyUser)) {
+//                            childOrder.setIsMonthly(1);
+//                        } else {
+//                            childOrder.setIsMonthly(3);
+//                        }
+//                        String ringName = tds.get(9).text();// 铃音名称
+//                        if (!"暂无".equals(ringName)) {
+//                            childOrder.setRingName(ringName);
+//                        }
+//                        childOrder.setRemark(tds.get(10).text());// 备注
                     }
                 }
                 if (operator.equals(Const.OPERATORS_UNICOM)) {
+//                    if (!childOrder.getIsRingtoneUser()) {
+//                        swxlApi.swxlrefreshCrbtStatus(childOrder.getLinkmanTel(), 1);
+//                    }
+//                    if (!childOrder.getIsMonthly().equals(2)){
+//                        swxlApi.swxlrefreshCrbtStatus(childOrder.getLinkmanTel(), 2);
+//                    }
                     List<ThreenetsChildOrder> childOrders = collect.get(Const.OPERATORS_UNICOM);
                     String phoneInfo = swxlApi.refreshUserStatus(null, attached.getSwxlId());
                     JSONObject jsonObject = JSONObject.fromObject(phoneInfo);
@@ -2008,13 +1940,41 @@ public class ApiUtils {
                             JSONObject partDaily = jsonArray.getJSONObject(i);
                             String msisdn = partDaily.getString("msisdn");
                             if (childOrder.getLinkmanTel().equals(msisdn)) {
-
+                                String monthStatus = partDaily.getString("monthStatus");
+                                // 包月状态 0：已包月  1:未包月  2:未知（未包月）  3:已退订
+                                // 对应状态 1.未包月/2.已包月/3.已退订
+                                if (monthStatus.equals("0")){
+                                    childOrder.setIsMonthly(2);
+                                }else if (monthStatus.equals("1")){
+                                    childOrder.setIsMonthly(1);
+                                }else if (monthStatus.equals("2")){
+                                    childOrder.setIsMonthly(1);
+                                }else if (monthStatus.equals("3")){
+                                    childOrder.setIsMonthly(3);
+                                }
+                                String crbtStatus = partDaily.getString("crbtStatus");
+                                if (crbtStatus.equals("0")){
+                                    childOrder.setIsRingtoneUser(true);
+                                }else if (crbtStatus.equals("1")){
+                                    childOrder.setIsRingtoneUser(false);
+                                }else if (crbtStatus.equals("2")){
+                                    childOrder.setIsRingtoneUser(false);
+                                }
+                                String remark = partDaily.getString("remark");
+                                childOrder.setRemark(remark);
+                                // 如为彩铃用户且已包月，则设置铃音名称
+                                if (childOrder.getIsRingtoneUser() && childOrder.getIsMonthly().equals(2)) {
+                                    if (remark.contains("[")) {
+                                        String splitStr = remark.split("\\[")[1];
+                                        String ringName = splitStr.split("\\]")[0];
+                                        if (childOrder.getRingName() == null || childOrder.getRingName() == "") {
+                                            childOrder.setRingName(ringName);
+                                        }
+                                    }
+                                }
                             }
                         }
                     }
-
-
-                    //System.out.println(phoneInfo);
                 }
                 if (operator.equals(Const.OPERATORS_TELECOM)) {
                     if (StringUtils.isEmpty(attached.getMcardDistributorId())) {
@@ -2137,4 +2097,223 @@ public class ApiUtils {
         return list;
     }
 
+
+    public AjaxResult refreshRingInfo(List<ThreenetsRing> rings, ThreeNetsOrderAttached attached) {
+        List<ThreenetsRing> ringlist = new ArrayList<>();
+        String ringId = "";
+        String ringName = "";
+        try {
+            Map<Integer, List<ThreenetsRing>> collect = rings.stream().collect(Collectors.groupingBy(ThreenetsRing::getOperate));
+            for (Integer operator : collect.keySet()) {
+                if (operator.equals(Const.OPERATORS_MOBILE)) {
+                    List<ThreenetsRing> list = collect.get(operator);
+                    if (StringUtils.isEmpty(attached.getMiguId())) {
+                        return AjaxResult.error("刷新失败，同步信息缺少关键信息！");
+                    }
+                    String result = miguApi.findCircleRingPageById(attached.getMiguId());
+                    if (StringUtils.isEmpty(result)) {
+                        return AjaxResult.error("刷新失败，为获取到铃音信息！");
+                    }
+                    Document doc = Jsoup.parse(result);
+                    Elements contents = doc.getElementsByClass("tbody_lis");
+                    Elements trs = contents.get(0).getElementsByTag("tr");
+                    for (int i = 0; i < trs.size(); i++) {
+                        Elements tds = trs.get(i).getElementsByTag("td");
+                        ringName = tds.get(0).text();
+                        if (tds.get(8).childNodes().size() > 5) {
+                            Elements temp = tds.get(8).child(2).getElementsByTag("a");
+                            if (temp.size() == 0) {
+                                temp = tds.get(8).child(1).getElementsByTag("a");
+                            }
+                            String t = temp.attr("onclick");
+                            t = t.replace("showConfirm('", "").replace("');", "");
+                            ringId = StringUtils.isEmpty(t) ? "0000" : t;
+                        }
+                        for (int j = 0; j < list.size(); j++) {
+                            ThreenetsRing ring = list.get(j);
+                            String name = StringUtils.subString(ring.getRingName(), '.');
+                            String id = ring.getOperateRingId();
+                            if (ringName.equals(name) || ringId.equals(id)) {
+                                Element el2 = tds.get(4);
+                                String ringCheckmsg = el2.attr("title");
+                                ringCheckmsg = ringCheckmsg.replace("激活", "下发");
+                                String remark = el2.text();
+                                if (StringUtils.isNotEmpty(ringCheckmsg)) {
+                                    ring.setRemark(ringCheckmsg); // 运营商返回的备注信息
+                                }
+                                // 铃音状态（1.待审核/2.激活中/3.激活成功/4.部分省份激活超时/5.部分省份激活成功/6.激活失败/7.审核不通过/8.分发失败）
+                                if ("待审核".equals(remark)) {
+                                    ring.setRingStatus(1);
+                                } else if ("激活中".equals(remark)) {
+                                    ring.setRingStatus(2);
+                                } else if ("激活成功".equals(remark)) {
+                                    ring.setRingStatus(3);
+                                } else if ("部分省份激活超时".equals(remark)) {
+                                    ring.setRingStatus(4);
+                                } else if ("部分省份激活成功".equals(remark)) {
+                                    ring.setRingStatus(5);
+                                } else {
+                                    ring.setRemark(remark + "->" + ringCheckmsg);
+                                    ring.setRingStatus(6);
+                                }
+                                ring.setOperateRingId(ringId);
+                                SpringUtils.getBean(ThreenetsRingMapper.class).updateByPrimaryKeySelective(ring);
+                                ringlist.add(ring);
+                            }
+                        }
+                    }
+                }
+                if (operator.equals(Const.OPERATORS_UNICOM)) {
+                    List<ThreenetsRing> list = collect.get(operator);
+                    if (StringUtils.isEmpty(attached.getSwxlId())) {
+                        return AjaxResult.error("刷新失败，同步信息缺少关键信息！");
+                    }
+                    String result = swxlApi.getRingInfo(attached.getSwxlId());
+                    if (StringUtils.isEmpty(result)) {
+                        return AjaxResult.error("刷新失败，为获取到铃音信息！");
+                    }
+                    //{"recode":"000000","message":"成功","data":{"data":[{"id":"9178900020191013923588","ringFilePath":"/v1/ring/2019/10/13/2034e6f874a84dbda045be12b96f6ebe.mp3","groupId":"4b9dc1422585436ba8681205806f694d","ringName":"郑州市亚森鞋业213242","ctime":"2019-10-13 19:47:43","status":"2","remark":"铃音审核通过"}],"recordsTotal":1},"success":true}
+                    JSONObject jsonObject = JSONObject.fromObject(result);
+                    String recode = jsonObject.getString("recode");
+                    boolean success = jsonObject.getBoolean("success");
+                    JSONObject data = jsonObject.getJSONObject("data");
+                    JSONArray jsonArray = data.getJSONArray("data");
+                    if ("000000".equals(recode) && success) {
+                        for (int i = 0; i < jsonArray.size(); i++) {
+                            JSONObject partDaily = jsonArray.getJSONObject(i);
+                            ringId = partDaily.getString("id");
+                            ringName = partDaily.getString("ringName");
+                            for (int j = 0; j < list.size(); j++) {
+                                ThreenetsRing ring = list.get(j);
+                                String name = StringUtils.subString(ring.getRingName(), '.');
+                                String id = ring.getOperateRingId();
+                                if (ringName.equals(name) || ringId.equals(id)) {
+                                    // 1: 审核中 2：审核通过 3：审核不通过  4：分发失败 9：激活成功
+                                    // 对应状态：1.待审核/2.激活中/3.激活成功/4.部分省份激活超时/5.部分省份激活成功/6.激活失败/7.审核不通过/8.分发失败
+                                    String status = partDaily.getString("status");
+                                    String remark = partDaily.getString("remark");
+                                    if (status.equals("1")) {
+                                        ring.setRingStatus(2);
+                                    } else if (status.equals("2")) {
+                                        ring.setRingStatus(2);
+                                        String msg = "下发情况：";
+                                        int falgs = 0;
+                                        boolean fgla = false;
+                                        // 获取铃音分发情况
+                                        String swxlRingFenFaAreaInfo = swxlApi.getSwxlRingFenFaAreaInfo(id);
+                                        //{"recode":"000000","message":"成功","data":{"data":[{"id":"8421821bcfdf473aa281899cf6f55ee0","ringId":"9178900020191013923588","provinceName":"集中","provinceId":"00","ctime":"2019-10-14 00:10:26","successTime":"2019-10-14 00:55:00","responseCode":"00","responseDesc":null,"deployStatus":0},{"id":"f387340ad87441acadb3fa23ddcaaa98","ringId":"9178900020191013923588","provinceName":"河南","provinceId":"76","ctime":"2019-10-14 00:10:26","successTime":"2019-10-14 00:35:00","responseCode":"00","responseDesc":null,"deployStatus":0}],"recordsTotal":2},"success":true}
+                                        if (StringUtils.isNotEmpty(swxlRingFenFaAreaInfo)) {
+                                            // 铃音分发实体详情转换
+                                            SwxlPubBackData<SwxlQueryPubRespone<SwxlRingAreaFenFaInfo>> info = SpringUtils.getBean(ObjectMapper.class).readValue(swxlRingFenFaAreaInfo, SwxlPubBackData.class);
+                                            if (StringUtils.isNotNull(info) && info.isSuccess()) {
+                                                SwxlQueryPubRespone<SwxlRingAreaFenFaInfo> pageData = (SwxlQueryPubRespone) info.getData();
+                                                if (StringUtils.isNotNull(pageData) && StringUtils.isNotEmpty(pageData.getData())) {
+                                                    List<SwxlRingAreaFenFaInfo> swxlRingAreaFenFaInfoList = pageData.getData();
+                                                    if (StringUtils.isNotNull(swxlRingAreaFenFaInfoList)) {
+                                                        List<SwxlRingAreaFenFaInfo> swxlRingAreaFenFaInfos = new ArrayList<>();
+                                                        for (Object obj : swxlRingAreaFenFaInfoList) {
+                                                            JSONObject jsonObject1 = JSONObject.fromObject(obj); // 将数据转成json字符串
+                                                            SwxlRingAreaFenFaInfo swxlRingAreaFenFaInfo = (SwxlRingAreaFenFaInfo) JSONObject.toBean(jsonObject1, SwxlRingAreaFenFaInfo.class); //将json转成需要的对象
+                                                            swxlRingAreaFenFaInfos.add(swxlRingAreaFenFaInfo);
+                                                        }
+                                                        if (swxlRingAreaFenFaInfos.size() > 0) {
+                                                            for (SwxlRingAreaFenFaInfo swxlRingAreaFenFaInfo : swxlRingAreaFenFaInfos) {
+                                                                //判断deployStatus是否为0,0表示成功1表示激活中2表示失败
+                                                                //判断铃音是否为激活中，如果是则跳出循环，不再判断，铃音为等待审核状态
+                                                                if (swxlRingAreaFenFaInfo != null && 1 == swxlRingAreaFenFaInfo.getDeployStatus()) {//激活中
+                                                                    msg += "[" + swxlRingAreaFenFaInfo.getProvinceName() + "]激活中";
+                                                                }
+                                                                if (swxlRingAreaFenFaInfo != null && 0 == swxlRingAreaFenFaInfo.getDeployStatus()) {//成功
+                                                                    msg += "[" + swxlRingAreaFenFaInfo.getProvinceName() + "]成功";
+                                                                    if ("集中".equals(swxlRingAreaFenFaInfo.getProvinceName())) {
+                                                                        fgla = true;
+                                                                    } else {
+                                                                        falgs++;
+                                                                    }
+                                                                }
+                                                                if (swxlRingAreaFenFaInfo != null && 2 == swxlRingAreaFenFaInfo.getDeployStatus()) {//激活失败
+                                                                    if ("集中".equals(swxlRingAreaFenFaInfo.getProvinceName())) {
+                                                                        msg += "[" + swxlRingAreaFenFaInfo.getProvinceName() + "]激活失败,请重新上传铃音";
+                                                                    } else {
+                                                                        msg += "[" + swxlRingAreaFenFaInfo.getProvinceName() + "]激活失败";
+                                                                    }
+                                                                }
+                                                                if (swxlRingAreaFenFaInfo != null && 3 == swxlRingAreaFenFaInfo.getDeployStatus()) {//重新激活
+                                                                    msg += "[" + swxlRingAreaFenFaInfo.getProvinceName() + "]重新激活";
+                                                                }
+                                                            }
+                                                            ring.setRemark(msg);
+                                                        } else {
+                                                            ring.setRemark(msg + "无");
+                                                        }
+                                                        if (fgla && falgs > 0) {
+                                                            ring.setRingStatus(3);
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    } else if (status.equals("3")) {
+                                        ring.setRingStatus(7);
+                                        ring.setRemark(remark);
+                                    } else if (status.equals("4")) {
+                                        ring.setRingStatus(8);
+                                    } else if (status.equals("9")) {
+                                        ring.setRingStatus(3);
+                                    }
+                                    ring.setOperateRingId(ringId);
+                                    SpringUtils.getBean(ThreenetsRingMapper.class).updateByPrimaryKeySelective(ring);
+                                    ringlist.add(ring);
+                                }
+                            }
+                        }
+                    }
+                }
+                if (operator.equals(Const.OPERATORS_TELECOM)) {
+                    List<ThreenetsRing> list = collect.get(operator);
+                    mcardApi.toUserList(attached.getMcardId(), attached.getMcardDistributorId());
+                    String result = mcardApi.getRingInfo(attached.getMcardDistributorId());
+                    if (StringUtils.isEmpty(result)) {
+                        break;
+                    }
+                    Document doc = Jsoup.parse(result);
+                    Elements contents = doc.getElementsByTag("tbody");
+                    Elements trs = contents.get(0).getElementsByTag("tr");
+                    for (int i = 0; i < trs.size(); i++) {
+                        Elements tds = trs.get(i).getElementsByTag("td");
+                        if (tds.size() <= 0) {
+                            continue;
+                        }
+                        ringName = tds.get(1).text();
+                        Element el6 = tds.get(6);
+                        ringId = el6.childNodes().get(1).attributes().get("data-id");
+                        for (int j = 0; j < list.size(); j++) {
+                            ThreenetsRing ring = list.get(j);
+                            String name = StringUtils.subString(ring.getRingName(), '.');
+                            String id = ring.getOperateRingId();
+                            String status = tds.get(4).text();
+                            if (ringName.equals(name) || ringId.equals(id)) {
+                                if (status.equals("审核通过")) {
+                                    ring.setRingStatus(3);
+                                } else if (status.equals("等待审核")) {
+                                    ring.setRingStatus(2);
+                                } else {
+                                    Elements lable = tds.get(4).getElementsByTag("lable");
+                                    String title = lable.attr("title");
+                                    ring.setRingStatus(6);
+                                    ring.setRemark(title);
+                                }
+                                ring.setOperateRingId(ringId);
+                                SpringUtils.getBean(ThreenetsRingMapper.class).updateByPrimaryKeySelective(ring);
+                                ringlist.add(ring);
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return AjaxResult.success(ringlist, "查询成功", ringlist.size());
+    }
 }

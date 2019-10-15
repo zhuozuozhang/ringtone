@@ -211,6 +211,13 @@ function deleteTel(id) {
 }
 
 function sendMessage() {
+    // layer.open({
+    //     type: 2,
+    //     title: '用户信息',
+    //     content: '/threenets/clcy/sendMessages',
+    //     area: ['950px', '600px'],
+    //     maxmin: true
+    // });
     window.open("http://t.cn/R1BRf4e?phoneNo=15150013617");
 }
 
