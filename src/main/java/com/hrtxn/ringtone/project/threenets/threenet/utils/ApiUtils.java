@@ -1196,6 +1196,7 @@ public class ApiUtils {
         mcardApi.toUserList(circleId, distributorId);
         for (int i = 0; i < orders.size(); i++) {
             ThreenetsChildOrder childOrder = orders.get(i);
+            childOrder.setOperateId(circleId);
             if (ConfigUtil.getAreaArray("unable_to_open_area", childOrder.getProvince())) {
                 childOrder.setStatus(Const.FAILURE_REVIEW);
                 childOrder.setRemark(childOrder.getProvince() + "电信暂停业务");
@@ -1749,6 +1750,9 @@ public class ApiUtils {
                         childOrder.setRingName(ringName);
                     }
                     childOrder.setRemark(tds.get(10).text());// 备注
+                    if (StringUtils.isNotEmpty(childOrder.getRingName()) && childOrder.getRemark().equals("无")){
+                        childOrder.setRemark("铃音设置成功");
+                    }
                 }
             }
             //联通
@@ -1804,6 +1808,7 @@ public class ApiUtils {
                                     }
                                 }
                             }
+                            childOrder.setOperateOrderId(id);
                         }
                     }
                 }
@@ -1892,34 +1897,42 @@ public class ApiUtils {
                         Elements tds = trs.get(0).getElementsByTag("td");
                         String telNoOrId = tds.get(0).child(0).attr("value");
                         String mcardApersonId = telNoOrId.substring(telNoOrId.indexOf("|") + 1);
-//                        if (StringUtils.isNotEmpty(mcardApersonId)) {
-//                            childOrder.setOperateOrderId(mcardApersonId);
-//                        }
-//                        String whetherRingUser = tds.get(2).text();
-//                        if ("彩铃用户".equals(whetherRingUser)) {
-//                            childOrder.setIsRingtoneUser(true);
-//                        } else {
-//                            childOrder.setIsRingtoneUser(false);
-//                        }
-//                        String whetherVideoRingUser = tds.get(3).text();// 视频彩铃功能
-//                        if ("视频彩铃用户".equals(whetherVideoRingUser)) {
-//                            childOrder.setIsVideoUser(true);
-//                        } else {
-//                            childOrder.setIsVideoUser(false);
-//                        }
-//                        String whetherMonthlyUser = tds.get(8).text();
-//                        if ("包月".equals(whetherMonthlyUser)) {
-//                            childOrder.setIsMonthly(2);
-//                        } else if ("未包月".equals(whetherMonthlyUser)) {
-//                            childOrder.setIsMonthly(1);
-//                        } else {
-//                            childOrder.setIsMonthly(3);
-//                        }
-//                        String ringName = tds.get(9).text();// 铃音名称
-//                        if (!"暂无".equals(ringName)) {
-//                            childOrder.setRingName(ringName);
-//                        }
-//                        childOrder.setRemark(tds.get(10).text());// 备注
+                        String moblieTel = tds.get(1).text();
+                        for (int i = 0; i < mobOrders.size(); i++) {
+                            ThreenetsChildOrder childOrder = mobOrders.get(i);
+                            if (childOrder.getLinkmanTel().equals(moblieTel)){
+                                childOrder.setOperateOrderId(mcardApersonId);
+                                String whetherRingUser = tds.get(2).text();
+                                if ("彩铃用户".equals(whetherRingUser)) {
+                                    childOrder.setIsRingtoneUser(true);
+                                } else {
+                                    childOrder.setIsRingtoneUser(false);
+                                }
+                                String whetherVideoRingUser = tds.get(3).text();// 视频彩铃功能
+                                if ("视频彩铃用户".equals(whetherVideoRingUser)) {
+                                    childOrder.setIsVideoUser(true);
+                                } else {
+                                    childOrder.setIsVideoUser(false);
+                                }
+                                String whetherMonthlyUser = tds.get(8).text();
+                                if ("包月".equals(whetherMonthlyUser)) {
+                                    childOrder.setIsMonthly(2);
+                                } else if ("未包月".equals(whetherMonthlyUser)) {
+                                    childOrder.setIsMonthly(1);
+                                } else {
+                                    childOrder.setIsMonthly(3);
+                                }
+                                String ringName = tds.get(9).text();// 铃音名称
+                                if (!"暂无".equals(ringName)) {
+                                    childOrder.setRingName(ringName);
+                                }
+                                childOrder.setRemark(tds.get(10).text());// 备注
+                                if (StringUtils.isNotEmpty(childOrder.getRingName()) && childOrder.getRemark().equals("无")){
+                                    childOrder.setRemark("铃音设置成功");
+                                }
+                            }
+                            newList.add(childOrder);
+                        }
                     }
                 }
                 if (operator.equals(Const.OPERATORS_UNICOM)) {
@@ -1974,6 +1987,7 @@ public class ApiUtils {
                                 }
                             }
                         }
+                        newList.add(childOrder);
                     }
                 }
                 if (operator.equals(Const.OPERATORS_TELECOM)) {
@@ -2098,6 +2112,13 @@ public class ApiUtils {
     }
 
 
+    /**
+     * 刷新铃音状态
+     *
+     * @param rings
+     * @param attached
+     * @return
+     */
     public AjaxResult refreshRingInfo(List<ThreenetsRing> rings, ThreeNetsOrderAttached attached) {
         List<ThreenetsRing> ringlist = new ArrayList<>();
         String ringId = "";

@@ -58,7 +58,7 @@ function showTable() {
     }, {
         targets: [5],
         render: function (data, type, row, meta) {
-            var result = "<a><span onclick=\"openPlayer('"+data+"');\">试听</span></a>";
+            var result = "<a><span onclick=\"openPlayer('"+data+"');\" style='color:#0569FD'>试听</span></a>";
             return result;
         }
     }, {

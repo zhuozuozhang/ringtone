@@ -82,7 +82,7 @@ public class ThreeNetsAsyncService {
                     for (int i = 0; i < childOrders.size(); i++) {
                         childOrders.get(i).setIsExemptSms(Const.IS_EXEMPT_SMS_YES);
                     }
-                }else{
+                } else {
                     //如果不是免短则不保存免短相关的文件
                     attached.setAvoidShortAgreement("");
                 }
@@ -234,7 +234,8 @@ public class ThreeNetsAsyncService {
             list.set(i, childOrder);
         }
         try {
-            apiUtils.getPhoneInfo(list);
+            //apiUtils.getPhoneInfo(list);
+            apiUtils.batchRefresh(list, order.getId());
         } catch (Exception e) {
             log.info("移动成员信息获取失败=>" + e);
         }
@@ -262,18 +263,18 @@ public class ThreeNetsAsyncService {
         //登录联通商户
         apiUtils.loginToUnicom();
         list = apiUtils.unicomCheckMobiles(list);
-        for (int i = 0; i <list.size() ; i++) {
-            if (list.get(i).getStatus().equals(Const.FAILURE_REVIEW)){
+        for (int i = 0; i < list.size(); i++) {
+            if (list.get(i).getStatus().equals(Const.FAILURE_REVIEW)) {
                 threenetsChildOrderMapper.updateThreeNetsChidOrder(list.get(i));
                 list.remove(i);
-            }else{
+            } else {
                 phones = list.get(i).getLinkmanTel() + "," + phones;
             }
         }
         SwxlBaseBackMessage result = apiUtils.addPhoneByLt(phones, attached);
         for (int i = 0; i < list.size(); i++) {
             ThreenetsChildOrder childOrder = list.get(i);
-            if (StringUtils.isNotEmpty(attached.getAvoidShortAgreement())){
+            if (StringUtils.isNotEmpty(attached.getAvoidShortAgreement())) {
                 childOrder.setIsExemptSms(Const.IS_EXEMPT_SMS_YES);
             }
             childOrder.setOperateId(attached.getSwxlId());
@@ -281,7 +282,8 @@ public class ThreeNetsAsyncService {
             threenetsChildOrderMapper.updateThreeNetsChidOrder(childOrder);
         }
         try {
-            apiUtils.getPhoneInfo(list);
+            //apiUtils.getPhoneInfo(list);
+            apiUtils.batchRefresh(list, order.getId());
         } catch (Exception e) {
             log.info("联通成员信息获取失败=>" + e);
         }
@@ -397,7 +399,8 @@ public class ThreeNetsAsyncService {
                 ring.setRemark(ringRespone.getMsg());
                 threenetsRingMapper.updateByPrimaryKeySelective(ring);
                 threeNetsOrderAttachedMapper.updateByPrimaryKeySelective(attached);
-                utils.getPhoneInfo(childOrders);
+                utils.batchRefresh(childOrders, order.getId());
+                //utils.getPhoneInfo(childOrders);
                 return;
             } else {
                 firstChildOrder.setRemark("移动商户:" + groupRespone.getMsg());
@@ -433,10 +436,10 @@ public class ThreeNetsAsyncService {
             //验证手机号是否可以添加
             List<ThreenetsChildOrder> childOrders = new ArrayList<>();
             list = utils.unicomCheckMobiles(list);
-            for (int i = 0; i <list.size() ; i++) {
-                if (list.get(i).getStatus().equals(Const.FAILURE_REVIEW)){
+            for (int i = 0; i < list.size(); i++) {
+                if (list.get(i).getStatus().equals(Const.FAILURE_REVIEW)) {
                     threenetsChildOrderMapper.updateThreeNetsChidOrder(list.get(i));
-                }else{
+                } else {
                     phones = list.get(i).getLinkmanTel() + "," + phones;
                     childOrders.add(list.get(i));
                 }
@@ -466,7 +469,8 @@ public class ThreeNetsAsyncService {
                     }
                     threenetsChildOrderMapper.updateThreeNetsChidOrder(childOrder);
                 }
-                utils.getPhoneInfo(childOrders);
+                utils.batchRefresh(childOrders, order.getId());
+                //utils.getPhoneInfo(childOrders);
                 return;
             } else {
                 firstChildOrder.setRemark("联通商户:" + swxlGroupResponse.getRemark());
@@ -681,6 +685,57 @@ public class ThreeNetsAsyncService {
             }
         } catch (Exception e) {
             log.info("电信刷新信息上传用户失败" + e);
+        }
+    }
+
+    /**
+     * 从新上传添加失败的用户
+     *
+     * @param order
+     */
+    @Async
+    public void uploadFailedMember(ThreenetsOrder order) {
+        ThreeNetsOrderAttached attached = threeNetsOrderAttachedMapper.selectByParentOrderId(order.getId());
+        ThreenetsChildOrder childOrder = new ThreenetsChildOrder();
+        childOrder.setParentOrderId(order.getId());
+        try {
+            List<ThreenetsChildOrder> oldlist = threenetsChildOrderMapper.listByParamNoPage(childOrder);
+            List<ThreenetsChildOrder> list = new ArrayList<>();
+            for (int i = 0; i < oldlist.size(); i++) {
+                if (StringUtils.isEmpty(oldlist.get(i).getRemark())) {
+                    list.add(oldlist.get(i));
+                }
+            }
+            Map<Integer, List<ThreenetsChildOrder>> map = list.stream().collect(Collectors.groupingBy(ThreenetsChildOrder::getOperator));
+            List<ThreenetsRing> threenetsRings = threenetsRingMapper.selectByOrderId(order.getId());
+            Map<Integer, List<ThreenetsRing>> ringMap = threenetsRings.stream().collect(Collectors.groupingBy(ThreenetsRing::getOperate));
+            for (Integer operate : map.keySet()) {
+                if (operate.equals(Const.OPERATORS_MOBILE)) {
+                    ThreenetsRing ring = ringMap.get(Const.OPERATORS_MOBILE).get(0);
+                    addMembersByYd(order, attached, map.get(Const.OPERATORS_TELECOM), ring);
+                }
+                if (operate.equals(Const.OPERATORS_TELECOM)) {
+                    ThreenetsRing ring = ringMap.get(Const.OPERATORS_TELECOM).get(0);
+                    BaseRequest request = new BaseRequest();
+                    if (StringUtils.isNotEmpty(attached.getBusinessLicense())) {
+                        request.setCompanyUrl(attached.getBusinessLicense());
+                    }
+                    if (StringUtils.isNotEmpty(attached.getConfirmLetter())) {
+                        request.setClientUrl(attached.getConfirmLetter());
+                    }
+                    if (StringUtils.isNotEmpty(attached.getSubjectProve())) {
+                        request.setMainUrl(attached.getSubjectProve());
+                    }
+                    addMcardByDx(order, attached, map.get(Const.OPERATORS_TELECOM), request, ring);
+                }
+                if (operate.equals(Const.OPERATORS_UNICOM)) {
+                    ThreenetsRing ring = ringMap.get(Const.OPERATORS_UNICOM).get(0);
+                    addMemberByLt(order, attached, map.get(Const.OPERATORS_UNICOM), ring);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.info("重新上传添加失败用户" + e);
         }
     }
 

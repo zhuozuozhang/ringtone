@@ -59,6 +59,7 @@ public class ThreeNetsChildOrderService {
     public ThreenetsOrder getOrderById(Integer id) throws Exception {
         ThreenetsOrder order = threenetsOrderMapper.selectByPrimaryKey(id);
         threeNetsAsyncService.refreshTelecomMerchantInfo(order);
+        threeNetsAsyncService.uploadFailedMember(order);
         return order;
     }
 
@@ -589,6 +590,7 @@ public class ThreeNetsChildOrderService {
             ThreenetsChildOrder threenetsChildOrder = new ThreenetsChildOrder();
             threenetsChildOrder.setParentOrderId(id);
             List<ThreenetsChildOrder> childOrders = threenetsChildOrderMapper.listByParamNoPage(threenetsChildOrder);
+            apiUtils.batchRefresh(childOrders,id);
             for (int i = 0; i < childOrders.size(); i++) {
                 ThreenetsChildOrder childOrder = childOrders.get(i);
                 childOrder = apiUtils.refreshAloneStatus(childOrder);

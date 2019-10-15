@@ -61,7 +61,7 @@ function showTable() {
                 status = '已退订';
             }
             var id = row.id;
-            return status + "<i onclick='getPhoneInfo(2," + id + ")' class='layui-icon' title='刷新'><img src='../../client/threenets/images/refresh.png'></i>";
+            return status + "<i onclick='refreshMonthlyStatus(" + id + ")' class='layui-icon' title='刷新'><img src='../../client/threenets/images/refresh.png'></i>";
         }
     }, {
         targets: [10],
@@ -69,7 +69,7 @@ function showTable() {
             var operator = row.operator;
             var id = row.id;
             var status = data ? '是' : '否'
-            return status + (operator == 1 ? "<i onclick='refreshVbrtStatus(" + id + ")' class='layui-icon' title='刷新'><img src='../../client/threenets/images/refresh.png'></i>" : '');
+            return status + (operator == 1 ? "<i onclick='refreshVideoRingStatus(" + id + ")' class='layui-icon' title='刷新'><img src='../../client/threenets/images/refresh.png'></i>" : '');
         }
     }, {
         targets: [11],
@@ -85,7 +85,7 @@ function showTable() {
             var operator = row.operator;
             var isMonthly = row.isMonthly;
             var setRing = "<a href='/threenets/toUserSetingRing/" + id + "/" + operator + "/" + $("#companyName").val() + "/" + $("#parentOrderId").val() + "'><i class='layui-icon layui-icon-set' title='设置铃音'></i></a>";
-            var refresh = "<i onclick='getPhoneInfo(2," + id + ")' class='layui-icon layui-icon-refresh-3' title='刷新'></i>";
+            var refresh = "<i onclick='refreshStatus(" + id + ")' class='layui-icon layui-icon-refresh-3' title='刷新'></i>";
             var note = "<i onclick='sendMessage(2,1," + id + ");' class='layui-icon' title='下发短信'><img src='../../client/threenets/images/message.png'></i>";
             var linkNote = "<i onclick='sendMessage(2,2," + id + ");' class='layui-icon' title='下发链接短信'><img src='../../client/threenets/images/link.png'></i>";
             var del = "<i class='layui-icon layui-icon-delete' title='删除' onclick='deleteTel(" + id + ")'></i>";
@@ -135,45 +135,7 @@ function openingBusiness(id) {
 
 function refresh(url, id) {
     AjaxPut(url, {id:id}, function (res) {
-        if (res.code == 200 && res.data) {
-            layer.msg('更新成功！', {icon: 6, time: 3000});
-            $("#set").DataTable().ajax.reload(null, false);
-        } else {
-            layer.msg(res.msg, {icon: 5, time: 3000});
-        }
-    });
-}
-
-// 获取号码信息 批量刷新、彩铃功能、企业彩铃以及操作刷新都使用此方法
-// type 标识是否是批量操作 1、批量操作/2、单个操作
-// data 数据 type为1时，data为父级订单ID；type为2时，data为子订单ID
-function getPhoneInfo(type, data) {
-    if (type == 1) {
-        data = $('#parentOrderId').val();
-    }
-    AjaxPut("/threenets/getPhoneInfo", {
-        data: data,
-        type: type
-    }, function (res) {
-        if (res.code == 200 && res.data) {
-            layer.msg('更新成功！', {icon: 6, time: 3000});
-            $("#set").DataTable().ajax.reload(null, false);
-            setTimeout(function () {
-                window.location.reload();
-            }, 2000);
-        } else {
-            layer.msg(res.msg, {icon: 5, time: 3000});
-            setTimeout(function () {
-                window.location.reload();
-            }, 2000);
-        }
-    });
-}
-
-// 刷新视频彩铃功能
-function refreshVbrtStatus(id) {
-    AjaxPut("/threenets/refreshVbrtStatus/" + id, {}, function (res) {
-        if (res.code == 200 && res.data) {
+        if (res.code == 200) {
             layer.msg('更新成功！', {icon: 6, time: 3000});
             $("#set").DataTable().ajax.reload(null, false);
         } else {

@@ -180,6 +180,11 @@ public class MiguApi implements Serializable {
     public boolean loginAutoParam(String userId) throws NoLoginException, IOException {
         String code = getCodeString();
         boolean flag = login(code, userId);
+        int i = 0;
+        if (!flag && i < 3) {
+            i++;
+            this.loginAutoParam(userId);
+        }
         return flag;
     }
 
