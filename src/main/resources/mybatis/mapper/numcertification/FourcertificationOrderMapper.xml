@@ -64,6 +64,9 @@
     <result column="template_url" property="templateUrl" jdbcType="VARCHAR" />
     <result column="remarks" property="remarks" jdbcType="VARCHAR" />
     <result column="task_id" property="taskId" jdbcType="VARCHAR" />
+    <result column="available" property="available" jdbcType="VARCHAR" />
+    <result column="occupy_time" property="occupyTime" jdbcType="VARCHAR" />
+    <result column="effective_time" property="effectiveTime" jdbcType="VARCHAR" />
   </resultMap>
 
   <sql id="Base_Column_List" >
@@ -75,7 +78,8 @@
     a.corp_bank_name, a.corp_bank_no, a.legal_name, a.legal_identity_id, a.legal_effective, a.legal_long_effective,
     a.legal_handler_name, a.legal_handler_identity_id, a.legal_handler_effective, a.legal_handler_long_effective,
     a.legal_address, a.legal_handler_address, a.yyzz, a.khxkz, a.frsfz, a.frsq, a.jbrsfz, a.jbrsq, a.jffp,
-    a.sld, a.fwxy, a.aqcns, a.scsfz, a.jyyczm, a.ccyyzz, a.dxxy, a.gswjt, a.qt, a.status,a.del_flag,a.availability,a.template_url,a.remarks,a.task_id
+    a.sld, a.fwxy, a.aqcns, a.scsfz, a.jyyczm, a.ccyyzz, a.dxxy, a.gswjt, a.qt, a.status,a.del_flag,a.availability,a.template_url,a.remarks,a.task_id,
+    a.available,a.occupy_time,a.effective_time
   </sql>
 
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
@@ -86,13 +90,13 @@
     from tb_fourcertification_order a
     left join sys_area p on p.fourid = a.user_province and p.type = 'province'
     left join sys_area c on c.fourid = a.user_city and c.type = 'city'
-    where a.id = #{id,jdbcType=BIGINT}
+    where a.id = #{id}
   </select>
 
 
 
 
-  <select id="getOrderByApplyNumber" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+  <select id="getOrderByApplyNumber" resultMap="BaseResultMap" parameterType="String" >
     select
     <include refid="Base_Column_List" />,
     p.name as "province",
@@ -166,7 +170,7 @@
       jbrsq, jffp, sld, fwxy, 
       aqcns, scsfz, jyyczm, 
       ccyyzz, dxxy, gswjt, 
-      qt, status,del_flag,availability,template_url,remarks,task_id)
+      qt, status,del_flag,availability,template_url,remarks,task_id,available,occupy_time,effective_time)
     values (#{id,jdbcType=BIGINT}, #{userId,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, 
       #{provider,jdbcType=VARCHAR}, #{applyNumber,jdbcType=VARCHAR}, #{comboPattern,jdbcType=VARCHAR}, 
       #{price,jdbcType=DECIMAL}, #{ageLimit,jdbcType=INTEGER}, #{companyName,jdbcType=VARCHAR}, 
@@ -186,7 +190,8 @@
       #{jbrsq,jdbcType=VARCHAR}, #{jffp,jdbcType=VARCHAR}, #{sld,jdbcType=VARCHAR}, #{fwxy,jdbcType=VARCHAR}, 
       #{aqcns,jdbcType=VARCHAR}, #{scsfz,jdbcType=VARCHAR}, #{jyyczm,jdbcType=VARCHAR}, 
       #{ccyyzz,jdbcType=VARCHAR}, #{dxxy,jdbcType=VARCHAR}, #{gswjt,jdbcType=VARCHAR}, 
-      #{qt,jdbcType=VARCHAR}, #{status,jdbcType=VARCHAR},#{delFlag},#{availability},#{templateUrl},#{remarks},#{taskId})
+      #{qt,jdbcType=VARCHAR}, #{status,jdbcType=VARCHAR},#{delFlag},#{availability},#{templateUrl},#{remarks},#{taskId},#{available}
+      ,#{occupyTime},#{effectiveTime})
   </insert>
 
 
@@ -372,6 +377,15 @@
       </if>
       <if test="taskId != null" >
         task_id = #{taskId,jdbcType=VARCHAR},
+      </if>
+      <if test="available != null" >
+        available = #{available},
+      </if>
+      <if test="occupyTime != null" >
+        occupy_time = #{occupyTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="effectiveTime != null" >
+        effective_time = #{effectiveTime,jdbcType=TIMESTAMP},
       </if>
     </set>
     where id = #{id,jdbcType=BIGINT}

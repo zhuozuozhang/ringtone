@@ -144,4 +144,13 @@ public class FourcertificationOrder {
     private String province;
 
     private String city;
+
+    private String available;
+
+    private Date occupyTime;
+
+    private Date effectiveTime;
+
+    private String effctiveStr;
+
 }
