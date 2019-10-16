@@ -1,0 +1,274 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hrtxn.ringtone.project.telcertification.mapper.TelCerDistributorMapper" >
+  <resultMap id="BaseResultMap" type="com.hrtxn.ringtone.project.telcertification.domain.TelCerDistributor" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="distributor_id" property="distributorId" jdbcType="INTEGER"/>
+    <result column="distributor_name" property="distributorName" jdbcType="VARCHAR" />
+    <result column="stage" property="stage" jdbcType="VARCHAR" />
+    <result column="total" property="total" jdbcType="INTEGER" />
+    <result column="last_month_total" property="lastMonthTotal" jdbcType="INTEGER" />
+    <result column="the_month_total" property="theMonthTotal" jdbcType="INTEGER" />
+    <result column="today_total" property="todayTotal" jdbcType="INTEGER" />
+    <result column="teddy_num" property="teddyNum" jdbcType="INTEGER" />
+    <result column="tel_bond_num" property="telBondNum" jdbcType="INTEGER" />
+    <result column="color_print_num" property="colorPrintNum" jdbcType="INTEGER" />
+    <result column="hangup_message_num" property="hangupMessageNum" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id,distributor_id, distributor_name, stage, total, last_month_total, the_month_total, today_total,
+    teddy_num, tel_bond_num, color_print_num, hangup_message_num
+  </sql>
+
+  <sql id="parameters">
+    <if test="param.distributorId != null and param.distributorId != ''">
+      AND ttdi.distributor_id = #{param.distributorId}
+    </if>
+    <if test="param.name != null and param.name != ''">
+      AND ttdi.distributor_name = #{param.name}
+    </if>
+    <if test="param.phoneNum != null and param.phoneNum !=''">
+      AND ttco.tel_child_order_phone =#{param.phoneNum}
+    </if>
+  </sql>
+
+  <sql id="page">
+    <if test="page.page != null and page.pagesize != null and page.pagesize !=''">
+      LIMIT #{page.page},#{page.pagesize}
+    </if>
+  </sql>
+
+  <select id="getAllTelCerDistributorInfo" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"/>
+    from tb_telcertification_distributor_info ttdi
+    where 1=1
+    <include refid="parameters"/>
+    <include refid="page"/>
+  </select>
+
+  <select id="getServiceNum" resultMap="BaseResultMap" parameterType="int">
+SELECT COUNT(*) AS 'total',
+(SELECT COUNT(id) FROM `tb_telcertification_order` WHERE
+id IN (SELECT parent_order_id FROM `tb_telcertification_child_order` son LEFT JOIN `tb_telcertification_order` fa ON son.parent_order_id = fa.id WHERE son.tel_child_order_status = 2 OR son.tel_child_order_status = 5)
+AND product_name LIKE '%泰迪熊%') AS 'teddy_num',
+(SELECT COUNT(id) FROM `tb_telcertification_order` WHERE
+id IN (SELECT parent_order_id FROM `tb_telcertification_child_order` son LEFT JOIN `tb_telcertification_order` fa ON son.parent_order_id = fa.id WHERE son.tel_child_order_status = 2 OR son.tel_child_order_status = 5)
+AND product_name LIKE '%电话邦%') AS 'tel_bond_num',
+
+(SELECT COUNT(id) FROM `tb_telcertification_order` WHERE
+id IN (SELECT parent_order_id FROM `tb_telcertification_child_order` son LEFT JOIN `tb_telcertification_order` fa ON son.parent_order_id = fa.id WHERE son.tel_child_order_status = 2 OR son.tel_child_order_status = 5)
+AND product_name LIKE '%彩印%') AS 'color_print_num',
+
+(SELECT COUNT(id) FROM `tb_telcertification_order` WHERE
+id IN (SELECT parent_order_id FROM `tb_telcertification_child_order` son LEFT JOIN `tb_telcertification_order` fa ON son.parent_order_id = fa.id WHERE son.tel_child_order_status = 2 OR son.tel_child_order_status = 5)
+AND product_name LIKE '%挂机短信%') AS 'hangup_message_num'
+FROM `tb_telcertification_order`
+
+WHERE product_name IS NOT NULL
+AND id IN (SELECT parent_order_id FROM `tb_telcertification_child_order` son LEFT JOIN `tb_telcertification_order` fa ON son.parent_order_id = fa.id WHERE son.tel_child_order_status = 2 OR son.tel_child_order_status = 5)
+AND user_id =  #{userId,jdbcType=INTEGER}
+  </select>
+
+  <select id="getTheMonthService" parameterType="int" resultMap="BaseResultMap">
+SELECT COUNT(*) AS 'total',
+(SELECT COUNT(id) FROM `tb_telcertification_order`
+WHERE id IN (SELECT parent_order_id FROM `tb_telcertification_child_order` son LEFT JOIN `tb_telcertification_order` fa ON son.parent_order_id = fa.id
+WHERE DATE_FORMAT( son.tel_child_order_ctime, '%Y%m' ) = DATE_FORMAT( CURDATE( ) , '%Y%m' ) AND (son.tel_child_order_status = 2 OR son.tel_child_order_status = 5))
+AND product_name LIKE '%泰迪熊%') AS 'teddy_num',
+(SELECT COUNT(id) FROM `tb_telcertification_order`
+WHERE id IN (SELECT parent_order_id FROM `tb_telcertification_child_order` son LEFT JOIN `tb_telcertification_order` fa ON son.parent_order_id = fa.id
+WHERE DATE_FORMAT( son.tel_child_order_ctime, '%Y%m' ) = DATE_FORMAT( CURDATE( ) , '%Y%m' ) AND (son.tel_child_order_status = 2 OR son.tel_child_order_status = 5))
+AND product_name LIKE '%电话邦%') AS 'tel_bond_num',
+
+(SELECT COUNT(id) FROM `tb_telcertification_order`
+WHERE id IN (SELECT parent_order_id FROM `tb_telcertification_child_order` son LEFT JOIN `tb_telcertification_order` fa ON son.parent_order_id = fa.id
+WHERE DATE_FORMAT( son.tel_child_order_ctime, '%Y%m' ) = DATE_FORMAT( CURDATE( ) , '%Y%m' ) AND (son.tel_child_order_status = 2 OR son.tel_child_order_status = 5))
+AND product_name LIKE '%彩印%') AS 'color_print_num',
+
+(SELECT COUNT(id) FROM `tb_telcertification_order`
+WHERE id IN (SELECT parent_order_id FROM `tb_telcertification_child_order` son LEFT JOIN `tb_telcertification_order` fa ON son.parent_order_id = fa.id
+WHERE DATE_FORMAT( son.tel_child_order_ctime, '%Y%m' ) = DATE_FORMAT( CURDATE( ) , '%Y%m' ) AND (son.tel_child_order_status = 2 OR son.tel_child_order_status = 5))
+AND product_name LIKE '%挂机短信%') AS 'hangup_message_num'
+FROM `tb_telcertification_order`
+
+WHERE product_name IS NOT NULL
+AND id IN (SELECT parent_order_id FROM `tb_telcertification_child_order` son LEFT JOIN `tb_telcertification_order` fa ON son.parent_order_id = fa.id
+WHERE son.tel_child_order_status = 2 OR son.tel_child_order_status = 5)
+AND user_id =  #{userId,jdbcType=INTEGER}
+  </select>
+
+  <select id="getTodayService" parameterType="int" resultMap="BaseResultMap">
+    SELECT COUNT(*) AS 'total',
+(SELECT COUNT(id) FROM `tb_telcertification_order`
+WHERE id IN (SELECT parent_order_id FROM `tb_telcertification_child_order` son LEFT JOIN `tb_telcertification_order` fa ON son.parent_order_id = fa.id
+WHERE TO_DAYS(son.tel_child_order_ctime) = TO_DAYS(NOW()) AND (son.tel_child_order_status = 2 OR son.tel_child_order_status = 5))
+AND product_name LIKE '%泰迪熊%') AS 'teddy_num',
+(SELECT COUNT(id) FROM `tb_telcertification_order`
+WHERE id IN (SELECT parent_order_id FROM `tb_telcertification_child_order` son LEFT JOIN `tb_telcertification_order` fa ON son.parent_order_id = fa.id
+WHERE TO_DAYS(son.tel_child_order_ctime) = TO_DAYS(NOW()) AND (son.tel_child_order_status = 2 OR son.tel_child_order_status = 5))
+AND product_name LIKE '%电话邦%') AS 'tel_bond_num',
+
+(SELECT COUNT(id) FROM `tb_telcertification_order`
+WHERE id IN (SELECT parent_order_id FROM `tb_telcertification_child_order` son LEFT JOIN `tb_telcertification_order` fa ON son.parent_order_id = fa.id
+WHERE TO_DAYS(son.tel_child_order_ctime) = TO_DAYS(NOW()) AND (son.tel_child_order_status = 2 OR son.tel_child_order_status = 5))
+AND product_name LIKE '%彩印%') AS 'color_print_num',
+
+(SELECT COUNT(id) FROM `tb_telcertification_order`
+WHERE id IN (SELECT parent_order_id FROM `tb_telcertification_child_order` son LEFT JOIN `tb_telcertification_order` fa ON son.parent_order_id = fa.id
+WHERE TO_DAYS(son.tel_child_order_ctime) = TO_DAYS(NOW()) AND (son.tel_child_order_status = 2 OR son.tel_child_order_status = 5))
+AND product_name LIKE '%挂机短信%') AS 'hangup_message_num'
+FROM `tb_telcertification_order`
+
+WHERE product_name IS NOT NULL
+AND id IN (SELECT parent_order_id FROM `tb_telcertification_child_order` son LEFT JOIN `tb_telcertification_order` fa ON son.parent_order_id = fa.id
+WHERE TO_DAYS(son.tel_child_order_ctime) = TO_DAYS(NOW()) AND (son.tel_child_order_status = 2 OR son.tel_child_order_status = 5))
+AND user_id =  #{userId,jdbcType=INTEGER}
+  </select>
+
+    <insert id="insert" parameterType="com.hrtxn.ringtone.project.telcertification.domain.TelCerDistributor" >
+    insert into tb_telcertification_distributor_info (id, distributor_id, distributor_name, stage,
+      total, last_month_total, the_month_total,
+      today_total, teddy_num, tel_bond_num,
+      color_print_num, hangup_message_num)
+    values (#{id,jdbcType=INTEGER}, #{distributorId,jdbcType=INTEGER},
+    #{distributorName,jdbcType=VARCHAR}, #{stage,jdbcType=VARCHAR},
+      #{total,jdbcType=INTEGER}, #{lastMonthTotal,jdbcType=INTEGER}, #{theMonthTotal,jdbcType=INTEGER},
+      #{todayTotal,jdbcType=INTEGER}, #{teddyNum,jdbcType=INTEGER}, #{telBondNum,jdbcType=INTEGER},
+      #{colorPrintNum,jdbcType=INTEGER}, #{hangupMessageNum,jdbcType=INTEGER})
+  </insert>
+
+    <update id="updateByPrimaryKey" parameterType="com.hrtxn.ringtone.project.telcertification.domain.TelCerDistributor" >
+    update tb_telcertification_distributor_info
+    set distributor_name = #{distributorName,jdbcType=VARCHAR},
+      stage = #{stage,jdbcType=VARCHAR},
+      total = #{total,jdbcType=INTEGER},
+      last_month_total = #{lastMonthTotal,jdbcType=INTEGER},
+      the_month_total = #{theMonthTotal,jdbcType=INTEGER},
+      today_total = #{todayTotal,jdbcType=INTEGER},
+      teddy_num = #{teddyNum,jdbcType=INTEGER},
+      tel_bond_num = #{telBondNum,jdbcType=INTEGER},
+      color_print_num = #{colorPrintNum,jdbcType=INTEGER},
+      hangup_message_num = #{hangupMessageNum,jdbcType=INTEGER}
+    where  distributor_id = #{distributorId,jdbcType=INTEGER}
+  </update>
+<!--  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >-->
+<!--    select -->
+<!--    <include refid="Base_Column_List" />-->
+<!--    from tb_telcertification_distributor_info-->
+<!--    where id = #{id,jdbcType=INTEGER}-->
+<!--  </select>-->
+<!--  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >-->
+<!--    delete from tb_telcertification_distributor_info-->
+<!--    where id = #{id,jdbcType=INTEGER}-->
+<!--  </delete>-->
+<!--  <insert id="insertSelective" parameterType="com.hrtxn.ringtone.project.telcertification.domain.TelCerDistributor" >-->
+<!--    insert into tb_telcertification_distributor_info-->
+<!--    <trim prefix="(" suffix=")" suffixOverrides="," >-->
+<!--      <if test="id != null" >-->
+<!--        id,-->
+<!--      </if>-->
+<!--      <if test="distributorName != null" >-->
+<!--        distributor_name,-->
+<!--      </if>-->
+<!--      <if test="stage != null" >-->
+<!--        stage,-->
+<!--      </if>-->
+<!--      <if test="total != null" >-->
+<!--        total,-->
+<!--      </if>-->
+<!--      <if test="lastMonthTotal != null" >-->
+<!--        last_month_total,-->
+<!--      </if>-->
+<!--      <if test="theMonthTotal != null" >-->
+<!--        the_month_total,-->
+<!--      </if>-->
+<!--      <if test="todayTotal != null" >-->
+<!--        today_total,-->
+<!--      </if>-->
+<!--      <if test="teddyNum != null" >-->
+<!--        teddy_num,-->
+<!--      </if>-->
+<!--      <if test="telBondNum != null" >-->
+<!--        tel_bond_num,-->
+<!--      </if>-->
+<!--      <if test="colorPrintNum != null" >-->
+<!--        color_print_num,-->
+<!--      </if>-->
+<!--      <if test="hangupMessageNum != null" >-->
+<!--        hangup_message_num,-->
+<!--      </if>-->
+<!--    </trim>-->
+<!--    <trim prefix="values (" suffix=")" suffixOverrides="," >-->
+<!--      <if test="id != null" >-->
+<!--        #{id,jdbcType=INTEGER},-->
+<!--      </if>-->
+<!--      <if test="distributorName != null" >-->
+<!--        #{distributorName,jdbcType=VARCHAR},-->
+<!--      </if>-->
+<!--      <if test="stage != null" >-->
+<!--        #{stage,jdbcType=VARCHAR},-->
+<!--      </if>-->
+<!--      <if test="total != null" >-->
+<!--        #{total,jdbcType=INTEGER},-->
+<!--      </if>-->
+<!--      <if test="lastMonthTotal != null" >-->
+<!--        #{lastMonthTotal,jdbcType=INTEGER},-->
+<!--      </if>-->
+<!--      <if test="theMonthTotal != null" >-->
+<!--        #{theMonthTotal,jdbcType=INTEGER},-->
+<!--      </if>-->
+<!--      <if test="todayTotal != null" >-->
+<!--        #{todayTotal,jdbcType=INTEGER},-->
+<!--      </if>-->
+<!--      <if test="teddyNum != null" >-->
+<!--        #{teddyNum,jdbcType=INTEGER},-->
+<!--      </if>-->
+<!--      <if test="telBondNum != null" >-->
+<!--        #{telBondNum,jdbcType=INTEGER},-->
+<!--      </if>-->
+<!--      <if test="colorPrintNum != null" >-->
+<!--        #{colorPrintNum,jdbcType=INTEGER},-->
+<!--      </if>-->
+<!--      <if test="hangupMessageNum != null" >-->
+<!--        #{hangupMessageNum,jdbcType=INTEGER},-->
+<!--      </if>-->
+<!--    </trim>-->
+<!--  </insert>-->
+<!--  <update id="updateByPrimaryKeySelective" parameterType="com.hrtxn.ringtone.project.telcertification.domain.TelCerDistributor" >-->
+<!--    update tb_telcertification_distributor_info-->
+<!--    <set >-->
+<!--      <if test="distributorName != null" >-->
+<!--        distributor_name = #{distributorName,jdbcType=VARCHAR},-->
+<!--      </if>-->
+<!--      <if test="stage != null" >-->
+<!--        stage = #{stage,jdbcType=VARCHAR},-->
+<!--      </if>-->
+<!--      <if test="total != null" >-->
+<!--        total = #{total,jdbcType=INTEGER},-->
+<!--      </if>-->
+<!--      <if test="lastMonthTotal != null" >-->
+<!--        last_month_total = #{lastMonthTotal,jdbcType=INTEGER},-->
+<!--      </if>-->
+<!--      <if test="theMonthTotal != null" >-->
+<!--        the_month_total = #{theMonthTotal,jdbcType=INTEGER},-->
+<!--      </if>-->
+<!--      <if test="todayTotal != null" >-->
+<!--        today_total = #{todayTotal,jdbcType=INTEGER},-->
+<!--      </if>-->
+<!--      <if test="teddyNum != null" >-->
+<!--        teddy_num = #{teddyNum,jdbcType=INTEGER},-->
+<!--      </if>-->
+<!--      <if test="telBondNum != null" >-->
+<!--        tel_bond_num = #{telBondNum,jdbcType=INTEGER},-->
+<!--      </if>-->
+<!--      <if test="colorPrintNum != null" >-->
+<!--        color_print_num = #{colorPrintNum,jdbcType=INTEGER},-->
+<!--      </if>-->
+<!--      <if test="hangupMessageNum != null" >-->
+<!--        hangup_message_num = #{hangupMessageNum,jdbcType=INTEGER},-->
+<!--      </if>-->
+<!--    </set>-->
+<!--    where id = #{id,jdbcType=INTEGER}-->
+<!--  </update>-->
+</mapper>

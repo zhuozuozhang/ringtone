@@ -11,6 +11,7 @@ import com.hrtxn.ringtone.project.system.notice.service.NoticeService;
 import com.hrtxn.ringtone.project.telcertification.domain.CertificationChildOrder;
 import com.hrtxn.ringtone.project.telcertification.domain.CertificationOrder;
 import com.hrtxn.ringtone.project.telcertification.domain.CertificationRequest;
+import com.hrtxn.ringtone.project.telcertification.domain.TelCerDistributor;
 import com.hrtxn.ringtone.project.telcertification.service.TelCertificationChildService;
 import com.hrtxn.ringtone.project.telcertification.service.TelCertificationConfigService;
 import com.hrtxn.ringtone.project.telcertification.service.TelCertificationService;
@@ -158,12 +159,11 @@ public class   TelCertificationController {
      * @param map
      * @return
      */
-    @ResponseBody
-    @PostMapping("/toTelEditPage")
-    public AjaxResult toTelEditPage(Integer id,ModelMap map){
+    @GetMapping("/toTelEditPage/{id}")
+    public String toTelEditPage(@PathVariable Integer id,ModelMap map){
         map.put("id",id);
         CertificationOrder certificationOrder = telCertificationService.getTelCerOrderById(id,map);
-        return AjaxResult.success(certificationOrder,"商户信息回显");
+        return "telcertification/edit_merchant";
     }
 
     /**
@@ -223,6 +223,17 @@ public class   TelCertificationController {
     }
 
     /**
+     * 验证联系人电话是否重复
+     * @param telLinkPhone
+     * @return
+     */
+    @PostMapping("/verificationTelLinkPhone")
+    @ResponseBody
+    public AjaxResult verificationTelLinkPhone(String telLinkPhone){
+        return telCertificationService.isRepetitionByTelLinkPhone(telLinkPhone);
+    }
+
+    /**
      * 进入即将到期号码页面
      * @return
      */
@@ -239,16 +250,4 @@ public class   TelCertificationController {
     public String toDuePage(){
         return "telcertification/due";
     }
-
-    /**
-     * 进入订购统计页面
-     * @return
-     */
-    @GetMapping("/toServiceStatisticsPage")
-    public String toServiceStatisticsPage(){
-        return "telcertification/statistics";
-    }
-
-
-
 }

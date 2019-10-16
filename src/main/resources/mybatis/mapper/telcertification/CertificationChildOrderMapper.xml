@@ -18,17 +18,17 @@
     </resultMap>
 
     <sql id="Base_Column_List">
-    id, tel_child_order_num, tel_child_order_phone, years, price, tel_child_order_status, business_feedback,
+    ttco.id, tel_child_order_num, tel_child_order_phone, years, price, tel_child_order_status, business_feedback,
     tel_child_order_ctime, tel_child_order_open_time, tel_child_order_expire_time, parent_order_id, 
     consume_log_id
   </sql>
 
     <sql id="parameters">
         <if test="param != null and param.parentId != null and param.parentId != ''">
-            AND tcc.parent_order_id = #{param.parentId}
+            AND ttco.parent_order_id = #{param.parentId}
         </if>
         <if test="param != null and param.phoneNum != null and param.phoneNum != ''">
-            AND tcc.tel_child_order_phone = ${param.phoneNum}
+            AND ttco.tel_child_order_phone = ${param.phoneNum}
         </if>
     </sql>
 
@@ -39,7 +39,7 @@
     </sql>
 <!--获取子订单总数-->
     <select id="getCount" resultType="int">
-        select count(*) from tb_telcertification_child_order tcc
+        select count(*) from tb_telcertification_child_order ttco
         where 1=1
          <include refid="parameters"/>
     </select>
@@ -48,30 +48,35 @@
     <select id="findTheChildOrder" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>
-        from tb_telcertification_child_order tcc
+        from tb_telcertification_child_order ttco
+        RIGHT JOIN tb_telcertification_order tto
+        ON ttco.parent_order_id = tto.id
         WHERE 1=1
         <include refid="parameters"/>
+        <if test="param != null and param.userId != null and param.userId != ''">
+            AND tto.user_id = #{param.userId}
+        </if>
         ORDER BY tel_child_order_ctime DESC
         <include refid="page"/>
     </select>
 <!--根据父id获取成员数量-->
     <select id="getMemberCountByParentId" parameterType="int" resultType="int">
-    select count(*) from tb_telcertification_child_order
+    select count(*) from tb_telcertification_child_order ttco
     where parent_order_id = #{parent_order_id,jdbcType=INTEGER}
   </select>
 <!--根据id获取所有号码认证数据-->
     <select id="getTelCerChildById" parameterType="int" resultMap="BaseResultMap">
-    SELECT * FROM tb_telcertification_child_order WHERE id = #{id}
+    SELECT * FROM tb_telcertification_child_order ttco WHERE id = #{id}
   </select>
 
 <!--    删除成员信息-->
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
-    delete from tb_telcertification_child_order
+    delete from tb_telcertification_child_order ttco
     where id = #{id,jdbcType=INTEGER}
   </delete>
     <!--修改业务反馈-->
     <update id="editFeedBackById" parameterType="com.hrtxn.ringtone.project.telcertification.domain.CertificationChildOrder">
-        UPDATE tb_telcertification_child_order
+        UPDATE tb_telcertification_child_order ttco
         <set>
             <if test="businessFeedback != null">
                 business_feedback = #{businessFeedback,jdbcType=VARCHAR},
@@ -82,13 +87,13 @@
     <!--根据成员号码获取父订单id-->
     <select id="getTelcerChildParentIdByPhoneNum" parameterType="java.lang.String" resultType="int">
         SELECT parent_order_id
-        FROM tb_telcertification_child_order
+        FROM tb_telcertification_child_order ttco
         WHERE tel_child_order_phone = #{telChildOrderPhone,jdbcType=VARCHAR}
     </select>
 
     <!--修改成员状态、提交时间，开通时间，到期时间-->
     <update id="editChildOrderIfStatusChanged" parameterType="com.hrtxn.ringtone.project.telcertification.domain.CertificationChildOrder">
-        UPDATE tb_telcertification_child_order
+        UPDATE tb_telcertification_child_order ttco
         <set>
             <if test="telChildOrderStatus != null">
                 tel_child_order_status = #{telChildOrderStatus,jdbcType=VARCHAR},
@@ -101,7 +106,7 @@
     </update>
     <!--根据子订单电话号码获得全部列表-->
     <select id="getTelcerChildByPhoneNum" parameterType="java.lang.String" resultMap="BaseResultMap">
-        SELECT * FROM tb_telcertification_child_order
+        SELECT * FROM tb_telcertification_child_order ttco
         WHERE tel_child_order_phone = #{telChildOrderPhone,jdbcType=VARCHAR}
     </select>
 
@@ -138,9 +143,14 @@
         SELECT
             <include refid="Base_Column_List"/>
         FROM
-            tb_telcertification_child_order tcc
+            tb_telcertification_child_order ttco
+        RIGHT JOIN tb_telcertification_order tto
+        ON ttco.parent_order_id = tto.id
         WHERE 1=1
         <include refid="parameters"/>
+        <if test="param != null and param.userId != null and param.userId != ''">
+            AND tto.user_id = #{param.userId}
+        </if>
         AND UNIX_TIMESTAMP(NOW()) >= (UNIX_TIMESTAMP(tel_child_order_expire_time)-86400*60)
         AND UNIX_TIMESTAMP(tel_child_order_expire_time) >= UNIX_TIMESTAMP(NOW())
         ORDER BY tel_child_order_ctime DESC
@@ -151,8 +161,13 @@
         SELECT
         COUNT(*)
         FROM
-        tb_telcertification_child_order tcc
+        tb_telcertification_child_order ttco
+        RIGHT JOIN tb_telcertification_order tto
+        ON ttco.parent_order_id = tto.id
         WHERE 1=1
+        <if test="param != null and param.userId != null and param.userId != ''">
+            AND tto.user_id = #{param.userId}
+        </if>
         AND UNIX_TIMESTAMP(NOW()) >= (UNIX_TIMESTAMP(tel_child_order_expire_time)-86400*60)
         AND UNIX_TIMESTAMP(tel_child_order_expire_time) >= UNIX_TIMESTAMP(NOW())
     </select>
@@ -161,9 +176,14 @@
         SELECT
         *
         FROM
-        tb_telcertification_child_order tcc
+        tb_telcertification_child_order ttco
+        RIGHT JOIN tb_telcertification_order tto
+        ON ttco.parent_order_id = tto.id
         WHERE 1=1
         <include refid="parameters"/>
+        <if test="param != null and param.userId != null and param.userId != ''">
+            AND tto.user_id = #{param.userId}
+        </if>
         AND UNIX_TIMESTAMP(NOW()) >= UNIX_TIMESTAMP(tel_child_order_expire_time)
         <include refid="page"/>
     </select>
@@ -171,20 +191,25 @@
         SELECT
         COUNT(*)
         FROM
-        tb_telcertification_child_order tcc
-        WHERE 1=1 AND
-        UNIX_TIMESTAMP(NOW()) >= UNIX_TIMESTAMP(tel_child_order_expire_time)
+        tb_telcertification_child_order ttco
+        RIGHT JOIN tb_telcertification_order tto
+        ON ttco.parent_order_id = tto.id
+        WHERE 1=1
+        <if test="param != null and param.userId != null and param.userId != ''">
+            AND tto.user_id = #{param.userId}
+        </if>
+        AND UNIX_TIMESTAMP(NOW()) >= UNIX_TIMESTAMP(tel_child_order_expire_time)
     </select>
 
     <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>
-        from tb_telcertification_child_order
+        from tb_telcertification_child_order ttco
         where id = #{id,jdbcType=INTEGER}
     </select>
     <insert id="insertSelective"
             parameterType="com.hrtxn.ringtone.project.telcertification.domain.CertificationChildOrder">
-        insert into tb_telcertification_child_order
+        insert into tb_telcertification_child_order ttco
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="id != null">
                 id,
@@ -258,7 +283,7 @@
     </insert>
     <update id="updateByPrimaryKeySelective"
             parameterType="com.hrtxn.ringtone.project.telcertification.domain.CertificationChildOrder">
-        update tb_telcertification_child_order
+        update tb_telcertification_child_order ttco
         <set>
             <if test="telChildOrderNum != null">
                 tel_child_order_num = #{telChildOrderNum,jdbcType=VARCHAR},
@@ -295,7 +320,7 @@
     </update>
     <update id="updateByPrimaryKey"
             parameterType="com.hrtxn.ringtone.project.telcertification.domain.CertificationChildOrder">
-    update tb_telcertification_child_order
+    update tb_telcertification_child_order ttco
     set tel_child_order_num = #{telChildOrderNum,jdbcType=VARCHAR},
       years = #{years,jdbcType=INTEGER},
       price = #{price,jdbcType=REAL},

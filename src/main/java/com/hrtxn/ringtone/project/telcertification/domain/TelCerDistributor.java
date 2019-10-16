@@ -13,6 +13,14 @@ import java.io.Serializable;
 @Data
 public class TelCerDistributor implements Serializable {
     /**
+     * 订购统计渠道商信息id
+     */
+    private Integer id;
+    /**
+     * 渠道商id
+     */
+    private Integer distributorId;
+    /**
      * 渠道商名称
      */
     private String distributorName;
@@ -33,7 +41,31 @@ public class TelCerDistributor implements Serializable {
      */
     private Integer theMonthTotal;
     /**
-     * 昨日新增开通数
+     * 今日新增开通数
      */
-    private Integer yesterdayTotal;
+    private Integer todayTotal;
+    /**
+     * 泰迪熊开通个数
+     */
+    private Integer teddyNum;
+    /**
+     * 电话邦开通个数
+     */
+    private Integer telBondNum;
+    /**
+     * 彩印开通个数
+     */
+    private Integer colorPrintNum;
+    /**
+     * 挂机短信开通个数
+     */
+    private Integer hangupMessageNum;
+    /**
+     * 泰迪熊和电话邦的总价
+     */
+    private Float teddyAndTelBond;
+    /**
+     * 挂机短信（用户输入的）
+     */
+    private Float hangUpMessage;
 }

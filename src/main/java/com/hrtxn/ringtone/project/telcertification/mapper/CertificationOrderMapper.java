@@ -85,4 +85,11 @@ public interface CertificationOrderMapper {
      * @return
      */
     List<CertificationOrder> isRepetitionByName(@Param("telCompanyName")String telCompanyName);
+
+    /**
+     * 查询联系人电话是否重复
+     * @param telLinkPhone
+     * @return
+     */
+    List<CertificationOrder> isRepetitionByTelLinkPhone(@Param("telLinkPhone") String telLinkPhone);
 }

@@ -16,6 +16,7 @@ import com.hrtxn.ringtone.project.system.user.domain.User;
 import com.hrtxn.ringtone.project.system.user.mapper.UserMapper;
 import com.hrtxn.ringtone.project.telcertification.domain.CertificationChildOrder;
 import com.hrtxn.ringtone.project.telcertification.domain.CertificationOrder;
+import com.hrtxn.ringtone.project.telcertification.domain.TelCerDistributor;
 import com.hrtxn.ringtone.project.telcertification.mapper.CertificationChildOrderMapper;
 import com.hrtxn.ringtone.project.telcertification.mapper.CertificationOrderMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,6 +44,11 @@ public class TelCertificationChildService {
     @Autowired
     private ConsumeLogMapper consumeLogMapper;
 
+    /**
+     * 获得号码认证成员号码订单数量
+     * @param request
+     * @return
+     */
     public int getCount(BaseRequest request) {
         return certificationChildOrderMapper.getCount(request);
     }
@@ -56,6 +62,7 @@ public class TelCertificationChildService {
      */
     public AjaxResult findTheChildOrder(Page page, BaseRequest request) {
         page.setPage((page.getPage() - 1) * page.getPagesize());
+        request.setUserId(ShiroUtils.getSysUser().getId());
         List<CertificationChildOrder> allChildOrderList = certificationChildOrderMapper.findTheChildOrder(page, request);
         CertificationOrder certificationOrder = certificationOrderMapper.getTelCerOrderById(request.getParentId());
         String productJson = certificationOrder.getProductName();
@@ -77,6 +84,7 @@ public class TelCertificationChildService {
      */
     public AjaxResult getFallDueList(Page page,BaseRequest request) {
         page.setPage((page.getPage() - 1) * page.getPagesize());
+        request.setUserId(ShiroUtils.getSysUser().getId());
         List<CertificationChildOrder> fallDueList = certificationChildOrderMapper.getFallDueList(page,request);
         int fallDueListCount = certificationChildOrderMapper.getFallDueListCount(page,request);
         if(fallDueList.size() > 0 && fallDueListCount > 0){
@@ -307,7 +315,8 @@ public class TelCertificationChildService {
                         if(insertConsumeLog > 0){
                             int afterSuccess = certificationChildOrderMapper.editChildOrderIfStatusChanged(certificationChildOrder);
                             if(afterSuccess > 0){
-                                return AjaxResult.success(200,afterSuccess,"扣费成功！",afterSuccess);
+
+                                return AjaxResult.success(200,afterSuccess,"扣费成功！当前账户余额为："+restMoney,afterSuccess);
                             }
                             return AjaxResult.error("扣费失败!");
                         }
