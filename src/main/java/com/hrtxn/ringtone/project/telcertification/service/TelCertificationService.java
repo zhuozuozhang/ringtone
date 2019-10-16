@@ -13,10 +13,7 @@ import com.hrtxn.ringtone.freemark.config.systemConfig.RingtoneConfig;
 import com.hrtxn.ringtone.project.system.File.domain.Uploadfile;
 import com.hrtxn.ringtone.project.system.File.mapper.UploadfileMapper;
 import com.hrtxn.ringtone.project.system.File.service.FileService;
-import com.hrtxn.ringtone.project.telcertification.domain.CertificationChildOrder;
-import com.hrtxn.ringtone.project.telcertification.domain.CertificationConfig;
-import com.hrtxn.ringtone.project.telcertification.domain.CertificationOrder;
-import com.hrtxn.ringtone.project.telcertification.domain.CertificationRequest;
+import com.hrtxn.ringtone.project.telcertification.domain.*;
 import com.hrtxn.ringtone.project.telcertification.mapper.CertificationChildOrderMapper;
 import com.hrtxn.ringtone.project.telcertification.mapper.CertificationConfigMapper;
 import com.hrtxn.ringtone.project.telcertification.mapper.CertificationOrderMapper;
@@ -48,8 +45,6 @@ public class TelCertificationService {
     private CertificationChildOrderMapper certificationChildOrderMapper;
     @Autowired
     private CertificationConfigMapper certificationConfigMapper;
-    @Autowired
-    private UploadfileMapper uploadfileMapper;
 
 
     /**
@@ -75,6 +70,7 @@ public class TelCertificationService {
      */
     public AjaxResult findAllTelCertification(Page page, BaseRequest request,ModelMap map) throws ParseException {
         page.setPage((page.getPage() - 1) * page.getPagesize());
+        request.setUserId(ShiroUtils.getSysUser().getId());
         List<CertificationOrder> theTelCer = new ArrayList<CertificationOrder>();
         //通过时间段、集团名称、联系人电话、成员号码查到商户信息
         String rangeTime = request.getRangetime();
@@ -113,7 +109,6 @@ public class TelCertificationService {
                 request.setEnd(end);
             }
         }
-
         List<CertificationOrder> allTelCer = certificationOrderMapper.findAllTelCertification(page, request);
         int totalCount = certificationOrderMapper.getCount(request);
 
@@ -343,6 +338,10 @@ public class TelCertificationService {
         return AjaxResult.error("添加失败");
     }
 
+    /**
+     * 修改上传文件的状态
+     * @param certificationProduct
+     */
     private void updateFileStatus(CertificationRequest certificationProduct) {
         SpringUtils.getBean(FileService.class).updateStatus(certificationProduct.getBusinessLicense());
         SpringUtils.getBean(FileService.class).updateStatus(certificationProduct.getLegalPersonCardZhen());
@@ -383,5 +382,27 @@ public class TelCertificationService {
         } else {
             return AjaxResult.success("商户名称可用！");
         }
+    }
+
+    /**
+     * 验证联系人电话是否重复
+     * @param telLinkPhone
+     * @return
+     */
+    public AjaxResult isRepetitionByTelLinkPhone(String telLinkPhone) {
+        List<CertificationOrder> list = certificationOrderMapper.isRepetitionByTelLinkPhone(telLinkPhone);
+        if(list != null && list.size() >= 1){
+            for (int i = 0; i < list.size(); i++) {
+                String cTelPhone = list.get(i).getTelLinkPhone();
+                if(cTelPhone.length() <= 12 && cTelPhone.length() >10){
+                    if(cTelPhone.equals(telLinkPhone)){
+                        return AjaxResult.error("联系人电话不允许重复！");
+                    }else{
+                        continue;
+                    }
+                }
+            }
+        }
+        return AjaxResult.success("联系人电话可用！");
     }
 }

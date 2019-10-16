@@ -4,10 +4,9 @@
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-#    url: jdbc:mysql://localhost:10086/ringtone?useUnicode=true&characterEncoding=utf-8&useSSL=true&serverTimezone=GMT%2B8
+#    url: jdbc:mysql://120.27.226.14:3306/ringtone?useUnicode=true&characterEncoding=utf-8&useSSL=true&serverTimezone=GMT%2B8
 #    username: root
-#    password: zgjc123!
-    # 120.27.226.14
+#    password: root
     url: jdbc:mysql://localhost:3306/ringtone?useUnicode=true&characterEncoding=utf-8&useSSL=true&serverTimezone=GMT%2B8
     username: root
     password: root

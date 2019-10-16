@@ -74,4 +74,9 @@ public class BaseRequest {
     private String[] phoneNumberArray;
 
     private String remark;
+
+    /**
+     * 渠道商id
+     */
+    private Integer distributorId;
 }

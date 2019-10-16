@@ -72,14 +72,16 @@ public final class Const implements Serializable {
     //private static String child_Distributor_ID_177 = "594095";
     //private static String test_id = "1673882";
 
-    //充值记录类型--号码认证
+    //充值记录类型
+    //号码认证
     public static Integer SYS_RECHARGE_LOG_TYPE_TEL_CER = 1;
-    //充值记录类型--三网
+    //三网
     public static Integer SYS_RECHARGE_LOG_TYPE_THREE_NET = 2;
 
-    //消费记录类型--号码认证
+    //消费记录类型
+    //号码认证
     public static Integer SYS_CONSUME_LOG_TYPE_TEL_CER = 1;
-    //消费记录类型--三网
+    //三网
     public static Integer SYS_CONSUME_LOG_TYPE_THREE_NET = 2;
 
     //号码认证消费记录类型（1.首次/2.续费）

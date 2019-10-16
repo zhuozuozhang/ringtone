@@ -244,6 +244,16 @@ function vertifyTelLinkPhone() {
             }
         }
     }
+    AjaxPost("/telcertify/verificationTelLinkPhone", {
+        "telLinkPhone": phones,
+    }, function (result) {
+        if (result.code == 500) {
+            $("#telLinkPhoneAdd").focus();
+            layer.msg(result.msg);
+        } else {
+            layer.msg(result.msg);
+        }
+    });
 }
 
 function vertifyTelLinkPhoneEdit() {
@@ -296,28 +306,34 @@ function ckeckDetailsOne(id) {
 var sendId = null;
 //打开修改订单弹窗--回显
 function editTelCerOrder(id) {
-    sendId = id;
-    AjaxPost("/telcertify/toTelEditPage",{
-        id:id
-    },function (res) {
-        if (res.code = 200 && res.data) {
-            var telCerOrder = res.data;
-            $("#telCompanyName").val(telCerOrder.telCompanyName);
-            $("#telLinkName").val(telCerOrder.telLinkName);
-            $("#telLinkPhone").val(telCerOrder.telLinkPhone);
-            $("#telContent").val(telCerOrder.telContent);
-            // $("#businessLicense").val(telCerOrder.businessLicense);
-            // $("#legalPersonCardZhen").val(telCerOrder.legalPersonCardZhen);
-            // $("#").val(telCerOrder.);
-            // $("#").val(telCerOrder.);
-            // $("#").val(telCerOrder.);
-            // $("#").val(telCerOrder.);
-            $("#remark").val(telCerOrder.remark);
-        }else{
-            layer.msg("弹出修改弹窗失败！", {icon: 5, time: 3000});
-        }
+    layer.open({
+        type: 2,
+        title: '更改商户信息',
+        content: '/telcertify/toTelEditPage/'+id,
+        area: ['568px', '815px']
     });
-    $("#editor").removeClass("display");
+    // sendId = id;
+    // AjaxPost("/telcertify/toTelEditPage",{
+    //     id:id
+    // },function (res) {
+    //     if (res.code = 200 && res.data) {
+    //         var telCerOrder = res.data;
+    //         $("#telCompanyName").val(telCerOrder.telCompanyName);
+    //         $("#telLinkName").val(telCerOrder.telLinkName);
+    //         $("#telLinkPhone").val(telCerOrder.telLinkPhone);
+    //         $("#telContent").val(telCerOrder.telContent);
+    //         $("#businessLicense").val(telCerOrder.businessLicense);
+    //         $("#legalPersonCardZhen").val(telCerOrder.legalPersonCardZhen);
+    //         $("#legalPersonCardFan").val(telCerOrder.legalPersonCardFan);
+    //         $("#logo").val(telCerOrder.logo);
+    //         // $("#").val(telCerOrder.);
+    //         // $("#").val(telCerOrder.);
+    //         $("#remark").val(telCerOrder.remark);
+    //     }else{
+    //         layer.msg("弹出修改弹窗失败！", {icon: 5, time: 3000});
+    //     }
+    // });
+    // $("#editor").removeClass("display");
 }
 
 
@@ -542,12 +558,12 @@ $("#cancel").on('click', function () { //点击取消隐藏弹窗
     $("#pop").addClass("display")
 })
 //修改信息
-$('.openeditor').on('click', function () { //点击按钮显示弹窗
-    $("#editor").removeClass("display")
-})
-$("#gbxg").on('click', function () { //点击取消隐藏弹窗
-    $("#editor").addClass("display")
-})
+// $('.openeditor').on('click', function () { //点击按钮显示弹窗
+//     $("#editor").removeClass("display")
+// })
+// $("#gbxg").on('click', function () { //点击取消隐藏弹窗
+//     $("#editor").addClass("display")
+// })
 //查看实例弹窗
 $('.opencase').on('click', function () { //点击按钮显示弹窗
     $("#case").removeClass("display")
@@ -895,116 +911,116 @@ function validate_img2(idVal,file) {
     }
 }
 
-// --------------------------------------------------------修改---------------------------------------------------------
-<!--修改-----上传图片文件 -->
-$("body").on('click', '#businessLicenseClassEdit', function () {
-    valid($("#telCompanyName"),"businessLicense",$("#businessLicense"),"businessLicense", $(this));
-});
-$("body").on('click', '#legalPersonCardZhenClassEdit', function () {
-    valid($("#telCompanyName"),"legalPersonCardZhen",$("#legalPersonCardZhen"),"legalPersonCardZhen",$(this));
-});
-$("body").on('click', '#legalPersonCardFanClassEdit', function () {
-    valid($("#telCompanyName"),"legalPersonCardFan", $("#legalPersonCardFan"),"legalPersonCardFan",$(this));
-});
-$("body").on('click', '#logoClassEdit', function () {
-    valid($("#telCompanyName"),"logo",$("#logo"),"logo",$(this));
-});
-
-//上传授权书
-$('#authorization').on('change', function (e) {
-    var telCompanyName = $("#telCompanyName").val();
-    if(telCompanyName == "" || telCompanyName == null){
-        $("#telCompanyName").focus();
-        $("#authorization").val("");
-        layer.msg("请先输入集团名称！");
-        return
-    }
-    uploadFile("authorization","authorization",$("#telCompanyName").val())
-});
-//上传号码证明
-$("#numberProve").on('change', function (e) {
-    var telCompanyName = $("#telCompanyName").val();
-    if(telCompanyName == "" || telCompanyName == null){
-        $("#telCompanyName").focus();
-        $("#numberProve").val("");
-        layer.msg("请先输入集团名称！");
-        return
-    }
-    uploadFile("numberProve","numberProve",$("#telCompanyName").val())
-});
-
-//修改商户信息
-function determine() {
-    if($("#telCompanyName").html() > 0 || $("#telCompanyName").val() == ""){
-        $("#telCompanyName").focus();
-        layer.msg("请填写集团名称");
-        return;
-    }
-    if($("#telLinkName").html() > 0 || $("#telLinkName").val() == ""){
-        $("#telLinkName").focus();
-        layer.msg("请填写联系人姓名");
-        return;
-    }
-    if($("#telLinkPhone").html() > 0 || $("#telLinkPhone").val() == ""){
-        $("#telLinkPhone").focus();
-        layer.msg("请填写联系人电话");
-        return;
-    }
-    if($("#telContent").html() > 0 || $("#telContent").val() == ""){
-        $("#telContent").focus();
-        layer.msg("请填写认证展示内容");
-        return;
-    }
-    if($("#businessLicense").html() > 0 || $("#businessLicenseHidden").val() == ""){
-        layer.msg("您需要上传营业执照");
-        return;
-    }
-    if($("#legalPersonCardZhen").html() > 0 || $("#legalPersonCardZhenHidden").val() == ""){
-        layer.msg("您需要上传法人身份证正面");
-        return;
-    }
-    if($("#legalPersonCardFan").html() > 0 || $("#legalPersonCardFanHidden").val() == ""){
-        layer.msg("您需要上传法人身份证反面");
-        return;
-    }
-    if($("#logo").html() > 0 || $("#logoHidden").val() == ""){
-        layer.msg("您需要上传LOGO");
-        return;
-    }
-    if($("#authorization").html() > 0 || $("#authorizationHidden").val() == ""){
-        layer.msg("请上传授权书");
-        return;
-    }
-    if($("#numberProve").html() > 0 || $("#numberProveHidden").val() == ""){
-        layer.msg("请上传号码证明");
-        return;
-    }
-    var url = "/telcertify/editTelCerOrderById";
-    AjaxPost(url,{
-        id : sendId,
-        telCompanyName : $("#telCompanyName").val(),
-        telLinkName : $("#telLinkName").val(),
-        telLinkPhone : $("#telLinkPhone").val(),
-        telContent : $("#telContent").val(),
-
-        businessLicense : $("#businessLicenseHidden").val(),
-        legalPersonCardZhen : $("#legalPersonCardZhenHidden").val(),
-        legalPersonCardFan : $("#legalPersonCardFanHidden").val(),
-        logo : $("#logoHidden").val(),
-        authorization : $("#authorizationHidden").val(),
-        numberProve : $("#numberProveHidden").val(),
-
-        remark : $("#remark").val()
-    },function (res) {
-        if(res.code==200 && res.data){
-            layer.confirm(res.msg,{
-                btn:'确定'
-            },function () {
-                window.parent.location.reload();//刷新父页面
-            });
-        }else {
-            layer.msg(res.msg, {icon: 5, time: 3000});
-        }
-    });
-}
+// // --------------------------------------------------------修改---------------------------------------------------------
+// <!--修改-----上传图片文件 -->
+// $("body").on('click', '#businessLicenseClassEdit', function () {
+//     valid($("#telCompanyName"),"businessLicense",$("#businessLicense"),"businessLicense", $(this));
+// });
+// $("body").on('click', '#legalPersonCardZhenClassEdit', function () {
+//     valid($("#telCompanyName"),"legalPersonCardZhen",$("#legalPersonCardZhen"),"legalPersonCardZhen",$(this));
+// });
+// $("body").on('click', '#legalPersonCardFanClassEdit', function () {
+//     valid($("#telCompanyName"),"legalPersonCardFan", $("#legalPersonCardFan"),"legalPersonCardFan",$(this));
+// });
+// $("body").on('click', '#logoClassEdit', function () {
+//     valid($("#telCompanyName"),"logo",$("#logo"),"logo",$(this));
+// });
+//
+// //上传授权书
+// $('#authorization').on('change', function (e) {
+//     var telCompanyName = $("#telCompanyName").val();
+//     if(telCompanyName == "" || telCompanyName == null){
+//         $("#telCompanyName").focus();
+//         $("#authorization").val("");
+//         layer.msg("请先输入集团名称！");
+//         return
+//     }
+//     uploadFile("authorization","authorization",$("#telCompanyName").val())
+// });
+// //上传号码证明
+// $("#numberProve").on('change', function (e) {
+//     var telCompanyName = $("#telCompanyName").val();
+//     if(telCompanyName == "" || telCompanyName == null){
+//         $("#telCompanyName").focus();
+//         $("#numberProve").val("");
+//         layer.msg("请先输入集团名称！");
+//         return
+//     }
+//     uploadFile("numberProve","numberProve",$("#telCompanyName").val())
+// });
+//
+// //修改商户信息
+// function determine() {
+//     if($("#telCompanyName").html() > 0 || $("#telCompanyName").val() == ""){
+//         $("#telCompanyName").focus();
+//         layer.msg("请填写集团名称");
+//         return;
+//     }
+//     if($("#telLinkName").html() > 0 || $("#telLinkName").val() == ""){
+//         $("#telLinkName").focus();
+//         layer.msg("请填写联系人姓名");
+//         return;
+//     }
+//     if($("#telLinkPhone").html() > 0 || $("#telLinkPhone").val() == ""){
+//         $("#telLinkPhone").focus();
+//         layer.msg("请填写联系人电话");
+//         return;
+//     }
+//     if($("#telContent").html() > 0 || $("#telContent").val() == ""){
+//         $("#telContent").focus();
+//         layer.msg("请填写认证展示内容");
+//         return;
+//     }
+//     if($("#businessLicense").html() > 0 || $("#businessLicenseHidden").val() == ""){
+//         layer.msg("您需要上传营业执照");
+//         return;
+//     }
+//     if($("#legalPersonCardZhen").html() > 0 || $("#legalPersonCardZhenHidden").val() == ""){
+//         layer.msg("您需要上传法人身份证正面");
+//         return;
+//     }
+//     if($("#legalPersonCardFan").html() > 0 || $("#legalPersonCardFanHidden").val() == ""){
+//         layer.msg("您需要上传法人身份证反面");
+//         return;
+//     }
+//     if($("#logo").html() > 0 || $("#logoHidden").val() == ""){
+//         layer.msg("您需要上传LOGO");
+//         return;
+//     }
+//     if($("#authorization").html() > 0 || $("#authorizationHidden").val() == ""){
+//         layer.msg("请上传授权书");
+//         return;
+//     }
+//     if($("#numberProve").html() > 0 || $("#numberProveHidden").val() == ""){
+//         layer.msg("请上传号码证明");
+//         return;
+//     }
+//     var url = "/telcertify/editTelCerOrderById";
+//     AjaxPost(url,{
+//         id : sendId,
+//         telCompanyName : $("#telCompanyName").val(),
+//         telLinkName : $("#telLinkName").val(),
+//         telLinkPhone : $("#telLinkPhone").val(),
+//         telContent : $("#telContent").val(),
+//
+//         businessLicense : $("#businessLicenseHidden").val(),
+//         legalPersonCardZhen : $("#legalPersonCardZhenHidden").val(),
+//         legalPersonCardFan : $("#legalPersonCardFanHidden").val(),
+//         logo : $("#logoHidden").val(),
+//         authorization : $("#authorizationHidden").val(),
+//         numberProve : $("#numberProveHidden").val(),
+//
+//         remark : $("#remark").val()
+//     },function (res) {
+//         if(res.code==200 && res.data){
+//             layer.confirm(res.msg,{
+//                 btn:'确定'
+//             },function () {
+//                 window.parent.location.reload();//刷新父页面
+//             });
+//         }else {
+//             layer.msg(res.msg, {icon: 5, time: 3000});
+//         }
+//     });
+// }
 

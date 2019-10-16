@@ -134,5 +134,15 @@
         page("#due_table", 10, param, "/telcertify/getDueList", columns, columnDefs);
     }
 
+    //即将到期和到期号码查看详情
+    function ckeckDetailsOne(id) {
+        layer.open({
+            type: 2,
+            title: '详情',
+            content: '/telcertify/toTeldetailsOnePage/'+id,
+            area: ['500px', '680px']
+        });
+    }
+
 </script>
 </html>
