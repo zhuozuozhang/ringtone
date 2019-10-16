@@ -38,6 +38,7 @@ public class IntfController {
 
 
     @RequestMapping("/jsjt")
+    @ResponseBody
     public String receive(HttpServletRequest request, HttpServletResponse response,@RequestBody String body){
 
         String account = request.getParameter("account");
@@ -47,12 +48,12 @@ public class IntfController {
         if("occupy_audit".equals(infoType)){
             //预占结果通知
             preemptionResult(request,body);
-        }else if(Const.TEMPLATE_GENERATION_RESULT.equals(account)){
+        }else if("material_template".equals(infoType)){
             //资料模板生成完成通知
             templateResult(request,body);
-        }else if(Const.EXAMINE_RESULT.equals(account)){
+        }else if("material_audit".equals(infoType)){
             //资料审核通知
-
+            examineResult(request,body);
         }
 
 

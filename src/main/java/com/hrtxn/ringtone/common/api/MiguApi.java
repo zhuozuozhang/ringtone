@@ -736,7 +736,7 @@ public class MiguApi implements Serializable {
      * @return
      * @throws
      */
-    public MiguAddPhoneRespone addPhone(String data, String circleID) throws IOException, NoLoginException {
+    public MiguAddPhoneRespone addPhone(String data, String circleID) {
         MiguAddPhoneRespone miguAddPhoneRespone = new MiguAddPhoneRespone();
         DefaultHttpClient httpclient = new DefaultHttpClient();
         HttpPost httppost = new HttpPost(ADD_PHONE_URL);
@@ -745,8 +745,8 @@ public class MiguApi implements Serializable {
         formparams.add(new BasicNameValuePair("circleID", circleID));
         formparams.add(new BasicNameValuePair("autoSetRing", "1"));
         formparams.add(new BasicNameValuePair("addAll", "0"));
-        httpclient.setCookieStore(this.getCookieStore());
         try {
+            httpclient.setCookieStore(this.getCookieStore());
             UrlEncodedFormEntity entity = new UrlEncodedFormEntity(formparams, "utf-8");
             httppost.setEntity(entity);
             HttpResponse response = httpclient.execute(httppost);
@@ -766,7 +766,7 @@ public class MiguApi implements Serializable {
             }
             this.setMiguCookie(httpclient.getCookieStore());
         } catch (Exception e) {
-            System.out.println(e);
+            e.printStackTrace();
         } finally {
             httppost.abort();
             httpclient.getConnectionManager().shutdown();
