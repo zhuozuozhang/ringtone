@@ -64,6 +64,7 @@ public class ThreeNetsAsyncService {
      */
     @Async
     public void saveOnlineOrder(ThreenetsOrder order, ThreeNetsOrderAttached attached, OrderRequest orderRequest) {
+        log.info(DateUtils.getTime() + "创建三网订单开始：" + order.getCompanyName());
         try {
             ThreenetsChildOrder childOrder = new ThreenetsChildOrder();
             childOrder.setParentOrderId(order.getId());
@@ -71,10 +72,12 @@ public class ThreeNetsAsyncService {
             Map<Integer, List<ThreenetsChildOrder>> collect = list.stream().collect(Collectors.groupingBy(ThreenetsChildOrder::getOperator));
             // 移动
             if (collect.get(Const.OPERATORS_MOBILE) != null) {
+                log.info(DateUtils.getTime() + "创建三网移动订单开始：" + order.getCompanyName());
                 createMobileMerchant(order, attached, collect.get(Const.OPERATORS_MOBILE));
             }
             //联通
             if (collect.get(Const.OPERATORS_UNICOM) != null) {
+                log.info(DateUtils.getTime() + "创建三网联通订单开始：" + order.getCompanyName());
                 List<ThreenetsChildOrder> childOrders = collect.get(Const.OPERATORS_UNICOM);
                 order.setMianduan("0");
                 if (StringUtils.isNotEmpty(orderRequest.getMianduan()) && orderRequest.getMianduan().equals("是")) {
@@ -91,6 +94,7 @@ public class ThreeNetsAsyncService {
             }
             //电信
             if (collect.get(Const.OPERATORS_TELECOM) != null) {
+                log.info(DateUtils.getTime() + "创建三网电信订单开始：" + order.getCompanyName());
                 createTelecomMerchant(order, attached, orderRequest, collect.get(Const.OPERATORS_TELECOM));
             }
             //保存订单附表
@@ -108,6 +112,7 @@ public class ThreeNetsAsyncService {
      */
     @Async
     public void saveThreenetsPhone(ThreeNetsOrderAttached attached, BaseRequest request) {
+        log.info(DateUtils.getTime() + "创建三网子订单开始：");
         try {
             List<ThreenetsRing> rings = threenetsRingMapper.selectByOrderId(attached.getParentOrderId());
             Map<Integer, List<ThreenetsRing>> ringMap = rings.stream().collect(Collectors.groupingBy(ThreenetsRing::getOperate));
@@ -134,8 +139,9 @@ public class ThreeNetsAsyncService {
                         threenetsRingMapper.insertThreeNetsRing(threenetsRing);
                     }
                     //order.setUpLoadAgreement(new File(RingtoneConfig.getProfile() + threenetsRing.getRingWay()));
+                    log.info(DateUtils.getTime() + "创建三网移动子订单开始："+threenetsRing.getRingName());
                     list = addMembersByYd(order, attached, list, threenetsRing);
-                    batchChindOrder(list, threenetsRing);
+                    batchChindOrder(list, threenetsRing,order.getUserId());
                 }
                 if (operator == 2) {
                     ThreenetsRing threenetsRing = rings.get(0);
@@ -149,8 +155,9 @@ public class ThreeNetsAsyncService {
                         threenetsRing.setRingName(path.substring(path.lastIndexOf("\\") + 1));
                         threenetsRingMapper.insertThreeNetsRing(threenetsRing);
                     }
+                    log.info(DateUtils.getTime() + "创建三网电信子订单开始："+threenetsRing.getRingName());
                     List<ThreenetsChildOrder> orders = addMcardByDx(order, attached, list, request, threenetsRing);
-                    batchChindOrder(orders, threenetsRing);
+                    batchChindOrder(orders, threenetsRing,order.getUserId());
                 }
                 if (operator == 3) {
                     order.setMianduan("0");
@@ -173,8 +180,9 @@ public class ThreeNetsAsyncService {
                         threenetsRing.setRingName(path.substring(path.lastIndexOf("\\") + 1));
                         threenetsRingMapper.insertThreeNetsRing(threenetsRing);
                     }
+                    log.info(DateUtils.getTime() + "创建三网联通子订单开始："+threenetsRing.getRingName());
                     list = addMemberByLt(order, attached, list, threenetsRing);
-                    batchChindOrder(list, threenetsRing);
+                    batchChindOrder(list, threenetsRing,order.getUserId());
                 }
             }
         } catch (Exception e) {
@@ -188,11 +196,14 @@ public class ThreeNetsAsyncService {
      * @param orders
      * @return
      */
-    public Integer batchChindOrder(List<ThreenetsChildOrder> orders, ThreenetsRing ring) {
+    public Integer batchChindOrder(List<ThreenetsChildOrder> orders, ThreenetsRing ring,Integer userId) {
         Integer sum = 0;
         for (int i = 0; i < orders.size(); i++) {
             ThreenetsChildOrder childOrder = orders.get(i);
             childOrder.setParentOrderId(ring.getOrderId());
+            if (!userId.equals(childOrder.getUserId())){
+                childOrder.setUserId(userId);
+            }
             orders.set(i, childOrder);
             sum = sum + threenetsChildOrderMapper.updateThreeNetsChidOrder(childOrder);
         }
@@ -698,6 +709,7 @@ public class ThreeNetsAsyncService {
         ThreeNetsOrderAttached attached = threeNetsOrderAttachedMapper.selectByParentOrderId(order.getId());
         ThreenetsChildOrder childOrder = new ThreenetsChildOrder();
         childOrder.setParentOrderId(order.getId());
+        childOrder.setStatus(Const.PENDING_REVIEW);
         try {
             List<ThreenetsChildOrder> oldlist = threenetsChildOrderMapper.listByParamNoPage(childOrder);
             List<ThreenetsChildOrder> list = new ArrayList<>();
@@ -712,7 +724,7 @@ public class ThreeNetsAsyncService {
             for (Integer operate : map.keySet()) {
                 if (operate.equals(Const.OPERATORS_MOBILE)) {
                     ThreenetsRing ring = ringMap.get(Const.OPERATORS_MOBILE).get(0);
-                    addMembersByYd(order, attached, map.get(Const.OPERATORS_TELECOM), ring);
+                    addMembersByYd(order, attached, map.get(Const.OPERATORS_MOBILE), ring);
                 }
                 if (operate.equals(Const.OPERATORS_TELECOM)) {
                     ThreenetsRing ring = ringMap.get(Const.OPERATORS_TELECOM).get(0);
@@ -730,6 +742,12 @@ public class ThreeNetsAsyncService {
                 }
                 if (operate.equals(Const.OPERATORS_UNICOM)) {
                     ThreenetsRing ring = ringMap.get(Const.OPERATORS_UNICOM).get(0);
+                    order.setPaymentType("0");
+                    if (StringUtils.isNotEmpty(attached.getAvoidShortAgreement())){
+                        order.setMianduan("1");
+                    }else{
+                        order.setMianduan("0");
+                    }
                     addMemberByLt(order, attached, map.get(Const.OPERATORS_UNICOM), ring);
                 }
             }

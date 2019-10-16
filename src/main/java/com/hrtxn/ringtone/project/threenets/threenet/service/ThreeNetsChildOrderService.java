@@ -59,7 +59,7 @@ public class ThreeNetsChildOrderService {
     public ThreenetsOrder getOrderById(Integer id) throws Exception {
         ThreenetsOrder order = threenetsOrderMapper.selectByPrimaryKey(id);
         threeNetsAsyncService.refreshTelecomMerchantInfo(order);
-        threeNetsAsyncService.uploadFailedMember(order);
+        //threeNetsAsyncService.uploadFailedMember(order);
         return order;
     }
 
@@ -239,6 +239,7 @@ public class ThreeNetsChildOrderService {
         childOrder.setIsReplyMessage(false);
         //是否铃音用户
         childOrder.setIsRingtoneUser(false);
+        childOrder.setIsVideoUser(false);
         //手机号验证
         JuhePhone juhePhone = JuhePhoneUtils.getPhone(childOrder.getLinkmanTel());
         JuhePhoneResult result = (JuhePhoneResult) juhePhone.getResult();
@@ -605,6 +606,9 @@ public class ThreeNetsChildOrderService {
             }
             if (threenetsChildOrder.getStatus().equals(Const.FAILURE_REVIEW)){
                 return AjaxResult.error("当前成员已在其他商户中存在，请在运营商处删除对应号码！");
+            }
+            if (threenetsChildOrder.getStatus().equals(Const.PENDING_REVIEW)){
+                return AjaxResult.error("成员正在同步添加，请稍后再试！");
             }
             if (type.equals(Const.UPDATE_STATUS_RING)) {
                 threenetsChildOrder = apiUtils.refreshRingStatus(threenetsChildOrder);

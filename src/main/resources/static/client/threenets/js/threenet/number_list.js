@@ -15,6 +15,7 @@ function showTable() {
         {"data": "province"},
         {"data": "createDate"},
         {"data": "ringName"},
+        {"data": "status"},
         {"data": "isRingtoneUser"},
         {"data": "isMonthly"},
         {"data": "isVideoUser"},
@@ -37,20 +38,20 @@ function showTable() {
             }
         }
     }, {
-        targets: [7],
+        targets: [8],
         render: function (data, type, row, meta) {
             data = isNotEmpty(data) ? data : "";
             return "<div style='text-overflow:ellipsis;overflow:hidden;white-space:nowrap;width:150px;' title='" + data + "'>" + data + "</div>";
         }
     }, {
-        targets: [8],
+        targets: [9],
         render: function (data, type, row, meta) {
             var id = row.id;
             var status = data ? '是' : '否';
             return status + "<i onclick='refreshRingStatus(" + id + ")' class='layui-icon' title='刷新' data-rowindex='" + meta.row + "'><img src='../../client/threenets/images/refresh.png'></i>";
         }
     }, {
-        targets: [9],
+        targets: [10],
         render: function (data, type, row, meta) {
             var status = '';
             if (data == 1) {
@@ -64,7 +65,7 @@ function showTable() {
             return status + "<i onclick='refreshMonthlyStatus(" + id + ")' class='layui-icon' title='刷新'><img src='../../client/threenets/images/refresh.png'></i>";
         }
     }, {
-        targets: [10],
+        targets: [11],
         render: function (data, type, row, meta) {
             var operator = row.operator;
             var id = row.id;
@@ -72,13 +73,13 @@ function showTable() {
             return status + (operator == 1 ? "<i onclick='refreshVideoRingStatus(" + id + ")' class='layui-icon' title='刷新'><img src='../../client/threenets/images/refresh.png'></i>" : '');
         }
     }, {
-        targets: [11],
+        targets: [12],
         render: function (data, type, row, meta) {
             data = isNotEmpty(data) ? data : "";
             return "<div style='width:150px;' title='" + data + "'>" + data + "</div>";
         }
     }, {
-        targets: [12],
+        targets: [13],
         render: function (data, type, row, meta) {
             console.log(row.isExemptSms)
             var id = row.id;

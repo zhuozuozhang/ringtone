@@ -998,6 +998,7 @@ public class ApiUtils {
      * @return
      */
     public MiguAddGroupRespone addOrderByYd(ThreenetsOrder order, ThreeNetsOrderAttached attached) throws IOException, NoLoginException {
+        log.info("同步移动商户信息---->>>" + DateUtils.getTime());
         MiguAddGroupRespone addGroupResponse = null;
         //进行同步到服务器，同步3次。
         for (int i = 0; i < 3; i++) {// 重试添加3次
@@ -1019,6 +1020,7 @@ public class ApiUtils {
      * @throws NoLoginException
      */
     public SwxlGroupResponse addOrderByLt(ThreenetsOrder ringOrder, ThreeNetsOrderAttached attached) throws IOException, NoLoginException {
+        log.info("同步联通商户信息---->>>" + DateUtils.getTime());
         SwxlGroupResponse swxlGroupResponse = null;
         // 添加商户,同步5次
         for (int i = 0; i < 5; i++) {
@@ -1043,6 +1045,7 @@ public class ApiUtils {
      * @throws NoLoginException
      */
     public McardAddGroupRespone addOrderByDx(ThreenetsOrder order, ThreeNetsOrderAttached attached) {
+        log.info("同步电信商户信息---->>>" + DateUtils.getTime());
         McardAddGroupRespone mcardAddGroupRespone = null;
         boolean flag = ConfigUtil.getAreaArray("unable_to_open_area", order.getProvince());
         if (flag) {
@@ -1808,6 +1811,9 @@ public class ApiUtils {
                                     }
                                 }
                             }
+                            if (StringUtils.isEmpty(childOrder.getRemark())){
+                                childOrder.setRemark("无");
+                            }
                             childOrder.setOperateOrderId(id);
                         }
                     }
@@ -1952,6 +1958,7 @@ public class ApiUtils {
                         for (int i = 0; i < jsonArray.size(); i++) {
                             JSONObject partDaily = jsonArray.getJSONObject(i);
                             String msisdn = partDaily.getString("msisdn");
+                            String id = partDaily.getString("id");
                             if (childOrder.getLinkmanTel().equals(msisdn)) {
                                 String monthStatus = partDaily.getString("monthStatus");
                                 // 包月状态 0：已包月  1:未包月  2:未知（未包月）  3:已退订
@@ -1985,6 +1992,10 @@ public class ApiUtils {
                                         }
                                     }
                                 }
+                                if (StringUtils.isEmpty(childOrder.getRemark())){
+                                    childOrder.setRemark("无");
+                                }
+                                childOrder.setOperateOrderId(id);
                             }
                         }
                         newList.add(childOrder);
