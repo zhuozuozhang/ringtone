@@ -657,6 +657,7 @@ public class ThreeNetsAsyncService {
         }
         try {
             McardAddGroupRespone respone = apiUtils.normalBusinessInfo(order);
+            log.info("电信获取审核状态---->"+respone.getCode());
             if (respone.getCode().equals("0000")) {
                 ThreenetsChildOrder param = new ThreenetsChildOrder();
                 param.setParentOrderId(order.getId());
@@ -690,7 +691,13 @@ public class ThreeNetsAsyncService {
                 List<ThreenetsChildOrder> childOrders = threenetsChildOrderMapper.listByParamNoPage(param);
                 for (int i = 0; i < childOrders.size(); i++) {
                     ThreenetsChildOrder childOrder = childOrders.get(i);
-                    childOrder.setRemark(respone.getMessage());
+                    log.info("电信修改审核状态---->"+respone.getMessage());
+                    if (respone.getCode().equals("1001")){
+                        childOrder.setRemark(respone.getMessage());
+                    }else{
+                        childOrder.setStatus(Const.PENDING_REVIEW);
+                        childOrder.setRemark("电信商户正在审核中，请等待！");
+                    }
                     threenetsChildOrderMapper.updateThreeNetsChidOrder(childOrder);
                 }
             }

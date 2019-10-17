@@ -315,4 +315,19 @@ public class ThreeNetsRingService {
     public void update(ThreenetsRing ring) {
         threenetsRingMapper.updateByPrimaryKeySelective(ring);
     }
+
+    /**
+     * 移动铃音重新激活
+     *
+     * @param id
+     */
+    public void reactivateRing(Integer id) {
+        try{
+            ThreenetsRing threenetsRings = threenetsRingMapper.selectByPrimaryKey(id);
+            ThreenetsOrder order = threenetsOrderMapper.selectByPrimaryKey(threenetsRings.getOrderId());
+            apiUtils.reactivateRing(threenetsRings,order.getCompanyName());
+        }catch(Exception e) {
+            e.printStackTrace();
+        }
+    }
 }

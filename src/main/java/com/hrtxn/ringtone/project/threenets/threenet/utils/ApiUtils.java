@@ -486,8 +486,10 @@ public class ApiUtils {
                     respone.setMessage(remark + "-" + ringCheckmsg);
                     if (remark.indexOf("未通过") >= 0) {
                         respone.setCode("1001");
-                    } else {
+                    } else if (remark.equals("审核通过")) {
                         respone.setCode("0000");
+                    } else if (remark.equals("未审核")) {
+                        respone.setCode("1002");
                     }
                     break;
                 }
@@ -1498,13 +1500,13 @@ public class ApiUtils {
                         JSONObject partDaily = jsonArray.getJSONObject(i);
                         String msisdn = partDaily.getString("msisdn");
                         String id = partDaily.getString("id");
-                        if (childOrder.getLinkmanTel().equals(msisdn)){
+                        if (childOrder.getLinkmanTel().equals(msisdn)) {
                             String crbtStatus = partDaily.getString("crbtStatus");
-                            if (crbtStatus.equals("0")){
+                            if (crbtStatus.equals("0")) {
                                 childOrder.setIsRingtoneUser(true);
-                            }else if (crbtStatus.equals("1")){
+                            } else if (crbtStatus.equals("1")) {
                                 childOrder.setIsRingtoneUser(false);
-                            }else if (crbtStatus.equals("2")){
+                            } else if (crbtStatus.equals("2")) {
                                 childOrder.setIsRingtoneUser(false);
                             }
                         }
@@ -1624,7 +1626,7 @@ public class ApiUtils {
             }
             //联通
             if (childOrder.getOperator() == 3 && StringUtils.isNotEmpty(childOrder.getLinkmanTel())) {
-                if (!childOrder.getIsMonthly().equals(2)){
+                if (!childOrder.getIsMonthly().equals(2)) {
                     swxlApi.swxlrefreshCrbtStatus(childOrder.getLinkmanTel(), 2);
                 }
                 String phoneInfo = swxlApi.getPhoneInfo(childOrder.getLinkmanTel(), attached.getSwxlId());
@@ -1639,17 +1641,17 @@ public class ApiUtils {
                         JSONObject partDaily = jsonArray.getJSONObject(i);
                         String msisdn = partDaily.getString("msisdn");
                         String id = partDaily.getString("id");
-                        if (childOrder.getLinkmanTel().equals(msisdn)){
+                        if (childOrder.getLinkmanTel().equals(msisdn)) {
                             String monthStatus = partDaily.getString("monthStatus");
                             // 包月状态 0：已包月  1:未包月  2:未知（未包月）  3:已退订
                             // 对应状态 1.未包月/2.已包月/3.已退订
-                            if (monthStatus.equals("0")){
+                            if (monthStatus.equals("0")) {
                                 childOrder.setIsMonthly(2);
-                            }else if (monthStatus.equals("1")){
+                            } else if (monthStatus.equals("1")) {
                                 childOrder.setIsMonthly(1);
-                            }else if (monthStatus.equals("2")){
+                            } else if (monthStatus.equals("2")) {
                                 childOrder.setIsMonthly(1);
-                            }else if (monthStatus.equals("3")){
+                            } else if (monthStatus.equals("3")) {
                                 childOrder.setIsMonthly(3);
                             }
                         }
@@ -1753,7 +1755,7 @@ public class ApiUtils {
                         childOrder.setRingName(ringName);
                     }
                     childOrder.setRemark(tds.get(10).text());// 备注
-                    if (StringUtils.isNotEmpty(childOrder.getRingName()) && childOrder.getRemark().equals("无")){
+                    if (StringUtils.isNotEmpty(childOrder.getRingName()) && childOrder.getRemark().equals("无")) {
                         childOrder.setRemark("铃音设置成功");
                     }
                 }
@@ -1763,7 +1765,7 @@ public class ApiUtils {
                 if (!childOrder.getIsRingtoneUser()) {
                     swxlApi.swxlrefreshCrbtStatus(childOrder.getLinkmanTel(), 1);
                 }
-                if (!childOrder.getIsMonthly().equals(2)){
+                if (!childOrder.getIsMonthly().equals(2)) {
                     swxlApi.swxlrefreshCrbtStatus(childOrder.getLinkmanTel(), 2);
                 }
                 String phoneInfo = swxlApi.getPhoneInfo(childOrder.getLinkmanTel(), attached.getSwxlId());
@@ -1778,25 +1780,25 @@ public class ApiUtils {
                         JSONObject partDaily = jsonArray.getJSONObject(i);
                         String msisdn = partDaily.getString("msisdn");
                         String id = partDaily.getString("id");
-                        if (childOrder.getLinkmanTel().equals(msisdn)){
+                        if (childOrder.getLinkmanTel().equals(msisdn)) {
                             String monthStatus = partDaily.getString("monthStatus");
                             // 包月状态 0：已包月  1:未包月  2:未知（未包月）  3:已退订
                             // 对应状态 1.未包月/2.已包月/3.已退订
-                            if (monthStatus.equals("0")){
+                            if (monthStatus.equals("0")) {
                                 childOrder.setIsMonthly(2);
-                            }else if (monthStatus.equals("1")){
+                            } else if (monthStatus.equals("1")) {
                                 childOrder.setIsMonthly(1);
-                            }else if (monthStatus.equals("2")){
+                            } else if (monthStatus.equals("2")) {
                                 childOrder.setIsMonthly(1);
-                            }else if (monthStatus.equals("3")){
+                            } else if (monthStatus.equals("3")) {
                                 childOrder.setIsMonthly(3);
                             }
                             String crbtStatus = partDaily.getString("crbtStatus");
-                            if (crbtStatus.equals("0")){
+                            if (crbtStatus.equals("0")) {
                                 childOrder.setIsRingtoneUser(true);
-                            }else if (crbtStatus.equals("1")){
+                            } else if (crbtStatus.equals("1")) {
                                 childOrder.setIsRingtoneUser(false);
-                            }else if (crbtStatus.equals("2")){
+                            } else if (crbtStatus.equals("2")) {
                                 childOrder.setIsRingtoneUser(false);
                             }
                             String remark = partDaily.getString("remark");
@@ -1811,7 +1813,7 @@ public class ApiUtils {
                                     }
                                 }
                             }
-                            if (StringUtils.isEmpty(childOrder.getRemark())){
+                            if (StringUtils.isEmpty(childOrder.getRemark()) || childOrder.getRemark().equals("null")) {
                                 childOrder.setRemark("无");
                             }
                             childOrder.setOperateOrderId(id);
@@ -1906,7 +1908,7 @@ public class ApiUtils {
                         String moblieTel = tds.get(1).text();
                         for (int i = 0; i < mobOrders.size(); i++) {
                             ThreenetsChildOrder childOrder = mobOrders.get(i);
-                            if (childOrder.getLinkmanTel().equals(moblieTel)){
+                            if (childOrder.getLinkmanTel().equals(moblieTel)) {
                                 childOrder.setOperateOrderId(mcardApersonId);
                                 String whetherRingUser = tds.get(2).text();
                                 if ("彩铃用户".equals(whetherRingUser)) {
@@ -1933,7 +1935,7 @@ public class ApiUtils {
                                     childOrder.setRingName(ringName);
                                 }
                                 childOrder.setRemark(tds.get(10).text());// 备注
-                                if (StringUtils.isNotEmpty(childOrder.getRingName()) && childOrder.getRemark().equals("无")){
+                                if (StringUtils.isNotEmpty(childOrder.getRingName()) && childOrder.getRemark().equals("无")) {
                                     childOrder.setRemark("铃音设置成功");
                                 }
                             }
@@ -1963,21 +1965,21 @@ public class ApiUtils {
                                 String monthStatus = partDaily.getString("monthStatus");
                                 // 包月状态 0：已包月  1:未包月  2:未知（未包月）  3:已退订
                                 // 对应状态 1.未包月/2.已包月/3.已退订
-                                if (monthStatus.equals("0")){
+                                if (monthStatus.equals("0")) {
                                     childOrder.setIsMonthly(2);
-                                }else if (monthStatus.equals("1")){
+                                } else if (monthStatus.equals("1")) {
                                     childOrder.setIsMonthly(1);
-                                }else if (monthStatus.equals("2")){
+                                } else if (monthStatus.equals("2")) {
                                     childOrder.setIsMonthly(1);
-                                }else if (monthStatus.equals("3")){
+                                } else if (monthStatus.equals("3")) {
                                     childOrder.setIsMonthly(3);
                                 }
                                 String crbtStatus = partDaily.getString("crbtStatus");
-                                if (crbtStatus.equals("0")){
+                                if (crbtStatus.equals("0")) {
                                     childOrder.setIsRingtoneUser(true);
-                                }else if (crbtStatus.equals("1")){
+                                } else if (crbtStatus.equals("1")) {
                                     childOrder.setIsRingtoneUser(false);
-                                }else if (crbtStatus.equals("2")){
+                                } else if (crbtStatus.equals("2")) {
                                     childOrder.setIsRingtoneUser(false);
                                 }
                                 String remark = partDaily.getString("remark");
@@ -1992,7 +1994,7 @@ public class ApiUtils {
                                         }
                                     }
                                 }
-                                if (StringUtils.isEmpty(childOrder.getRemark())){
+                                if (StringUtils.isEmpty(childOrder.getRemark()) || childOrder.getRemark().equals("null")) {
                                     childOrder.setRemark("无");
                                 }
                                 childOrder.setOperateOrderId(id);
@@ -2159,6 +2161,10 @@ public class ApiUtils {
                             }
                             String t = temp.attr("onclick");
                             t = t.replace("showConfirm('", "").replace("');", "");
+                            if (t.contains("showConfirmHand")) {
+                                t = t.replace("showConfirmHand('", "").replace("');", "");
+                                t = t.substring(t.lastIndexOf(",") + 2);
+                            }
                             ringId = StringUtils.isEmpty(t) ? "0000" : t;
                         }
                         for (int j = 0; j < list.size(); j++) {
@@ -2347,5 +2353,18 @@ public class ApiUtils {
             e.printStackTrace();
         }
         return AjaxResult.success(ringlist, "查询成功", ringlist.size());
+    }
+
+
+    public void reactivateRing(ThreenetsRing ring, String name) {
+        try {
+            if (ring.getOperate().equals(Const.OPERATORS_MOBILE)) {
+                miguApi.reactivateRing(ring, name);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (NoLoginException e) {
+            e.printStackTrace();
+        }
     }
 }

@@ -15,7 +15,6 @@ function showTable() {
         {"data": "province"},
         {"data": "createDate"},
         {"data": "ringName"},
-        {"data": "status"},
         {"data": "isRingtoneUser"},
         {"data": "isMonthly"},
         {"data": "isVideoUser"},
@@ -38,20 +37,22 @@ function showTable() {
             }
         }
     }, {
-        targets: [8],
+        targets: [7],
         render: function (data, type, row, meta) {
             data = isNotEmpty(data) ? data : "";
-            return "<div style='text-overflow:ellipsis;overflow:hidden;white-space:nowrap;width:150px;' title='" + data + "'>" + data + "</div>";
+            // return "<div style='text-overflow:ellipsis;overflow:hidden;white-space:nowrap;width:150px;' title='" + data + "'>" + data + "</div>";
+            return data
         }
     }, {
-        targets: [9],
+        targets: [8],
         render: function (data, type, row, meta) {
             var id = row.id;
             var status = data ? '是' : '否';
-            return status + "<i onclick='refreshRingStatus(" + id + ")' class='layui-icon' title='刷新' data-rowindex='" + meta.row + "'><img src='../../client/threenets/images/refresh.png'></i>";
+            // return status + "<i onclick='refreshRingStatus(" + id + ")' class='layui-icon' title='刷新' data-rowindex='" + meta.row + "'><img src='../../client/threenets/images/refresh.png'></i>";
+            return status
         }
     }, {
-        targets: [10],
+        targets: [9],
         render: function (data, type, row, meta) {
             var status = '';
             if (data == 1) {
@@ -62,26 +63,27 @@ function showTable() {
                 status = '已退订';
             }
             var id = row.id;
-            return status + "<i onclick='refreshMonthlyStatus(" + id + ")' class='layui-icon' title='刷新'><img src='../../client/threenets/images/refresh.png'></i>";
+            //return status + "<i onclick='refreshMonthlyStatus(" + id + ")' class='layui-icon' title='刷新'><img src='../../client/threenets/images/refresh.png'></i>";
+            return status;
         }
     }, {
-        targets: [11],
+        targets: [10],
         render: function (data, type, row, meta) {
             var operator = row.operator;
             var id = row.id;
             var status = data ? '是' : '否'
-            return status + (operator == 1 ? "<i onclick='refreshVideoRingStatus(" + id + ")' class='layui-icon' title='刷新'><img src='../../client/threenets/images/refresh.png'></i>" : '');
+            //return status + (operator == 1 ? "<i onclick='refreshVideoRingStatus(" + id + ")' class='layui-icon' title='刷新'><img src='../../client/threenets/images/refresh.png'></i>" : '');
+            return status;
         }
     }, {
-        targets: [12],
+        targets: [11],
         render: function (data, type, row, meta) {
             data = isNotEmpty(data) ? data : "";
             return "<div style='width:150px;' title='" + data + "'>" + data + "</div>";
         }
     }, {
-        targets: [13],
+        targets: [12],
         render: function (data, type, row, meta) {
-            console.log(row.isExemptSms)
             var id = row.id;
             var operator = row.operator;
             var isMonthly = row.isMonthly;
@@ -90,11 +92,11 @@ function showTable() {
             var note = "<i onclick='sendMessage(2,1," + id + ");' class='layui-icon' title='下发短信'><img src='../../client/threenets/images/message.png'></i>";
             var linkNote = "<i onclick='sendMessage(2,2," + id + ");' class='layui-icon' title='下发链接短信'><img src='../../client/threenets/images/link.png'></i>";
             var del = "<i class='layui-icon layui-icon-delete' title='删除' onclick='deleteTel(" + id + ")'></i>";
-            if (row.isExemptSms){
-                var open  = "<i onclick='openingBusiness(" + id + ");' class='layui-icon layui-icon-auz' title='开通业务'></i>"
-                return refresh +open+ (isMonthly == 2 ? setRing : '')  + del;
+            if (row.isExemptSms) {
+                var open = "<i onclick='openingBusiness(" + id + ");' class='layui-icon layui-icon-auz' title='开通业务'></i>"
+                return refresh + open + (isMonthly == 2 ? setRing : '') + del;
             }
-            if (operator == 2){
+            if (operator == 2) {
                 return refresh + setRing + del;
             }
             return refresh + (isMonthly != 2 ? note : '') + (isMonthly == 2 ? setRing : '') + (operator == 3 && isMonthly == 1 ? linkNote : '') + del;
@@ -120,11 +122,11 @@ function refreshStatus(id) {
 }
 
 function batchRefresh() {
-    refresh("/threenets/refreshUserStatus/all", $('#parentOrderId').val());
+    bRefresh("/threenets/refreshUserStatus/all", $('#parentOrderId').val());
 }
 
 function openingBusiness(id) {
-    AjaxPut("/threenets/openingBusiness/"+id, {}, function (res) {
+    AjaxPut("/threenets/openingBusiness/" + id, {}, function (res) {
         if (res.code == 200 && res.data) {
             layer.msg('更新成功！', {icon: 6, time: 3000});
             $("#set").DataTable().ajax.reload(null, false);
@@ -135,10 +137,28 @@ function openingBusiness(id) {
 }
 
 function refresh(url, id) {
-    AjaxPut(url, {id:id}, function (res) {
+    AjaxPut(url, {id: id}, function (res) {
         if (res.code == 200) {
             layer.msg('更新成功！', {icon: 6, time: 3000});
             $("#set").DataTable().ajax.reload(null, false);
+        } else if (res.code == 501) {
+            layer.msg(res.msg, {icon: 5, time: 3000});
+            setTimeout(function () {
+                showTable();
+            }, 3000)
+        } else {
+            layer.msg(res.msg, {icon: 5, time: 3000});
+        }
+    });
+}
+
+function bRefresh(url, id) {
+    AjaxPut(url, {id: id}, function (res) {
+        if (res.code == 200) {
+            layer.msg('更新成功！', {icon: 6, time: 3000});
+            setTimeout(function () {
+                showTable();
+            }, 3000)
         } else {
             layer.msg(res.msg, {icon: 5, time: 3000});
         }

@@ -25,6 +25,7 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.utils.URLEncodedUtils;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.mime.MultipartEntity;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
@@ -44,6 +45,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
+import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.util.*;
 
@@ -84,6 +86,7 @@ public class MiguApi implements Serializable {
     public static String refreshRingOrder_url = "http://211.137.107.18:8888/cm/groupInfo!findList.action";
     public static String toolbox_userInfo_url = "http://211.137.107.18:8888/qycl/platform/platform!getUserInfo.action";
     public static String findCircleMsgList = "http://211.137.107.18:8888/cm/groupInfo!findCircleMsgList.action";  //查看消息
+    public static String ringRetryHandOut_url = "http://211.137.107.18:8888/cm/cmCircleRing!ringRetryHandOut.action";
 
 
     public String USER_NAME = "中高俊聪";// 帐号
@@ -167,23 +170,27 @@ public class MiguApi implements Serializable {
     public boolean loginAuto() throws NoLoginException, IOException {
         Subject currentUser = org.apache.shiro.SecurityUtils.getSubject();
         String userId = currentUser.getPrincipal().toString();
-        String code = getCodeString();
+        boolean flag = true;
         int i = 0;
-        boolean flag = login(code, userId);
-        if (!flag && i < 3) {
+        while (flag) {
+            flag = !login(getCodeString(), userId);
             i++;
-            this.loginAuto();
+            if (i > 3) {
+                break;
+            }
         }
         return flag;
     }
 
-    public boolean loginAutoParam(String userId) throws NoLoginException, IOException {
-        String code = getCodeString();
-        boolean flag = login(code, userId);
+    public boolean loginAutoParam(String userName) throws NoLoginException, IOException {
+        boolean flag = true;
         int i = 0;
-        if (!flag && i < 3) {
+        while (flag) {
+            flag = !login(getCodeString(), userName);
             i++;
-            this.loginAutoParam(userId);
+            if (i > 3) {
+                break;
+            }
         }
         return flag;
     }
@@ -325,7 +332,8 @@ public class MiguApi implements Serializable {
         try {
             HttpEntity resEntity = response.getEntity();
             String s = EntityUtils.toString(resEntity);
-            log.info("移动登录结果--->");
+            log.info("移动登录结果--->", s);
+            System.out.println(s);
             isSuccess = !s.contains("输入错误");
             // 获取登录cookie
             if (isSuccess) {
@@ -395,7 +403,7 @@ public class MiguApi implements Serializable {
         return result;
     }
 
-    public String updatePhoneInfo(String tel,String operateId) throws NoLoginException ,IOException{
+    public String updatePhoneInfo(String tel, String operateId) throws NoLoginException, IOException {
         String getUrl = getPhonePage_url + "?provinceCode=&phoneNoOrName=" + tel + "&groupId=" + operateId + "&groupName=&freezeStatus=-1&payType=0&pageView.currentpage=1";
         String result = sendGet(getUrl);
         log.info("移动获取铃音列表页面 参数：{},{}", tel, operateId);
@@ -501,8 +509,7 @@ public class MiguApi implements Serializable {
         formparams.add(new BasicNameValuePair("data", phones));
         formparams.add(new BasicNameValuePair("payType", "0"));
         formparams.add(new BasicNameValuePair("allFlag", ""));
-        String vcode = getCreateSHCodeString();
-        formparams.add(new BasicNameValuePair("vcode", vcode));
+        formparams.add(new BasicNameValuePair("vcode", getCreateSHCodeString()));
         UrlEncodedFormEntity entity = new UrlEncodedFormEntity(formparams, "utf-8");
         httppost.setEntity(entity);
         CloseableHttpResponse response = httpclient.execute(httppost);
@@ -550,11 +557,6 @@ public class MiguApi implements Serializable {
             httpGet.abort();
             response.close();
         }
-        //如果返回登录页面则进行重新登录之后在进行接口访问
-        if (result.contains("nologin.html")){
-            loginAuto();
-            sendGet(getUrl);
-        }
         return result;
     }
 
@@ -592,10 +594,6 @@ public class MiguApi implements Serializable {
             } catch (IOException e) {
                 log.error("response.close(); 错误信息", e);
             }
-        }
-        if (result.contains("nologin.html")){
-            loginAuto();
-            sendPost(paramMap,url);
         }
         return result;
     }
@@ -648,9 +646,9 @@ public class MiguApi implements Serializable {
         try {
             HttpEntity resEntity = response.getEntity();
             String result = EntityUtils.toString(resEntity);
-            if (result.contains("loginForm")){
+            if (result.contains("loginForm")) {
                 loginAuto();
-                add1(ringOrder,attached);
+                add1(ringOrder, attached);
             }
             log.info("移动商户建立=>");
             this.setMiguCookie(this.getCookieStore());
@@ -699,9 +697,9 @@ public class MiguApi implements Serializable {
         try {
             HttpEntity resEntity = response.getEntity();
             result = EntityUtils.toString(resEntity);
-            if (result.contains("loginForm")){
+            if (result.contains("loginForm")) {
                 loginAuto();
-                saveRing(ring,trade);
+                saveRing(ring, trade);
             }
             this.setMiguCookie(this.getCookieStore());
             int statusCode = response.getStatusLine().getStatusCode();
@@ -752,9 +750,9 @@ public class MiguApi implements Serializable {
             HttpResponse response = httpclient.execute(httppost);
             HttpEntity resEntity = response.getEntity();
             String result = EntityUtils.toString(resEntity);
-            if (result.contains("loginForm")){
+            if (result.contains("loginForm")) {
                 loginAuto();
-                addPhone(data,circleID);
+                addPhone(data, circleID);
             }
             miguAddPhoneRespone = (MiguAddPhoneRespone) JsonUtil.getObject4JsonString(result, MiguAddPhoneRespone.class);
             JSONObject jsonObject = JSONObject.fromObject(result);
@@ -877,6 +875,22 @@ public class MiguApi implements Serializable {
         map.put("circleId", migu_id);
         String result = sendPost(map, findCircleMsgList);
         log.info("商户列表-->处理信息 参数：{}", migu_id);
+        return result;
+    }
+
+    /**
+     * 重新激活铃音
+     * @param ring
+     * @param name
+     * @return
+     * @throws IOException
+     * @throws NoLoginException
+     */
+    public String reactivateRing(ThreenetsRing ring,String name) throws IOException, NoLoginException {
+        String groupName = URLEncoder.encode(name, "utf-8");
+        String getUrl = ringRetryHandOut_url + "?ringID=" + ring.getOperateRingId() + "&circleID=" + ring.getOperateId() + "&groupName=" + groupName;
+        String result = sendGet(getUrl);
+        log.info("移动铃音重新激活 参数：{}", ring.getRingName());
         return result;
     }
 }

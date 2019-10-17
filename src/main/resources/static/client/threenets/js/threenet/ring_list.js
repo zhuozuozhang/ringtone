@@ -91,8 +91,12 @@ function showTable() {
             var ringStatus = row.ringStatus;
             var operate = row.operate;
             var setRing = "";
+            var reactivate = '';
             if(ringStatus == 3 || ringStatus == 4 || ringStatus == 5){
                 setRing = "<a href='/threenets/toSetingRing/"+id+"/"+operate+"/" + $("#orderId").val() + "/" + $("#companyName").val()+ "'><i class='layui-icon layui-icon-set' title='设置铃音'></i></a>";
+            }
+            if (operate ==  1 && ringStatus == 6){
+                reactivate = '<i class="layui-icon layui-icon-refresh" title="重新激活" onclick="reactivateRing(' + id + ')"></i>';
             }
             return '<i class="layui-icon" title="复制铃音" onclick="cloneRing(' + id + ')"><img src="../../client/threenets/images/copy.png" alt=""></i>' +
                 '<a href="/threenets/downloadRing/' + id + '"><i class="layui-icon layui-icon-download-circle" title="下载铃音"></i></a>' +
@@ -154,6 +158,20 @@ function cloneRing(id) {
         btn: ["确定", "取消"] //按钮
     }, function () {
         AjaxPost("/threenets/cloneRing/" + id, {}, function (result) {
+            layer.closeAll('dialog');//关闭弹层
+            layer.msg(result.msg + "!", {icon: result.code == 500 ? 2 : 1, time: 1000});
+            $("#set").DataTable().ajax.reload(null, false);
+        })
+    }, function () {
+    });
+}
+
+//克隆铃音
+function reactivateRing(id) {
+    layer.confirm("是否重新激活铃音?", {
+        btn: ["确定", "取消"] //按钮
+    }, function () {
+        AjaxPost("/threenets/reactivateRing/" + id, {}, function (result) {
             layer.closeAll('dialog');//关闭弹层
             layer.msg(result.msg + "!", {icon: result.code == 500 ? 2 : 1, time: 1000});
             $("#set").DataTable().ajax.reload(null, false);

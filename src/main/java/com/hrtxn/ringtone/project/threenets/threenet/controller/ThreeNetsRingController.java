@@ -278,4 +278,20 @@ public class ThreeNetsRingController {
         return AjaxResult.error("获取数据失败！");
     }
 
+    /**
+     * 铃音重新激活
+     *
+     * @param id
+     * @return
+     */
+    @PostMapping("/threenets/reactivateRing/{id}")
+    @ResponseBody
+    public AjaxResult reactivateRing(@PathVariable Integer id) {
+        try {
+            threeNetsRingService.reactivateRing(id);
+        } catch (Exception e) {
+            log.error("获取设置铃音激活成功铃音数据 方法：getThreeNetsRingSetingList 错误信息：", e);
+        }
+        return AjaxResult.error("获取数据失败！");
+    }
 }

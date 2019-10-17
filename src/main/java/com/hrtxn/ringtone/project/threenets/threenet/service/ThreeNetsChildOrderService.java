@@ -605,10 +605,18 @@ public class ThreeNetsChildOrderService {
                 return AjaxResult.error("查询不到数据！");
             }
             if (threenetsChildOrder.getStatus().equals(Const.FAILURE_REVIEW)){
-                return AjaxResult.error("当前成员已在其他商户中存在，请在运营商处删除对应号码！");
+                if (threenetsChildOrder.getOperator().equals(Const.OPERATORS_TELECOM)){
+                    return AjaxResult.error(501,"当前成员已在其他商户中存在，请在运营商处删除对应号码！");
+                }else{
+                    return AjaxResult.error("当前成员已在其他商户中存在，请在运营商处删除对应号码！");
+                }
             }
             if (threenetsChildOrder.getStatus().equals(Const.PENDING_REVIEW)){
-                return AjaxResult.error("成员正在同步添加，请稍后再试！");
+                if (threenetsChildOrder.getOperator().equals(Const.OPERATORS_TELECOM)){
+                    return AjaxResult.error(501,"成员正在同步添加，请稍后再试！");
+                }else{
+                    return AjaxResult.error("成员正在同步添加，请稍后再试！");
+                }
             }
             if (type.equals(Const.UPDATE_STATUS_RING)) {
                 threenetsChildOrder = apiUtils.refreshRingStatus(threenetsChildOrder);

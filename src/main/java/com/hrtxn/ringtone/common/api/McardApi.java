@@ -337,6 +337,8 @@ public class McardApi {
             map.put("industry", "1");
             map.put("isUnifyPay", "2");
             map.put("unifyPayPhone", "");
+            //刷新验证码，以保证第二次获取的是最新的验证码
+            getCodeString(attached.getMcardDistributorId());
             map.put("imageCode", getCodeString(attached.getMcardDistributorId()));
             map.put("auserBlicencePath", attached.getBusinessLicense());
             map.put("auserFilePath", attached.getConfirmLetter());
