@@ -3,8 +3,8 @@
 function showDistributorTable() {
     var param = {
         "id": $("#id").val(),
-        "distributorName" : $("#distributorName").val().trim(),
-        "phoneNum" : $("#phoneNum").val().trim()
+        "distributorName" : $("#distributorName").val().trim()
+        // "phoneNum" : $("#phoneNum").val().trim()
     }
     var columns = [
         {"data": null},

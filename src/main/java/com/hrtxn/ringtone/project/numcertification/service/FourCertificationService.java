@@ -61,6 +61,7 @@ public class FourCertificationService {
         fourcertificationOrder.setDelFlag("0");
         fourcertificationOrder.setCreateTime(new Date());
         fourcertificationOrder.setUserId(ShiroUtils.getSysUser().getId());
+        fourcertificationOrder.setAvailability("1");
         fourcertificationOrderMapper.insert(fourcertificationOrder);
         return AjaxResult.success("预占申请成功！");
     }
@@ -88,6 +89,40 @@ public class FourCertificationService {
         }
         return AjaxResult.success("预占申请成功！");
     }
+
+
+    /**
+     * 模板申请
+     * @return
+     */
+    public AjaxResult commit(FourcertificationOrder fourcertificationOrder){
+        try {
+            if (StringUtils.isNull(fourcertificationOrder)) {
+                return AjaxResult.error();
+            }
+
+            //预占申请中
+            fourcertificationOrder.setStatus(Const.FOUR_ORDER_SUBMIT_NEW);
+            fourcertificationOrder.setCreateTime(new Date());
+            fourcertificationOrder.setUserId(ShiroUtils.getSysUser().getId());
+            fourcertificationOrderMapper.update(fourcertificationOrder);
+            fourcertificationOrder = fourcertificationOrderMapper.selectByPrimaryKey((long)fourcertificationOrder.getId());
+
+            String result =  numApi.submit(fourcertificationOrder);
+            if(!"0".equals(result)){
+                FourcertificationOrder f = new FourcertificationOrder();
+                f.setId(fourcertificationOrder.getId());
+                f.setRemarks(result);
+                fourcertificationOrderMapper.update(f);
+                return AjaxResult.error(result);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return AjaxResult.success("预占申请成功！");
+    }
+
 
 
     public AjaxResult ApplyTemplate(FourcertificationOrder fourcertificationOrder){

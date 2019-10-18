@@ -113,6 +113,18 @@ public class NumCertificationController {
     }
 
     /**
+     * 申请模板
+     *
+     * @author zcy
+     * @date 2019-8-30 11:40
+     */
+    @PostMapping("/commit")
+    @ResponseBody
+    public AjaxResult commit(FourcertificationOrder fourcertificationOrder) {
+        return fourCertificationService.commit(fourcertificationOrder);
+    }
+
+    /**
      * 跳转到
      *
      * @author zcy

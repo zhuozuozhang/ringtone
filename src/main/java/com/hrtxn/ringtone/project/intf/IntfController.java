@@ -12,6 +12,7 @@ import com.hrtxn.ringtone.project.numcertification.domain.NumcertificationOrder;
 import com.hrtxn.ringtone.project.numcertification.service.FourCertificationService;
 import com.hrtxn.ringtone.project.numcertification.service.NumCertificationService;
 import com.hrtxn.ringtone.project.threenets.kedas.kedasites.json.KedaBaseResult;
+import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -37,18 +38,22 @@ public class IntfController {
 
 
     @RequestMapping("/jsjt")
+    @ResponseBody
     public String receive(HttpServletRequest request, HttpServletResponse response,@RequestBody String body){
 
         String account = request.getParameter("account");
-        if(Const.PREEMPTION_RESULT.equals(account)){
+
+        JSONObject jsonObject = JSONObject.fromObject(body);
+        String infoType = jsonObject.get("infoType").toString();
+        if("occupy_audit".equals(infoType)){
             //预占结果通知
             preemptionResult(request,body);
-        }else if(Const.TEMPLATE_GENERATION_RESULT.equals(account)){
+        }else if("material_template".equals(infoType)){
             //资料模板生成完成通知
             templateResult(request,body);
-        }else if(Const.EXAMINE_RESULT.equals(account)){
+        }else if("material_audit".equals(infoType)){
             //资料审核通知
-
+            examineResult(request,body);
         }
 
 

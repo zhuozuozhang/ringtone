@@ -53,8 +53,8 @@ public class NumApi {
 
     public static String cgiToken = null;
 
-    @Value("${ringtone.profile-url}")
-    private String profileUrl;
+//    @Value("${ringtone.profile-url}")
+    private String profileUrl = "http://127.0.0.1/";
 
     public AjaxResult getCgiToken() throws IOException {
         HashMap map = new HashMap();
@@ -209,15 +209,11 @@ public class NumApi {
          log.info("获取数据结果{}", result);
          JSONObject jsonObject = JSONObject.fromObject(result);
          String code = jsonObject.get("code").toString();
-         if("0".equals(jsonObject.get("code").toString())){
-            String data = jsonObject.get("data").toString();
-            if(StringUtils.isNotEmpty(data)){
-                JSONObject dataObject = JSONObject.fromObject(data);
-                String taskId = dataObject.get("taskId").toString();
-                return taskId;
-            }
+         if("0".equals(code)){
+             return code;
+         }else{
+             return jsonObject.get("msg").toString();
          }
-         return jsonObject.get("code").toString();
      }
 
     public HashMap buildMap(FourcertificationOrder fourcertificationOrder){
@@ -244,19 +240,16 @@ public class NumApi {
         log.info("获取数据结果{}", result);
         JSONObject jsonObject = JSONObject.fromObject(result);
         String code = jsonObject.get("code").toString();
-        if("0".equals(jsonObject.get("code").toString())){
-            String data = jsonObject.get("data").toString();
-            if(StringUtils.isNotEmpty(data)){
-                JSONObject dataObject = JSONObject.fromObject(data);
-                String taskId = dataObject.get("taskId").toString();
-                return taskId;
-            }
+        if("0".equals(code)){
+            return code;
+        }else{
+            return jsonObject.get("msg").toString();
         }
-        return jsonObject.get("code").toString();
     }
 
     public HashMap buildSubmitMap(FourcertificationOrder four){
         HashMap<String,String> map = new HashMap();
+        map.put("numberCode",four.getApplyNumber());
         map.put("corpSocietyNo",four.getCorpSocietyNo());
         map.put("corpBusinessScope",four.getCorpBusinessScope());
         //企业注册地省份主键

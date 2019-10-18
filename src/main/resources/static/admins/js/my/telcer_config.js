@@ -78,9 +78,6 @@ layui.use(['form','layer'], function(){
         return false;
     });
 });
-function abc() {
-    alert("lala");
-}
 //添加号码认证业务
 function addTelCerService(title, url, w, h){
     layer.open({

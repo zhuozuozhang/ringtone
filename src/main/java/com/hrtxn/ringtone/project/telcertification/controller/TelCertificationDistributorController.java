@@ -56,4 +56,21 @@ public class TelCertificationDistributorController {
         return telCertificationDistributorService.getTelCerDistributor(page, request);
     }
 
+    /**
+     * 获取月统计
+     *
+     * @param request
+     * @return
+     */
+//    @PostMapping("/getServiceDate")
+//    @ResponseBody
+//    public AjaxResult getServiceDate(BaseRequest request) {
+//        try {
+//            return telCertificationDistributorService.getMonthData(request);
+//        } catch (Exception e) {
+//            log.error("获取月统计 方法：getServiceDate 错误信息", e);
+//        }
+//        return null;
+//    }
+
 }
