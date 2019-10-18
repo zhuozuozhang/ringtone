@@ -684,12 +684,12 @@ function addTelCerMerchants(){
     }
     if($("#telLinkNameAdd").html() > 0 || $("#telLinkNameAdd").val() == ""){
         $("#telLinkNameAdd").focus();
-        layer.msg("请填写联系人姓名")
+        layer.msg("请填写联系人姓名");
         return;
     }
     if($("#telLinkPhoneAdd").html() > 0 || $("#telLinkPhoneAdd").val() == ""){
         $("#telLinkPhoneAdd").focus();
-        layer.msg("请填写联系人电话")
+        layer.msg("请填写联系人电话");
         return;
     }
     if($("#telContentAdd").html() > 0 || $("#telContentAdd").val() == ""){

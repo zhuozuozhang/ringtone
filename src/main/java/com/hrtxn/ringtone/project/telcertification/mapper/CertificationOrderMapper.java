@@ -92,4 +92,15 @@ public interface CertificationOrderMapper {
      * @return
      */
     List<CertificationOrder> isRepetitionByTelLinkPhone(@Param("telLinkPhone") String telLinkPhone);
+
+    /**
+     * 获取挂机短信累计金额
+     * @param userId
+     * @return
+     */
+    List<CertificationOrder> gethangUpListsAll(Integer userId);
+
+    List<CertificationOrder> getHangUpListsTheMonth(Integer userId);
+
+    List<CertificationOrder> getHangUpListsToday(Integer userId);
 }

@@ -25,10 +25,10 @@
       AND ttdi.distributor_id = #{param.distributorId}
     </if>
     <if test="param.name != null and param.name != ''">
-      AND ttdi.distributor_name = #{param.name}
+      AND ttdi.distributor_name like '%${param.name}%'
     </if>
     <if test="param.phoneNum != null and param.phoneNum !=''">
-      AND ttco.tel_child_order_phone =#{param.phoneNum}
+      AND ttco.tel_child_order_phone = #{param.phoneNum}
     </if>
   </sql>
 
@@ -49,80 +49,110 @@
 
   <select id="getServiceNum" resultMap="BaseResultMap" parameterType="int">
 SELECT COUNT(*) AS 'total',
-(SELECT COUNT(id) FROM `tb_telcertification_order` WHERE
-id IN (SELECT parent_order_id FROM `tb_telcertification_child_order` son LEFT JOIN `tb_telcertification_order` fa ON son.parent_order_id = fa.id WHERE son.tel_child_order_status = 2 OR son.tel_child_order_status = 5)
+(SELECT COUNT(*) FROM `tb_telcertification_child_order` son LEFT JOIN `tb_telcertification_order` fa ON son.parent_order_id = fa.id
+WHERE (son.tel_child_order_status = 2 OR son.tel_child_order_status = 5)
 AND product_name LIKE '%泰迪熊%') AS 'teddy_num',
-(SELECT COUNT(id) FROM `tb_telcertification_order` WHERE
-id IN (SELECT parent_order_id FROM `tb_telcertification_child_order` son LEFT JOIN `tb_telcertification_order` fa ON son.parent_order_id = fa.id WHERE son.tel_child_order_status = 2 OR son.tel_child_order_status = 5)
+
+(SELECT COUNT(*) FROM `tb_telcertification_child_order` son LEFT JOIN `tb_telcertification_order` fa ON son.parent_order_id = fa.id
+WHERE (son.tel_child_order_status = 2 OR son.tel_child_order_status = 5)
 AND product_name LIKE '%电话邦%') AS 'tel_bond_num',
 
-(SELECT COUNT(id) FROM `tb_telcertification_order` WHERE
-id IN (SELECT parent_order_id FROM `tb_telcertification_child_order` son LEFT JOIN `tb_telcertification_order` fa ON son.parent_order_id = fa.id WHERE son.tel_child_order_status = 2 OR son.tel_child_order_status = 5)
+(SELECT COUNT(*) FROM `tb_telcertification_child_order` son LEFT JOIN `tb_telcertification_order` fa ON son.parent_order_id = fa.id
+WHERE (son.tel_child_order_status = 2 OR son.tel_child_order_status = 5)
 AND product_name LIKE '%彩印%') AS 'color_print_num',
 
-(SELECT COUNT(id) FROM `tb_telcertification_order` WHERE
-id IN (SELECT parent_order_id FROM `tb_telcertification_child_order` son LEFT JOIN `tb_telcertification_order` fa ON son.parent_order_id = fa.id WHERE son.tel_child_order_status = 2 OR son.tel_child_order_status = 5)
+(SELECT COUNT(*) FROM `tb_telcertification_child_order` son LEFT JOIN `tb_telcertification_order` fa ON son.parent_order_id = fa.id
+WHERE (son.tel_child_order_status = 2 OR son.tel_child_order_status = 5)
 AND product_name LIKE '%挂机短信%') AS 'hangup_message_num'
-FROM `tb_telcertification_order`
-
+FROM `tb_telcertification_order` fa RIGHT JOIN `tb_telcertification_child_order` son ON son.parent_order_id = fa.id
 WHERE product_name IS NOT NULL
-AND id IN (SELECT parent_order_id FROM `tb_telcertification_child_order` son LEFT JOIN `tb_telcertification_order` fa ON son.parent_order_id = fa.id WHERE son.tel_child_order_status = 2 OR son.tel_child_order_status = 5)
+AND (son.tel_child_order_status = 2 OR son.tel_child_order_status = 5)
 AND user_id =  #{userId,jdbcType=INTEGER}
   </select>
 
-  <select id="getTheMonthService" parameterType="int" resultMap="BaseResultMap">
+  <select id="getLastMonth" resultMap="BaseResultMap" parameterType="int">
 SELECT COUNT(*) AS 'total',
-(SELECT COUNT(id) FROM `tb_telcertification_order`
-WHERE id IN (SELECT parent_order_id FROM `tb_telcertification_child_order` son LEFT JOIN `tb_telcertification_order` fa ON son.parent_order_id = fa.id
-WHERE DATE_FORMAT( son.tel_child_order_ctime, '%Y%m' ) = DATE_FORMAT( CURDATE( ) , '%Y%m' ) AND (son.tel_child_order_status = 2 OR son.tel_child_order_status = 5))
+(SELECT COUNT(*) FROM `tb_telcertification_child_order` son LEFT JOIN `tb_telcertification_order` fa ON son.parent_order_id = fa.id
+WHERE (son.tel_child_order_status = 2 OR son.tel_child_order_status = 5)
+AND PERIOD_DIFF( DATE_FORMAT( NOW( ) , '%Y%m' ) , DATE_FORMAT( son.tel_child_order_ctime, '%Y%m' ) ) =1
 AND product_name LIKE '%泰迪熊%') AS 'teddy_num',
-(SELECT COUNT(id) FROM `tb_telcertification_order`
-WHERE id IN (SELECT parent_order_id FROM `tb_telcertification_child_order` son LEFT JOIN `tb_telcertification_order` fa ON son.parent_order_id = fa.id
-WHERE DATE_FORMAT( son.tel_child_order_ctime, '%Y%m' ) = DATE_FORMAT( CURDATE( ) , '%Y%m' ) AND (son.tel_child_order_status = 2 OR son.tel_child_order_status = 5))
+
+(SELECT COUNT(*) FROM `tb_telcertification_child_order` son LEFT JOIN `tb_telcertification_order` fa ON son.parent_order_id = fa.id
+WHERE (son.tel_child_order_status = 2 OR son.tel_child_order_status = 5)
+AND PERIOD_DIFF( DATE_FORMAT( NOW( ) , '%Y%m' ) , DATE_FORMAT( son.tel_child_order_ctime, '%Y%m' ) ) =1
 AND product_name LIKE '%电话邦%') AS 'tel_bond_num',
 
-(SELECT COUNT(id) FROM `tb_telcertification_order`
-WHERE id IN (SELECT parent_order_id FROM `tb_telcertification_child_order` son LEFT JOIN `tb_telcertification_order` fa ON son.parent_order_id = fa.id
-WHERE DATE_FORMAT( son.tel_child_order_ctime, '%Y%m' ) = DATE_FORMAT( CURDATE( ) , '%Y%m' ) AND (son.tel_child_order_status = 2 OR son.tel_child_order_status = 5))
+(SELECT COUNT(*) FROM `tb_telcertification_child_order` son LEFT JOIN `tb_telcertification_order` fa ON son.parent_order_id = fa.id
+WHERE (son.tel_child_order_status = 2 OR son.tel_child_order_status = 5)
+AND PERIOD_DIFF( DATE_FORMAT( NOW( ) , '%Y%m' ) , DATE_FORMAT( son.tel_child_order_ctime, '%Y%m' ) ) =1
 AND product_name LIKE '%彩印%') AS 'color_print_num',
 
-(SELECT COUNT(id) FROM `tb_telcertification_order`
-WHERE id IN (SELECT parent_order_id FROM `tb_telcertification_child_order` son LEFT JOIN `tb_telcertification_order` fa ON son.parent_order_id = fa.id
-WHERE DATE_FORMAT( son.tel_child_order_ctime, '%Y%m' ) = DATE_FORMAT( CURDATE( ) , '%Y%m' ) AND (son.tel_child_order_status = 2 OR son.tel_child_order_status = 5))
+(SELECT COUNT(*) FROM `tb_telcertification_child_order` son LEFT JOIN `tb_telcertification_order` fa ON son.parent_order_id = fa.id
+WHERE (son.tel_child_order_status = 2 OR son.tel_child_order_status = 5)
+AND PERIOD_DIFF( DATE_FORMAT( NOW( ) , '%Y%m' ) , DATE_FORMAT( son.tel_child_order_ctime, '%Y%m' ) ) =1
 AND product_name LIKE '%挂机短信%') AS 'hangup_message_num'
-FROM `tb_telcertification_order`
-
+FROM `tb_telcertification_order` fa RIGHT JOIN `tb_telcertification_child_order` son ON son.parent_order_id = fa.id
 WHERE product_name IS NOT NULL
-AND id IN (SELECT parent_order_id FROM `tb_telcertification_child_order` son LEFT JOIN `tb_telcertification_order` fa ON son.parent_order_id = fa.id
-WHERE son.tel_child_order_status = 2 OR son.tel_child_order_status = 5)
+AND (son.tel_child_order_status = 2 OR son.tel_child_order_status = 5)
+AND PERIOD_DIFF( DATE_FORMAT( NOW( ) , '%Y%m' ) , DATE_FORMAT( son.tel_child_order_ctime, '%Y%m' ) ) =1
+AND user_id =  #{userId,jdbcType=INTEGER}
+  </select>
+
+<!--  获取当月统计数据-->
+  <select id="getTheMonthService" parameterType="int" resultMap="BaseResultMap">
+SELECT COUNT(*) AS 'total',
+(SELECT COUNT(*) FROM `tb_telcertification_child_order` son LEFT JOIN `tb_telcertification_order` fa ON son.parent_order_id = fa.id
+WHERE (son.tel_child_order_status = 2 OR son.tel_child_order_status = 5)
+AND DATE_FORMAT( son.tel_child_order_ctime, '%Y%m' ) = DATE_FORMAT( CURDATE( ) , '%Y%m' )
+AND product_name LIKE '%泰迪熊%') AS 'teddy_num',
+
+(SELECT COUNT(*) FROM `tb_telcertification_child_order` son LEFT JOIN `tb_telcertification_order` fa ON son.parent_order_id = fa.id
+WHERE (son.tel_child_order_status = 2 OR son.tel_child_order_status = 5)
+AND DATE_FORMAT( son.tel_child_order_ctime, '%Y%m' ) = DATE_FORMAT( CURDATE( ) , '%Y%m' )
+AND product_name LIKE '%电话邦%') AS 'tel_bond_num',
+
+(SELECT COUNT(*) FROM `tb_telcertification_child_order` son LEFT JOIN `tb_telcertification_order` fa ON son.parent_order_id = fa.id
+WHERE (son.tel_child_order_status = 2 OR son.tel_child_order_status = 5)
+AND DATE_FORMAT( son.tel_child_order_ctime, '%Y%m' ) = DATE_FORMAT( CURDATE( ) , '%Y%m' )
+AND product_name LIKE '%彩印%') AS 'color_print_num',
+
+(SELECT COUNT(*) FROM `tb_telcertification_child_order` son LEFT JOIN `tb_telcertification_order` fa ON son.parent_order_id = fa.id
+WHERE (son.tel_child_order_status = 2 OR son.tel_child_order_status = 5)
+AND DATE_FORMAT( son.tel_child_order_ctime, '%Y%m' ) = DATE_FORMAT( CURDATE( ) , '%Y%m' )
+AND product_name LIKE '%挂机短信%') AS 'hangup_message_num'
+FROM `tb_telcertification_order` fa RIGHT JOIN `tb_telcertification_child_order` son ON son.parent_order_id = fa.id
+WHERE product_name IS NOT NULL
+AND (son.tel_child_order_status = 2 OR son.tel_child_order_status = 5)
+AND DATE_FORMAT( son.tel_child_order_ctime, '%Y%m' ) = DATE_FORMAT( CURDATE( ) , '%Y%m' )
 AND user_id =  #{userId,jdbcType=INTEGER}
   </select>
 
   <select id="getTodayService" parameterType="int" resultMap="BaseResultMap">
-    SELECT COUNT(*) AS 'total',
-(SELECT COUNT(id) FROM `tb_telcertification_order`
-WHERE id IN (SELECT parent_order_id FROM `tb_telcertification_child_order` son LEFT JOIN `tb_telcertification_order` fa ON son.parent_order_id = fa.id
-WHERE TO_DAYS(son.tel_child_order_ctime) = TO_DAYS(NOW()) AND (son.tel_child_order_status = 2 OR son.tel_child_order_status = 5))
+
+SELECT COUNT(*) AS 'total',
+(SELECT COUNT(*) FROM `tb_telcertification_child_order` son LEFT JOIN `tb_telcertification_order` fa ON son.parent_order_id = fa.id
+WHERE (son.tel_child_order_status = 2 OR son.tel_child_order_status = 5)
+AND TO_DAYS(son.tel_child_order_ctime) = TO_DAYS(NOW())
 AND product_name LIKE '%泰迪熊%') AS 'teddy_num',
-(SELECT COUNT(id) FROM `tb_telcertification_order`
-WHERE id IN (SELECT parent_order_id FROM `tb_telcertification_child_order` son LEFT JOIN `tb_telcertification_order` fa ON son.parent_order_id = fa.id
-WHERE TO_DAYS(son.tel_child_order_ctime) = TO_DAYS(NOW()) AND (son.tel_child_order_status = 2 OR son.tel_child_order_status = 5))
+
+(SELECT COUNT(*) FROM `tb_telcertification_child_order` son LEFT JOIN `tb_telcertification_order` fa ON son.parent_order_id = fa.id
+WHERE (son.tel_child_order_status = 2 OR son.tel_child_order_status = 5)
+AND TO_DAYS(son.tel_child_order_ctime) = TO_DAYS(NOW())
 AND product_name LIKE '%电话邦%') AS 'tel_bond_num',
 
-(SELECT COUNT(id) FROM `tb_telcertification_order`
-WHERE id IN (SELECT parent_order_id FROM `tb_telcertification_child_order` son LEFT JOIN `tb_telcertification_order` fa ON son.parent_order_id = fa.id
-WHERE TO_DAYS(son.tel_child_order_ctime) = TO_DAYS(NOW()) AND (son.tel_child_order_status = 2 OR son.tel_child_order_status = 5))
+(SELECT COUNT(*) FROM `tb_telcertification_child_order` son LEFT JOIN `tb_telcertification_order` fa ON son.parent_order_id = fa.id
+WHERE (son.tel_child_order_status = 2 OR son.tel_child_order_status = 5)
+AND TO_DAYS(son.tel_child_order_ctime) = TO_DAYS(NOW())
 AND product_name LIKE '%彩印%') AS 'color_print_num',
 
-(SELECT COUNT(id) FROM `tb_telcertification_order`
-WHERE id IN (SELECT parent_order_id FROM `tb_telcertification_child_order` son LEFT JOIN `tb_telcertification_order` fa ON son.parent_order_id = fa.id
-WHERE TO_DAYS(son.tel_child_order_ctime) = TO_DAYS(NOW()) AND (son.tel_child_order_status = 2 OR son.tel_child_order_status = 5))
+(SELECT COUNT(*) FROM `tb_telcertification_child_order` son LEFT JOIN `tb_telcertification_order` fa ON son.parent_order_id = fa.id
+WHERE (son.tel_child_order_status = 2 OR son.tel_child_order_status = 5)
+AND TO_DAYS(son.tel_child_order_ctime) = TO_DAYS(NOW())
 AND product_name LIKE '%挂机短信%') AS 'hangup_message_num'
-FROM `tb_telcertification_order`
-
+FROM `tb_telcertification_order` fa RIGHT JOIN `tb_telcertification_child_order` son ON son.parent_order_id = fa.id
 WHERE product_name IS NOT NULL
-AND id IN (SELECT parent_order_id FROM `tb_telcertification_child_order` son LEFT JOIN `tb_telcertification_order` fa ON son.parent_order_id = fa.id
-WHERE TO_DAYS(son.tel_child_order_ctime) = TO_DAYS(NOW()) AND (son.tel_child_order_status = 2 OR son.tel_child_order_status = 5))
+AND (son.tel_child_order_status = 2 OR son.tel_child_order_status = 5)
+AND TO_DAYS(son.tel_child_order_ctime) = TO_DAYS(NOW())
 AND user_id =  #{userId,jdbcType=INTEGER}
   </select>
 
@@ -152,6 +182,32 @@ AND user_id =  #{userId,jdbcType=INTEGER}
       hangup_message_num = #{hangupMessageNum,jdbcType=INTEGER}
     where  distributor_id = #{distributorId,jdbcType=INTEGER}
   </update>
+
+  <select id="getMonthData" resultType="com.hrtxn.ringtone.project.telcertification.domain.PlotBarData">
+    SELECT * FROM(
+    SELECT DATE_FORMAT( create_date, '%Y-%m' ) AS dateTimes, COUNT( * ) AS allNumber
+    FROM tb_threenets_child_order o
+    left join tb_user b on o.user_id = b.id
+    WHERE 1=1
+    <if test="param.userId != null and param.userId != ''">
+      AND o.user_id = #{param.userId}
+    </if>
+    <if test="param.parentId != null and param.parentId != ''">
+      AND b.parent_id = #{param.parentId} or b.id = #{param.parentId}
+    </if>
+    <if test="param.operator != null and param.operator != ''">
+      AND operator = #{param.operator}
+    </if>
+    <if test="param.arrayById != null">
+      AND o.user_id in
+      <foreach collection="param.arrayById" item="id" index="index" open="(" close=")" separator=",">
+        #{id}
+      </foreach>
+    </if>
+    GROUP BY DATE_FORMAT( create_date, '%Y-%m' ) DESC,is_monthly
+    ) a
+    where left( a.dateTimes, 4) ='${param.year}'
+  </select>
 <!--  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >-->
 <!--    select -->
 <!--    <include refid="Base_Column_List" />-->

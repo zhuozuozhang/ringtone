@@ -61,11 +61,12 @@ public class TelCerDistributor implements Serializable {
      */
     private Integer hangupMessageNum;
     /**
-     * 泰迪熊和电话邦的总价
-     */
-    private Float teddyAndTelBond;
-    /**
      * 挂机短信（用户输入的）
      */
     private Float hangUpMessage;
+
+    /**
+     * 泰迪熊和电话邦和挂机短信总价
+     */
+    private Float teddyAndTelBondAndHangUp;
 }

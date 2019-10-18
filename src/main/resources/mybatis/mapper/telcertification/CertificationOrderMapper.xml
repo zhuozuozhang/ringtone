@@ -132,6 +132,28 @@
         where tel_link_phone = #{telLinkPhone,jdbcType=VARCHAR}
   </select>
 
+  <select id="gethangUpListsAll" parameterType="int" resultMap="BaseResultMap">
+    SELECT * FROM `tb_telcertification_child_order` son LEFT JOIN `tb_telcertification_order` fa ON son.parent_order_id = fa.id
+WHERE (son.tel_child_order_status = 2 OR son.tel_child_order_status = 5)
+AND product_name LIKE '%挂机短信%'
+AND user_id = #{userId,jdbcType=INTEGER}
+  </select>
+
+  <select id="getHangUpListsTheMonth" parameterType="int" resultMap="BaseResultMap">
+SELECT * FROM `tb_telcertification_child_order` son LEFT JOIN `tb_telcertification_order` fa ON son.parent_order_id = fa.id
+WHERE DATE_FORMAT( son.tel_child_order_ctime, '%Y%m' ) = DATE_FORMAT( CURDATE( ) , '%Y%m' )
+AND (son.tel_child_order_status = 2 OR son.tel_child_order_status = 5)
+AND product_name LIKE '%挂机短信%'
+AND user_id = #{userId,jdbcType=INTEGER}
+  </select>
+
+  <select id="getHangUpListsToday" parameterType="int" resultMap="BaseResultMap">
+SELECT * FROM `tb_telcertification_child_order` son LEFT JOIN `tb_telcertification_order` fa ON son.parent_order_id = fa.id
+WHERE TO_DAYS(son.tel_child_order_ctime) = TO_DAYS(NOW())
+AND (son.tel_child_order_status = 2 OR son.tel_child_order_status = 5)
+AND product_name LIKE '%挂机短信%'
+AND user_id = #{userId,jdbcType=INTEGER}
+  </select>
 
   <insert id="insertSelective" parameterType="com.hrtxn.ringtone.project.telcertification.domain.CertificationOrder" >
 

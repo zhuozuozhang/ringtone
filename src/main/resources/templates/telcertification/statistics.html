@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE>
 <html lang="zh" xmlns:th="http://www.thymeleaf.org">
 <head th:include="telcertification/common/include :: linkcss"></head>
 <head>
@@ -37,20 +37,18 @@
                         <span th:text="${con.typeName}"></span>:
                         <span id="telBondAllNum" th:text="${allService.telBondNum}"></span>个，
                         <span id="telBondAll" th:text="${con.price}*${allService.telBondNum}"></span>元</span>
+                    <span th:if="${con.type} == 3">
+                        <span th:text="${con.typeName}"></span>:
+                        <span id="colorPrintAllNum" th:text="${allService.colorPrintNum}"></span>个，
+                        <span id="colorPrintAll"></span>0元</span>
                     <span th:if="${con.type} == 4">
                         <span th:text="${con.typeName}"></span>:
                         <span id="hangUpMessageAllNum" th:text="${allService.hangupMessageNum}"></span>个，
-                        <span id="hangUpMessageAll"></span>元</span>
+                        <span id="hangUpMessageAll" th:text="${allService.hangUpMessage}"></span>元</span>
                 </dt>
-<!--                <dt>泰迪熊+电话邦：<span th:text="${allService.teddyNum}+${allService.telBondNum}"></span>个，-->
-<!--                    <span th:text="${allService.teddyAndTelBond}"></span>元</dt>-->
-                <dt>合计：<span id="allNum" th:text="${allService.teddyNum}+${allService.telBondNum}+${allService.hangupMessageNum}"></span>个，
-                    <span></span>元</dt>
+                <dt>合计：<span id="allNum" th:text="${allService.teddyNum}+${allService.telBondNum}+${allService.colorPrintNum}+${allService.hangupMessageNum}"></span>个，
+                    <span th:text="${allService.teddyAndTelBondAndHangUp}"></span>元</dt>
             </dl>
-
-<!--    <dt>泰迪熊+电话邦：<span th:text="${all.teddyNum}+${all.telBondNum}"></span>  个，<span th:text="${all.teddyAndTelBond}"></span> 元</dt>-->
-<!--    <dt>挂机短信： <span th:text="${all.hangupMessageNum}"></span>  个，<span th:if="${con.type} == 4"> <span th:text="${con.price}"></span></span>元</dt>-->
-<!--    <dt>合计：<span th:text="${all.teddyNum}+${all.telBondNum}+${all.hangupMessageNum}"></span>  个，<span th:text="${all.teddyAndTelBondAndHangup}"></span>元</dt>-->
 
         </div>
         <div class="shujutow">
@@ -67,26 +65,19 @@
                         <span th:text="${con.typeName}"></span>:
                         <span id="telBondTheMonthNum" th:text="${theMonthService.telBondNum}"></span>个，
                         <span id="telBondTheMonth" th:text="${con.price}*${theMonthService.telBondNum}"></span>元</span>
+                    <span th:if="${con.type} == 3">
+                        <span th:text="${con.typeName}"></span>:
+                        <span id="colorPrintTheMonthNum" th:text="${theMonthService.colorPrintNum}"></span>个，
+                        <span id="colorPrintTheMonth"></span>0元</span>
                     <span th:if="${con.type} == 4">
                         <span th:text="${con.typeName}"></span>:
                         <span id="hangUpMessageTheMonthNum" th:text="${theMonthService.hangupMessageNum}"></span>个，
-                        <span id="hangUpMessageTheMonth"></span>元</span>
+                        <span id="hangUpMessageTheMonth" th:text="${theMonthService.hangUpMessage}"></span>元</span>
                 </dt>
-                <dt>合计：<span th:text="${theMonthService.teddyNum}+${theMonthService.telBondNum}+${theMonthService.hangupMessageNum}"></span>个，
-                    <span></span>元</dt>
+                <dt>合计：<span th:text="${theMonthService.teddyNum}+${theMonthService.telBondNum}+${theMonthService.colorPrintNum}+${theMonthService.hangupMessageNum}"></span>个，
+                    <span th:text="${theMonthService.teddyAndTelBondAndHangUp}"></span>元</dt>
             </dl>
-
-<!--            <dl th:each="theMonth:${theMonthService}">-->
-<!--                <span th:each="con:${configList}">-->
-<!--                    <dt>泰迪熊：<span th:text="${theMonth.teddyNum}"></span>  个，  <span th:if="${con.type} == 1"> <span th:text="${con.price}"></span></span> 元</dt>-->
-<!--                    <dt>电话邦：<span th:text="${theMonth.telBondNum}"></span>   个，<span th:if="${con.type} == 2"> <span th:text="${con.price}"></span></span>元</dt>-->
-<!--                    <dt>泰迪熊+电话邦：<span th:text="${theMonth.teddyNum}+${theMonth.telBondNum}"></span>  个，<span th:text="${theMonth.teddyAndTelBond}"></span> 元</dt>-->
-<!--                    <dt>挂机短信： <span th:text="${theMonth.hangupMessageNum}"></span>  个，<span th:if="${con.type} == 4"> <span th:text="${con.price}"></span></span>元</dt>-->
-<!--                    <dt>合计：<span th:text="${theMonth.teddyNum}+${theMonth.telBondNum}+${theMonth.hangupMessageNum}"></span>  个，元</dt>-->
-<!--                </span>-->
-<!--            </dl>-->
         </div>
-
         <div class="shujuthree">
             <ul>
                 <h2>今日</h2>
@@ -95,31 +86,38 @@
                 <dt th:each="con:${configList}">
                     <span th:if="${con.type} == 1">
                         <span th:text="${con.typeName}"></span>:
-                        <span th:text="${todayService.teddyNum}"></span>个，
-                        <span id="teddy" th:text="${con.price}*${todayService.teddyNum}"></span>元</span>
+                        <span id="teddyTodayNum" th:text="${todayService.teddyNum}"></span>个，
+                        <span id="teddyToday" th:text="${con.price}*${todayService.teddyNum}"></span>元</span>
                     <span th:if="${con.type} == 2">
                         <span th:text="${con.typeName}"></span>:
-                        <span th:text="${todayService.telBondNum}"></span>个，
-                        <span id="telBond" th:text="${con.price}*${todayService.telBondNum}"></span>元</span>
+                        <span id="telBondTodayNum" th:text="${todayService.telBondNum}"></span>个，
+                        <span id="telBondToday" th:text="${con.price}*${todayService.telBondNum}"></span>元</span>
+                    <span th:if="${con.type} == 3">
+                        <span th:text="${con.typeName}"></span>:
+                        <span id="colorPrintTodayNum" th:text="${todayService.colorPrintNum}"></span>个，
+                        <span></span>0元</span>
+                    <span th:if="${con.type} == 4">
+                        <span th:text="${con.typeName}"></span>:
+                        <span id="hangupMessageTodayNum" th:text="${todayService.hangupMessageNum}"></span>个，
+                        <span id="hangupMessageToday" th:text="${todayService.hangUpMessage}"></span>元</span>
                 </dt>
-                <dt>泰迪熊+电话邦：<span th:text="${todayService.teddyNum}+${todayService.telBondNum}"></span>个，
-                    <span th:text="${todayService.teddyAndTelBond}"></span>元</dt>
+                <dt>合计：<span th:text="${todayService.teddyNum}+${todayService.telBondNum}+${todayService.colorPrintNum}+${todayService.hangupMessageNum}"></span>个，
+                    <span th:text="${todayService.teddyAndTelBondAndHangUp}"></span>元</dt>
             </dl>
-
-<!--            <dl th:each="today:${todayService}">-->
-<!--                <span th:each="con:${configList}">-->
-<!--                    <dt>泰迪熊：<span th:text="${today.teddyNum}"></span>  个，  <span th:if="${con.type} == 1"> <span th:text="${con.price}"></span></span> 元</dt>-->
-<!--                    <dt>电话邦：<span th:text="${today.telBondNum}"></span>   个，<span th:if="${con.type} == 2"> <span th:text="${con.price}"></span></span>元</dt>-->
-<!--                    <dt>泰迪熊+电话邦：<span th:text="${today.teddyNum}+${today.telBondNum}"></span>  个，<span th:text="${today.teddyAndTelBond}"></span> 元</dt>-->
-<!--                    <dt>挂机短信： <span th:text="${today.hangupMessageNum}"></span>  个，<span th:if="${con.type} == 4"> <span th:text="${con.price}"></span></span>元</dt>-->
-<!--                    <dt>合计：<span th:text="${today.teddyNum}+${today.telBondNum}+${today.hangupMessageNum}"></span>  个，元</dt>-->
-<!--                </span>-->
-<!--            </dl>-->
         </div>
     </div>
-    <div class="chart" id="chart" style="width: 400px;height:300px;float: left;margin: 20px 1%"></div>
+
+<!--    日发展量分布：-->
+<!--    <span class="DatePicker_Icon_Wrapper" style="display: inline-block; position: relative; float: none; top: auto; right: auto; bottom: auto; left: auto;">-->
+<!--                            <input type="text" name="month" id="month" class="datepicker input-small" readonly="readonly" style="height: 24px;margin-top: 7px;text-align: center;">-->
+<!--                        </span>-->
+<!--    <button type="button" id="loading" onclick="loading()" class="btn btn-primary">查询</button>-->
+
+<!--    <div class="chart" id="chart0" style="width: 900px;height:300px;float: left;margin: 20px 1%"></div>-->
+<!--    <v-chart :options="option" autoresize theme="light"></v-chart>-->
+    <div class="chart" id="chart" style="width: 400px;height:400px;float: left;margin: 20px 1%"></div>
     <v-chart :options="option" autoresize theme="light"></v-chart>
-    <div class="chart" id="chart2" style="width: 400px;height:300px;float: left;margin: 20px 1%"></div>
+    <div class="chart" id="chart2" style="width: 400px;height:400px;float: left;margin: 20px 1%"></div>
     <v-chart :options="option" autoresize theme="light"></v-chart>
 
     <div class="order_middle" style="margin-top: 30px;float:right;">
@@ -127,8 +125,8 @@
         <div class="myorder" style="width: 800px;">
             渠道商名称：
             <input type="text" name="distributorName" id="distributorName" autocomplete="off" maxlength="20" style="margin:0 10px;width: 180px;height: 36px;border: 1px solid #ddd;">
-            渠道商号码：
-            <input type="text" name="phoneNum" id="phoneNum" autocomplete="off" maxlength="12" style="margin:0 10px;width: 180px;height: 36px;border: 1px solid #ddd;">
+<!--            渠道商号码：-->
+<!--            <input type="text" name="phoneNum" id="phoneNum" autocomplete="off" maxlength="12" style="margin:0 10px;width: 180px;height: 36px;border: 1px solid #ddd;">-->
             <button class="layui-btn layui-btn-normal" onclick="showDistributorTable()"
                     style="border-radius: 5px;width: 80px;height: 34px;line-height: 34px;font-size: 16px;color: #fff;background: #17a9ff;border: none;margin-left: 30px;">搜索</button>
             <div class="number_list" style="margin-top: 15px">
@@ -164,6 +162,7 @@
 <script th:src="@{/public/js/jquery-2.1.4.min.js}"></script>
 <script type="text/javascript" th:src="@{/public/js/jquery.min.js}"></script>
 <script type="text/javascript" th:src="@{/public/js/echarts.min.js}"></script>
+<script type="text/javascript" th:src="@{/client/telcertification/js/walden.js}"></script>
 <!--<script type="text/javascript">jQuery(".slideTxtBox").slide();</script>-->
 <!--<script th:src="@{/public/js/jquery-3.2.0.min.js}"></script>-->
 <script th:src="@{/public/layui/layui.js}"></script>
@@ -175,20 +174,99 @@
 <script type="text/javascript" th:src="@{/public/js/ajax.js}"></script>
 <script type="text/javascript" th:src="@{/client/telcertification/js/statistics.js}"></script>
 <script type="text/javascript">
-
     $(document).ready(function () {
         showDistributorTable();
+        // setTimeout(function () {
+        //    loading();
+        // },200)
     });
 
-
-
-    var myChart = echarts.init(document.getElementById("chart"));
-    var myChart2 = echarts.init(document.getElementById("chart2"));
+    // //加载数据
+    // function loading() {
+    //     let params = {
+    //         // "userId": $("#auserid").val(),
+    //         "month": $("#month").val()
+    //         // "operator": $("#phoneType").val()
+    //     }
+    //     AjaxPost("/telcertify/getServiceDate", params, function (result) {
+    //         var data = result.data;
+    //         showEcharts(data)
+    //     });
+    // }
+    //
+    // function showEcharts(data) {
+    //     var myChart0 = echarts.init(document.getElementById('chart0'));
+    //     var option0 = {
+    //         title: {
+    //             text: '各业务统计折线图'
+    //         },
+    //         tooltip: {
+    //             trigger: 'axis'
+    //         },
+    //         legend: {
+    //             data:['泰迪熊','电话邦','彩印','挂机短信','合计']
+    //         },
+    //         grid: {
+    //             left: '3%',
+    //             right: '4%',
+    //             bottom: '3%',
+    //             containLabel: true
+    //         },
+    //         toolbox: {
+    //             feature: {
+    //                 saveAsImage: {}
+    //             }
+    //         },
+    //         xAxis: {
+    //             type: 'category',
+    //             boundaryGap: false,
+    //             data: ['周一','周二','周三','周四','周五','周六','周日']
+    //         },
+    //         yAxis: {
+    //             type: 'value'
+    //         },
+    //         series: [
+    //             {
+    //                 name:'泰迪熊',
+    //                 type:'line',
+    //                 stack: '总量',
+    //                 data:[120, 132, 101, 134, 90, 230, 210]
+    //             },
+    //             {
+    //                 name:'电话邦',
+    //                 type:'line',
+    //                 stack: '总量',
+    //                 data:[220, 182, 191, 234, 290, 330, 310]
+    //             },
+    //             {
+    //                 name:'彩印',
+    //                 type:'line',
+    //                 stack: '总量',
+    //                 data:[150, 232, 201, 154, 190, 330, 410]
+    //             },
+    //             {
+    //                 name:'挂机短信',
+    //                 type:'line',
+    //                 stack: '总量',
+    //                 data:[320, 332, 301, 334, 390, 330, 320]
+    //             },
+    //             {
+    //                 name:'合计',
+    //                 type:'line',
+    //                 stack: '总量',
+    //                 data:[820, 932, 901, 934, 1290, 1330, 1320]
+    //             }
+    //         ]
+    //     };
+    //     myChart0.setOption(option0);
+    // }
+    var myChart = echarts.init(document.getElementById('chart'),'walden');
+    var myChart2 = echarts.init(document.getElementById('chart2'),'walden');
     var option = {
-        // title:{
-        //     text:"lala",
-        //     subtext:"lala"
-        // },
+        title:{
+            text:"累计"
+            // subtext:"lala"
+        },
         tooltip: {
             trigger: 'item',
             formatter: "{a} <br/>{b}: {c} ({d}%)"
@@ -196,7 +274,7 @@
         legend: {
             orient: 'vertical',
             x: 'right',
-            data:['泰迪熊','电话邦','挂机短信','合计']
+            data:['泰迪熊','电话邦','彩印','挂机短信']
         },
         series: [
             {
@@ -223,20 +301,27 @@
                     }
                 },
                 data:[
-                    {value:document.getElementById("teddyAllNum").innerText, name:'泰迪熊'},
-                    {value:document.getElementById("telBondAllNum").innerText, name:'电话邦'},
-                    {value:document.getElementById("hangUpMessageAllNum").innerText, name:'挂机短信'},
-                    {value:document.getElementById("allNum").innerText, name:'合计'}
+                    {value:document.getElementById("teddyAllNum").innerText, name:'泰迪熊', itemStyle:{
+                            normal:{color:'#3fb1e3'}
+                        }},
+                    {value:document.getElementById("telBondAllNum").innerText, name:'电话邦', itemStyle:{
+                            normal:{color:'#6be6c1'}
+                        }},
+                    {value:document.getElementById("colorPrintAllNum").innerText, name:'彩印', itemStyle:{
+                            normal:{color:'#96dee8'}
+                        }},
+                    {value:document.getElementById("hangUpMessageAllNum").innerText, name:'挂机短信', itemStyle:{
+                            normal:{color:'#c4ebad'}
+                        }}
                 ]
             }
         ]
     };
-
     var option2 = {
-        // title:{
-        //     text:"lala",
-        //     subtext:"lala"
-        // },
+        title:{
+            text:"当月"
+            // subtext:"lala"
+        },
         tooltip: {
             trigger: 'item',
             formatter: "{a} <br/>{b}: {c} ({d}%)"
@@ -244,7 +329,7 @@
         legend: {
             orient: 'vertical',
             x: 'right',
-            data:['泰迪熊','电话邦','挂机短信','合计']
+            data:['泰迪熊','电话邦','彩印','挂机短信']
         },
         series: [
             {
@@ -271,21 +356,33 @@
                     }
                 },
                 data:[
-                    {value:2, name:'泰迪熊'},
-                    {value:1, name:'电话邦'},
-                    {value:1, name:'挂机短信'},
-                    {value:3, name:'合计'}
+                    {value:document.getElementById("teddyTheMonthNum").innerText, name:'泰迪熊', itemStyle:{
+                            normal:{color:'#3fb1e3'}
+                        }},
+                    {value:document.getElementById("telBondTheMonthNum").innerText, name:'电话邦', itemStyle:{
+                            normal:{color:'#6be6c1'}
+                        }},
+                    {value:document.getElementById("colorPrintTheMonthNum").innerText, name:'彩印', itemStyle:{
+                            normal:{color:'#96dee8'}
+                        }},
+                    {value:document.getElementById("hangUpMessageTheMonthNum").innerText, name:'挂机短信', itemStyle:{
+                            normal:{color:'#c4ebad'}
+                        }}
                 ]
             }
         ]
     };
-
-
-
     myChart.setOption(option);
     myChart2.setOption(option2);
-
-
     $(".index5").addClass("active");
+    //年月选择器
+    layui.use('laydate', function() {
+        var laydate = layui.laydate;
+        laydate.render({
+            elem: '#month',
+            type: 'month',
+            value:new Date()
+        });
+    });
 </script>
 </html>
