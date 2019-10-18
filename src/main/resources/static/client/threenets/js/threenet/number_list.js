@@ -90,7 +90,8 @@ function showTable() {
             var setRing = "<a href='/threenets/toUserSetingRing/" + id + "/" + operator + "/" + $("#companyName").val() + "/" + $("#parentOrderId").val() + "'><i class='layui-icon layui-icon-set' title='设置铃音'></i></a>";
             var refresh = "<i onclick='refreshStatus(" + id + ")' class='layui-icon layui-icon-refresh-3' title='刷新'></i>";
             var note = "<i onclick='sendMessage(2,1," + id + ");' class='layui-icon' title='下发短信'><img src='../../client/threenets/images/message.png'></i>";
-            var linkNote = "<i onclick='sendMessage(2,2," + id + ");' class='layui-icon' title='下发链接短信'><img src='../../client/threenets/images/link.png'></i>";
+            //var linkNote = "<i onclick='sendMessage(2,2," + id + ");' class='layui-icon' title='下发链接短信'><img src='../../client/threenets/images/link.png'></i>";
+            var linkNote = "";
             var del = "<i class='layui-icon layui-icon-delete' title='删除' onclick='deleteTel(" + id + ")'></i>";
             if (row.isExemptSms) {
                 var open = "<i onclick='openingBusiness(" + id + ");' class='layui-icon layui-icon-auz' title='开通业务'></i>"
@@ -185,8 +186,6 @@ function batch() {
         content: "<div class='sendMes'>" +
             "<input type='button' class='btn btn-primary' value='给所有未包月用户下发短信' id='SMS' onclick='sendMessage(1,1,);'>" +
             "<span>(运营商下的所有未包月用户)</span></br></br></br></br>" +
-            "<input type='button' class='btn btn-primary' value='给所有未包月用户下发链接短信' id='links' onclick='sendMessage(1,2,);'>" +
-            "<span>(仅联通下的所有未包月用户)</span>" +
             "</div>"
     });
 }

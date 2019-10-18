@@ -606,11 +606,18 @@ public class SwxlApi implements Serializable {
                 if (res.contains("000000")) {
                     // 创建集团成功
                     // 查询集团信息
-                    for (int i = 0; i < 10; i++) {
+                    for (int i = 0; i < 3; i++) {
                         swxlAddGroupRespone = getGRoupInfo(ringOrder);
                         if (swxlAddGroupRespone != null) {
                             break;
                         }
+                    }
+                    if (swxlAddGroupRespone == null){
+                        JSONObject jsonObject = JSONObject.fromObject("res");
+                        JSONObject data = jsonObject.getJSONObject("data");
+                        String groupId = data.getString("groupId");
+                        swxlAddGroupRespone.setStatus(0);
+                        swxlAddGroupRespone.setId(groupId);
                     }
                     this.setSwxlCookie(httpclient.getCookieStore());
                 } else {
@@ -661,7 +668,7 @@ public class SwxlApi implements Serializable {
      * @throws NoLoginException
      */
     public SwxlGroupResponse getGRoupInfo(ThreenetsOrder order) throws IOException, NoLoginException {
-        SwxlGroupResponse content = null;
+        SwxlGroupResponse content = new SwxlGroupResponse();
         DefaultHttpClient httpclient = WebClientDevWrapper.wrapClient(new DefaultHttpClient());
         long longTime = new Date().getTime();
         String getUrl = "https://swxl.10155.com/swxlapi/web/group?order=asc&maxresult=15&offset=0&currentpage=1&draw=1&start=0&groupName=" + order.getCompanyName() + "&msisdn=" + order.getLinkmanTel() + "&status=&noSMS=&payType=&payWay=&_=" + longTime;
@@ -678,20 +685,33 @@ public class SwxlApi implements Serializable {
                 log.debug("更新号码，取得的内容：" + resStr);
                 if (resStr.contains("000000")) {
                     ObjectMapper mapper = new ObjectMapper();
-                    SwxlPubBackData<SwxlQueryPubRespone<SwxlGroupResponse>> backData = mapper.readValue(resStr, new TypeReference<SwxlPubBackData<SwxlGroupResponse>>() {
-                    });
-                    @SuppressWarnings({"unchecked", "rawtypes"})
-                    SwxlQueryPubRespone<SwxlGroupResponse> dataList = (SwxlQueryPubRespone) backData.getData();
-                    if (dataList != null) {
-                        List<SwxlGroupResponse> groupList = dataList.getData();
-                        if (groupList.size() > 0) {
-                            for (SwxlGroupResponse groupInfo : groupList) {
-                                if (groupInfo.getGroupName().trim().equals(order.getCompanyName().trim())) {
-                                    content = groupInfo;
-                                    content.setStatus(0);
-                                }
-                            }
-                        }
+                    //{"recode":"000000","message":"成功","data":{"recordsFiltered":1,"data":[{"id":"982c6622e0a1449aba42f8993bbbae4e","managerId":"2c6387a2f3b041c38eaad7ce5f311a0a","managerName":"江苏中高俊聪","managerMsisdn":"15601635530","groupName":"华东花卉总代209942","productId":"225","ctime":"2019-10-18 09:22:48","memberCount":1,"applyForSmsNotification":0,"status":0,"platformId":null,"remark":null,"platformQdId":null,"payType":0,"productName":"商务炫铃10元","productPrice":"10","tel":"15605226309","payWay":0,"discount":null,"days":null,"source":null}],"recordsTotal":1},"success":true}
+                    JSONObject jsonObject = JSONObject.fromObject(resStr);
+                    JSONObject data = jsonObject.getJSONObject("data");
+                    JSONArray jsonArray = data.getJSONArray("data");
+                    for (int i = 0; i < jsonArray.size(); i++) {
+                        //"platformId":null,"remark":null,"platformQdId":null,"payType":0,"productName":"商务炫铃10元","productPrice":"10","tel":"15605226309","payWay":0,"discount":null,"days":null,"source":null}
+                        JSONObject partDaily = jsonArray.getJSONObject(i);
+                        content.setId(partDaily.getString("id"));
+                        content.setManagerId(partDaily.getString("managerId"));
+                        content.setManagerName(partDaily.getString("managerName"));
+                        content.setManagerMsisdn(partDaily.getString("managerMsisdn"));
+                        content.setGroupName(partDaily.getString("groupName"));
+                        content.setProductId(partDaily.getString("productId"));
+                        content.setCtime(partDaily.getString("ctime"));
+                        content.setMemberCount(partDaily.getInt("memberCount"));
+                        content.setApplyForSmsNotification(partDaily.getInt("applyForSmsNotification"));
+                        content.setStatus(partDaily.getInt("status"));
+                        content.setPlatformId(partDaily.getString("platformId"));
+                        content.setRemark(partDaily.getString("remark"));
+                        content.setPlatformQdId(partDaily.getString("platformQdId"));
+                        content.setPayType(partDaily.getString("payType"));
+                        content.setProductName(partDaily.getString("productName"));
+                        content.setProductPrice(partDaily.getString("productPrice"));
+                        content.setTel(partDaily.getString("tel"));
+                        content.setPayWay(partDaily.getString("payWay"));
+                        content.setDiscount(partDaily.getString("discount"));
+                        content.setDays(partDaily.getString("days"));
                     }
                 }
             }
@@ -1052,4 +1072,5 @@ public class SwxlApi implements Serializable {
             return result;
         }
     }
+
 }

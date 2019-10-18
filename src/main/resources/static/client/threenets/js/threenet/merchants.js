@@ -13,8 +13,7 @@ function showTable() {
         {"data": "linkmanTel"},
         {"data": "peopleNum"},
         {"data": "province"},
-        {"data": "createTime"},
-        {"data": "message"}
+        {"data": "createTime"}
     ];
     var columnDefs = [{
         targets: [1],
@@ -33,17 +32,7 @@ function showTable() {
             return "<div style='text-overflow:ellipsis;overflow:hidden;white-space:nowrap;width:150px;' title='"+data+"'>"+data+"</div>";
         }
     }, {
-        targets: [8],
-        render:function (data, type, row, meta) {
-            var id = row.id;
-            if(data == 2){
-                return "<i class='layui-icon' title='查看消息' onclick='findCricleMsgList("+id+")'><img src='../../client/threenets/images/group_msg.png'></i>"
-            }else{
-                return "<i>无</i>"
-            }
-        }
-    },{
-        targets:[9],
+        targets:[8],
         render: function (data, type, row, meta) {
             var id = row.id;
             var name = row.companyName;
