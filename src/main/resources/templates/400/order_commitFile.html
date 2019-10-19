@@ -90,37 +90,104 @@
                                 <div data-v-15e66472="" class="title">基本信息</div>
                                 <div data-v-15e66472="" class="base-info">
                                     <div data-v-27737a5a="" data-v-3cb507e4="" data-v-15e66472="" class="wrap" style="width: 360px;">
-                                        <div data-v-27737a5a="" class="label" style="width: 130px;"><span data-v-27737a5a="">经营范围</span></div>
+                                        <div data-v-27737a5a="" class="label" style="width: 130px;"><i style="color: red">*</i> <span data-v-27737a5a="">统一社会信用代码</span></div>
+                                        <div class="layui-input-block">
+                                            <input type="text" th:value="${fourcertificationOrder.corpSocietyNo}" id="corpSocietyNo" name="corpSocietyNo" autocomplete="off" class="layui-input">
+                                        </div>
+                                    </div>
+                                    <div data-v-27737a5a="" data-v-3cb507e4="" data-v-15e66472="" class="wrap" style="width: 360px;">
+                                        <div data-v-27737a5a="" class="label" style="width: 130px;"><i style="color: red">*</i> <span data-v-27737a5a="">经营范围</span></div>
                                         <div class="layui-input-block">
                                             <input type="text" th:value="${fourcertificationOrder.corpBusinessScope}" id="corpBusinessScope" name="corpBusinessScope" autocomplete="off" class="layui-input">
                                         </div>
                                     </div>
                                     <div data-v-27737a5a="" data-v-3cb507e4="" data-v-15e66472="" class="wrap" style="width: 360px;">
-                                        <div data-v-27737a5a="" class="label" style="width: 130px;"><span>号码用途</span></div>
+                                        <div data-v-27737a5a="" class="label" style="width: 130px;"><i style="color: red">*</i> <span>企业注册地省份</span></div>
+                                        <div class="layui-input-block">
+                                            <input type="text" name="corpCompanyProvince" id="corpCompanyProvince" autocomplete="off" class="layui-input"
+                                                   th:value="${fourcertificationOrder.corpCompanyProvince}">
+                                        </div>
+                                    </div>
+                                    <div data-v-27737a5a="" data-v-3cb507e4="" data-v-15e66472="" class="wrap" style="width: 360px;">
+                                        <div data-v-27737a5a="" class="label" style="width: 130px;"><i style="color: red">*</i> <span>企业注册地城市</span></div>
+                                        <div class="layui-input-block">
+                                            <input type="text" name="corpCompanyCity" id="corpCompanyCity" autocomplete="off" class="layui-input"
+                                                   th:value="${fourcertificationOrder.corpCompanyCity}">
+                                        </div>
+                                    </div>
+                                    <div data-v-27737a5a="" data-v-3cb507e4="" data-v-15e66472="" class="wrap" style="width: 360px;">
+                                        <div data-v-27737a5a="" class="label" style="width: 130px;"><i style="color: red">*</i> <span data-v-27737a5a="">企业注册地地址</span></div>
+                                        <div class="layui-input-block">
+                                            <input type="text" th:value="${fourcertificationOrder.corpCompanyDetail}" id="corpCompanyDetail" name="corpCompanyDetail" autocomplete="off" class="layui-input">
+                                        </div>
+                                    </div>
+                                    <div data-v-27737a5a="" data-v-3cb507e4="" data-v-15e66472="" class="wrap" style="width: 360px;">
+                                        <div data-v-27737a5a="" class="label" style="width: 130px;"><i style="color: red">*</i> <span>实际办公地省份</span></div>
+                                        <div class="layui-input-block">
+                                            <input type="text" name="corpOfficeProvince" id="corpOfficeProvince" autocomplete="off" class="layui-input"
+                                                   th:value="${fourcertificationOrder.corpOfficeProvince}">
+                                        </div>
+                                    </div>
+                                    <div data-v-27737a5a="" data-v-3cb507e4="" data-v-15e66472="" class="wrap" style="width: 360px;">
+                                        <div data-v-27737a5a="" class="label" style="width: 130px;"><i style="color: red">*</i> <span>实际办公地城市</span></div>
+                                        <div class="layui-input-block">
+                                            <input type="text" name="corpOfficeCity" id="corpOfficeCity" autocomplete="off" class="layui-input"
+                                                   th:value="${fourcertificationOrder.corpOfficeCity}">
+                                        </div>
+                                    </div>
+                                    <div data-v-27737a5a="" data-v-3cb507e4="" data-v-15e66472="" class="wrap" style="width: 360px;">
+                                        <div data-v-27737a5a="" class="label" style="width: 130px;"><i style="color: red">*</i> <span data-v-27737a5a="">实际办公地地址</span></div>
+                                        <div class="layui-input-block">
+                                            <input type="text" th:value="${fourcertificationOrder.corpOfficeDetail}" id="corpOfficeDetail" name="corpOfficeDetail" autocomplete="off" class="layui-input">
+                                        </div>
+                                    </div>
+                                    <div data-v-27737a5a="" data-v-3cb507e4="" data-v-15e66472="" class="wrap" style="width: 360px;">
+                                        <div data-v-27737a5a="" class="label" style="width: 130px;"><i style="color: red">*</i> <span>号码用途</span></div>
                                         <div class="layui-input-block">
                                             <input type="text" name="corpNunmberUsage" id="corpNunmberUsage" autocomplete="off" class="layui-input" th:value="${fourcertificationOrder.corpNunmberUsage}">
                                         </div>
                                     </div>
                                     <div data-v-27737a5a="" data-v-3cb507e4="" data-v-15e66472="" class="wrap" style="width: 360px;">
-                                        <div data-v-27737a5a="" class="label" style="width: 130px;"><span data-v-27737a5a="">法人姓名</span></div>
+                                        <div data-v-27737a5a="" class="label" style="width: 130px;"><span>企业开户类型</span></div>
+                                        <div class="layui-input-block">
+                                            <input type="text" name="corpAccountType" id="corpAccountType" autocomplete="off" class="layui-input"
+                                                   th:value="${fourcertificationOrder.corpAccountType}">
+                                        </div>
+                                    </div>
+                                    <div data-v-27737a5a="" data-v-3cb507e4="" data-v-15e66472="" class="wrap" style="width: 360px;">
+                                        <div data-v-27737a5a="" class="label" style="width: 130px;"><span>开户行名称</span></div>
+                                        <div class="layui-input-block">
+                                            <input type="text" name="corpBankName" id="corpBankName" autocomplete="off" class="layui-input"
+                                                   th:value="${fourcertificationOrder.corpBankName}">
+                                        </div>
+                                    </div>
+                                    <div data-v-27737a5a="" data-v-3cb507e4="" data-v-15e66472="" class="wrap" style="width: 360px;">
+                                        <div data-v-27737a5a="" class="label" style="width: 130px;"><span>开户行名称</span></div>
+                                        <div class="layui-input-block">
+                                            <input type="text" name="corpBankNo" id="corpBankNo" autocomplete="off" class="layui-input"
+                                                   th:value="${fourcertificationOrder.corpBankNo}">
+                                        </div>
+                                    </div>
+                                    <div data-v-27737a5a="" data-v-3cb507e4="" data-v-15e66472="" class="wrap" style="width: 360px;">
+                                        <div data-v-27737a5a="" class="label" style="width: 130px;"><i style="color: red">*</i> <span data-v-27737a5a="">法人姓名</span></div>
                                         <div class="layui-input-block">
                                             <input type="text" th:value="${fourcertificationOrder.legalName}" id="legalName" name="legalName" autocomplete="off" class="layui-input">
                                         </div>
                                     </div>
                                     <div data-v-27737a5a="" data-v-3cb507e4="" data-v-15e66472="" class="wrap" style="width: 360px;">
-                                        <div data-v-27737a5a="" class="label" style="width: 130px;"><span data-v-27737a5a="">法人身份证号码</span></div>
+                                        <div data-v-27737a5a="" class="label" style="width: 130px;"><i style="color: red">*</i> <span data-v-27737a5a="">法人身份证号码</span></div>
                                         <div class="layui-input-block">
                                             <input type="text" th:value="${fourcertificationOrder.legalIdentityId}" id="legalIdentityId" name="legalIdentityId" autocomplete="off" class="layui-input">
                                         </div>
                                     </div>
                                     <div data-v-27737a5a="" data-v-3cb507e4="" data-v-15e66472="" class="wrap" style="width: 360px;">
-                                        <div data-v-27737a5a="" class="label" style="width: 130px;"><span data-v-27737a5a="">法人身份证有效期</span></div>
+                                        <div data-v-27737a5a="" class="label" style="width: 130px;"><i style="color: red">*</i> <span data-v-27737a5a="">法人身份证有效期</span></div>
                                         <div class="layui-input-block">
                                             <input type="text" th:value="${fourcertificationOrder.legalEffective}" id="legalEffective" name="legalEffective" autocomplete="off" class="layui-input">
                                         </div>
                                     </div>
                                     <div data-v-27737a5a="" data-v-3cb507e4="" data-v-15e66472="" class="wrap" style="width: 360px;">
-                                        <div data-v-27737a5a="" class="label" style="width: 130px;"><span data-v-27737a5a="">法人身份证是否长期有效</span></div>
+                                        <div data-v-27737a5a="" class="label" style="width: 130px;"><i style="color: red">*</i> <span data-v-27737a5a="">法人身份证是否长期有效</span></div>
                                         <div class="layui-input-block">
                                             <input type="radio" name="legalLongEffective" th:if="${fourcertificationOrder.legalLongEffective eq 'true'}" checked value="true" title="是" />
                                             <input type="radio" name="legalLongEffective" th:if="${fourcertificationOrder.legalLongEffective ne 'true'}" value="true" title="是" />
@@ -129,25 +196,25 @@
                                         </div>
                                     </div>
                                     <div data-v-27737a5a="" data-v-3cb507e4="" data-v-15e66472="" class="wrap" style="width: 360px;">
-                                        <div data-v-27737a5a="" class="label" style="width: 130px;"><span data-v-27737a5a="">经办人名称</span></div>
+                                        <div data-v-27737a5a="" class="label" style="width: 130px;"><i style="color: red">*</i> <span data-v-27737a5a="">经办人名称</span></div>
                                         <div class="layui-input-block">
                                             <input type="text" th:value="${fourcertificationOrder.legalHandlerName}" id="legalHandlerName" name="legalHandlerName" autocomplete="off" class="layui-input">
                                         </div>
                                     </div>
                                     <div data-v-27737a5a="" data-v-3cb507e4="" data-v-15e66472="" class="wrap" style="width: 360px;">
-                                        <div data-v-27737a5a="" class="label" style="width: 130px;"><span data-v-27737a5a="">经办人身份证</span></div>
+                                        <div data-v-27737a5a="" class="label" style="width: 130px;"><i style="color: red">*</i> <span data-v-27737a5a="">经办人身份证</span></div>
                                         <div class="layui-input-block">
                                             <input type="text" th:value="${fourcertificationOrder.legalHandlerIdentityId}" id="legalHandlerIdentityId" name="legalHandlerIdentityId" autocomplete="off" class="layui-input">
                                         </div>
                                     </div>
                                     <div data-v-27737a5a="" data-v-3cb507e4="" data-v-15e66472="" class="wrap" style="width: 360px;">
-                                        <div data-v-27737a5a="" class="label" style="width: 130px;"><span data-v-27737a5a="">经办人身份证有效期</span></div>
+                                        <div data-v-27737a5a="" class="label" style="width: 130px;"><i style="color: red">*</i> <span data-v-27737a5a="">经办人身份证有效期</span></div>
                                         <div class="layui-input-block">
                                             <input type="text" th:value="${fourcertificationOrder.legalHandlerEffective}" id="legalHandlerEffective" name="legalHandlerEffective" autocomplete="off" class="layui-input">
                                         </div>
                                     </div>
                                     <div data-v-27737a5a="" data-v-3cb507e4="" data-v-15e66472="" class="wrap" style="width: 360px;">
-                                        <div data-v-27737a5a="" class="label" style="width: 130px;"><span data-v-27737a5a="">经办人身份证是否长期有效</span></div>
+                                        <div data-v-27737a5a="" class="label" style="width: 130px;"><i style="color: red">*</i> <span data-v-27737a5a="">经办人身份证是否长期有效</span></div>
                                         <div class="layui-input-block">
                                             <input type="radio" name="legalHandlerLongEffective" th:if="${fourcertificationOrder.legalHandlerLongEffective eq 'true'}" checked value="true" title="是" />
                                             <input type="radio" name="legalHandlerLongEffective" th:if="${fourcertificationOrder.legalHandlerLongEffective ne 'true'}" value="true" title="是" />
@@ -156,17 +223,18 @@
                                         </div>
                                     </div>
                                     <div data-v-27737a5a="" data-v-3cb507e4="" data-v-15e66472="" class="wrap" style="width: 360px;">
-                                        <div data-v-27737a5a="" class="label" style="width: 130px;"><span data-v-27737a5a="">企业注册地地址</span></div>
+                                        <div data-v-27737a5a="" class="label" style="width: 130px;"><i style="color: red">*</i> <span data-v-27737a5a="">法人身份证地址</span></div>
                                         <div class="layui-input-block">
-                                            <input type="text" th:value="${fourcertificationOrder.corpCompanyDetail}" id="corpCompanyDetail" name="corpCompanyDetail" autocomplete="off" class="layui-input">
+                                            <input type="text" th:value="${fourcertificationOrder.legalAddress}" id="legalAddress" name="legalAddress" autocomplete="off" class="layui-input">
                                         </div>
                                     </div>
                                     <div data-v-27737a5a="" data-v-3cb507e4="" data-v-15e66472="" class="wrap" style="width: 360px;">
-                                        <div data-v-27737a5a="" class="label" style="width: 130px;"><span data-v-27737a5a="">实际办公地地址</span></div>
+                                        <div data-v-27737a5a="" class="label" style="width: 130px;"><i style="color: red">*</i> <span data-v-27737a5a="">经办人身份证地址</span></div>
                                         <div class="layui-input-block">
-                                            <input type="text" th:value="${fourcertificationOrder.corpOfficeDetail}" id="corpOfficeDetail" name="corpOfficeDetail" autocomplete="off" class="layui-input">
+                                            <input type="text" th:value="${fourcertificationOrder.legalHandlerAddress}" id="legalHandlerAddress" name="legalHandlerAddress" autocomplete="off" class="layui-input">
                                         </div>
                                     </div>
+
                                 </div>
                             </div>
 
@@ -181,7 +249,7 @@
                                 <div data-v-15e66472="" class="base-info">
                                     <div data-v-27737a5a="" data-v-6608c108="" data-v-15e66472="" class="wrap" style="width: 1111px; margin-bottom: 2px;">
                                         <div data-v-27737a5a="" class="label" style="width: 180px;">
-                                            <div data-v-6608c108="" data-v-27737a5a="">营业执照</div>
+                                            <div data-v-6608c108="" data-v-27737a5a=""><i style="color: red">*</i> 营业执照</div>
                                             <div data-v-6608c108="" data-v-27737a5a="" style="font-size: 12px; color: rgb(170, 170, 170);">(格式支持jpg、png, 且大小不超过20M)</div>
                                         </div>
                                         <div data-v-27737a5a="" class="input">
@@ -215,7 +283,7 @@
                                     </div>
                                     <div data-v-27737a5a="" data-v-6608c108="" data-v-15e66472="" class="wrap" style="width: 1111px; margin-bottom: 2px;">
                                         <div data-v-27737a5a="" class="label" style="width: 180px;">
-                                            <div data-v-6608c108="" data-v-27737a5a="">法人身份证</div>
+                                            <div data-v-6608c108="" data-v-27737a5a=""><i style="color: red">*</i> 法人身份证</div>
                                             <div data-v-6608c108="" data-v-27737a5a="" style="font-size: 12px; color: rgb(170, 170, 170);">(格式支持jpg、png, 且大小不超过20M)</div>
                                         </div>
                                         <div data-v-27737a5a="" class="input">
@@ -232,7 +300,7 @@
                                     </div>
                                     <div data-v-27737a5a="" data-v-6608c108="" data-v-15e66472="" class="wrap" style="width: 1111px; margin-bottom: 2px;">
                                         <div data-v-27737a5a="" class="label" style="width: 180px;">
-                                            <div data-v-6608c108="" data-v-27737a5a="">法人授权证明</div>
+                                            <div data-v-6608c108="" data-v-27737a5a=""><i style="color: red">*</i> 法人授权证明</div>
                                             <div data-v-6608c108="" data-v-27737a5a="" style="font-size: 12px; color: rgb(170, 170, 170);">(格式支持jpg、png, 且大小不超过20M)</div>
                                         </div>
                                         <div data-v-27737a5a="" class="input">
@@ -249,7 +317,7 @@
                                     </div>
                                     <div data-v-27737a5a="" data-v-6608c108="" data-v-15e66472="" class="wrap" style="width: 1111px; margin-bottom: 2px;">
                                         <div data-v-27737a5a="" class="label" style="width: 180px;">
-                                            <div data-v-6608c108="" data-v-27737a5a="">经办人身份证</div>
+                                            <div data-v-6608c108="" data-v-27737a5a=""><i style="color: red">*</i> 经办人身份证</div>
                                             <div data-v-6608c108="" data-v-27737a5a="" style="font-size: 12px; color: rgb(170, 170, 170);">(格式支持jpg、png, 且大小不超过20M)</div>
                                         </div>
                                         <div data-v-27737a5a="" class="input">
@@ -266,7 +334,7 @@
                                     </div>
                                     <div data-v-27737a5a="" data-v-6608c108="" data-v-15e66472="" class="wrap" style="width: 1111px; margin-bottom: 2px;">
                                         <div data-v-27737a5a="" class="label" style="width: 180px;">
-                                            <div data-v-6608c108="" data-v-27737a5a="">经办人授权证明</div>
+                                            <div data-v-6608c108="" data-v-27737a5a=""><i style="color: red">*</i> 经办人授权证明</div>
                                             <div data-v-6608c108="" data-v-27737a5a="" style="font-size: 12px; color: rgb(170, 170, 170);">(格式支持jpg、png, 且大小不超过20M)</div>
                                         </div>
                                         <div data-v-27737a5a="" class="input">
@@ -283,7 +351,7 @@
                                     </div>
                                     <div data-v-27737a5a="" data-v-6608c108="" data-v-15e66472="" class="wrap" style="width: 1111px; margin-bottom: 2px;">
                                         <div data-v-27737a5a="" class="label" style="width: 180px;">
-                                            <div data-v-6608c108="" data-v-27737a5a="">缴费发票文件</div>
+                                            <div data-v-6608c108="" data-v-27737a5a=""><i style="color: red">*</i> 缴费发票文件</div>
                                             <div data-v-6608c108="" data-v-27737a5a="" style="font-size: 12px; color: rgb(170, 170, 170);">(格式支持jpg、png, 且大小不超过20M)</div>
                                         </div>
                                         <div data-v-27737a5a="" class="input">
@@ -300,7 +368,7 @@
                                     </div>
                                     <div data-v-27737a5a="" data-v-6608c108="" data-v-15e66472="" class="wrap" style="width: 1111px; margin-bottom: 2px;">
                                         <div data-v-27737a5a="" class="label" style="width: 180px;">
-                                            <div data-v-6608c108="" data-v-27737a5a="">受理单文件</div>
+                                            <div data-v-6608c108="" data-v-27737a5a=""><i style="color: red">*</i> 受理单文件</div>
                                             <div data-v-6608c108="" data-v-27737a5a="" style="font-size: 12px; color: rgb(170, 170, 170);">(格式支持jpg、png, 且大小不超过20M)</div>
                                         </div>
                                         <div data-v-27737a5a="" class="input">
@@ -317,7 +385,7 @@
                                     </div>
                                     <div data-v-27737a5a="" data-v-6608c108="" data-v-15e66472="" class="wrap" style="width: 1111px; margin-bottom: 2px;">
                                         <div data-v-27737a5a="" class="label" style="width: 180px;">
-                                            <div data-v-6608c108="" data-v-27737a5a="">服务协议文件</div>
+                                            <div data-v-6608c108="" data-v-27737a5a=""><i style="color: red">*</i> 服务协议文件</div>
                                             <div data-v-6608c108="" data-v-27737a5a="" style="font-size: 12px; color: rgb(170, 170, 170);">(格式支持jpg、png, 且大小不超过20M)</div>
                                         </div>
                                         <div data-v-27737a5a="" class="input">
@@ -334,7 +402,7 @@
                                     </div>
                                     <div data-v-27737a5a="" data-v-6608c108="" data-v-15e66472="" class="wrap" style="width: 1111px; margin-bottom: 2px;">
                                         <div data-v-27737a5a="" class="label" style="width: 180px;">
-                                            <div data-v-6608c108="" data-v-27737a5a="">安全承诺书</div>
+                                            <div data-v-6608c108="" data-v-27737a5a=""><i style="color: red">*</i> 安全承诺书</div>
                                             <div data-v-6608c108="" data-v-27737a5a="" style="font-size: 12px; color: rgb(170, 170, 170);">(格式支持jpg、png, 且大小不超过20M)</div>
                                         </div>
                                         <div data-v-27737a5a="" class="input">
@@ -510,10 +578,10 @@
                                 <!--</div>-->
                             <!--</div>-->
                             <div data-v-15e66472="" style="text-align: center; padding: 10px 30px 30px;">
-                                <button data-v-15e66472="" type="button" class="el-button el-button--default" style="width: 200px;">
-                                    <span>取消</span>
+                                <button data-v-15e66472="" onclick="back();" type="button" class="el-button el-button--default" style="width: 200px;">
+                                    <span>返回</span>
                                 </button>
-                                <button data-v-15e66472="" type="button" onclick="submitFile();" class="el-button el-button--primary" style="width: 200px;" lay-submit lay-filter="formDemo">
+                                <button data-v-15e66472=""  type="button" onclick="submitFile();" class="el-button el-button--primary" style="width: 200px;" lay-submit lay-filter="formDemo">
                                     <span>保存</span>
                                 </button>
                             </div>
@@ -559,18 +627,26 @@
         var id = $("#id").val();
         var applyNumber = $("#applyNumber").val();
         var corpBusinessScope = $("#corpBusinessScope").val();
+        var corpSocietyNo = $("#corpSocietyNo").val();
+        var corpCompanyProvince = $("#corpCompanyProvince").val();
+        var corpCompanyCity = $("#corpCompanyCity").val();
+        var corpCompanyDetail = $("#corpCompanyDetail").val();
+        var corpOfficeProvince = $("#corpOfficeProvince").val();
+        var corpOfficeCity = $("#corpOfficeCity").val();
+        var corpOfficeDetail = $("#corpOfficeDetail").val();
+        var corpBankName = $("#corpBankName").val();
+        var corpAccountType = $("#corpAccountType").val();
+        var corpBankNo = $("#corpBankNo").val();
         var corpNunmberUsage = $("#corpNunmberUsage").val();
         var legalName = $("#legalName").val();
         var legalIdentityId = $("#legalIdentityId").val();
         var legalLongEffective = $("input[name='legalLongEffective']:checked").val();
-
         var legalHandlerName = $("#legalHandlerName").val();
         var legalHandlerIdentityId = $("#legalHandlerIdentityId").val();
         var legalHandlerEffective = $("#legalHandlerEffective").val();
         var legalHandlerLongEffective = $("input[name='legalHandlerLongEffective']:checked").val();
         var corpCompanyDetail = $("#corpCompanyDetail").val();
         var corpOfficeDetail = $("#corpOfficeDetail").val();
-
         var yyzz = $("#yyzz").val();
         var khxkz = $("#khxkz").val();
         var frsfz = $("#frsfz").val();
@@ -586,13 +662,62 @@
         var ccyyzz = $("#ccyyzz").val();
         var dxxy = $("#dxxy").val();
         var gswjt = $("#gswjt").val();
+        var legalEffective = $("#legalEffective").val();
+        var legalHandlerAddress = $("#legalHandlerAddress").val();
+        var legalAddress = $("#legalAddress").val();
+
+        if (!isNotEmpty(corpSocietyNo)) {layer.msg("统一社会信用代码不能为空！", {icon: 5, time: 2500});return;}
+        if (!isNotEmpty(corpBusinessScope)) {layer.msg("经营范围不能为空！", {icon: 5, time: 2500});return;}
+        if (!isNotEmpty(corpCompanyProvince)) {layer.msg("企业注册地省份不能为空！", {icon: 5, time: 2500});return;}
+        if (!isNotEmpty(corpCompanyCity)) {layer.msg("企业注册地城市不能为空！", {icon: 5, time: 2500});return;}
+        if (!isNotEmpty(corpCompanyDetail)) {layer.msg("企业注册地地址不能为空！", {icon: 5, time: 2500});return;}
+        if (!isNotEmpty(corpOfficeProvince)) {layer.msg("实际办公地省份不能为空！", {icon: 5, time: 2500});return;}
+
+        if (!isNotEmpty(corpOfficeCity)) {layer.msg("实际办公地城市不能为空！", {icon: 5, time: 2500});return;}
+        if (!isNotEmpty(corpOfficeDetail)) {layer.msg("实际办公地地址不能为空！", {icon: 5, time: 2500});return;}
+        if (!isNotEmpty(corpNunmberUsage)) {layer.msg("号码用途不能为空！", {icon: 5, time: 2500});return;}
+        if (!isNotEmpty(legalName)) {layer.msg("法人姓名不能为空！", {icon: 5, time: 2500});return;}
+        if (!isNotEmpty(legalIdentityId)) {layer.msg("法人身份证号码不能为空！", {icon: 5, time: 2500});return;}
+        if (!isNotEmpty(legalEffective)) {layer.msg("法人身份证有效期不能为空！", {icon: 5, time: 2500});return;}
+
+        if (!isNotEmpty(legalLongEffective)) {layer.msg("请选择法人身份证是否长期有效！", {icon: 5, time: 2500});return;}
+        if (!isNotEmpty(legalHandlerName)) {layer.msg("经办人名称不能为空！", {icon: 5, time: 2500});return;}
+        if (!isNotEmpty(legalHandlerIdentityId)) {layer.msg("经办人身份证不能为空！", {icon: 5, time: 2500});return;}
+        if (!isNotEmpty(legalHandlerEffective)) {layer.msg("经办人身份证有效期不能为空！", {icon: 5, time: 2500});return;}
+        if (!isNotEmpty(legalHandlerLongEffective)) {layer.msg("请选择经办人身份证是否长期有效！", {icon: 5, time: 2500});return;}
+        if (!isNotEmpty(legalAddress)) {layer.msg("法人身份证地址不能为空！", {icon: 5, time: 2500});return;}
+
+        if (!isNotEmpty(legalHandlerAddress)) {layer.msg("经办人身份证地址不能为空！", {icon: 5, time: 2500});return;}
+        if (!isNotEmpty(yyzz)) {layer.msg("请上传营业执照！", {icon: 5, time: 2500});return;}
+        if (!isNotEmpty(frsfz)) {layer.msg("请上传法人身份证！", {icon: 5, time: 2500});return;}
+        if (!isNotEmpty(frsq)) {layer.msg("请上传法人授权证明！", {icon: 5, time: 2500});return;}
+        if (!isNotEmpty(jbrsfz)) {layer.msg("请上传经办人身份证！", {icon: 5, time: 2500});return;}
+        if (!isNotEmpty(jbrsq)) {layer.msg("请上传经办人授权证明！", {icon: 5, time: 2500});return;}
+
+        if (!isNotEmpty(jffp)) {layer.msg("请上传缴费发票文件！", {icon: 5, time: 2500});return;}
+        if (!isNotEmpty(sld)) {layer.msg("请上传受理单文件！", {icon: 5, time: 2500});return;}
+        if (!isNotEmpty(fwxy)) {layer.msg("请上传服务协议文件！", {icon: 5, time: 2500});return;}
+        if (!isNotEmpty(aqcns)) {layer.msg("请上传安全承诺书！", {icon: 5, time: 2500});return;}
+
 
         AjaxPost("/400/commit",{
             id:id,
             applyNumber:applyNumber,
+            corpSocietyNo:corpSocietyNo,
             corpBusinessScope:corpBusinessScope,
+            corpCompanyProvince:corpCompanyProvince,
+            corpCompanyCity:corpCompanyCity,
+            corpCompanyDetail:corpCompanyDetail,
+            corpOfficeProvince:corpOfficeProvince,
+            corpOfficeCity:corpOfficeCity,
+            corpOfficeDetail:corpOfficeDetail,
+            corpBankName:corpBankName,
+            applyNumber:applyNumber,
+            corpAccountType:corpAccountType,
             corpNunmberUsage:corpNunmberUsage,
+            corpBankNo:corpBankNo,
             legalName:legalName,
+            legalEffective:legalEffective,
             legalIdentityId:legalIdentityId,
             legalLongEffective:legalLongEffective,
             legalHandlerName:legalHandlerName,
@@ -601,6 +726,8 @@
             legalHandlerLongEffective:legalHandlerLongEffective,
             corpCompanyDetail:corpCompanyDetail,
             corpOfficeDetail:corpOfficeDetail,
+            legalHandlerAddress:legalHandlerAddress,
+            legalAddress:legalAddress,
             yyzz:yyzz,
             khxkz:khxkz,
             frsfz:frsfz,
@@ -650,7 +777,7 @@
             uploadFile(id,'/400/'+$("#id").val(),file);
             // reads.readAsDataURL(f);
             // reads.onload = function(e) {
-            //     document.getElementById('img_'+id).src = this.result;
+            //     document.getElementById('img_'+id).src = this.result;this.result;
             // };
         }
     }

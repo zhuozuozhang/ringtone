@@ -141,6 +141,34 @@ public class NumCertificationController {
 
 
     /**
+     * 跳转到
+     *
+     * @author zcy
+     * @date 2019-9-2 14:03
+     */
+    @GetMapping("/setMeal/{orderId}")
+    public String setMeal(@PathVariable Long orderId, ModelMap map) {
+        map.put("orderId", orderId);
+
+        FourcertificationOrder fourcertificationOrder = fourCertificationService.selectByPrimaryKey(orderId);
+        map.put("fourcertificationOrder", fourcertificationOrder);
+        return "/400/order_next";
+    }
+
+
+    /**
+     * 申请模板
+     *
+     * @author zcy
+     * @date 2019-8-30 11:40
+     */
+    @PostMapping("/setMealSave")
+    @ResponseBody
+    public AjaxResult setMealSave(FourcertificationOrder fourcertificationOrder) {
+        return fourCertificationService.setMealSave(fourcertificationOrder);
+    }
+
+    /**
      * 跳转到订单列表
      *
      * @author zcy

@@ -101,7 +101,7 @@
                                         </div>
                                     </div>
                                     <div data-v-27737a5a="" data-v-3cb507e4="" data-v-15e66472="" class="wrap" style="width: 360px;">
-                                        <div data-v-27737a5a="" class="label" style="width: 130px;"><span data-v-27737a5a="">联系手机</span></div>
+                                        <div data-v-27737a5a="" class="label" style="width: 130px;"><i style="color: red">*</i> <span data-v-27737a5a="">联系手机</span></div>
                                         <div class="layui-input-block">
                                             <input type="text" th:value="${fourcertificationOrder.otherLinkMobile}" name="otherLinkMobile" id="otherLinkMobile" autocomplete="off" class="layui-input">
                                         </div>
@@ -113,28 +113,27 @@
                                         </div>
                                     </div>
                                     <div data-v-27737a5a="" data-v-3cb507e4="" data-v-15e66472="" class="wrap" style="width: 360px;">
-                                        <div data-v-27737a5a="" class="label" style="width: 130px;"><span data-v-27737a5a="">联系邮箱</span></div>
+                                        <div data-v-27737a5a="" class="label" style="width: 130px;"><span data-v-27737a5a=""><i style="color: red">*</i> 联系邮箱</span></div>
                                         <div class="layui-input-block">
                                             <input type="text" th:value="${fourcertificationOrder.otherLinkEmail}" name="otherLinkEmail" id="otherLinkEmail" autocomplete="off" class="layui-input">
                                         </div>
                                     </div>
                                     <div data-v-27737a5a="" data-v-3cb507e4="" data-v-15e66472="" class="wrap" style="width: 360px;">
-                                        <div data-v-27737a5a="" class="label" style="width: 130px;"><span data-v-27737a5a="">验证手机</span></div>
+                                        <div data-v-27737a5a="" class="label" style="width: 130px;"><span data-v-27737a5a=""><i style="color: red">*</i> 验证手机</span></div>
                                         <div class="layui-input-block">
                                             <input type="text" th:value="${fourcertificationOrder.otherValidPhone}" name="otherValidPhone" id="otherValidPhone" autocomplete="off" class="layui-input">
                                         </div>
                                     </div>
                                     <div data-v-27737a5a="" data-v-3cb507e4="" data-v-15e66472="" class="wrap" style="width: 360px;">
-                                        <div data-v-27737a5a="" class="label" style="width: 130px;"><span data-v-27737a5a="">绑定手机</span></div>
+                                        <div data-v-27737a5a="" class="label" style="width: 130px;"><span data-v-27737a5a=""><i style="color: red">*</i> 绑定手机</span></div>
                                         <div class="layui-input-block">
-                                            <!--<input type="text" name="otherBindPhone" autocomplete="off" class="layui-input">-->
-                                            <textarea  name="otherBindPhone" id="otherBindPhone" rows="4" maxlength="200"
+                                            <textarea  name="otherBindPhone" id="otherBindPhone" th:text="${fourcertificationOrder.otherBindPhone}" rows="4" maxlength="200"
                                                       required lay-verify="required"></textarea>
                                         </div>
                                     </div>
                                     <div data-v-27737a5a="" data-v-6608c108="" data-v-15e66472="" class="wrap" style="width: 1111px; margin-bottom: 2px;">
                                         <div data-v-27737a5a="" class="label" style="width: 180px;">
-                                            <div data-v-6608c108="" data-v-27737a5a="">法人身份证</div>
+                                            <div data-v-6608c108="" data-v-27737a5a=""><i style="color: red">*</i> 法人身份证</div>
                                             <div data-v-6608c108="" data-v-27737a5a="" style="font-size: 12px; color: rgb(170, 170, 170);">(格式支持jpg、png, 且大小不超过20M)</div>
                                         </div>
                                         <div data-v-27737a5a="" class="input">
@@ -142,7 +141,7 @@
                                                 <label data-v-5e9a5ea3="" style="width: 170px; height: 90px;">
                                                     <input type="file" id="legalCardUrl_file" style="display: none;" name="businessLicense"
                                                            onchange="changepic(this,'legalCardUrl','legalCardUrl_file')">
-                                                    <input type="hidden" th:value="${fourcertificationOrder.legalCardUrl}" id="legalCardUrl" name="legalCardUrl" value="" />
+                                                    <input type="hidden" th:value="${fourcertificationOrder.legalCardUrl}" id="legalCardUrl" name="legalCardUrl"/>
                                                     <img th:if="${fourcertificationOrder.legalCardUrl == null}" th:src="@{/client/400/images/111.jpg}" alt="" width="100%" height="100%" id="img_legalCardUrl">
                                                     <img th:if="${fourcertificationOrder.legalCardUrl != null}" th:src="${fourcertificationOrder.legalCardUrl}" alt="" width="100%" height="100%" id="img_legalCardUrl">
                                                 </label>
@@ -151,7 +150,7 @@
                                     </div>
                                     <div data-v-27737a5a="" data-v-6608c108="" data-v-15e66472="" class="wrap" style="width: 1111px; margin-bottom: 2px;">
                                         <div data-v-27737a5a="" class="label" style="width: 180px;">
-                                            <div data-v-6608c108="" data-v-27737a5a="">经办人身份证</div>
+                                            <div data-v-6608c108="" data-v-27737a5a=""><i style="color: red">*</i> 经办人身份证</div>
                                             <div data-v-6608c108="" data-v-27737a5a="" style="font-size: 12px; color: rgb(170, 170, 170);">(格式支持jpg、png, 且大小不超过20M)</div>
                                         </div>
                                         <div data-v-27737a5a="" class="input">
@@ -159,7 +158,7 @@
                                                 <label data-v-5e9a5ea3="" style="width: 170px; height: 90px;">
                                                     <input data-v-5e9a5ea3="" hidden="hidden" type="file"style="display: none;" onchange="changepic(this,'operatorCardUrl','operatorCardUrl_file')"
                                                            accept="image/jpg,image/png,image/PNG" id="operatorCardUrl_file">
-                                                    <input type="hidden" id="operatorCardUrl" name="operatorCardUrl" value="" />
+                                                    <input type="hidden" th:value="${fourcertificationOrder.operatorCardUrl}" id="operatorCardUrl" name="operatorCardUrl" />
                                                     <img  th:if="${fourcertificationOrder.operatorCardUrl  == null}" th:src="@{/client/400/images/111.jpg}" alt="" width="100%" height="100%" id="img_operatorCardUrl">
                                                     <img  th:if="${fourcertificationOrder.operatorCardUrl != null}" th:src="${fourcertificationOrder.operatorCardUrl}" alt="" width="100%" height="100%" id="img_operatorCardUrl">
 
@@ -173,7 +172,7 @@
 
                             <div data-v-15e66472="" style="text-align: center; padding: 10px 30px 30px;">
                                 <button data-v-15e66472="" type="button" onclick="back()" class="el-button el-button--default" style="width: 200px;">
-                                    <span>取消</span>
+                                    <span>返回</span>
                                 </button>
                                 <button data-v-15e66472="" onclick="perfect();" type="button" class="el-button el-button--primary" style="width: 200px;" lay-submit lay-filter="formDemo">
                                     <span>保存</span>
@@ -214,13 +213,16 @@
         var otherLinkEmail = $("#otherLinkEmail").val();
         var otherLinkPhone = $("#otherLinkPhone").val();
         var otherValidPhone = $("#otherValidPhone").val();
-        var otherBindPhone = $(".otherBindPhone").val();
+        var otherBindPhone = $("#otherBindPhone").val();
         var legalCardUrl = $("#legalCardUrl").val();
         var operatorCardUrl = $("#operatorCardUrl").val();
         var id = $("#id").val();
-
         if (!isNotEmpty(otherLinkMobile)) {layer.msg("联系手机不能为空！", {icon: 5, time: 2500});return;}
         if (!isNotEmpty(otherValidPhone)) {layer.msg("验证手机不能为空！", {icon: 5, time: 2500});return;}
+        if (!isNotEmpty(otherLinkEmail)) {layer.msg("邮箱不能为空！", {icon: 5, time: 2500});return;}
+        if (!isNotEmpty(otherBindPhone)) {layer.msg("绑定号码不能为空！", {icon: 5, time: 2500});return;}
+        if (!isNotEmpty(legalCardUrl)) {layer.msg("请上传法人身份证！", {icon: 5, time: 2500});return;}
+        if (!isNotEmpty(operatorCardUrl)) {layer.msg("请上传经办人身份证！", {icon: 5, time: 2500});return;}
         AjaxPost("/400/perfect",{
             otherLinkMobile:otherLinkMobile,
             otherLinkEmail:otherLinkEmail,

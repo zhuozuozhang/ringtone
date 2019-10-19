@@ -4,9 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hrtxn.ringtone.common.constant.AjaxResult;
 import com.hrtxn.ringtone.common.domain.Page;
 import com.hrtxn.ringtone.common.utils.*;
-import com.hrtxn.ringtone.project.numcertification.domain.FourcertificationOrder;
-import com.hrtxn.ringtone.project.numcertification.domain.NumOrder;
-import com.hrtxn.ringtone.project.numcertification.domain.NumcertificationOrder;
+import com.hrtxn.ringtone.project.numcertification.domain.*;
 import com.hrtxn.ringtone.project.numcertification.json.NumBaseDataResult;
 import com.hrtxn.ringtone.project.numcertification.json.NumBaseResult;
 import com.hrtxn.ringtone.project.numcertification.json.NumCgiTokenResult;
@@ -15,15 +13,20 @@ import lombok.extern.slf4j.Slf4j;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import okhttp3.*;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.nio.charset.Charset;
+import java.util.*;
 
 /**
  * 400API
@@ -37,7 +40,8 @@ public class NumApi {
 
     public final static String LOGINNAME = "江苏中高俊聪";
     public final static String PASSWORD = "111111";
-    public final static String URLPREFIX = "http://180.166.192.26:8910/";
+//    public final static String URLPREFIX = "http://180.166.192.26:8910/";
+    public final static String URLPREFIX = "http://agentweb.sungoin.com/";
     /**
      * 获取接口调用凭证
      */
@@ -54,7 +58,8 @@ public class NumApi {
     public static String cgiToken = null;
 
 //    @Value("${ringtone.profile-url}")
-    private String profileUrl = "http://127.0.0.1/";
+//    private String profileUrl = "http://272p922i24.qicp.vip:24914/";
+    private String profileUrl ="http://120.27.226.14/";
 
     public AjaxResult getCgiToken() throws IOException {
         HashMap map = new HashMap();
@@ -92,6 +97,10 @@ public class NumApi {
 //                log.info("执行刷新cgiToken结果{}", cgiToken);
 //            }
 //        }
+        if(StringUtils.isBlank(cgiToken)){
+            getCgiToken();
+            return AjaxResult.error("获取失败!,请重新获取");
+        }
 
         HashMap map = new HashMap();
         map.put("pageSize", page.getPagesize());
@@ -203,17 +212,13 @@ public class NumApi {
      * @return
      * @throws IOException
      */
-     public String downloadTemplate(FourcertificationOrder fourcertificationOrder) throws IOException {
+     public JSONObject downloadTemplate(FourcertificationOrder fourcertificationOrder) throws IOException {
          HashMap map = buildMap(fourcertificationOrder);
-         String result = sendPost(DOWNLOADTEMPLATE + "?cgiToken=" + NumApi.cgiToken, map,Const.CONTENT_TYPE_FORM_DATA);
+         String result = sendPostFile(DOWNLOADTEMPLATE + "?cgiToken=" + NumApi.cgiToken, map,Const.CONTENT_TYPE_FORM_DATA);
          log.info("获取数据结果{}", result);
          JSONObject jsonObject = JSONObject.fromObject(result);
-         String code = jsonObject.get("code").toString();
-         if("0".equals(code)){
-             return code;
-         }else{
-             return jsonObject.get("msg").toString();
-         }
+         return jsonObject;
+
      }
 
     public HashMap buildMap(FourcertificationOrder fourcertificationOrder){
@@ -235,8 +240,8 @@ public class NumApi {
     public String submit(FourcertificationOrder fourcertificationOrder) throws IOException{
 
         //准备数据
-        HashMap<String,String> map = buildSubmitMap(fourcertificationOrder);
-        String result = sendPost(DOWNLOADTEMPLATE + "?cgiToken=" + NumApi.cgiToken, map,Const.CONTENT_TYPE_FORM_DATA);
+        FourcertificationOrderSubmit submit = buildSubmit(fourcertificationOrder);
+        String result = sendPostSubmit(CGIMATERIALSUBMIT + "?cgiToken=" + NumApi.cgiToken, submit,Const.CONTENT_TYPE_JSON);
         log.info("获取数据结果{}", result);
         JSONObject jsonObject = JSONObject.fromObject(result);
         String code = jsonObject.get("code").toString();
@@ -247,112 +252,93 @@ public class NumApi {
         }
     }
 
-    public HashMap buildSubmitMap(FourcertificationOrder four){
+    public FourcertificationOrderSubmit buildSubmit(FourcertificationOrder four){
         HashMap<String,String> map = new HashMap();
-        map.put("numberCode",four.getApplyNumber());
-        map.put("corpSocietyNo",four.getCorpSocietyNo());
-        map.put("corpBusinessScope",four.getCorpBusinessScope());
+        FourcertificationOrderSubmit submit = new FourcertificationOrderSubmit();
+
+        submit.setNumberCode(four.getApplyNumber());
+        submit.setCorpSocietyNo(four.getCorpSocietyNo());
+        submit.setCorpBusinessScope(four.getCorpBusinessScope());
         //企业注册地省份主键
-        map.put("corpCompanyProvince",four.getCorpCompanyProvince());
+        submit.setCorpCompanyProvince(four.getCorpCompanyProvince());
         //企业注册地城市代码
-        map.put("corpCompanyCity",four.getCorpCompanyCity());
-        map.put("corpCompanyDetail",four.getCorpCompanyDetail());
-        map.put("corpOfficeProvince",four.getCorpOfficeProvince());
-        map.put("corpOfficeCity",four.getCorpOfficeCity());
-        map.put("corpOfficeDetail",four.getCorpOfficeDetail());
-        map.put("corpNunmberUsage",four.getCorpNunmberUsage());
-        map.put("corpAccountType",four.getCorpAccountType());
-        map.put("corpBankName",four.getCorpBankName());
-        map.put("corpBankNo",four.getCorpBankNo());
-        map.put("legalName",four.getLegalName());
-        map.put("legalIdentityId",four.getLegalIdentityId());
-        map.put("legalEffective",four.getLegalEffective());
-        map.put("legalLongEffective",four.getLegalLongEffective());
-        map.put("legalHandlerName",four.getLegalHandlerName());
-        map.put("legalHandlerIdentityId",four.getLegalHandlerIdentityId());
-        map.put("legalHandlerEffective",four.getLegalHandlerEffective());
-        map.put("legalHandlerLongEffective",four.getLegalHandlerLongEffective());
-        map.put("legalAddress",four.getLegalAddress());
-        map.put("legalHandlerAddress",four.getLegalHandlerAddress());
-        map.put("otherLinkMobile",four.getOtherLinkMobile());
-        map.put("otherLinkPhone",four.getOtherLinkPhone());
-        map.put("otherLinkEmail",four.getOtherLinkEmail());
-        map.put("otherBindPhone",four.getOtherBindPhone());
-        map.put("otherValidPhone",four.getOtherValidPhone());
+        submit.setCorpCompanyCity(four.getCorpCompanyCity());
+        submit.setCorpCompanyDetail(four.getCorpCompanyDetail());
+        submit.setCorpOfficeProvince(four.getCorpOfficeProvince());
+        submit.setCorpOfficeCity(four.getCorpOfficeCity());
+        submit.setCorpOfficeDetail(four.getCorpOfficeDetail());
+        submit.setCorpNunmberUsage(four.getCorpNunmberUsage());
+        submit.setCorpAccountType(four.getCorpAccountType());
+        submit.setCorpBankName(four.getCorpBankName());
+        submit.setCorpBankNo(four.getCorpBankNo());
+        submit.setLegalName(four.getLegalName());
+        submit.setLegalIdentityId(four.getLegalIdentityId());
+        submit.setLegalEffective(four.getLegalEffective());
+        submit.setLegalLongEffective(four.getLegalLongEffective());
+        submit.setLegalHandlerName(four.getLegalHandlerName());
+        submit.setLegalHandlerIdentityId(four.getLegalHandlerIdentityId());
+        submit.setLegalHandlerEffective(four.getLegalHandlerEffective());
+        submit.setLegalHandlerLongEffective(four.getLegalHandlerLongEffective());
+        submit.setLegalAddress(four.getLegalAddress());
+        submit.setLegalHandlerAddress(four.getLegalHandlerAddress());
+        submit.setOtherLinkMobile(four.getOtherLinkMobile());
+        submit.setOtherLinkPhone(four.getOtherLinkPhone());
+        submit.setOtherLinkEmail(four.getOtherLinkEmail());
+        submit.setOtherBindPhone(four.getOtherBindPhone());
+        submit.setOtherValidPhone(four.getOtherValidPhone());
         //营业执照文件
-        map.put("yyzz",formatFileUrl(four.getYyzz()));
+        submit.setYyzz(formatFileUrl(four.getYyzz()));
         //开户许可证文件
-        map.put("khxkz",formatFileUrl(four.getKhxkz()));
+        submit.setKhxkz(formatFileUrl(four.getKhxkz()));
         //法人身份证文件，
-        map.put("frsfz",formatFileUrl(four.getFrsfz()));
+        submit.setFrsfz(formatFileUrl(four.getFrsfz()));
         //法人授权证明文件
-        map.put("frsq",formatFileUrl(four.getFrsq()));
+        submit.setFrsq(formatFileUrl(four.getFrsq()));
         //经办人身份证文件
-        map.put("jbrsfz",formatFileUrl(four.getJbrsfz()));
+        submit.setJbrsfz(formatFileUrl(four.getJbrsfz()));
         //经办人授权证明文
-        map.put("jbrsq",formatFileUrl(four.getJbrsq()));
+        submit.setJbrsq(formatFileUrl(four.getJbrsq()));
         //缴费发票文件
-        map.put("jffp",formatFileUrl(four.getJffp()));
+        submit.setJffp(formatFileUrl(four.getJffp()));
         //受理单文件
-        map.put("sld",formatFileUrl(four.getSld()));
+        submit.setSld(formatFileUrl(four.getSld()));
         //服务协议文件
-        map.put("fwxy",formatFileUrl(four.getFwxy()));
+        submit.setFwxy(formatFileUrl(four.getFwxy()));
         //安全承诺书文件
-        map.put("aqcns",formatFileUrl(four.getAqcns()));
+        submit.setAqcns(formatFileUrl(four.getAqcns()));
         //手持身份证照片文件
-        map.put("scsfz",formatFileUrl(four.getScsfz()));
+        submit.setScsfz(formatFileUrl(four.getScsfz()));
         //经营异常证明文件
-        map.put("jyyczm",formatFileUrl(four.getJyyczm()));
+        submit.setJyyczm(formatFileUrl(four.getJyyczm()));
         //手持营业执照文件
-        map.put("ccyyzz",formatFileUrl(four.getCcyyzz()));
+        submit.setCcyyzz(formatFileUrl(four.getCcyyzz()));
         //低消协议文件
-        map.put("dxxy",formatFileUrl(four.getDxxy()));
+        submit.setDxxy(formatFileUrl(four.getDxxy()));
         //工商网截图文件
-        map.put("gswjt",formatFileUrl(four.getGswjt()));
+        submit.setGswjt(formatFileUrl(four.getGswjt()));
         //其他文件
-        map.put("qt",formatFileUrl(four.getQt()));
-        return map;
+        submit.setQt(formatFileUrl(four.getQt()));
+        return submit;
     }
 
-    public String formatFileUrl(String fileUrl){
+    public List<OrderFileBean> formatFileUrl(String fileUrl){
         if(StringUtils.isBlank(fileUrl)){
-            return "";
+            return null;
         }
-        String[] files = fileUrl.split("\\|");
-        List<String> strList = new ArrayList<>();
-        for(String str : files){
-            String fUrl = profileUrl + "profile"+str.replace("\\","/");
-            strList.add(fUrl);
-        }
-        JSONArray jsonArray = JSONArray.fromObject(strList);
 
-        return jsonArray.toString();
+        String[] files = fileUrl.split("\\|");
+        List<OrderFileBean> strList = new ArrayList<>();
+        for(String str : files){
+            OrderFileBean orderFileBean = new OrderFileBean();
+            String suffix = str.substring(str.lastIndexOf(".") + 1);
+            String fUrl = profileUrl + "profile"+str.replace("\\","/");
+            orderFileBean.setFileType(suffix);
+            orderFileBean.setUrl(fUrl);
+            strList.add(orderFileBean);
+        }
+        return strList;
     }
 
-    /**
-     * 自测预占回调用
-     */
-    public void yuzjgtz(){
-        String sign = "";
-        String url ="http://127.0.0.1/jsjt?account=80001001&applyNumber=4008166878&timestamp=1560507421999&sign=sign";
-         HashMap map = new HashMap<>();
-        map.put("applyNumber","4008166878");
-        map.put("infoType","occupy_audit");
-        Map<String,String> dataMap = new HashMap<>();
-
-        dataMap.put("occupyCompany","预占公司名称");
-        dataMap.put("auditStatus","1");
-        dataMap.put("applyDate","2019-06-11 17:55:56");
-         dataMap.put("applyDate","9576");
-         JSONObject jsonObject = JSONObject.fromObject(dataMap);
-         String param = jsonObject.toString();
-        map.put("data",param);
-         try {
-             sendPost(url,map, Const.CONTENT_TYPE_JSON);
-         } catch (IOException e) {
-             e.printStackTrace();
-         }
-     }
 
 
     /**
@@ -383,16 +369,71 @@ public class NumApi {
         String param = jsonObject.toString();
         log.info("输出的结果是：" + param);
         OkHttpClient client = new OkHttpClient();
-        MediaType mediaType = MediaType.parse("application/json");
+        MediaType mediaType = MediaType.parse(contentType);
         RequestBody body = RequestBody.create(mediaType, param);
         Request request = new Request.Builder()
                 .url(url)
                 .post(body)
+                .addHeader("Content-Type", "application/json")
                 .addHeader("Content-Type", contentType)
                 .addHeader("Cache-Control", "no-cache")
                 .build();
         Response response = client.newCall(request).execute();
         return response.body().string();
     }
+
+    public String sendPostSubmit(String url, FourcertificationOrderSubmit map,String contentType) throws IOException {
+        JSONObject jsonObject = JSONObject.fromObject(map);
+        String param = jsonObject.toString();
+        log.info("输出的结果是：" + param);
+        OkHttpClient client = new OkHttpClient();
+        MediaType mediaType = MediaType.parse(contentType);
+        RequestBody body = RequestBody.create(mediaType, param);
+        Request request = new Request.Builder()
+                .url(url)
+                .post(body)
+                .addHeader("Content-Type", "application/json")
+                .addHeader("Content-Type", contentType)
+                .addHeader("Cache-Control", "no-cache")
+                .build();
+        Response response = client.newCall(request).execute();
+        return response.body().string();
+    }
+
+
+    /**
+     * post封装
+     *
+     * @author zcy
+     * @date 2019-8-29 15:28
+     */
+    public String sendPostFile(String url, HashMap map,String contentType) throws IOException {
+        JSONObject jsonObject = JSONObject.fromObject(map);
+        String param = jsonObject.toString();
+        log.info("输出的结果是：" + param);
+        OkHttpClient client = new OkHttpClient();
+//        MediaType mediaType = MediaType.parse("multipart/form-data");
+//        RequestBody body = RequestBody.create(mediaType, param);
+        Set<String> keySet = map.keySet();
+        FormBody.Builder formBodyBuilder = new FormBody.Builder();
+        for(String key:keySet) {
+            String value = "";
+            if(map.get(key) != null){
+                value = (String)map.get(key);
+            }
+            formBodyBuilder.add(key,value);
+        }
+        FormBody formBody = formBodyBuilder.build();
+        Request request = new Request.Builder()
+                .url(url)
+                .post(formBody)
+//                .addHeader("Content-Type", "multipart/form-data")
+//                .addHeader("Cache-Control", "no-cache")
+                .build();
+        Response response = client.newCall(request).execute();
+        return response.body().string();
+    }
+
+
 
 }

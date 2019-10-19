@@ -231,6 +231,7 @@
                 return "<div class=\"cell\">\n" +
                             "<button data-v-ecae308c=\"\" type=\"button\" class=\"el-button el-button--text\" onclick=\"perfect("+id+")\">申请模板</button>" +
                     "<button data-v-ecae308c=\"\" type=\"button\" class=\"el-button el-button--text\" onclick=\"commitFile("+id+")\">完善资料</button>" +
+                    "<button data-v-ecae308c=\"\" type=\"button\" class=\"el-button el-button--text\" onclick=\"setMeal("+id+")\">订购套餐</button>" +
                             "<button data-v-ecae308c=\"\" type=\"button\" class=\"el-button el-button--text\" onclick=\"Details("+id+")\">详情</button>" +
 
                         "</div>";
@@ -281,5 +282,10 @@
     function commitFile(id){
         window.location.href = "/400/commitFile/"+id;
     }
+
+    function setMeal(id){
+        window.location.href = "/400/setMeal/"+id;
+    }
+
 </script>
 </html>

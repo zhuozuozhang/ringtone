@@ -2,10 +2,7 @@ package com.hrtxn.ringtone.project.system.user.controller;
 
 import com.google.code.kaptcha.Constants;
 import com.hrtxn.ringtone.common.domain.BaseRequest;
-import com.hrtxn.ringtone.common.utils.AddressUtils;
-import com.hrtxn.ringtone.common.utils.Const;
-import com.hrtxn.ringtone.common.utils.MD5Utils;
-import com.hrtxn.ringtone.common.utils.ShiroUtils;
+import com.hrtxn.ringtone.common.utils.*;
 import com.hrtxn.ringtone.freemark.config.asyncConfig.AsyncConfig;
 import com.hrtxn.ringtone.project.system.log.domain.LoginLog;
 import com.hrtxn.ringtone.project.system.user.domain.LoginParam;
@@ -14,6 +11,9 @@ import com.hrtxn.ringtone.project.system.user.service.UserService;
 import com.hrtxn.ringtone.project.threenets.threenet.mapper.ThreenetsChildOrderMapper;
 import com.hrtxn.ringtone.project.threenets.threenet.service.ThreeNetsRingService;
 import lombok.extern.slf4j.Slf4j;
+import net.sourceforge.tess4j.ITesseract;
+import net.sourceforge.tess4j.Tesseract;
+import net.sourceforge.tess4j.TesseractException;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.IncorrectCredentialsException;
 import org.apache.shiro.authc.LockedAccountException;
@@ -29,6 +29,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import javax.servlet.http.HttpSession;
+import java.io.File;
+import java.io.IOException;
 import java.util.Date;
 import java.util.Map;
 import java.util.Objects;
@@ -59,6 +61,7 @@ public class LoginController {
      */
     @PostMapping("/login")
     public String login(LoginParam loginParam, Map<String, Object> map, HttpSession session) {
+
         long startTime = System.currentTimeMillis();//获取当前时间
         String msg = "";
         // 构造登录记录实体类
@@ -261,4 +264,6 @@ public class LoginController {
 
         return "admin/welcome";
     }
+
+
 }

@@ -76,49 +76,7 @@
                                     <span data-v-072a8716="">
                                         <span data-v-072a8716="" style="color: rgb(250, 36, 24); font-size: 30px; font-weight: bold;" id="price" th:text="${agentCost}">0</span>元/年
                                     </span>
-                                    <span data-v-072a8716="">套餐模式: </span>
-                                    <button data-v-072a8716="" type="button" class="el-button button-select-active el-button--default el-button--medium" style="width: 150px;">
-                                        <span>按年</span>
-                                    </button>
-                                    <span data-v-072a8716="">充值年限: </span>
-                                    <div data-v-072a8716="" class="el-select" style="width: 150px;">
-                                        <div class="el-input el-input--suffix operator_div">
-                                            <input type="text" readonly="readonly" autocomplete="off" placeholder="请选择" class="el-input__inner" id="operator" data-bind="" onclick="Searchd('operator',this)" is_click="1">
-                                            <span class="el-input__suffix">
-                                                <span class="el-input__suffix-inner">
-                                                    <i class="el-select__caret el-input__icon el-icon-arrow-up operator_icon"></i>
-                                                </span>
-                                            </span>
-                                        </div>
-                                        <!-- 年份选择 -->
-                                        <div class="el-select-dropdown el-popper operator_d" style="display:none;min-width: 150px; position: absolute; top: 35px; left: 0px; transform-origin: center top; z-index: 2002;" x-placement="bottom-start">
-                                            <div class="el-scrollbar" style="">
-                                                <div class="el-select-dropdown__wrap el-scrollbar__wrap" style="margin-bottom: -17px; margin-right: -17px;">
-                                                    <ul class="el-scrollbar__view el-select-dropdown__list">
-                                                        <li data-v-072a8716="" class="el-select-dropdown__item selected" onclick="SelectCity('1年',this,'operator');">
-                                                            <span>1年</span>
-                                                        </li>
-                                                        <li data-v-072a8716="" class="el-select-dropdown__item" onclick="SelectCity('2年',this,'operator');">
-                                                            <span>2年</span>
-                                                        </li>
-                                                        <li data-v-072a8716="" class="el-select-dropdown__item" onclick="SelectCity('3年',this,'operator');">
-                                                            <span>3年</span>
-                                                        </li>
-                                                        <li data-v-072a8716="" class="el-select-dropdown__item" onclick="SelectCity('4年',this,'operator');">
-                                                            <span>4年</span>
-                                                        </li>
-                                                    </ul>
-                                                </div>
-                                                <div class="el-scrollbar__bar is-horizontal">
-                                                    <div class="el-scrollbar__thumb" style="transform: translateX(0%);"></div>
-                                                </div>
-                                                <div class="el-scrollbar__bar is-vertical">
-                                                    <div class="el-scrollbar__thumb" style="transform: translateY(0%);"></div>
-                                                </div>
-                                            </div>
-                                            <div x-arrow="" class="popper__arrow" style="left: 35px;"></div>
-                                        </div>
-                                    </div>
+
                                     <span data-v-072a8716="">号码使用地: </span>
                                     <div class="layui-row">
                                         <div class="layui-form-item" id="x-city">
@@ -209,7 +167,6 @@
     }
 
     function next(){
-        var ageLimit = $("#operator").attr("data-bind");
         var province = $("#province").val();
         var city = $("#city").val();
         var applyNumber = $("#applyNumber").val();
@@ -224,7 +181,6 @@
         if (!isNotEmpty(companyName)) {layer.msg("请输入公司名称！", {icon: 5, time: 2500});return;}
         
         AjaxPost("/400/order",{
-            ageLimit:ageLimit,
             userProvince:province,
             userCity:city,
             companyName:companyName,
