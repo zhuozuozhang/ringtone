@@ -26,6 +26,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -75,6 +76,16 @@ public class FourCertificationService {
         fourcertificationOrder.setCreateTime(new Date());
         fourcertificationOrder.setUserId(ShiroUtils.getSysUser().getId());
         fourcertificationOrder.setAvailability("1");
+        //预占
+        Date date = new Date();
+        fourcertificationOrder.setOccupyTime(date);
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        //增加7天
+        cal.add(Calendar.DAY_OF_MONTH, 7);
+        //Calendar转为Date类型
+        Date edate =cal.getTime();
+        fourcertificationOrder.setEffectiveTime(edate);
         fourcertificationOrderMapper.insert(fourcertificationOrder);
         return AjaxResult.success("预占申请成功！");
     }

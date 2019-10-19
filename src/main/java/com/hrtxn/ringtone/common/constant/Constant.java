@@ -16,5 +16,6 @@ public class Constant {
     public final static String UPDATEPASSWORDID = "172876";
 
     /**疑难杂单集团ID*/
-    public final static String OPERATEID = "441104513194111";
+//    public final static String OPERATEID = "441104513194111";
+    public final static String OPERATEID = "620247425334212";
 }

@@ -38,9 +38,11 @@ import java.util.*;
 @Component
 public class NumApi {
 
-    public final static String LOGINNAME = "江苏中高俊聪";
-    public final static String PASSWORD = "111111";
+//    public final static String LOGINNAME = "江苏中高俊聪";
+//    public final static String PASSWORD = "111111";
 //    public final static String URLPREFIX = "http://180.166.192.26:8910/";
+    public final static String LOGINNAME = "江苏中高俊聪";
+    public final static String PASSWORD = "zg316316@";
     public final static String URLPREFIX = "http://agentweb.sungoin.com/";
     /**
      * 获取接口调用凭证
@@ -58,8 +60,8 @@ public class NumApi {
     public static String cgiToken = null;
 
 //    @Value("${ringtone.profile-url}")
-//    private String profileUrl = "http://272p922i24.qicp.vip:24914/";
-    private String profileUrl ="http://120.27.226.14/";
+    private String profileUrl = "http://272p922i24.qicp.vip:24914/";
+//    private String profileUrl ="http://120.27.226.14/";
 
     public AjaxResult getCgiToken() throws IOException {
         HashMap map = new HashMap();
@@ -357,6 +359,11 @@ public class NumApi {
             log.info("执行刷新cgiToken结果{}", cgiToken);
         }
     }
+
+    public void checkFourTime(){
+        log.info("****************************开始执行查询预占订单是否有超时******************************************");
+    }
+
 
     /**
      * post封装
