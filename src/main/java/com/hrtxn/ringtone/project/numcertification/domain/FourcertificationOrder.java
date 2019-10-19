@@ -153,4 +153,6 @@ public class FourcertificationOrder {
 
     private String effctiveStr;
 
+    private String contractFile;
+
 }

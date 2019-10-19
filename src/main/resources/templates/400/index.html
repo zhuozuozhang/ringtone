@@ -163,7 +163,7 @@
                                 <th>序号</th>
                                 <th>400号码</th>
                                 <th>运营商</th>
-                                <th>成本价格</th>
+                                <!--<th>成本价格</th>-->
                                 <th>指导价格</th>
                                 <th>操作</th>
                             </tr>
@@ -193,7 +193,7 @@
             {"data": null},
             {"data": "phoneNum"},
             {"data": "phoneNum"},
-            {"data": "costPrice"},
+            // {"data": "costPrice"},
             {"data": "guidePrice"},
         ];
         var columnDefs = [{
@@ -205,7 +205,7 @@
                 if (4008 == s || 4009 == s) { return "电信";}
             }
         }, {
-            targets: [5],
+            targets: [4],
             render: function (data, type, row, meta) {
                 var phoneNum = row.phoneNum;
                 var agentCost = row.costPrice;

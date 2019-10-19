@@ -88,6 +88,8 @@ public class ConsumeLogService {
                 c.setConsumeTypeName("号码认证");
             }else if(c.getConsumeType() == 2){
                 c.setConsumeTypeName("三网");
+            }else if(c.getConsumeType() == 3){
+                c.setConsumeTypeName("400电话");
             }
         }
     }

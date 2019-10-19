@@ -15,6 +15,10 @@ import com.hrtxn.ringtone.project.numcertification.json.NumDataResult;
 import com.hrtxn.ringtone.project.numcertification.mapper.FourcertificationOrderMapper;
 import com.hrtxn.ringtone.project.numcertification.mapper.NumCertificateionPriceMapper;
 import com.hrtxn.ringtone.project.numcertification.mapper.NumcertificationOrderMapper;
+import com.hrtxn.ringtone.project.system.consumelog.domain.ConsumeLog;
+import com.hrtxn.ringtone.project.system.consumelog.mapper.ConsumeLogMapper;
+import com.hrtxn.ringtone.project.system.user.domain.User;
+import com.hrtxn.ringtone.project.system.user.mapper.UserMapper;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,7 +46,15 @@ public class FourCertificationService {
     @Autowired
     private FourcertificationOrderMapper fourcertificationOrderMapper;
 
+    @Autowired
+    private UserMapper userMapper;
+
+    @Autowired
+    private ConsumeLogMapper consumeLogMapper;
+
     private NumApi numApi = new NumApi();
+
+
 
     /**
      * 预占
@@ -52,6 +64,7 @@ public class FourCertificationService {
         if (StringUtils.isNull(fourcertificationOrder)) {
             return AjaxResult.error();
         }
+
         String result =  numApi.preoccupation(fourcertificationOrder);
         if(!"0".equals(result)){
             return AjaxResult.error(result);
@@ -75,15 +88,31 @@ public class FourCertificationService {
             if (StringUtils.isNull(fourcertificationOrder)) {
                 return AjaxResult.error();
             }
-//            String result =  numApi.downloadTemplate(fourcertificationOrder);
-//            if(!"0".equals(result)){
-//                return AjaxResult.error(result);
-//            }
             //预占申请中
             fourcertificationOrder.setStatus(Const.FOUR_ORDER_TEMPLATE_NEW);
             fourcertificationOrder.setCreateTime(new Date());
             fourcertificationOrder.setUserId(ShiroUtils.getSysUser().getId());
             fourcertificationOrderMapper.update(fourcertificationOrder);
+            fourcertificationOrder = fourcertificationOrderMapper.selectByPrimaryKey((long)fourcertificationOrder.getId());
+            JSONObject jsonObject =  numApi.downloadTemplate(fourcertificationOrder);
+            String code = jsonObject.get("code").toString();
+            if("0".equals(code)){
+                String data = jsonObject.get("data").toString();
+                JSONObject jsonData = JSONObject.fromObject(data);
+                String taskId = jsonData.get("taskId").toString();
+                FourcertificationOrder f = new FourcertificationOrder();
+                f.setId(fourcertificationOrder.getId());
+                f.setTaskId(taskId);
+                fourcertificationOrderMapper.update(f);
+            }else{
+                String msg = jsonObject.get("msg").toString();
+                FourcertificationOrder f = new FourcertificationOrder();
+                f.setId(fourcertificationOrder.getId());
+                f.setRemarks(msg);
+                fourcertificationOrderMapper.update(f);
+                return AjaxResult.error(msg);
+            }
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -125,19 +154,6 @@ public class FourCertificationService {
 
 
 
-    public AjaxResult ApplyTemplate(FourcertificationOrder fourcertificationOrder){
-        try {
-            String result = numApi.downloadTemplate(fourcertificationOrder);
-            if(!"0".equals(result)){
-                return AjaxResult.error("模板申请失败！");
-            }
-            fourcertificationOrder.setStatus(Const.FOUR_ORDER_TEMPLATE_NEW);
-            fourcertificationOrderMapper.update(fourcertificationOrder);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return AjaxResult.error("模板申请成功！");
-    }
 
 
     public FourcertificationOrder getOrderByApplyNumber(String applyNumber){
@@ -148,6 +164,35 @@ public class FourCertificationService {
         fourcertificationOrderMapper.update(fourcertificationOrder);
     }
 
+
+    public AjaxResult setMealSave(FourcertificationOrder fourcertificationOrder){
+        try {
+            fourcertificationOrder.setStatus(Const.FOUR_ORDER_SET_MEAL);
+
+            fourcertificationOrder.setCreateTime(new Date());
+            fourcertificationOrder.setUserId(ShiroUtils.getSysUser().getId());
+            //订购成功，扣款
+            User user = userMapper.findUserById(ShiroUtils.getSysUser().getId());
+            Float price = Float.parseFloat(fourcertificationOrder.getPrice().toString());
+            if(user.getTelcertificationAccount() < price){
+                return AjaxResult.error("余额不足，请充值！");
+            }
+
+            ConsumeLog consumeLog = new ConsumeLog();
+            consumeLog.setConsumePrice(price);
+            consumeLog.setConsumeMoney(user.getTelcertificationAccount() - price);
+            consumeLog.setConsumeTime(new Date());
+            consumeLog.setConsumeType(3);
+            consumeLog.setConsumeOperator(user.getUserName());
+            consumeLog.setUserName(fourcertificationOrder.getCompanyName());
+            consumeLog.setConsumeRemark("400订购消费");
+            consumeLogMapper.insert(consumeLog);
+            fourcertificationOrderMapper.update(fourcertificationOrder);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return AjaxResult.success("订购成功！");
+    }
 
     /**
      * 获取订单列表
@@ -191,6 +236,8 @@ public class FourCertificationService {
             return "资料审核成功";
         }else if("9".equals(status)){
             return "资料审核失败";
+        }else if("10".equals(status)){
+            return "订购成功";
         }
         return "";
     }

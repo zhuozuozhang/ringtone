@@ -67,6 +67,7 @@
     <result column="available" property="available" jdbcType="VARCHAR" />
     <result column="occupy_time" property="occupyTime" jdbcType="VARCHAR" />
     <result column="effective_time" property="effectiveTime" jdbcType="VARCHAR" />
+    <result column="contract_file" property="contractFile" jdbcType="VARCHAR" />
   </resultMap>
 
   <sql id="Base_Column_List" >
@@ -79,7 +80,7 @@
     a.legal_handler_name, a.legal_handler_identity_id, a.legal_handler_effective, a.legal_handler_long_effective,
     a.legal_address, a.legal_handler_address, a.yyzz, a.khxkz, a.frsfz, a.frsq, a.jbrsfz, a.jbrsq, a.jffp,
     a.sld, a.fwxy, a.aqcns, a.scsfz, a.jyyczm, a.ccyyzz, a.dxxy, a.gswjt, a.qt, a.status,a.del_flag,a.availability,a.template_url,a.remarks,a.task_id,
-    a.available,a.occupy_time,a.effective_time
+    a.available,a.occupy_time,a.effective_time,a.contract_file
   </sql>
 
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
@@ -170,7 +171,7 @@
       jbrsq, jffp, sld, fwxy, 
       aqcns, scsfz, jyyczm, 
       ccyyzz, dxxy, gswjt, 
-      qt, status,del_flag,availability,template_url,remarks,task_id,available,occupy_time,effective_time)
+      qt, status,del_flag,availability,template_url,remarks,task_id,available,occupy_time,effective_time,contract_file)
     values (#{id,jdbcType=BIGINT}, #{userId,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, 
       #{provider,jdbcType=VARCHAR}, #{applyNumber,jdbcType=VARCHAR}, #{comboPattern,jdbcType=VARCHAR}, 
       #{price,jdbcType=DECIMAL}, #{ageLimit,jdbcType=INTEGER}, #{companyName,jdbcType=VARCHAR}, 
@@ -191,7 +192,7 @@
       #{aqcns,jdbcType=VARCHAR}, #{scsfz,jdbcType=VARCHAR}, #{jyyczm,jdbcType=VARCHAR}, 
       #{ccyyzz,jdbcType=VARCHAR}, #{dxxy,jdbcType=VARCHAR}, #{gswjt,jdbcType=VARCHAR}, 
       #{qt,jdbcType=VARCHAR}, #{status,jdbcType=VARCHAR},#{delFlag},#{availability},#{templateUrl},#{remarks},#{taskId},#{available}
-      ,#{occupyTime},#{effectiveTime})
+      ,#{occupyTime},#{effectiveTime},#{contractFile})
   </insert>
 
 
@@ -386,6 +387,9 @@
       </if>
       <if test="effectiveTime != null" >
         effective_time = #{effectiveTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="contractFile != null" >
+        contract_file = #{contractFile,jdbcType=TIMESTAMP},
       </if>
     </set>
     where id = #{id,jdbcType=BIGINT}

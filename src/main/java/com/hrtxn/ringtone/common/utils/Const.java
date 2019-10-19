@@ -166,6 +166,8 @@ public final class Const implements Serializable {
     public static final String FOUR_ORDER_SUBMIT_SUCCESS = "8";
     /** 资料审核失败 */
     public static final String FOUR_ORDER_SUBMIT_FAIL = "9";
+    /** 已订购 */
+    public static final String FOUR_ORDER_SET_MEAL = "10";
 
     /**
      * 接口编码对照
