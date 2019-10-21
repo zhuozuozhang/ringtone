@@ -179,6 +179,7 @@ public class TelCertificationChildService {
      * @param certificationChildOrder
      * @return
      */
+    @Transactional
     public AjaxResult editChildStatus(CertificationChildOrder certificationChildOrder) throws Exception {
         if (StringUtils.isNotNull(certificationChildOrder) && StringUtils.isNotNull(certificationChildOrder.getId()) && certificationChildOrder.getId() != 0) {
             SimpleDateFormat sdf = new SimpleDateFormat(DateUtils.FORMAT_DEFAULT);

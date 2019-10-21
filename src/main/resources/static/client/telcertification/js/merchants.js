@@ -739,14 +739,6 @@ function addTelCerMerchants(){
         layer.msg("您需要上传LOGO");
         return;
     }
-    if($("#authorizationAdd").html() > 0 || $("#authorizationHidden").val() == ""){
-        layer.msg("请上传授权书");
-        return;
-    }
-    if($("#numberProveAdd").html() > 0 || $("#numberProveHidden").val() == ""){
-        layer.msg("请上传号码证明");
-        return;
-    }
     AjaxPost("/telcertify/addTelCertifyOrder",{
         telCompanyName: $("#telCompanyNameAdd").val(),
         telLinkName : $("#telLinkNameAdd").val(),
@@ -854,17 +846,7 @@ $('#authorizationAdd').on('change', function (e) {
     }
     uploadFile("authorization","authorizationAdd",$("#telCompanyNameAdd").val())
 });
-//上传号码证明
-$("#numberProveAdd").on('change', function (e) {
-    var telCompanyName = $("#telCompanyNameAdd").val();
-    if(telCompanyName == "" || telCompanyName == null){
-        $("#telCompanyNameAdd").focus();
-        $("#numberProveAdd").val("");
-        layer.msg("请先输入集团名称！");
-        return
-    }
-    uploadFile("numberProve","numberProveAdd",$("#telCompanyNameAdd").val())
-});
+
 
 <!--添加----上传图片文件 -->
 $("body").on('click', '#businessLicenseClass', function () {

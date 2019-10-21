@@ -75,7 +75,6 @@ public class TelCertificationDistributorService {
             }
         }else{
             for (TelCerDistributor dis : allDisList) {
-
                 if(userId.equals(dis.getDistributorId())){
                     int update = telCerDistributorMapper.updateByPrimaryKey(telCerDistributor);
                     if(update > 0){
@@ -85,7 +84,6 @@ public class TelCertificationDistributorService {
                     }
                     return AjaxResult.success(telCerDistributor,"更新失败",update);
                 }
-
             }
         }
         return AjaxResult.success(500,theDisList,"查询失败",0);

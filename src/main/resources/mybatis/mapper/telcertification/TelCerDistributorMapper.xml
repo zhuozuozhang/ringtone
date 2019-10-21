@@ -24,7 +24,7 @@
     <if test="param.distributorId != null and param.distributorId != ''">
       AND ttdi.distributor_id = #{param.distributorId}
     </if>
-    <if test="param.name != null and param.name != ''">
+    <if test="param != null and param.distributorName != null and param.distributorName != ''">
       AND ttdi.distributor_name like '%${param.name}%'
     </if>
     <if test="param.phoneNum != null and param.phoneNum !=''">

@@ -79,4 +79,5 @@ public class BaseRequest {
      * 渠道商id
      */
     private Integer distributorId;
+    private String distributorName;
 }

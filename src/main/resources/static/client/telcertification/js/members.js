@@ -139,6 +139,29 @@ function checkNum(obj) {
                     }
                 }
             }
+            AjaxPost("/telcertify/verificationChildNum", {
+                "phoneNum": phones,
+            }, function (result) {
+                if (result.code == 500) {
+                    layer.msg(result.msg);
+                } else {
+                    for (var i = 0; i < document.getElementsByClassName('numlists').length; i++) {
+                        if (document.getElementsByClassName('numlists')[i].value.length != 0) {
+                            var phones = checkData[i];
+                            if(!isTel(phones)){
+                                if(!isPhone(phones)){
+                                    if(!is_Phone(phones)){
+                                        $(document.getElementsByClassName("numlists")[i]).focus();
+                                        layer.msg('号码"' + phones + '"不正确!');
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    // layer.msg(result.msg);
+                }
+            });
         }
     }
     if(checkData.length == 0){

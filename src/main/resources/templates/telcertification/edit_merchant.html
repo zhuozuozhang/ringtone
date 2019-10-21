@@ -145,19 +145,7 @@
 
         <div class="layui-form-item">
                 <div class="ckan opencase">查看案例</div>
-                <div class="mbxz"><a href="http://v.130.xyz/api/auth/uploadModel?type=3">授权书模板下载</a></div>
-        </div>
-
-        <div class="layui-form-item">
-            <label class="layui-form-label"><span><i>*</i>号码证明</span></label>
-            <div class="layui-input-block">
-                <input class="scwj" type="file"  id="numberProve" name="numberProve" style="line-height: 38px;height: 38px;border: 1px solid #CCC;width: 360px;padding-right: 5px;padding-left: 5px;display: block;float: left;">
-            </div>
-        </div>
-
-        <div class="layui-form-item">
-            <div class="ckan opencase">查看案例</div>
-            <div class="mbxz"><a href="http://v.130.xyz/api/auth/uploadModel?type=3">授权书模板下载</a></div>
+                <div class="mbxz"><a th:href="@{/public/file/授权书模板.docx}">授权书模板下载</a></div>
         </div>
         <div class="layui-form-item">
             <label class="layui-form-label"><span>备注</span></label>
@@ -177,7 +165,7 @@
     <div class="approve_title">
         <div class="gban" id="closecase"><img th:src="@{/client/telcertification/images/close.png}"></div>
     </div>
-    <div class="casecon"><img th:src="@{/client/telcertification/images/sqs.jpg}"></div>
+    <div class="casecon"><img th:src="@{/client/telcertification/picture/shouquanshu.png}"></div>
 </div>
 <!--订购协议-->
 <div class="back display" id="agreement">
