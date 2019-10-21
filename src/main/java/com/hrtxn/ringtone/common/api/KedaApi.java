@@ -89,6 +89,12 @@ public class KedaApi {
         String res = sendPost(GETRINGEMPLOYEELIST + "?r=" + rm, param);
         log.info("疑难杂单获取自己订单信息 参数：{},{} 结果：{}", tel, id, res);
         KedaPhoneBaseResult<KedaPhoneResult> kedaPhoneBaseResult = SpringUtils.getBean(ObjectMapper.class).readValue(res, KedaPhoneBaseResult.class);
+        if (kedaPhoneBaseResult.getData() == null || kedaPhoneBaseResult.getData().size() == 0){
+            param = "groupId=" + Constant.OPERATEID_OLD + "&businessId=&dueStartTime=&dueEndTime=&keywords=" + tel + "&empState=&businessSettingState=&businessState=&pageIndex=1&pageSize=10&province=&city=&carriesCode=0&businessType=ring";
+            rm = (new Random()).nextDouble();
+            res = sendPost(GETRINGEMPLOYEELIST + "?r=" + rm, param);
+            kedaPhoneBaseResult = SpringUtils.getBean(ObjectMapper.class).readValue(res, KedaPhoneBaseResult.class);
+        }
         KedaChildOrder kedaChildOrder = new KedaChildOrder();
         kedaChildOrder.setId(id);
         if ("000000".equals(kedaPhoneBaseResult.getRetCode())) {
@@ -225,6 +231,12 @@ public class KedaApi {
                 String s = sendPost(QUERYRINGLIST + "?r=" + rm, param);
                 log.info("疑难杂单刷新铃音信息:{}", s);
                 KedaPhoneBaseResult<KedaRefresRingInfo> kedaRingBaseResult = SpringUtils.getBean(ObjectMapper.class).readValue(s, KedaPhoneBaseResult.class);
+                if (kedaRingBaseResult.getData() == null){
+                    param = "groupId=" + Constant.OPERATEID_OLD + "&pageSize=10000&pageIndex=1&name=" + kedaRingList.get(i).getRingName();
+                    rm = (new Random()).nextDouble();
+                    s = sendPost(QUERYRINGLIST + "?r=" + rm, param);
+                    kedaRingBaseResult = SpringUtils.getBean(ObjectMapper.class).readValue(s, KedaPhoneBaseResult.class);
+                }
                 if ("000000".equals(kedaRingBaseResult.getRetCode())) {
                     List<KedaRefresRingInfo> data = kedaRingBaseResult.getData();
                     List<KedaRefresRingInfo> kedaRefresRingInfos = new ArrayList<>();
@@ -258,6 +270,7 @@ public class KedaApi {
                             }
                         }
                     }
+
                 }
             }
         }

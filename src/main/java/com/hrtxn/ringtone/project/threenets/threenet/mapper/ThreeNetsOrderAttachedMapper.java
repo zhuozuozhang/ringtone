@@ -3,6 +3,8 @@ package com.hrtxn.ringtone.project.threenets.threenet.mapper;
 import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreeNetsOrderAttached;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 /**
  * Author:zcy
  * Date:2019-07-29 13:41
@@ -48,9 +50,9 @@ public interface ThreeNetsOrderAttachedMapper {
     ThreeNetsOrderAttached selectByParentOrderId(Integer id);
 
     /**
+     * 查询当天添加失败的商户
      *
-     * @param id
      * @return
      */
-
+    List<ThreeNetsOrderAttached> selectOrderStatusIsError();
 }

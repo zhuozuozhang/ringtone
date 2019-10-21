@@ -40,6 +40,12 @@ public final class Const implements Serializable {
     public final static String UNDER_REVIEW = "正在审核";
     public final static String KEDA_UNDER_REVIEW = "审核中";
 
+//    public final static String MERCHANT_STATUS_LOCAL_SUCCESS = "本地创建成功";
+//    public final static String MERCHANT_STATUS_ONLINE_ING = "正在同步后台";
+//    public final static String MERCHANT_STATUS_ONLINE_SUCCESS = "后台同步成功";
+//    public final static String MERCHANT_STATUS_ONLINE_ERROR = "后台同步失败";
+
+
 
     /**
      * 电信新增失败状态码
@@ -185,6 +191,9 @@ public final class Const implements Serializable {
      */
     public static final String EXAMINE_RESULT = "80001003";
 
+    /**
+     * 获取商户成员更新状态
+     */
     public static final String UPDATE_STATUS_RING = "ring";
     public static final String UPDATE_STATUS_VIDEO_RING = "videoRing";
     public static final String UPDATE_STATUS_ALL = "all";
@@ -193,9 +202,9 @@ public final class Const implements Serializable {
 
     public static final String SESSION_VERIFICATION_CODE = "session_verification_code";
 
-
+    /**
+     * 是否免短用户
+     */
     public static final Integer IS_EXEMPT_SMS_YES = 1;
     public static final Integer IS_EXEMPT_SMS_NO = 0;
-
-
 }

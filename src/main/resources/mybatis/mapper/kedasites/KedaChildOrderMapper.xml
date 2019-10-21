@@ -136,14 +136,6 @@
                 #{id}
             </foreach>
         </if>
-        <if test="param != null and param.month != null and param.month != '' ">
-            <if test="type == 1">
-                AND DATE_FORMAT(create_time, '%Y-%m') = #{param.month}
-            </if>
-            <if test="type == 2">
-                AND DATE_FORMAT(create_time, '%Y') = #{param.month}
-            </if>
-        </if>
     </select>
     <!--添加子级订单-->
     <insert id="insertKedaChildOrder"

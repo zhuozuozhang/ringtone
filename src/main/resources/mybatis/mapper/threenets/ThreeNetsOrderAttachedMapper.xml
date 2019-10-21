@@ -204,4 +204,18 @@
         </set>
         where id = #{id,jdbcType=INTEGER}
     </update>
+
+    <select id="selectOrderStatusIsError" resultMap="BaseResultMap">
+        SELECT
+            a.*
+        FROM
+            tb_threenets_order_attached a
+            LEFT JOIN tb_threenets_order b ON a.parent_order_id = b.id
+        WHERE
+            a.migu_id IS NULL
+            AND a.swxl_id IS NULL
+            AND a.mcard_id IS NULL
+            AND b.create_time BETWEEN str_to_date( DATE_FORMAT( NOW( ), '%Y-%m-%d' ), '%Y-%m-%d %H:%i:%s' )
+            AND DATE_ADD( DATE_ADD( str_to_date( DATE_FORMAT( NOW( ), '%Y-%m-%d' ), '%Y-%m-%d %H:%i:%s' ), INTERVAL 1 DAY ), INTERVAL - 1 SECOND )
+    </select>
 </mapper>

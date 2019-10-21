@@ -44,7 +44,8 @@ function showTable() {
             } else {
                 status = "开通失败"
             }
-            return status + "<i onclick='getPhoneInfo(" + id + ")' class='layui-icon' title='刷新' data-rowindex='" + meta.row + "'><img src='../../../../client/threenets/images/refresh.png'></i>";
+            //return status + "<i onclick='getPhoneInfo(" + id + ")' class='layui-icon' title='刷新' data-rowindex='" + meta.row + "'><img src='../../../../client/threenets/images/refresh.png'></i>";
+            return status;
         }
     }, {
         targets: [8],
@@ -69,7 +70,8 @@ function showTable() {
                 status = '已回短信';
             }
             var id = row.id;
-            return status + "<i onclick='getPhoneInfo(" + id + ")' class='layui-icon' title='刷新' data-rowindex='" + meta.row + "'><img src='../../../../client/threenets/images/refresh.png'></i>";
+            //return status + "<i onclick='getPhoneInfo(" + id + ")' class='layui-icon' title='刷新' data-rowindex='" + meta.row + "'><img src='../../../../client/threenets/images/refresh.png'></i>";
+            return status;
         }
     }, {
         targets: [9],
