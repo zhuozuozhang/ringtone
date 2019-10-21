@@ -59,25 +59,22 @@
             <div class="layui-row" style="height:110px;">
                 <div class="layui-col-xs6">
                     <div class="grid-demo grid-demo-bg1">
-                        <img th:src="@{/public/images/logo.png}" alt="" width="580px" height="100px" style='margin: 5px 20px;'>
+                        <img th:src="@{/client/telcertification/images/logoTelCer.png}" alt="" width="680px" height="100px" style='margin: 5px 20px;'>
                     </div>
                 </div>
                 <div class="layui-col-xs6" id="navigation">
                     <div class="grid-demo" style="margin-top: 15px;">
                         <div class="layui-row layui-col-space5">
-                            <div class="layui-col-md4">
-                                <a class="grid-demo grid-demo-bg1 layui-icon layui-icon-username" style="text-decoration: underline;" th:href="@{/system/toCenterPage}">  [[${session.username}]]</a>
+                            <div class="layui-col-md4" style="width: 300px">
+                                <a class="grid-demo grid-demo-bg1">您好,代理商，</a>
+                                <a class="grid-demo grid-demo-bg1" style="text-decoration: underline;" th:href="@{/system/toCenterPage}">[[${session.username}]]</a>
                             </div>
-<!--                            <div class="layui-col-md1" >-->
-<!--                                <a th:href="@{/telcertify/toTelNoticePage}">-->
-<!--                                    <div class="grid-demo" style="cursor: pointer;">|&nbsp;&nbsp;公告</div>-->
-<!--                                </a>-->
-<!--                            </div>-->
-                            <div class="layui-col-md1">
+                            <div class="layui-col-md1" style="width:70px;">
                                 <a th:href="@{/loginout}">
-                                    <div class="grid-demo grid-demo-bg1 layui-icon layui-icon-close" style="cursor: pointer;">&nbsp;&nbsp;退出</div>
+                                    <div class="grid-demo grid-demo-bg1" style="cursor: pointer;">|&nbsp;&nbsp;退出</div>
                                 </a>
                             </div>
+<!--                            <i class="layui-icon layui-icon-notice" style="font-size:30px" onclick="showAnnouncement()"></i>-->
                         </div>
                     </div>
                 </div>

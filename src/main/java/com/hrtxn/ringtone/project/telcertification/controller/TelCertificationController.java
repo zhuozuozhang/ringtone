@@ -33,7 +33,7 @@ import java.util.List;
 @RequestMapping("/telcertify")
 public class   TelCertificationController {
 
-    private final String MODULE_CERTIFICATION = "1";
+    private final String MODULE_CERTIFICATION = "8";
 
     @Autowired
     private TelCertificationService telCertificationService;

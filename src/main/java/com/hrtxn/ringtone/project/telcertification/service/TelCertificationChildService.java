@@ -404,4 +404,29 @@ public class TelCertificationChildService {
     public int getTelcerChildParentIdByPhoneNum(String phoneNum) {
         return certificationChildOrderMapper.getTelcerChildParentIdByPhoneNum(phoneNum);
     }
+
+    /**
+     * 验证成员号码是否重复
+     * @param phoneNum
+     * @return
+     */
+    public AjaxResult isRepetitionByChildNum(String phoneNum) {
+        if(phoneNum != "" && phoneNum != null) {
+            List<CertificationChildOrder> list = certificationChildOrderMapper.isRepetitionByChildNum(phoneNum);
+            if(list != null && list.size() >= 1){
+                for (int j = 0; j < list.size(); j++) {
+                    String cTelPhone = list.get(j).getTelChildOrderPhone();
+                    if(cTelPhone.length() <= 13 && cTelPhone.length() >10){
+                        if(cTelPhone.equals(phoneNum)){
+                            return AjaxResult.error(500,"电话"+phoneNum+"重复,请重新输入！");
+                        }else{
+                            continue;
+                        }
+                    }
+                }
+            }
+            return AjaxResult.success("联系人电话未重复！");
+        }
+        return AjaxResult.error("参数不正确");
+    }
 }

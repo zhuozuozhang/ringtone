@@ -236,14 +236,7 @@ function vertifyTelLinkPhone() {
     var tel_regex = /^(\d{3,4}\-)?\d{7,8}$/i;   //座机格式是 010-98909899 010-86551122
     var telregex = /^0(([1-9]\d)|([3-9]\d{2}))\d{8}$/; //没有中间那段 -的 座机格式是 01098909899
 
-    if (!phoneregex.test(phones)) {
-        if (!tel_regex.test(phones)) {
-            if(!telregex.test(phones)){
-                $("#telLinkPhoneAdd").focus();
-                layer.msg('联系人号码"' + phones + '"不正确!');
-            }
-        }
-    }
+
     AjaxPost("/telcertify/verificationTelLinkPhone", {
         "telLinkPhone": phones,
     }, function (result) {
@@ -251,7 +244,14 @@ function vertifyTelLinkPhone() {
             $("#telLinkPhoneAdd").focus();
             layer.msg(result.msg);
         } else {
-            layer.msg(result.msg);
+            if (!phoneregex.test(phones)) {
+                if (!tel_regex.test(phones)) {
+                    if(!telregex.test(phones)){
+                        $("#telLinkPhoneAdd").focus();
+                        layer.msg('联系人号码"' + phones + '"不正确!');
+                    }
+                }
+            }
         }
     });
 }
@@ -580,7 +580,7 @@ $("#closeagreement").on('click', function () { //点击取消隐藏弹窗
 })
 
 //----------------------------------------------成员号码的验证和批量添加---------------------------------------------------
-//验证成员号码
+//验证成员号码是否正确，不能重复
 function checkNum(obj) {
 
     //所输入的号码集合
@@ -598,8 +598,34 @@ function checkNum(obj) {
                     }
                 }
             }
+
+            AjaxPost("/telcertify/verificationChildNum", {
+                "phoneNum": phones,
+            }, function (result) {
+                if (result.code == 500) {
+                    layer.msg(result.msg);
+                } else {
+                    for (var i = 0; i < document.getElementsByClassName('numlists').length; i++) {
+                        if (document.getElementsByClassName('numlists')[i].value.length != 0) {
+                            var phones = checkData[i];
+                            if(!isTel(phones)){
+                                if(!isPhone(phones)){
+                                    if(!is_Phone(phones)){
+                                        $(document.getElementsByClassName("numlists")[i]).focus();
+                                        layer.msg('号码"' + phones + '"不正确!');
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    // layer.msg(result.msg);
+                }
+            });
         }
     }
+
+
 }
 
 //添加号码

@@ -396,13 +396,13 @@ public class TelCertificationService {
                 String cTelPhone = list.get(i).getTelLinkPhone();
                 if(cTelPhone.length() <= 12 && cTelPhone.length() >10){
                     if(cTelPhone.equals(telLinkPhone)){
-                        return AjaxResult.error("联系人电话不允许重复！");
+                        return AjaxResult.error(500,"联系人电话不允许重复！");
                     }else{
                         continue;
                     }
                 }
             }
         }
-        return AjaxResult.success("联系人电话可用！");
+        return AjaxResult.success("联系人电话未重复！");
     }
 }

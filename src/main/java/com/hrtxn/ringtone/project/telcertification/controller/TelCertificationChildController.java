@@ -171,4 +171,16 @@ public class TelCertificationChildController {
         return AjaxResult.error("参数格式错误！");
 
     }
+
+    /**
+     * 验证成员号码是否重复
+     *
+     * @param phoneNum
+     * @return
+     */
+    @PostMapping("/verificationChildNum")
+    @ResponseBody
+    public AjaxResult verificationChildNum(String phoneNum){
+        return telCertificationChildService.isRepetitionByChildNum(phoneNum);
+    }
 }

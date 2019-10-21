@@ -3,6 +3,7 @@ package com.hrtxn.ringtone.project.telcertification.mapper;
 import com.hrtxn.ringtone.common.domain.BaseRequest;
 import com.hrtxn.ringtone.common.domain.Page;
 import com.hrtxn.ringtone.project.telcertification.domain.CertificationChildOrder;
+import com.hrtxn.ringtone.project.telcertification.domain.CertificationOrder;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
@@ -45,4 +46,6 @@ public interface CertificationChildOrderMapper {
     List<CertificationChildOrder> getDueList(@Param("page") Page page, @Param("param") BaseRequest request);
 
     int getDueListCount(@Param("page") Page page,@Param("param") BaseRequest request);
+
+    List<CertificationChildOrder> isRepetitionByChildNum(@Param("phoneNum") String phoneNum);
 }

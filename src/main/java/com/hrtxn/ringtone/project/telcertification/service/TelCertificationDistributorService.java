@@ -49,39 +49,46 @@ public class TelCertificationDistributorService {
         List<TelCerDistributor> allDisList = telCerDistributorMapper.getAllTelCerDistributorInfo(page,request);
         List<TelCerDistributor> theDisList = new ArrayList<TelCerDistributor>();
         Integer userId = ShiroUtils.getSysUser().getId();
-        for (TelCerDistributor dis : allDisList) {
-            TelCerDistributor telCerDistributor = new TelCerDistributor();
-            telCerDistributor.setDistributorId(ShiroUtils.getSysUser().getId());
-            telCerDistributor.setDistributorName(ShiroUtils.getSysUser().getUserName());
-            if (ShiroUtils.getSysUser().getParentId() != 0 || ShiroUtils.getSysUser().getParentId() != 2){
-                telCerDistributor.setStage("非顶级");
-            }
-            telCerDistributor.setStage("顶级");
-            TelCerDistributor allService = telCerDistributorMapper.getServiceNum(userId);
-            TelCerDistributor lastMonth = telCerDistributorMapper.getLastMonth(userId);
-            TelCerDistributor theMonthService = telCerDistributorMapper.getTheMonthService(userId);
-            TelCerDistributor todayService = telCerDistributorMapper.getTodayService(userId);
-            telCerDistributor.setTotal(allService.getTeddyNum() + allService.getTelBondNum() + allService.getColorPrintNum() + allService.getHangupMessageNum());
-            telCerDistributor.setLastMonthTotal(lastMonth.getTeddyNum() + lastMonth.getTelBondNum() + lastMonth.getColorPrintNum() + lastMonth.getHangupMessageNum());
-            telCerDistributor.setTheMonthTotal(theMonthService.getTeddyNum() + theMonthService.getTelBondNum() + theMonthService.getColorPrintNum() + theMonthService.getHangupMessageNum());
-            telCerDistributor.setTodayTotal(todayService.getTeddyNum() + todayService.getTelBondNum() + todayService.getColorPrintNum() + todayService.getHangupMessageNum());
-            if(userId.equals(dis.getDistributorId())){
-                int update = telCerDistributorMapper.updateByPrimaryKey(telCerDistributor);
-                if(update > 0){
-                    request.setDistributorId(userId);
-                    theDisList = telCerDistributorMapper.getAllTelCerDistributorInfo(page,request);
-                    return AjaxResult.success(theDisList,"更新成功",update);
-                }
-                return AjaxResult.success(telCerDistributor,"更新失败",update);
-            }
+
+        TelCerDistributor telCerDistributor = new TelCerDistributor();
+        telCerDistributor.setDistributorId(ShiroUtils.getSysUser().getId());
+        telCerDistributor.setDistributorName(ShiroUtils.getSysUser().getUserName());
+        if (ShiroUtils.getSysUser().getParentId() != 0 || ShiroUtils.getSysUser().getParentId() != 2){
+            telCerDistributor.setStage("非顶级");
+        }
+        telCerDistributor.setStage("顶级");
+        TelCerDistributor allService = telCerDistributorMapper.getServiceNum(userId);
+        TelCerDistributor lastMonth = telCerDistributorMapper.getLastMonth(userId);
+        TelCerDistributor theMonthService = telCerDistributorMapper.getTheMonthService(userId);
+        TelCerDistributor todayService = telCerDistributorMapper.getTodayService(userId);
+        telCerDistributor.setTotal(allService.getTeddyNum() + allService.getTelBondNum() + allService.getColorPrintNum() + allService.getHangupMessageNum());
+        telCerDistributor.setLastMonthTotal(lastMonth.getTeddyNum() + lastMonth.getTelBondNum() + lastMonth.getColorPrintNum() + lastMonth.getHangupMessageNum());
+        telCerDistributor.setTheMonthTotal(theMonthService.getTeddyNum() + theMonthService.getTelBondNum() + theMonthService.getColorPrintNum() + theMonthService.getHangupMessageNum());
+        telCerDistributor.setTodayTotal(todayService.getTeddyNum() + todayService.getTelBondNum() + todayService.getColorPrintNum() + todayService.getHangupMessageNum());
+
+        if(allDisList.size() <= 0){
             int insert = telCerDistributorMapper.insert(telCerDistributor);
             if(insert > 0){
                 request.setDistributorId(userId);
                 theDisList = telCerDistributorMapper.getAllTelCerDistributorInfo(page,request);
                 return AjaxResult.success(theDisList,"新建成功",insert);
             }
+        }else{
+            for (TelCerDistributor dis : allDisList) {
+
+                if(userId.equals(dis.getDistributorId())){
+                    int update = telCerDistributorMapper.updateByPrimaryKey(telCerDistributor);
+                    if(update > 0){
+                        request.setDistributorId(userId);
+                        theDisList = telCerDistributorMapper.getAllTelCerDistributorInfo(page,request);
+                        return AjaxResult.success(theDisList,"更新成功",update);
+                    }
+                    return AjaxResult.success(telCerDistributor,"更新失败",update);
+                }
+
+            }
         }
-        return AjaxResult.error("查询失败");
+        return AjaxResult.success(500,theDisList,"查询失败",0);
     }
 
     /**

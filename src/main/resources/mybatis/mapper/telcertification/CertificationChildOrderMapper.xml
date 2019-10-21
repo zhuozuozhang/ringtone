@@ -28,7 +28,7 @@
             AND ttco.parent_order_id = #{param.parentId}
         </if>
         <if test="param != null and param.phoneNum != null and param.phoneNum != ''">
-            AND ttco.tel_child_order_phone = ${param.phoneNum}
+            AND ttco.tel_child_order_phone = #{param.phoneNum}
         </if>
     </sql>
 
@@ -199,6 +199,10 @@
             AND tto.user_id = #{param.userId}
         </if>
         AND UNIX_TIMESTAMP(NOW()) >= UNIX_TIMESTAMP(tel_child_order_expire_time)
+    </select>
+    <select id="isRepetitionByChildNum" resultMap="BaseResultMap">
+        select * from tb_telcertification_child_order
+        where tel_child_order_phone = #{phoneNum,jdbcType=VARCHAR}
     </select>
 
     <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
