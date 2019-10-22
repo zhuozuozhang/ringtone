@@ -19,6 +19,12 @@ public interface CertificationChildOrderMapper {
 
     int getCount(@Param("param") BaseRequest request);
 
+    /**
+     * 根据成员号码查找
+     * @param page
+     * @param request
+     * @return
+     */
     List<CertificationChildOrder> findTheChildOrder(@Param("page") Page page, @Param("param") BaseRequest request);
 
     int getMemberCountByParentId(int i);
@@ -30,6 +36,8 @@ public interface CertificationChildOrderMapper {
     int editFeedBackById(CertificationChildOrder certificationChildOrder);
 
     int getTelcerChildParentIdByPhoneNum(String phoneNum);
+
+    int getTelcerChildParentIdById(String id);
 
     CertificationChildOrder getTelcerChildByPhoneNum(String userTel);
 

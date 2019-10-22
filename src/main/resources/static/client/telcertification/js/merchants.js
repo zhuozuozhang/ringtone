@@ -76,26 +76,6 @@ function showTelCerTable() {
                 + "<a href='/telcertify/toTelMembersPage/"+id+"'><i class='layui-icon layui-icon-username' title='成员管理'></i></a>";
         }
     }];
-    if(param.phoneNum != "" && param.phoneNum != null){
-        if(!isTel(param.phoneNum)){
-            if(!isPhone(param.phoneNum)){
-                if(!is_Phone(param.phoneNum)){
-                    layer.msg("请输入正确的成员手机号码！",{icon: 0, time: 3000});
-                    return;
-                }
-            }
-        }
-    }
-    if(param.telLinkPhone != "" && param.telLinkPhone != null){
-        if(!isTel(param.telLinkPhone)){
-            if(!isPhone(param.telLinkPhone)){
-                if(!is_Phone(param.telLinkPhone)){
-                    layer.msg("请输入正确的商户联系电话！",{icon: 0, time: 3000});
-                    return;
-                }
-            }
-        }
-    }
     page("#merchants", 10, param, "/telcertify/getTelCerOrderList", columns, columnDefs);
 }
 // 获取订单列表-->即将到期列表
@@ -130,16 +110,6 @@ function showFallDueTable() {
             return "<p><i class='layui-icon layui-icon-log' title='查看详情' onclick='ckeckDetailsOne("+id+");'></i></p>";
         }
     }];
-    if(param.phoneNum != "" && param.phoneNum != null){
-        if(!isTel(param.phoneNum)){
-            if(!isPhone(param.phoneNum)){
-                if(!is_Phone(param.phoneNum)){
-                    layer.msg("请输入正确的成员手机号码！",{icon: 0, time: 3000});
-                    return;
-                }
-            }
-        }
-    }
     page("#fall_due_table", 10, param, "/telcertify/getFallDueList", columns, columnDefs);
 }
 
@@ -176,17 +146,6 @@ function showDueTable() {
             return "<p><i class='layui-icon layui-icon-log' title='查看详情' onclick='ckeckDetailsOne("+id+");'></i></p>";
         }
     }];
-    if(param.phoneNum != "" && param.phoneNum != null){
-        if(!isTel(param.phoneNum)){
-            if(!isPhone(param.phoneNum)){
-                if(!is_Phone(param.phoneNum)){
-                    $("#membernum").val(null).focus();
-                    layer.msg("请输入正确的成员手机号码！",{icon: 0, time: 3000});
-                    return;
-                }
-            }
-        }
-    }
     page("#due_table", 10, param, "/telcertify/getDueList", columns, columnDefs);
 }
 

@@ -54,21 +54,11 @@ function showTelCerMemberTable() {
         render: function (data, type, row, meta) {
             var id = row.id;
             var phoneNum = row.telChildOrderPhone;
-            return "<a href='javascript:;'><i class='layui-icon layui-icon-rmb' title='续费' onclick='Renewal("+phoneNum+");'></i></a>"
+            return "<a href='javascript:;'><i class='layui-icon layui-icon-rmb' title='续费' onclick='Renewal("+id+");'></i></a>"
                 + "<a href='/telcertify/toTelCostPage/"+phoneNum+"'><i class='layui-icon layui-icon-form' title='费用支出记录'></i></a>"
         }
     }];
 
-    if(param.phoneNum != "" && param.phoneNum != null){
-        if(!isTel(param.phoneNum.trim())){
-            if(!isPhone(param.phoneNum.trim())){
-                if(!is_Phone(param.phoneNum).trim()){
-                    layer.msg("请输入正确的手机号或者座机号，座机号请务必添加区号！",{icon: 5, time: 3000});
-                    return;
-                }
-            }
-        }
-    }
     var url = "/telcertify/getTelCerMembersList";
     page("#members", 15, param, url, columns, columnDefs);
 }
@@ -93,12 +83,12 @@ function closePanel(){
     $("body").css("overflow","auto");
 }
 //续费
-function Renewal(phoneNum){
+function Renewal(id){
     layer.open({
         type: 2,
         title: '续费',
         area: ['540px', '320px'],
-        content: '/telcertify/toRenewPage/'+phoneNum
+        content: '/telcertify/toRenewPage/'+id
     });
 }
 // 确认续费

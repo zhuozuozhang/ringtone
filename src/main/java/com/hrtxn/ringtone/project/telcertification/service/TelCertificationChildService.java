@@ -407,6 +407,16 @@ public class TelCertificationChildService {
     }
 
     /**
+     * 根据id获取号码认证子订单的父id
+     *
+     * @param id
+     * @return
+     */
+    public int getTelcerChildParentIdById(String id) {
+        return certificationChildOrderMapper.getTelcerChildParentIdById(id);
+    }
+
+    /**
      * 验证成员号码是否重复
      * @param phoneNum
      * @return
