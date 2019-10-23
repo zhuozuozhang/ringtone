@@ -132,8 +132,9 @@ public class KeDaController {
      *
      * @return
      */
-    @GetMapping("sendMessages")
-    public String sendMessages() {
+    @GetMapping("sendMessages/{phone}")
+    public String sendMessages(@PathVariable String phone,ModelMap map) {
+        map.put("phone",phone);
         return "threenets/kedas/kedasites/merchants/send_messages";
     }
 }

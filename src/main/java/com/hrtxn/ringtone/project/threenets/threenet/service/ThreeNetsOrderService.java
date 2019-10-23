@@ -264,9 +264,16 @@ public class ThreeNetsOrderService {
         //添加商户信息
         threenetsOrder.setCompanyName(order.getCompanyName()+DateUtils.getTimeRadom());
         threenetsOrder.setCompanyLinkman(order.getCompanyLinkman());
-        threenetsOrder.setLinkmanTel(order.getLinkmanTel());
         threenetsOrder.setFolderName(order.getFolderName());
-        threenetsOrder = init(threenetsOrder);
+        //子订单手机号验证,以及子订单数据初始化
+        List<ThreenetsChildOrder> childOrderList = threeNetsChildOrderService.formattedPhone(order.getMemberTels(), threenetsOrder.getId());
+        threenetsOrder.setLinkmanTel(childOrderList.get(0).getLinkmanTel());
+        threenetsOrder.setOperator(childOrderList.get(0).getOperator());
+        threenetsOrder.setProvince(childOrderList.get(0).getProvince());
+        threenetsOrder.setCity(childOrderList.get(0).getCity());
+        threenetsOrder.setUserId(ShiroUtils.getSysUser().getId());
+        threenetsOrder.setCreateTime(new Date());
+        threenetsOrder.setStatus("审核通过");
         threenetsOrderMapper.insertThreenetsOrder(threenetsOrder);
         //添加附表信息
         attached.setParentOrderId(threenetsOrder.getId());
@@ -283,7 +290,6 @@ public class ThreeNetsOrderService {
             attached.setAvoidShortAgreement(order.getProtocolUrl());//免短协议
         }
         //子订单手机号验证,以及子订单数据初始化
-        List<ThreenetsChildOrder> childOrderList = threeNetsChildOrderService.formattedPhone(order.getMemberTels(), threenetsOrder.getId());
         List<ThreenetsChildOrder> childOrders = new ArrayList<>();
         //将子订单数据按照网段区分
         Map<Integer, List<ThreenetsChildOrder>> collect = childOrderList.stream().collect(Collectors.groupingBy(ThreenetsChildOrder::getOperator));
@@ -296,23 +302,25 @@ public class ThreeNetsOrderService {
                 attached.setSwxlPrice(Integer.parseInt(order.getUmicomPay()));
             }
             ThreenetsRing ring = new ThreenetsRing();
-            ring.setRingWay(order.getRingUrl());
-            ring.setOperate(order.getOperate());
-            ring.setOrderId(threenetsOrder.getId());
-            ring.setRingContent(order.getRingContent());
-            ring.setRingName(order.getRingName() + DateUtils.getTimeRadom());
-            ring.setOperate(operator);
-            ring.setRingStatus(1);
-            if (num > 1) {
-                String file = fileService.cloneFile(ring);
-                ring.setRingWay(file);
+            if (StringUtils.isNotEmpty(order.getRingUrl())){
+                ring.setRingWay(order.getRingUrl());
+                ring.setOperate(order.getOperate());
+                ring.setOrderId(threenetsOrder.getId());
+                ring.setRingContent(order.getRingContent());
+                ring.setRingName(order.getRingName() + DateUtils.getTimeRadom());
+                ring.setOperate(operator);
+                ring.setRingStatus(1);
+                if (num > 1) {
+                    String file = fileService.cloneFile(ring);
+                    ring.setRingWay(file);
+                }
+                threeNetsRingService.save(ring);
             }
-            threeNetsRingService.save(ring);
             List<ThreenetsChildOrder> list = collect.get(operator);
             for (int i = 0; i < list.size(); i++) {
                 ThreenetsChildOrder childOrder = list.get(i);
-                childOrder.setRingId(ring.getId());
                 childOrder.setPaymentType(Integer.parseInt(order.getPaymentType()));
+                childOrder.setParentOrderId(threenetsOrder.getId());
                 childOrders.add(childOrder);
             }
             num++;

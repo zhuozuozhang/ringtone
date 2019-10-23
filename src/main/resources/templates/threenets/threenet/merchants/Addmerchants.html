@@ -54,11 +54,6 @@
                    id="companyLinkman" maxlength="32" autocomplete="off">
             <h6><i style="color: red">*</i>联 系 人</h6>
         </div>
-        <div class="newBlocPage-con3 clear">
-            <input class="input_css1" type="number" required lay-verify="required" name="linkmanTel" id="linkmanTel"
-                   maxlength="32" autocomplete="off">
-            <h6><i style="color: red">*</i>联系电话</h6>
-        </div>
         <div class="newBlocPage-con4 clear">
             <div class="right-newBlocPage-con4">
                 <div style="font-size: 12px; color: #333;line-height: 20px;text-align: left;">
@@ -201,28 +196,17 @@
         </div>
         <div class="addBell" style="margin-left:90px;background: none;width:auto;">
             <ul>
-                <li class="clearfix equally" style="margin-bottom:0;">
-                    <span class="fl"><i style="color: red;width:auto;">*</i>铃音类型</span>
-                    <div class="fl clearfix">
-                        <p class="fl">
-                            <i style="color: #000;">自带铃音</i>
-                        </p>
-                        <input type="hidden" id="ringType" name="ringType" value="2">
-                    </div>
-                </li>
                 <li class="clearfix bellType">
-                    <span class="fl"><i style="color: red">*</i>铃音名称</span>
+                    <span class="fl"><i style="color: red"></i>铃音名称</span>
                     <div class="fl">
-                        <input style="margin-left: 5px;" required lay-verify="required" type="text" name="ringName"
-                               id="ringName" autocomplete="off">
+                        <input style="margin-left: 5px;" required type="text" name="ringName" id="ringName" autocomplete="off">
                     </div>
                 </li>
                 <div id="ringdiv" style="display:block;">
                     <li class="clearfix upload" style="margin-left: -33px;">
-                        <span class="fl"><i style="color: red">*</i>铃音上传文件</span>
+                        <span class="fl"><i style="color: red"></i>铃音上传文件</span>
                         <div class="fl selected">
-                            <input type="file" name="ringFile" id="ringFile" class="" style="width:388px;" required
-                                   lay-verify="required" accept=".mp3,.wav,.mp4,.mov">
+                            <input type="file" name="ringFile" id="ringFile" class="" style="width:388px;" required accept=".mp3,.wav,.mp4,.mov">
                             <div class="clearfix">
                                 <p class="fr choose" style="width:388px;font-size: 14px;">点击上传铃音文件</p>
                                 <input type="hidden" id="ringUrl" name="ringUrl">
@@ -236,10 +220,9 @@
                  </span>）
                 </div>
                 <li class="clearfix bellContent">
-                    <span class="fl" style="margin-right: 5px;"><i style="color: red">*</i>铃音内容</span>
+                    <span class="fl" style="margin-right: 5px;"><i style="color: red"></i>铃音内容</span>
                     <div class="fl">
-                        <textarea placeholder="请输入铃音内容......" name="ringContent" id="ringContent" maxlength="200"
-                                  required lay-verify="required"></textarea>
+                        <textarea placeholder="请输入铃音内容......" name="ringContent" id="ringContent" maxlength="200" required ></textarea>
                     </div>
                 </li>
             </ul>
