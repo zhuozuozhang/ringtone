@@ -1,5 +1,7 @@
 package com.hrtxn.ringtone.common.utils;
 
+import java.util.regex.Pattern;
+
 public final class PhoneUtils {
 	
 	private static String[] telFirst="130,131,132,155,156,166,185,186,145,176".split(",");
@@ -26,5 +28,16 @@ public final class PhoneUtils {
      */
     private static int getNum(int start,int end) {
         return (int)(Math.random()*(end-start+1)+start);
+    }
+
+    /**
+     * 是否为固定电话
+     * @param fixedPhone
+     * @return
+     */
+    public static boolean isFixedPhone(String fixedPhone) {
+        String reg = "(?:(\\(\\+?86\\))(0[0-9]{2,3}\\-?)?([2-9][0-9]{6,7})+(\\-[0-9]{1,4})?)|" +
+                "(?:(86-?)?(0[0-9]{2,3}\\-?)?([2-9][0-9]{6,7})+(\\-[0-9]{1,4})?)";
+        return Pattern.matches(reg, fixedPhone);
     }
 }

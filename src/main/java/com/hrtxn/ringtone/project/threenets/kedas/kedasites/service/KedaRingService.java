@@ -63,8 +63,12 @@ public class KedaRingService {
         List<KedaRing> kedaRingList = kedaRingMapper.getKedaRingList(page, baseRequest);
         // 获取铃音数量
         int count = kedaRingMapper.getCount(baseRequest);
+        kedaRingList = kedaApi.refreshRingInfo(kedaRingList);
+        for (int i = 0; i < kedaRingList.size(); i++) {
+            kedaRingMapper.updateKedaRing(kedaRingList.get(i));
+        }
         // 执行刷新铃音操作
-        asyncService.updateRingtoneInformation(kedaRingList);
+        //asyncService.updateRingtoneInformation(kedaRingList);
         log.info("获取铃音列表 ----------->");
         return AjaxResult.success(kedaRingList, "获取数据成功！", count);
     }

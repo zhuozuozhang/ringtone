@@ -587,8 +587,8 @@ public class SwxlApi implements Serializable {
             } else {
                 reqEntity.addPart("productId", new StringBody("224"));//价格20元
             }
-            reqEntity.addPart("ringName", new StringBody(ringOrder.getRingName(), Charset.forName("UTF-8")));// 铃音名称
-            if (ringOrder.getUpLoadAgreement() != null) {
+            if (ringOrder.getUpLoadAgreement() != null && StringUtils.isNotEmpty(ringOrder.getRingName())) {
+                reqEntity.addPart("ringName", new StringBody(ringOrder.getRingName(), Charset.forName("UTF-8")));// 铃音名称
                 reqEntity.addPart("ringFile", new FileBody(ringOrder.getUpLoadAgreement())); // 铃音文件
             }
             reqEntity.addPart("msisdns", new StringBody(ringOrder.getPhones()));// 号码

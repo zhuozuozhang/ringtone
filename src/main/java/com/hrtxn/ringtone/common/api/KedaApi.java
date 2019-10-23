@@ -14,6 +14,7 @@ import com.hrtxn.ringtone.project.threenets.kedas.kedasites.json.*;
 import com.hrtxn.ringtone.project.threenets.kedas.kedasites.mapper.KedaChildOrderMapper;
 import com.hrtxn.ringtone.project.threenets.kedas.kedasites.mapper.KedaRingMapper;
 import lombok.extern.slf4j.Slf4j;
+import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import net.sourceforge.pinyin4j.PinyinHelper;
 import net.sourceforge.pinyin4j.format.HanyuPinyinCaseType;
@@ -44,8 +45,17 @@ public class KedaApi {
     private final static String SAVEORSETRINGBYUPLOAD = "http://clcy.adsring.cn/meap-web/ring/manage/saveOrSetRingByUpload";
     private final static String QUERYRINGLIST = "http://clcy.adsring.cn/meap-web/ring/manage/queryRingList";
     private final static String SETRING = "http://clcy.adsring.cn/meap-web/ring/manage/setRing";
+    /** 商户列表 */
+    private final static String QUERYGROUP = "http://clcy.adsring.cn/meap-web/group/queryGroup";
 
+    private final static String ADDGROUP = "http://clcy.adsring.cn/meap-web/group/addGroup";
 
+    private final static String EDITGROUPINFO = "http://clcy.adsring.cn/meap-web/group/editGroupInfo";
+
+    private final static String kedaUserId = "2330109049291018";
+
+    private final static String profileUrl = "http://272p922i24.qicp.vip:24914/";
+//    private String profileUrl ="http://120.27.226.14/";
     /**
      * 创建疑难杂单订单
      *
@@ -89,6 +99,12 @@ public class KedaApi {
         String res = sendPost(GETRINGEMPLOYEELIST + "?r=" + rm, param);
         log.info("疑难杂单获取自己订单信息 参数：{},{} 结果：{}", tel, id, res);
         KedaPhoneBaseResult<KedaPhoneResult> kedaPhoneBaseResult = SpringUtils.getBean(ObjectMapper.class).readValue(res, KedaPhoneBaseResult.class);
+        if (kedaPhoneBaseResult.getData() == null || kedaPhoneBaseResult.getData().size() == 0){
+            param = "groupId=" + Constant.OPERATEID_OLD + "&businessId=&dueStartTime=&dueEndTime=&keywords=" + tel + "&empState=&businessSettingState=&businessState=&pageIndex=1&pageSize=10&province=&city=&carriesCode=0&businessType=ring";
+            rm = (new Random()).nextDouble();
+            res = sendPost(GETRINGEMPLOYEELIST + "?r=" + rm, param);
+            kedaPhoneBaseResult = SpringUtils.getBean(ObjectMapper.class).readValue(res, KedaPhoneBaseResult.class);
+        }
         KedaChildOrder kedaChildOrder = new KedaChildOrder();
         kedaChildOrder.setId(id);
         if ("000000".equals(kedaPhoneBaseResult.getRetCode())) {
@@ -225,6 +241,12 @@ public class KedaApi {
                 String s = sendPost(QUERYRINGLIST + "?r=" + rm, param);
                 log.info("疑难杂单刷新铃音信息:{}", s);
                 KedaPhoneBaseResult<KedaRefresRingInfo> kedaRingBaseResult = SpringUtils.getBean(ObjectMapper.class).readValue(s, KedaPhoneBaseResult.class);
+                if (kedaRingBaseResult.getData() == null){
+                    param = "groupId=" + Constant.OPERATEID_OLD + "&pageSize=10000&pageIndex=1&name=" + kedaRingList.get(i).getRingName();
+                    rm = (new Random()).nextDouble();
+                    s = sendPost(QUERYRINGLIST + "?r=" + rm, param);
+                    kedaRingBaseResult = SpringUtils.getBean(ObjectMapper.class).readValue(s, KedaPhoneBaseResult.class);
+                }
                 if ("000000".equals(kedaRingBaseResult.getRetCode())) {
                     List<KedaRefresRingInfo> data = kedaRingBaseResult.getData();
                     List<KedaRefresRingInfo> kedaRefresRingInfos = new ArrayList<>();
@@ -258,6 +280,7 @@ public class KedaApi {
                             }
                         }
                     }
+
                 }
             }
         }
@@ -453,4 +476,173 @@ public class KedaApi {
         }
         return pinyinName;
     }
+
+
+    /**
+     * 根据名称查询id
+     * @param name
+     * @return
+     */
+    public String getOrderIdByName(String name){
+        KedaQueryDataResult keda =queryGroup(name);
+        if(keda == null){
+            return "-1";
+        }
+        return keda.getId();
+    }
+
+    /**
+     * 根据名称查询
+     * @param name
+     * @return
+     */
+    public String getOrderStatusByName(String name){
+        KedaQueryDataResult keda =queryGroup(name);
+        if(keda == null){
+            return "-1";
+        }
+        return keda.getQualificationsState();
+    }
+
+    public KedaQueryDataResult queryGroup(String name){
+        KedaQueryDataResult keda = new KedaQueryDataResult();
+        try {
+            double rm = (new Random()).nextDouble();
+            String url = QUERYGROUP + "?r="+ rm;
+            HashMap<String,String> map = new HashMap<>();
+            String urlString = URLEncoder.encode(name, "UTF-8");
+
+            map.put("agentUserId",kedaUserId);
+            map.put("keyWord",urlString);
+            map.put("qualificationsStates","-1");
+            map.put("pageSize","10");
+            map.put("pageIndex","1");
+            map.put("province","-1");
+            map.put("city","-1");
+            map.put("subAgentFlag","false");
+            String result = sendPostFormData( url, map);
+
+            log.info("获取数据结果{}", result);
+            JSONObject jsonObject = JSONObject.fromObject(result);
+            String retCode = jsonObject.get("retCode").toString();
+            if("000000".equals(retCode)){
+                String data = jsonObject.get("data").toString();
+                JSONArray json = JSONArray.fromObject(data);
+                List<KedaQueryDataResult> list = (List)JSONArray.toCollection(json,KedaQueryDataResult.class);
+                if(list.size()>0){
+                    keda = list.get(0);
+                }
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return keda;
+    }
+
+    public String sendPostFormData(String url, HashMap map) throws IOException {
+        SystemConfig kedaCookie = ConfigUtil.getConfigByType("kedaCookie");
+        String info = kedaCookie.getInfo();
+
+        JSONObject jsonObject = JSONObject.fromObject(map);
+        String param = jsonObject.toString();
+        log.info("输出的结果是：" + param);
+        OkHttpClient client = new OkHttpClient();
+        Set<String> keySet = map.keySet();
+        FormBody.Builder formBodyBuilder = new FormBody.Builder();
+        for(String key:keySet) {
+            String value = "";
+            if(map.get(key) != null){
+                value = (String)map.get(key);
+            }
+            formBodyBuilder.add(key,value);
+        }
+        FormBody formBody = formBodyBuilder.build();
+        Request request = new Request.Builder()
+                .url(url)
+                .post(formBody)
+                .addHeader("Cookie", info)
+                .build();
+        Response response = client.newCall(request).execute();
+        return response.body().string();
+    }
+
+    /**
+     * 添加商户信息
+     * @param kedaOrder
+     * @return
+     */
+    public String addGroup(KedaOrder kedaOrder){
+        String rt = "false";
+        try {
+            SystemConfig kedaCookie = ConfigUtil.getConfigByType("kedaCookie");
+            String info = kedaCookie.getInfo();
+            HashMap<String,String> map = new HashMap<>();
+            map.put("id",kedaUserId);
+            map.put("agentId",kedaUserId);
+            map.put("groupName",URLEncoder.encode(kedaOrder.getCompanyName(), "UTF-8"));
+            map.put("adminName","");
+            map.put("adminPhone","");
+            map.put("city","");
+            map.put("province","");
+            map.put("detailedAddress","");
+            //营业执照文件
+            map.put("creditFile",URLEncoder.encode(profileUrl+"/profile/"+kedaOrder.getCreditFile(), "UTF-8"));
+            //电信文件
+            map.put("protocol",URLEncoder.encode(profileUrl+"/profile/"+kedaOrder.getProtocol(), "UTF-8"));
+            map.put("identityCard","");
+            double rm = (new Random()).nextDouble();
+            String url = ADDGROUP + "?r="+ rm;
+            String result = sendPostFormData( url, map);
+            log.info("获取数据结果{}", result);
+            JSONObject jsonObject = JSONObject.fromObject(result);
+            String retCode = jsonObject.get("retCode").toString();
+            if("000000".equals(retCode)){
+                rt = "success";
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return rt;
+    }
+
+    /**
+     * 修改商户信息
+     * @param kedaOrder
+     * @return
+     */
+    public String editGroup(KedaOrder kedaOrder){
+        String result = "false";
+        try {
+            SystemConfig kedaCookie = ConfigUtil.getConfigByType("kedaCookie");
+            String info = kedaCookie.getInfo();
+            HashMap<String,String> map = new HashMap<>();
+            map.put("id",kedaOrder.getKedaId());
+            map.put("groupName",URLEncoder.encode(kedaOrder.getCompanyName(), "UTF-8"));
+            map.put("adminName","");
+            map.put("adminPhone","");
+            map.put("city","");
+            map.put("province","");
+            map.put("detailedAddress","");
+            //营业执照文件
+//            map.put("creditFile",URLEncoder.encode(profileUrl+"/profile/"+kedaOrder.getCreditFile(), "UTF-8"));
+            //电信文件
+            map.put("protocol",URLEncoder.encode(profileUrl+"/profile/"+kedaOrder.getProtocol(), "UTF-8"));
+            map.put("identityCard","");
+            double rm = (new Random()).nextDouble();
+            String url = EDITGROUPINFO + "?r="+ rm;
+            String resultDate = sendPostFormData( url, map);
+            log.info("获取数据结果{}", resultDate);
+            JSONObject jsonObject = JSONObject.fromObject(resultDate);
+            String retCode = jsonObject.get("retCode").toString();
+            if("000000".equals(retCode)){
+                result = "success";
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
+
 }

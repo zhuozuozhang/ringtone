@@ -135,6 +135,14 @@ public class McardApi {
         String url = to_user_list + "?userId=" + userId;
         return sendGet(url, parent);
     }
+    /**
+     *
+     */
+    public String refreshApersonnel(String userId, String parent){
+        Map<String,String> map = new HashMap<>();
+        map.put("apersonnelId",userId);
+        return sendPost(map, refresh_apersonnel, parent);
+    }
 
     /**
      * 跳转到铃音页面

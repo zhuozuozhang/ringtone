@@ -234,4 +234,9 @@
         delete from tb_threenets_ring
         where order_id = #{id,jdbcType=INTEGER}
     </delete>
+    <!-- 根据商户id和运营商查询铃音 -->
+    <select id="listByOrderIdAndOperator" resultMap="BaseResultMap">
+        select * from tb_threenets_ring
+        where order_id = #{orderId} AND operate = #{operate}
+    </select>
 </mapper>

@@ -33,7 +33,7 @@ public interface ThreenetsChildOrderMapper {
      * @return
      * @throws Exception
      */
-    List<ThreenetsChildOrder> listByParamNoPage(@Param("param") ThreenetsChildOrder param) throws Exception;
+    List<ThreenetsChildOrder> listByParamNoPage(@Param("param") ThreenetsChildOrder param);
 
     /**
      * 删除

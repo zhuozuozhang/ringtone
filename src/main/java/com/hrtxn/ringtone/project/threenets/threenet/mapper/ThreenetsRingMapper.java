@@ -111,4 +111,13 @@ public interface ThreenetsRingMapper {
      * @return
      */
     List<ThreenetsRing> findRingIsNotSuccess(@Param("userId") Integer userId);
+
+    /**
+     * 根据商户id和运营商查询铃音
+     *
+     * @param orderId
+     * @param operate
+     * @return
+     */
+    List<ThreenetsRing> listByOrderIdAndOperator(@Param("orderId") Integer orderId,@Param("operate") Integer operate);
 }

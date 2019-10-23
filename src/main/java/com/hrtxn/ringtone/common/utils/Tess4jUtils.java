@@ -62,7 +62,27 @@ public class Tess4jUtils {
     }
 
     public static void main(String[] args) {
-        String ch = "D:/imageCode.jpg";
-        System.out.println(readChar(ch, "src/main/resources", "chi_sim"));
+        String ch = "D:/sfz.png";
+        System.out.println("--------------------------------");
+        System.out.println(readChar(ch, "D:/tessdata/", "chi_sim"));
     }
+
+//    public static void main(String[] args) {
+//        // ImageIO.scanForPlugins(); // for server environment
+//        File imageFile = new File("D:/imageCode.jpg");
+//        ITesseract instance = new Tesseract(); // JNA Interface Mapping
+//        instance.setDatapath("D:/tessdata");
+//        // ITesseract instance = new Tesseract1(); // JNA Direct Mapping
+//        // instance.setDatapath("&lt;parentPath&gt;"); // replace &lt;parentPath&gt; with path to parent directory of tessdata
+//        // instance.setLanguage("eng");
+//
+//        try {
+//            String result = instance.doOCR(imageFile);
+//            System.out.println(result);
+//        } catch (TesseractException e) {
+//            System.err.println(e.getMessage());
+//        }
+//    }
+
+
 }

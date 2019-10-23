@@ -44,7 +44,8 @@ function showTable() {
             } else {
                 status = "开通失败"
             }
-            return status + "<i onclick='getPhoneInfo(" + id + ")' class='layui-icon' title='刷新' data-rowindex='" + meta.row + "'><img src='../../../../client/threenets/images/refresh.png'></i>";
+            //return status + "<i onclick='getPhoneInfo(" + id + ")' class='layui-icon' title='刷新' data-rowindex='" + meta.row + "'><img src='../../../../client/threenets/images/refresh.png'></i>";
+            return status;
         }
     }, {
         targets: [8],
@@ -69,7 +70,8 @@ function showTable() {
                 status = '已回短信';
             }
             var id = row.id;
-            return status + "<i onclick='getPhoneInfo(" + id + ")' class='layui-icon' title='刷新' data-rowindex='" + meta.row + "'><img src='../../../../client/threenets/images/refresh.png'></i>";
+            //return status + "<i onclick='getPhoneInfo(" + id + ")' class='layui-icon' title='刷新' data-rowindex='" + meta.row + "'><img src='../../../../client/threenets/images/refresh.png'></i>";
+            return status;
         }
     }, {
         targets: [9],
@@ -86,7 +88,7 @@ function showTable() {
             var linkTel = row.linkTel;
             var employeeId = row.employeeId;
             var operate = row.operate;
-            var note = "<i onclick='sendMessage();' class='layui-icon layui-icon-reply-fill' title='下发短信'></i>";
+            var note = "<i onclick='sendMessage("+row.linkTel+");' class='layui-icon layui-icon-reply-fill' title='下发短信'></i>";
             var setRing = "<a href='javascript:;' onclick='ringSet(\"" + linkMan + "\",\"" + linkTel + "\"," + employeeId + "," + id + ");'><i class='layui-icon layui-icon-set' title='设置铃音'></i></a>";
             var refresh = "<i onclick='getPhoneInfo(" + id + ")' class='layui-icon layui-icon-refresh-3' title='刷新'></i>";
             var del = "<i class='layui-icon layui-icon-delete' title='删除' onclick='deleteTel(" + id + ")'></i>";
@@ -210,11 +212,11 @@ function deleteTel(id) {
     });
 }
 
-function sendMessage() {
+function sendMessage(phone) {
     // layer.open({
     //     type: 2,
     //     title: '用户信息',
-    //     content: '/threenets/clcy/sendMessages',
+    //     content: '/threenets/clcy/sendMessages/'+phone,
     //     area: ['950px', '600px'],
     //     maxmin: true
     // });
