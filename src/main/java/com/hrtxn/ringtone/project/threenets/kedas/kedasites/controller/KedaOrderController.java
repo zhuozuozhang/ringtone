@@ -1,5 +1,6 @@
 package com.hrtxn.ringtone.project.threenets.kedas.kedasites.controller;
 
+import com.hrtxn.ringtone.common.api.KedaApi;
 import com.hrtxn.ringtone.common.constant.AjaxResult;
 import com.hrtxn.ringtone.common.domain.BaseRequest;
 import com.hrtxn.ringtone.common.domain.Page;
@@ -36,6 +37,7 @@ public class KedaOrderController {
     @ResponseBody
     @PostMapping("getKeDaOrderList")
     public AjaxResult getKeDaOrderList(Page page, BaseRequest baseRequest) {
+        KedaApi kedaApi = new KedaApi();
         return kedaOrderService.getKeDaOrderList(page, baseRequest);
     }
 

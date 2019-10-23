@@ -14,6 +14,7 @@ import com.hrtxn.ringtone.project.threenets.kedas.kedasites.json.*;
 import com.hrtxn.ringtone.project.threenets.kedas.kedasites.mapper.KedaChildOrderMapper;
 import com.hrtxn.ringtone.project.threenets.kedas.kedasites.mapper.KedaRingMapper;
 import lombok.extern.slf4j.Slf4j;
+import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import net.sourceforge.pinyin4j.PinyinHelper;
 import net.sourceforge.pinyin4j.format.HanyuPinyinCaseType;
@@ -44,6 +45,8 @@ public class KedaApi {
     private final static String SAVEORSETRINGBYUPLOAD = "http://clcy.adsring.cn/meap-web/ring/manage/saveOrSetRingByUpload";
     private final static String QUERYRINGLIST = "http://clcy.adsring.cn/meap-web/ring/manage/queryRingList";
     private final static String SETRING = "http://clcy.adsring.cn/meap-web/ring/manage/setRing";
+    /** 商户列表 */
+    private final static String QUERYGROUP = "http://clcy.adsring.cn/meap-web/group/queryGroup";
 
 
     /**
@@ -466,4 +469,95 @@ public class KedaApi {
         }
         return pinyinName;
     }
+
+
+    /**
+     * 根据名称查询id
+     * @param name
+     * @return
+     */
+    public String getOrderIdByName(String name){
+        KedaQueryDataResult keda =queryGroup(name);
+        if(keda == null){
+            return "-1";
+        }
+        return keda.getId();
+    }
+
+    /**
+     * 根据名称查询
+     * @param name
+     * @return
+     */
+    public String getOrderStatusByName(String name){
+        KedaQueryDataResult keda =queryGroup(name);
+        if(keda == null){
+            return "-1";
+        }
+        return keda.getQualificationsState();
+    }
+
+    public KedaQueryDataResult queryGroup(String name){
+        KedaQueryDataResult keda = new KedaQueryDataResult();
+        try {
+            double rm = (new Random()).nextDouble();
+            String url = QUERYGROUP + "?r="+ rm;
+            HashMap<String,String> map = new HashMap<>();
+            String urlString = URLEncoder.encode(name, "UTF-8");
+
+            map.put("agentUserId","2330109049291018");
+            map.put("keyWord",urlString);
+            map.put("qualificationsStates","-1");
+            map.put("pageSize","10");
+            map.put("pageIndex","1");
+            map.put("province","-1");
+            map.put("city","-1");
+            map.put("subAgentFlag","false");
+            String result = sendPostFormData( url, map);
+
+            log.info("获取数据结果{}", result);
+            JSONObject jsonObject = JSONObject.fromObject(result);
+            String retCode = jsonObject.get("retCode").toString();
+            if("000000".equals(retCode)){
+                String data = jsonObject.get("data").toString();
+                JSONArray json = JSONArray.fromObject(data);
+                List<KedaQueryDataResult> list = (List)JSONArray.toCollection(json,KedaQueryDataResult.class);
+                if(list.size()>0){
+                    keda = list.get(0);
+                }
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return keda;
+    }
+
+    public String sendPostFormData(String url, HashMap map) throws IOException {
+        SystemConfig kedaCookie = ConfigUtil.getConfigByType("kedaCookie");
+        String info = kedaCookie.getInfo();
+
+        JSONObject jsonObject = JSONObject.fromObject(map);
+        String param = jsonObject.toString();
+        log.info("输出的结果是：" + param);
+        OkHttpClient client = new OkHttpClient();
+        Set<String> keySet = map.keySet();
+        FormBody.Builder formBodyBuilder = new FormBody.Builder();
+        for(String key:keySet) {
+            String value = "";
+            if(map.get(key) != null){
+                value = (String)map.get(key);
+            }
+            formBodyBuilder.add(key,value);
+        }
+        FormBody formBody = formBodyBuilder.build();
+        Request request = new Request.Builder()
+                .url(url)
+                .post(formBody)
+                .addHeader("Cookie", info)
+                .build();
+        Response response = client.newCall(request).execute();
+        return response.body().string();
+    }
+
 }
