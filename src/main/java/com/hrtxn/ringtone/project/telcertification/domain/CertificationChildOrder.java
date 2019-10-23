@@ -48,9 +48,8 @@ public class CertificationChildOrder implements Serializable {
      */
     private Date telChildOrderOpenTime;
     /**
-     *
+     * 到期时间
      */
-    //到期时间
     private Date telChildOrderExpireTime;
     /**
      * 父级订单ID

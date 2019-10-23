@@ -92,11 +92,7 @@ public class   TelCertificationController {
      */
     @GetMapping("/toTelMerchantsPage")
     @Log(title = "订单管理页面",operatorLogType = OperatorLogType.TELCERTIFICATION)
-    public String toTelMerchantsPage(ModelMap map,BaseRequest request){
-        Page page = new Page();
-        page.setPage(1);
-        page.setPagesize(4);
-        AjaxResult list = telCertificationConfigService.getAllConfig(page,map);
+    public String toTelMerchantsPage(){
         return "telcertification/merchants";
     }
 
@@ -138,6 +134,20 @@ public class   TelCertificationController {
     public String toTeldetailsOnePage(@PathVariable Integer id, ModelMap map){
         telCertificationChildService.getTelCerChildById(id,map);
         return "telcertification/details_one";
+    }
+
+    /**
+     * 进入添加商户页面
+     * @return
+     */
+    @GetMapping("/toTelAddPage")
+    @Log(title = "进入添加商户页面",operatorLogType = OperatorLogType.TELCERTIFICATION)
+    public String toTelAddPage(ModelMap map) {
+//        Page page = new Page();
+//        page.setPage(1);
+//        page.setPagesize(4);
+//        AjaxResult list = telCertificationConfigService.getAllConfig(page,map);
+        return "telcertification/add_merchants";
     }
 
     /**
