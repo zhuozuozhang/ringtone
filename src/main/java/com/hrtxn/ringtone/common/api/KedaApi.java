@@ -48,6 +48,10 @@ public class KedaApi {
     /** 商户列表 */
     private final static String QUERYGROUP = "http://clcy.adsring.cn/meap-web/group/queryGroup";
 
+    private final static String ADDGROUP = "http://clcy.adsring.cn/meap-web/group/addGroup";
+
+    private final static String kedaUserId = "2330109049291018";
+
 
     /**
      * 创建疑难杂单订单
@@ -505,7 +509,7 @@ public class KedaApi {
             HashMap<String,String> map = new HashMap<>();
             String urlString = URLEncoder.encode(name, "UTF-8");
 
-            map.put("agentUserId","2330109049291018");
+            map.put("agentUserId",kedaUserId);
             map.put("keyWord",urlString);
             map.put("qualificationsStates","-1");
             map.put("pageSize","10");
@@ -559,5 +563,41 @@ public class KedaApi {
         Response response = client.newCall(request).execute();
         return response.body().string();
     }
+
+    /**
+     * 添加商户信息
+     * @param kedaOrder
+     * @return
+     */
+    public String addGroup(KedaOrder kedaOrder){
+        try {
+            SystemConfig kedaCookie = ConfigUtil.getConfigByType("kedaCookie");
+            String info = kedaCookie.getInfo();
+            HashMap<String,String> map = new HashMap<>();
+            map.put("id",kedaUserId);
+            map.put("agentId",kedaUserId);
+            map.put("groupName",URLEncoder.encode(kedaOrder.getCompanyName(), "UTF-8"));
+            map.put("adminName","");
+            map.put("adminPhone","");
+            map.put("city","");
+            map.put("province","");
+            map.put("detailedAddress","");
+            //营业执照文件
+            map.put("creditFile",URLEncoder.encode(kedaOrder.getCreditFile(), "UTF-8"));
+            //电信文件
+            map.put("protocol",URLEncoder.encode(kedaOrder.getProtocol(), "UTF-8"));
+            map.put("identityCard","");
+            double rm = (new Random()).nextDouble();
+            String url = ADDGROUP + "?r="+ rm;
+            String result = sendPostFormData( url, map);
+            log.info("获取数据结果{}", result);
+            JSONObject jsonObject = JSONObject.fromObject(result);
+            String retCode = jsonObject.get("retCode").toString();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return "";
+    }
+
 
 }

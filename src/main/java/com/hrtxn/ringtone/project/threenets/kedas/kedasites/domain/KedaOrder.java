@@ -66,4 +66,14 @@ public class KedaOrder implements Serializable {
      * 总数/包月
      */
     private String peopleNum;
+
+    /**
+     * 营业执照
+     */
+    private String creditFile;
+
+    /**
+     * 电信协议文件地址
+     */
+    private String protocol;
 }

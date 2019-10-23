@@ -37,7 +37,6 @@ public class KedaOrderController {
     @ResponseBody
     @PostMapping("getKeDaOrderList")
     public AjaxResult getKeDaOrderList(Page page, BaseRequest baseRequest) {
-        KedaApi kedaApi = new KedaApi();
         return kedaOrderService.getKeDaOrderList(page, baseRequest);
     }
 
