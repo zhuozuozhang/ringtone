@@ -50,9 +50,12 @@ public class KedaApi {
 
     private final static String ADDGROUP = "http://clcy.adsring.cn/meap-web/group/addGroup";
 
+    private final static String EDITGROUPINFO = "http://clcy.adsring.cn/meap-web/group/editGroupInfo";
+
     private final static String kedaUserId = "2330109049291018";
 
-
+    private final static String profileUrl = "http://272p922i24.qicp.vip:24914/";
+//    private String profileUrl ="http://120.27.226.14/";
     /**
      * 创建疑难杂单订单
      *
@@ -570,6 +573,7 @@ public class KedaApi {
      * @return
      */
     public String addGroup(KedaOrder kedaOrder){
+        String rt = "false";
         try {
             SystemConfig kedaCookie = ConfigUtil.getConfigByType("kedaCookie");
             String info = kedaCookie.getInfo();
@@ -583,9 +587,9 @@ public class KedaApi {
             map.put("province","");
             map.put("detailedAddress","");
             //营业执照文件
-            map.put("creditFile",URLEncoder.encode(kedaOrder.getCreditFile(), "UTF-8"));
+            map.put("creditFile",URLEncoder.encode(profileUrl+"/profile/"+kedaOrder.getCreditFile(), "UTF-8"));
             //电信文件
-            map.put("protocol",URLEncoder.encode(kedaOrder.getProtocol(), "UTF-8"));
+            map.put("protocol",URLEncoder.encode(profileUrl+"/profile/"+kedaOrder.getProtocol(), "UTF-8"));
             map.put("identityCard","");
             double rm = (new Random()).nextDouble();
             String url = ADDGROUP + "?r="+ rm;
@@ -593,10 +597,51 @@ public class KedaApi {
             log.info("获取数据结果{}", result);
             JSONObject jsonObject = JSONObject.fromObject(result);
             String retCode = jsonObject.get("retCode").toString();
+            if("000000".equals(retCode)){
+                rt = "success";
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return "";
+        return rt;
+    }
+
+    /**
+     * 修改商户信息
+     * @param kedaOrder
+     * @return
+     */
+    public String editGroup(KedaOrder kedaOrder){
+        String result = "false";
+        try {
+            SystemConfig kedaCookie = ConfigUtil.getConfigByType("kedaCookie");
+            String info = kedaCookie.getInfo();
+            HashMap<String,String> map = new HashMap<>();
+            map.put("id",kedaOrder.getKedaId());
+            map.put("groupName",URLEncoder.encode(kedaOrder.getCompanyName(), "UTF-8"));
+            map.put("adminName","");
+            map.put("adminPhone","");
+            map.put("city","");
+            map.put("province","");
+            map.put("detailedAddress","");
+            //营业执照文件
+//            map.put("creditFile",URLEncoder.encode(profileUrl+"/profile/"+kedaOrder.getCreditFile(), "UTF-8"));
+            //电信文件
+            map.put("protocol",URLEncoder.encode(profileUrl+"/profile/"+kedaOrder.getProtocol(), "UTF-8"));
+            map.put("identityCard","");
+            double rm = (new Random()).nextDouble();
+            String url = EDITGROUPINFO + "?r="+ rm;
+            String resultDate = sendPostFormData( url, map);
+            log.info("获取数据结果{}", resultDate);
+            JSONObject jsonObject = JSONObject.fromObject(resultDate);
+            String retCode = jsonObject.get("retCode").toString();
+            if("000000".equals(retCode)){
+                result = "success";
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return result;
     }
 
 
