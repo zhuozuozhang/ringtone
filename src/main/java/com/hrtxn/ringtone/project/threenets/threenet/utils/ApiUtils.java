@@ -1030,6 +1030,9 @@ public class ApiUtils {
             if (swxlGroupResponse != null && 0 == swxlGroupResponse.getStatus()) {
                 break;
             }
+            if (swxlGroupResponse != null && 1 == swxlGroupResponse.getStatus()) {
+                break;
+            }
             if (swxlGroupResponse != null && swxlGroupResponse.getRemark().equals("企业联系号码已存在,请更换其他号码")) {
                 break;
             }
@@ -1708,15 +1711,8 @@ public class ApiUtils {
             ThreeNetsOrderAttached attached = SpringUtils.getBean(ThreeNetsOrderAttachedMapper.class).selectByParentOrderId(childOrder.getParentOrderId());
             //移动
             if (childOrder.getOperator() == 1 && StringUtils.isNotEmpty(childOrder.getLinkmanTel())) {
-                if (!childOrder.getIsRingtoneUser() && childOrder.getIsVideoUser()) {
-                    miguApi.refreshCrbtStatus(childOrder.getLinkmanTel());
-                }
-                if (!childOrder.getIsMonthly().equals(2)) {
-                    miguApi.refreshIsMonthly(childOrder.getLinkmanTel());
-                }
-                if (!childOrder.getIsVideoUser() && childOrder.getIsRingtoneUser()) {
-                    miguApi.refreshVbrtStatus(childOrder.getLinkmanTel());
-                }
+                miguApi.refreshCrbtStatus(childOrder.getLinkmanTel());
+                miguApi.refreshIsMonthly(childOrder.getLinkmanTel());
                 String result = miguApi.updatePhoneInfo(childOrder.getLinkmanTel(), childOrder.getOperateId());
                 Document doc = Jsoup.parse(result);
                 Elements contents = doc.getElementsByClass("tbody_lis");
@@ -1762,12 +1758,8 @@ public class ApiUtils {
             }
             //联通
             if (childOrder.getOperator() == 3 && StringUtils.isNotEmpty(childOrder.getLinkmanTel())) {
-                if (!childOrder.getIsRingtoneUser()) {
-                    swxlApi.swxlrefreshCrbtStatus(childOrder.getLinkmanTel(), 1);
-                }
-                if (!childOrder.getIsMonthly().equals(2)) {
-                    swxlApi.swxlrefreshCrbtStatus(childOrder.getLinkmanTel(), 2);
-                }
+                swxlApi.swxlrefreshCrbtStatus(childOrder.getLinkmanTel(), 1);
+                swxlApi.swxlrefreshCrbtStatus(childOrder.getLinkmanTel(), 2);
                 String phoneInfo = swxlApi.getPhoneInfo(childOrder.getLinkmanTel(), attached.getSwxlId());
                 //{"recode":"000000","message":"成功","data":{"data":[{"id":"60a3731dd2d541ce8232dec153634932","msisdn":"15516933320","groupId":"4b9dc1422585436ba8681205806f694d","crbtStatus":0,"monthStatus":0,"netType":null,"status":0,"openTime":"2019-10-13 19:48:37","ctime":"2019-10-13 19:47:43","closeTime":null,"provinceId":76,"provinceName":"河南","remark":"铃音[郑州市亚森鞋业213242]设置成功","syncStatus":1,"productName":null}],"recordsTotal":1},"success":true}
                 JSONObject jsonObject = JSONObject.fromObject(phoneInfo);
@@ -1944,13 +1936,12 @@ public class ApiUtils {
                     }
                 }
                 if (operator.equals(Const.OPERATORS_UNICOM)) {
-//                    if (!childOrder.getIsRingtoneUser()) {
-//                        swxlApi.swxlrefreshCrbtStatus(childOrder.getLinkmanTel(), 1);
-//                    }
-//                    if (!childOrder.getIsMonthly().equals(2)){
-//                        swxlApi.swxlrefreshCrbtStatus(childOrder.getLinkmanTel(), 2);
-//                    }
                     List<ThreenetsChildOrder> childOrders = collect.get(Const.OPERATORS_UNICOM);
+                    for (int i = 0; i < childOrders.size(); i++) {
+                        ThreenetsChildOrder childOrder = childOrders.get(i);
+                        swxlApi.swxlrefreshCrbtStatus(childOrder.getLinkmanTel(), 1);
+                        swxlApi.swxlrefreshCrbtStatus(childOrder.getLinkmanTel(), 2);
+                    }
                     String phoneInfo = swxlApi.refreshUserStatus(null, attached.getSwxlId());
                     JSONObject jsonObject = JSONObject.fromObject(phoneInfo);
                     JSONObject data = jsonObject.getJSONObject("data");
@@ -2133,14 +2124,14 @@ public class ApiUtils {
      * @return
      */
     public AjaxResult refreshRingInfo(List<ThreenetsRing> rings, ThreeNetsOrderAttached attached) {
-        List<ThreenetsRing> ringlist = new ArrayList<>();
+        List<ThreenetsRing> list = new ArrayList<>();
         String ringId = "";
         String ringName = "";
         try {
             Map<Integer, List<ThreenetsRing>> collect = rings.stream().collect(Collectors.groupingBy(ThreenetsRing::getOperate));
             for (Integer operator : collect.keySet()) {
                 if (operator.equals(Const.OPERATORS_MOBILE)) {
-                    List<ThreenetsRing> list = collect.get(operator);
+                    list = collect.get(operator);
                     if (StringUtils.isEmpty(attached.getMiguId())) {
                         return AjaxResult.error("刷新失败，同步信息缺少关键信息！");
                     }
@@ -2196,13 +2187,13 @@ public class ApiUtils {
                                 }
                                 ring.setOperateRingId(ringId);
                                 SpringUtils.getBean(ThreenetsRingMapper.class).updateByPrimaryKeySelective(ring);
-                                ringlist.add(ring);
+                                list.set(j,ring);
                             }
                         }
                     }
                 }
                 if (operator.equals(Const.OPERATORS_UNICOM)) {
-                    List<ThreenetsRing> list = collect.get(operator);
+                    list = collect.get(operator);
                     if (StringUtils.isEmpty(attached.getSwxlId())) {
                         return AjaxResult.error("刷新失败，同步信息缺少关键信息！");
                     }
@@ -2301,14 +2292,14 @@ public class ApiUtils {
                                     }
                                     ring.setOperateRingId(ringId);
                                     SpringUtils.getBean(ThreenetsRingMapper.class).updateByPrimaryKeySelective(ring);
-                                    ringlist.add(ring);
+                                    list.set(i,ring);
                                 }
                             }
                         }
                     }
                 }
                 if (operator.equals(Const.OPERATORS_TELECOM)) {
-                    List<ThreenetsRing> list = collect.get(operator);
+                    list = collect.get(operator);
                     mcardApi.toUserList(attached.getMcardId(), attached.getMcardDistributorId());
                     String result = mcardApi.getRingInfo(attached.getMcardDistributorId());
                     if (StringUtils.isEmpty(result)) {
@@ -2343,7 +2334,7 @@ public class ApiUtils {
                                 }
                                 ring.setOperateRingId(ringId);
                                 SpringUtils.getBean(ThreenetsRingMapper.class).updateByPrimaryKeySelective(ring);
-                                ringlist.add(ring);
+                                list.set(i,ring);
                             }
                         }
                     }
@@ -2352,7 +2343,7 @@ public class ApiUtils {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return AjaxResult.success(ringlist, "查询成功", ringlist.size());
+        return AjaxResult.success(list, "查询成功", list.size());
     }
 
 
