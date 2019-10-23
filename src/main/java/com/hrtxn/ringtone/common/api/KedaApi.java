@@ -14,6 +14,7 @@ import com.hrtxn.ringtone.project.threenets.kedas.kedasites.json.*;
 import com.hrtxn.ringtone.project.threenets.kedas.kedasites.mapper.KedaChildOrderMapper;
 import com.hrtxn.ringtone.project.threenets.kedas.kedasites.mapper.KedaRingMapper;
 import lombok.extern.slf4j.Slf4j;
+import net.minidev.json.JSONUtil;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import net.sourceforge.pinyin4j.PinyinHelper;
@@ -178,7 +179,7 @@ public class KedaApi {
      * @throws IOException
      */
     public AjaxResult uploadRing(File source) throws IOException {
-        String s = sendFile(UPLOAD, source);
+        String s = sendRingFile(UPLOAD, source);
         log.info("疑难杂单铃音文件上传----->" + s);
         if (StringUtils.isNotEmpty(s)) {
             KedaBaseResult<KedaUploadRing> kedaBaseResult = SpringUtils.getBean(ObjectMapper.class).readValue(s, KedaBaseResult.class);
@@ -197,6 +198,38 @@ public class KedaApi {
             return AjaxResult.error(kedaBaseResult.getRetMsg());
         }
         return AjaxResult.error("上传失败！");
+    }
+//{"retCode":"000000","retMsg":"成功","exDesc":null,"data":[{"fileName":"rBBGel2wDcKAFchCAAsLSnoBnP8372.jpg","fileSize":"706 Kb","fileType":"jpg","realName":"微信图片_20191023104616.jpg","fileUrl":"http://file.kuyinyun.com/group2/M00/BE/49/rBBGel2wDcKAFchCAAsLSnoBnP8372.jpg"}],"data2":null}
+    /**
+     * 文件上传
+     *
+     * @param source
+     * @return
+     * @throws IOException
+     */
+    public String uploadFile(File source) {
+        String url = "";
+        try{
+            String s = sendFile(UPLOAD, source);
+            log.info("疑难杂单文件上传----->" + s);
+            if (StringUtils.isNotEmpty(s)) {
+//                JSONObject.f
+//                if ("000000".equals(kedaBaseResult.getRetCode())) {
+//                    List<KedaUploadRing> data = kedaBaseResult.getData();
+//                    List<KedaUploadRing> kedaUploadRingList = new ArrayList<>();
+//                    for (Object obj : data) {
+//                        JSONObject jsonObject = JSONObject.fromObject(obj); // 将数据转成json字符串
+//                        KedaUploadRing kedaUploadRing = (KedaUploadRing) JSONObject.toBean(jsonObject, KedaUploadRing.class); //将json转成需要的对象
+//                        kedaUploadRingList.add(kedaUploadRing);
+//                    }
+//
+//                }
+            }
+        }catch(IOException e) {
+            e.printStackTrace();
+        }finally {
+            return url;
+        }
     }
 
     /**
@@ -317,7 +350,7 @@ public class KedaApi {
      * @return
      * @throws IOException
      */
-    public String sendFile(String url, File file) throws IOException {
+    public String sendRingFile(String url, File file) throws IOException {
         SystemConfig kedaCookie = ConfigUtil.getConfigByType("kedaCookie");
         String info = kedaCookie.getInfo();
         OkHttpClient client = new OkHttpClient();
@@ -339,6 +372,32 @@ public class KedaApi {
         return response.body().string();
     }
 
+    /**
+     * 铃音文件上传
+     *
+     * @param url
+     * @param file
+     * @return
+     * @throws IOException
+     */
+    public String sendFile(String url, File file) throws IOException {
+        SystemConfig kedaCookie = ConfigUtil.getConfigByType("kedaCookie");
+        String info = kedaCookie.getInfo();
+        OkHttpClient client = new OkHttpClient();
+        RequestBody fileBody = RequestBody.create(MediaType.parse("multipart/form-data"), file);
+        RequestBody requestBody = new MultipartBody.Builder()
+                .addFormDataPart("files", file.getName(), fileBody)
+                .build();
+        Request request = new Request.Builder()
+                .url(url)
+                .post(requestBody)
+                .addHeader("Content-Type", "application/x-www-form-urlencoded")
+                .addHeader("Cookie", info)
+                .addHeader("Cache-Control", "no-cache")
+                .build();
+        Response response = client.newCall(request).execute();
+        return response.body().string();
+    }
     /**
      * 封装工具类
      * 发送post方式

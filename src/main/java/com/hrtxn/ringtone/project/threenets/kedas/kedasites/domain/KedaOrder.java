@@ -81,4 +81,9 @@ public class KedaOrder implements Serializable {
      * 科大商户id
      */
     private String kedaId;
+
+    /**
+     * 成员手机号
+     */
+    private String tels;
 }

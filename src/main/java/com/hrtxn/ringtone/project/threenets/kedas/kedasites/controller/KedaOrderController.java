@@ -4,12 +4,14 @@ import com.hrtxn.ringtone.common.api.KedaApi;
 import com.hrtxn.ringtone.common.constant.AjaxResult;
 import com.hrtxn.ringtone.common.domain.BaseRequest;
 import com.hrtxn.ringtone.common.domain.Page;
+import com.hrtxn.ringtone.common.utils.DateUtils;
 import com.hrtxn.ringtone.common.utils.StringUtils;
 import com.hrtxn.ringtone.freemark.config.logConfig.Log;
 import com.hrtxn.ringtone.freemark.enums.BusinessType;
 import com.hrtxn.ringtone.freemark.enums.OperatorLogType;
 import com.hrtxn.ringtone.project.threenets.kedas.kedasites.domain.KedaOrder;
 import com.hrtxn.ringtone.project.threenets.kedas.kedasites.service.KedaOrderService;
+import org.aspectj.weaver.loadtime.Aj;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -107,4 +109,32 @@ public class KedaOrderController {
         return kedaOrderService.deleteKedaOrder(id);
     }
 
+    /**
+     * 验证商户名称是否重复
+     *
+     * @param companyName
+     * @return
+     */
+    @PostMapping("isItRedundantByName")
+    @ResponseBody
+    public AjaxResult isItRedundantByName(String companyName){
+        Boolean itRedundantByName = kedaOrderService.isItRedundantByName(companyName);
+        if (itRedundantByName) {
+            return AjaxResult.error("商户名称不允许重复！");
+        } else {
+            return AjaxResult.success(DateUtils.getTime(), "");
+        }
+    };
+
+    /**
+     * 验证手机号
+     *
+     * @param tels
+     * @return
+     */
+    @PostMapping("formatPhoneNumber")
+    @ResponseBody
+    public AjaxResult formatPhoneNumber(String tels){
+        return kedaOrderService.formatPhoneNumber(tels);
+    }
 }

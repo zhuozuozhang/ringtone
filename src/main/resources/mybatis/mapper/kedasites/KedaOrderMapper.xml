@@ -131,6 +131,20 @@
         select * from tb_keda_order
         where id = #{id,jdbcType=INTEGER}
     </select>
+    <!-- 按照条件查询，无分页 -->
+    <select id="liseOrderNoPage" parameterType="com.hrtxn.ringtone.project.threenets.kedas.kedasites.domain.KedaOrder" resultMap="BaseResultMap">
+        select * from tb_keda_order
+        WHERE 1=1
+        <if test="companyName != null">
+           and  company_name = #{companyName,jdbcType=VARCHAR}
+        </if>
+        <if test="linkTel != null">
+            and link_tel = #{linkTel,jdbcType=VARCHAR}
+        </if>
+        <if test="statucreditFiles != null">
+            and status = #{status,jdbcType=VARCHAR}
+        </if>
+    </select>
     <!--条件-->
     <sql id="parameters">
         <if test="param != null and param.userId != null">
