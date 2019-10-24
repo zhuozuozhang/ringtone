@@ -266,4 +266,27 @@ public class FileController {
     }
 
 
+    /**
+     * 科大10元
+     * @param fourFileUpload
+     * @param folderName
+     * @return
+     */
+    @PostMapping("/system/upload/protocolTelecom10")
+    @ResponseBody
+    public AjaxResult protocolTelecom10(@RequestParam("fourFileUpload") MultipartFile fourFileUpload, String folderName) {
+        return fileService.upload(fourFileUpload,"电信10元资质文件", folderName);
+    }
+
+    /**
+     * 科大20元
+     * @param fourFileUpload
+     * @param folderName
+     * @return
+     */
+    @PostMapping("/system/upload/protocolTelecom20")
+    @ResponseBody
+    public AjaxResult protocolTelecom20(@RequestParam("fourFileUpload") MultipartFile fourFileUpload, String folderName) {
+        return fileService.upload(fourFileUpload, "电信20元资质文件", folderName);
+    }
 }
