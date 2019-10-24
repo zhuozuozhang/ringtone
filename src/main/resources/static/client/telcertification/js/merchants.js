@@ -1,6 +1,15 @@
 $(document).ready(function () {
     showTelCerTable();
 });
+//打开添加商户页面
+function toAddMerchantPage() {
+    layer.open({
+        type: 2,
+        title: '添加商户',
+        area: ['779px', '600px'],
+        content: '/telcertify/toAddMerchantPage'
+    });
+}
 
 //tab切换
 //我的订单
@@ -110,6 +119,16 @@ function showFallDueTable() {
             return "<p><i class='layui-icon layui-icon-log' title='查看详情' onclick='ckeckDetailsOne("+id+");'></i></p>";
         }
     }];
+    if(param.phoneNum != "" && param.phoneNum != null){
+        if(!isTel(param.phoneNum)){
+            if(!isPhone(param.phoneNum)){
+                if(!is_Phone(param.phoneNum)){
+                    layer.msg("请输入正确的成员手机号码！",{icon: 0, time: 3000});
+                    return;
+                }
+            }
+        }
+    }
     page("#fall_due_table", 10, param, "/telcertify/getFallDueList", columns, columnDefs);
 }
 
@@ -146,8 +165,22 @@ function showDueTable() {
             return "<p><i class='layui-icon layui-icon-log' title='查看详情' onclick='ckeckDetailsOne("+id+");'></i></p>";
         }
     }];
+    if(param.phoneNum != "" && param.phoneNum != null){
+        if(!isTel(param.phoneNum)){
+            if(!isPhone(param.phoneNum)){
+                if(!is_Phone(param.phoneNum)){
+                    $("#membernum").val(null).focus();
+                    layer.msg("请输入正确的成员手机号码！",{icon: 0, time: 3000});
+                    return;
+                }
+            }
+        }
+    }
     page("#due_table", 10, param, "/telcertify/getDueList", columns, columnDefs);
 }
+
+
+var price = 0;
 
 //日期时间范围
 layui.use('laydate', function () {
@@ -178,25 +211,23 @@ function ckeckDetailsOne(id) {
     });
 }
 //添加商户
-function addMerchant() {
-    layer.open({
-        type:2,
-        title:'添加商户',
-        content:'/telcertify/toTelAddPage',
-        area:['650px','650px']
-    });
-}
+// function addMerchant() {
+//     layer.open({
+//         type:2,
+//         title:'添加商户',
+//         content:'/telcertify/toTelAddPage',
+//         area:['650px','650px']
+//     });
+// }
 // ---------------------------------------------------修改弹窗--回显-----------------------------------------------------
+var sendId = null;
 //打开修改订单弹窗--回显
 function editTelCerOrder(id) {
     layer.open({
         type: 2,
         title: '更改商户信息',
         content: '/telcertify/toTelEditPage/'+id,
-        area: ['30%', '60%']
+        area: ['550px', '600px']
     });
 }
-
-
-
 

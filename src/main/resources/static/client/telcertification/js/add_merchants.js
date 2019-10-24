@@ -1,49 +1,54 @@
 
 
+//验证集团名称，不能为重复的
+function verificationName() {
+    var name = $("#telCompanyNameAdd").val();
+    if (name == '' || name == null) {
+        $("#telCompanyNameAdd").focus();
+        layer.msg("集团名称不能为空！");
+        return
+    }
+    AjaxPost("/telcertify/verificationName", {
+        "telCompanyName": name,
+    }, function (result) {
+        if (result.code == 500) {
+            $("#telCompanyNameAdd").focus();
+            layer.msg(result.msg);
+        } else {
+            // layer.msg(result.msg);
+        }
+    });
+}
+
+
+//验证联系人电话
+function vertifyTelLinkPhone() {
+    var phones = $("#telLinkPhoneAdd").val();
+    var phoneregex = /^[1][3,4,5,7,8,9][0-9]{9}$/; //手机号码
+    var tel_regex = /^(\d{3,4}\-)?\d{7,8}$/i;   //座机格式是 010-98909899 010-86551122
+    var telregex = /^0(([1-9]\d)|([3-9]\d{2}))\d{8}$/; //没有中间那段 -的 座机格式是 01098909899
+
+
+    AjaxPost("/telcertify/verificationTelLinkPhone", {
+        "telLinkPhone": phones,
+    }, function (result) {
+        if (result.code == 500) {
+            $("#telLinkPhoneAdd").focus();
+            layer.msg(result.msg);
+        } else {
+            if (!phoneregex.test(phones)) {
+                if (!tel_regex.test(phones)) {
+                    if(!telregex.test(phones)){
+                        $("#telLinkPhoneAdd").focus();
+                        layer.msg('联系人号码"' + phones + '"不正确!');
+                    }
+                }
+            }
+        }
+    });
+}
 
 var price = 0;
-
-//日期时间范围
-layui.use('laydate', function () {
-    var laydate = layui.laydate;
-    laydate.render({
-        elem: '#rangetime',
-        range: true
-    });
-})
-
-//我的订单查看详情
-function ckeckDetails(id) {
-    layer.open({
-        type: 2,
-        title: '详情',
-        content: '/telcertify/toTeldetailsPage/'+id,
-        area: ['500px', '680px']
-    });
-}
-
-//即将到期和到期号码查看详情
-function ckeckDetailsOne(id) {
-    layer.open({
-        type: 2,
-        title: '详情',
-        content: '/telcertify/toTeldetailsOnePage/'+id,
-        area: ['500px', '680px']
-    });
-}
-
-// ---------------------------------------------------修改弹窗--回显-----------------------------------------------------
-var sendId = null;
-//打开修改订单弹窗--回显
-function editTelCerOrder(id) {
-    layer.open({
-        type: 2,
-        title: '更改商户信息',
-        content: '/telcertify/toTelEditPage/'+id,
-        area: ['568px', '815px']
-    });
-}
-
 // --------------------------------------------------------计算---------------------------------------------------------
 var teddyPriceOut = 0;
 
@@ -190,7 +195,8 @@ $(function () {
         //判断输入是否为整百数
         var num = $(this).val();
         if (!/^\d+$/.test(num / 100)) {
-            alert("输入金额必须为整百数！");
+            // alert("输入金额必须为整百数！");
+            layer.msg("输入金额必须为整百数！")
             $(this).val('');
             $("#dxnumber").html(0);
             return false;
@@ -256,21 +262,6 @@ function jiSuan() {
     }
 }
 
-//填写信息弹窗
-$('#cause').on('click', function () { //点击按钮显示弹窗
-    $("#pop").removeClass("display")
-    $("#orderamount").html(price);
-})
-$("#cancel").on('click', function () { //点击取消隐藏弹窗
-    $("#pop").addClass("display")
-})
-//修改信息
-// $('.openeditor').on('click', function () { //点击按钮显示弹窗
-//     $("#editor").removeClass("display")
-// })
-// $("#gbxg").on('click', function () { //点击取消隐藏弹窗
-//     $("#editor").addClass("display")
-// })
 //查看实例弹窗
 $('.opencase').on('click', function () { //点击按钮显示弹窗
     $("#case").removeClass("display")
@@ -331,8 +322,6 @@ function checkNum(obj) {
             });
         }
     }
-
-
 }
 
 //添加号码
@@ -485,6 +474,35 @@ function addTelCerMerchants(){
         }
     });
 }
+
+
+<!--添加----上传图片文件 -->
+$("body").on('click', '#businessLicenseClass', function () {
+    valid($("#telCompanyNameAdd"),"businessLicense",$("#businessLicenseAdd"),"businessLicenseAdd",$(this));
+});
+$("body").on('click', '#legalPersonCardZhenClass', function () {
+    valid($("#telCompanyNameAdd"),"legalPersonCardZhen",$("#legalPersonCardZhenAdd"),"legalPersonCardZhenAdd",$(this));
+});
+$("body").on('click', '#legalPersonCardFanClass', function () {
+    valid($("#telCompanyNameAdd"),"legalPersonCardFan",$("#legalPersonCardFanAdd"),"legalPersonCardFanAdd",$(this));
+});
+$("body").on('click', '#logoClass', function () {
+    valid($("#telCompanyNameAdd"),"logo",$("#logoAdd"), "logoAdd",$(this));
+});
+//上传授权书
+$('#authorizationAdd').on('change', function (e) {
+//判断有没有填写用户名
+//没有，给出提示信息 ，清空文件选择   给用户输入框聚焦 return false
+    var telCompanyName = $("#telCompanyNameAdd").val();
+    if(telCompanyName == "" || telCompanyName == null){
+        $("#telCompanyNameAdd").focus();
+        $("#authorizationAdd").val("");
+        layer.msg("请先输入集团名称！");
+        return
+    }
+    uploadFile("authorization","authorizationAdd",$("#telCompanyNameAdd").val())
+});
+
 //上传文件
 function uploadFile(url,fileId,folderName) {
     var layuiLoding = layer.load(0, { //icon支持传入0-2
@@ -538,38 +556,6 @@ function uploadFile(url,fileId,folderName) {
 }
 
 
-
-
-//上传授权书
-$('#authorizationAdd').on('change', function (e) {
-    //判断有没有填写用户名
-    //没有，给出提示信息 ，清空文件选择   给用户输入框聚焦 return false
-    var telCompanyName = $("#telCompanyNameAdd").val();
-    if(telCompanyName == "" || telCompanyName == null){
-        $("#telCompanyNameAdd").focus();
-        $("#authorizationAdd").val("");
-        // layer.msg("请先输入集团名称！");
-
-        return
-    }
-    uploadFile("authorization","authorizationAdd",$("#telCompanyNameAdd").val())
-});
-
-
-<!--添加----上传图片文件 -->
-$("body").on('click', '#businessLicenseClass', function () {
-    alert("授权书");
-    valid($("#telCompanyNameAdd"),"businessLicense",$("#businessLicenseAdd"),"businessLicenseAdd",$(this));
-});
-$("body").on('click', '#legalPersonCardZhenClass', function () {
-    valid($("#telCompanyNameAdd"),"legalPersonCardZhen",$("#legalPersonCardZhenAdd"),"legalPersonCardZhenAdd",$(this));
-});
-$("body").on('click', '#legalPersonCardFanClass', function () {
-    valid($("#telCompanyNameAdd"),"legalPersonCardFan",$("#legalPersonCardFanAdd"),"legalPersonCardFanAdd",$(this));
-});
-$("body").on('click', '#logoClass', function () {
-    valid($("#telCompanyNameAdd"),"logo",$("#logoAdd"), "logoAdd",$(this));
-});
 
 function valid(telCompanyNameId,url,pictureId,fileId,ts){
     var telCompanyNameVal = telCompanyNameId.val();
@@ -627,4 +613,5 @@ function validate_img2(idVal,file) {
         return false;
     }
 }
+
 

@@ -92,7 +92,11 @@ public class   TelCertificationController {
      */
     @GetMapping("/toTelMerchantsPage")
     @Log(title = "订单管理页面",operatorLogType = OperatorLogType.TELCERTIFICATION)
-    public String toTelMerchantsPage(){
+    public String toTelMerchantsPage(ModelMap map){
+//        Page page = new Page();
+//        page.setPage(1);
+//        page.setPagesize(4);
+//        AjaxResult list = telCertificationConfigService.getAllConfig(page,map);
         return "telcertification/merchants";
     }
 
@@ -140,13 +144,13 @@ public class   TelCertificationController {
      * 进入添加商户页面
      * @return
      */
-    @GetMapping("/toTelAddPage")
+    @GetMapping("/toAddMerchantPage")
     @Log(title = "进入添加商户页面",operatorLogType = OperatorLogType.TELCERTIFICATION)
-    public String toTelAddPage(ModelMap map) {
-//        Page page = new Page();
-//        page.setPage(1);
-//        page.setPagesize(4);
-//        AjaxResult list = telCertificationConfigService.getAllConfig(page,map);
+    public String toAddMerchantPage(ModelMap map) {
+        Page page = new Page();
+        page.setPage(1);
+        page.setPagesize(4);
+        AjaxResult list = telCertificationConfigService.getAllConfig(page,map);
         return "telcertification/add_merchants";
     }
 
@@ -156,10 +160,10 @@ public class   TelCertificationController {
      */
     @GetMapping("/toAddTelCerMerchantPage")
     public String toAddTelCerMerchantPage(ModelMap map){
-        Page page = new Page();
-        page.setPage(1);
-        page.setPagesize(4);
-        AjaxResult list = telCertificationConfigService.getAllConfig(page,map);
+//        Page page = new Page();
+//        page.setPage(1);
+//        page.setPagesize(4);
+//        AjaxResult list = telCertificationConfigService.getAllConfig(page,map);
         return "telcertification/addTelCerMerchant";
     }
 
