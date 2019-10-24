@@ -646,9 +646,9 @@ public class KedaApi {
             map.put("province","");
             map.put("detailedAddress","");
             //营业执照文件
-            map.put("creditFile",URLEncoder.encode(profileUrl+"/profile/"+kedaOrder.getCreditFile(), "UTF-8"));
+            map.put("creditFile",URLEncoder.encode(kedaOrder.getCreditFile(), "UTF-8"));
             //电信文件
-            map.put("protocol",URLEncoder.encode(profileUrl+"/profile/"+kedaOrder.getProtocol(), "UTF-8"));
+            map.put("protocol",URLEncoder.encode(kedaOrder.getProtocol(), "UTF-8"));
             map.put("identityCard","");
             double rm = (new Random()).nextDouble();
             String url = ADDGROUP + "?r="+ rm;
@@ -684,9 +684,14 @@ public class KedaApi {
             map.put("province","");
             map.put("detailedAddress","");
             //营业执照文件
-//            map.put("creditFile",URLEncoder.encode(profileUrl+"/profile/"+kedaOrder.getCreditFile(), "UTF-8"));
+            if(StringUtils.isNotBlank(kedaOrder.getCreditFile())){
+                map.put("creditFile",URLEncoder.encode(kedaOrder.getCreditFile(), "UTF-8"));
+            }
+
             //电信文件
-            map.put("protocol",URLEncoder.encode(profileUrl+"/profile/"+kedaOrder.getProtocol(), "UTF-8"));
+            if(StringUtils.isNotBlank(kedaOrder.getProtocol())){
+                map.put("protocol",URLEncoder.encode(kedaOrder.getProtocol(), "UTF-8"));
+            }
             map.put("identityCard","");
             double rm = (new Random()).nextDouble();
             String url = EDITGROUPINFO + "?r="+ rm;
