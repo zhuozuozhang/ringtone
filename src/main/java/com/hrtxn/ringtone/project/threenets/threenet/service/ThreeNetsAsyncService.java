@@ -467,14 +467,14 @@ public class ThreeNetsAsyncService {
             order.setLinkmanTel(childOrders.get(0).getLinkmanTel());
             order.setPhones(phones);
             SwxlGroupResponse swxlGroupResponse = utils.addOrderByLt(order, attached);
-            if (swxlGroupResponse.getStatus() == 0) {
+            if (swxlGroupResponse.getStatus() == 0 || swxlGroupResponse.getStatus() == 1) {
                 attached.setSwxlId(swxlGroupResponse.getId());
                 attached.setSwxlStatus(Const.REVIEWED);
                 threeNetsOrderAttachedMapper.updateByPrimaryKeySelective(attached);
                 for (int i = 0; i < childOrders.size(); i++) {
                     ThreenetsChildOrder childOrder = childOrders.get(i);
                     childOrder.setOperateId(attached.getSwxlId());
-                    if (order.getMianduan().equals("1")) {
+                    if (swxlGroupResponse.getStatus() == 1) {
                         childOrder.setRemark("免短审核中，请稍后刷新查看！");
                     } else {
                         childOrder.setRemark("添加成功");
