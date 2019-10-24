@@ -504,4 +504,52 @@ public class KedaChildOrderService {
         }
         return ajaxResult;
     }
+
+
+
+    /**
+     * 疑难杂单创建子级订单
+     *
+     * @param kedaChildOrder
+     * @return
+     * @throws Exception
+     */
+    public AjaxResult batchInsertKedaChildOrderNew(KedaChildOrder kedaChildOrder) throws Exception {
+        if (!StringUtils.isNotNull(kedaChildOrder)) {return AjaxResult.error("请输入成员号码!");}
+        if (!StringUtils.isNotEmpty(kedaChildOrder.getLinkTel())) {return AjaxResult.error("成员号码不能为空!");}
+        String[] phone = kedaChildOrder.getTels().split(",");
+        List<KedaChildOrder> childOrders = new ArrayList<>();
+        for (String p : phone) {
+            p = p.replace(" ", "");
+            //首先验证是固定电话还是手机号
+            JuhePhone<JuhePhoneResult> juhePhone = JuhePhoneUtils.getPhone(p);
+            KedaChildOrder childOrder = new KedaChildOrder();
+            if ("200".equals(juhePhone.getResultcode())) {
+                JuhePhoneResult result = juhePhone.getResult();
+                childOrder.setProvince(result.getProvince());
+                childOrder.setCity(result.getCity());
+                if ("移动".equals(result.getCompany())) {
+                    childOrder.setOperate(1);
+                } else if ("电信".equals(result.getCompany())) {
+                    childOrder.setOperate(2);
+                } else {
+                    childOrder.setOperate(3);
+                }
+            }
+            childOrder.setLinkTel(p);
+            childOrder.setLinkMan(p);
+            childOrder.setCreateTime(new Date());
+            childOrder.setIsMonthly(0);
+            childOrder.setIsRingtoneUser(1);
+            childOrder.setOrderId(kedaChildOrder.getOrderId());
+            childOrder.setUserId(ShiroUtils.getSysUser().getId());
+            childOrder.setOperateId(Constant.OPERATEID);
+            childOrder.setStatus(Const.KEDA_UNDER_REVIEW);
+            kedaChildOrderMapper.insertKedaChildOrder(kedaChildOrder);
+            childOrders.add(childOrder);
+        }
+        r.notify("batchInsertKedaorder", Event.wrap(childOrders));
+        // 执行添加子订单操作
+        return AjaxResult.success(true, "创建子订单成功！");
+    }
 }
