@@ -167,7 +167,6 @@ public class KedaOrderService {
     }
 
 
-
     /**
      * 添加父級訂單
      *
@@ -176,7 +175,7 @@ public class KedaOrderService {
      * @throws Exception
      */
     @Transactional(rollbackFor = Exception.class)
-    public AjaxResult addKedaOrderNew(KedaOrder kedaOrder){
+    public AjaxResult addKedaOrderNew(KedaOrder kedaOrder) {
         if (!StringUtils.isNotNull(kedaOrder)) return AjaxResult.error("参数格式不正确!");
         if (!StringUtils.isNotEmpty(kedaOrder.getCompanyName())) return AjaxResult.error("参数格式不正确!");
         if (!StringUtils.isNotEmpty(kedaOrder.getLinkMan())) return AjaxResult.error("参数格式不正确!");
@@ -189,8 +188,8 @@ public class KedaOrderService {
             KedaChildOrder kedaChildOrder = new KedaChildOrder();
             if ("200".equals(juhePhone.getResultcode())) {
                 JuhePhoneResult result = juhePhone.getResult();
-                kedaOrder.setProvince(result.getProvince());
-                kedaOrder.setCity(result.getCity());
+                kedaChildOrder.setProvince(result.getProvince());
+                kedaChildOrder.setCity(result.getCity());
                 if ("移动".equals(result.getCompany())) {
                     kedaChildOrder.setOperate(1);
                 } else if ("电信".equals(result.getCompany())) {
@@ -206,11 +205,14 @@ public class KedaOrderService {
         // 添加父级订单
         kedaOrder.setCerateTime(new Date());
         kedaOrder.setUserId(ShiroUtils.getSysUser().getId());
+        kedaOrder.setLinkTel(childOrders.get(0).getLinkTel());
+        kedaOrder.setProvince(childOrders.get(0).getProvince());
+        kedaOrder.setCity(childOrders.get(0).getCity());
         int count = kedaOrderMapper.insertKedaOrder(kedaOrder);
-        initChildOrder(childOrders,kedaOrder.getId());
+        initChildOrder(childOrders, kedaOrder.getId());
         log.info("疑难杂单创建父级订单---->" + count);
         // 同步数据
-        r.notify("uploadOrderInfo", Event.wrap(kedaOrder));
+        r.notify("addOrderInfo", Event.wrap(kedaOrder));
         return AjaxResult.success("添加成功！");
     }
 
@@ -267,8 +269,6 @@ public class KedaOrderService {
         KedaOrder order = new KedaOrder();
         order.setCompanyName(companyName);
         List<KedaOrder> kedaOrders = kedaOrderMapper.liseOrderNoPage(order);
-
-
         return kedaOrders.size() > 0 ? true : false;
     }
 
@@ -279,7 +279,7 @@ public class KedaOrderService {
      * @return
      * @throws Exception
      */
-    public AjaxResult formatPhoneNumber(String phones) {
+    public AjaxResult formatPhoneNumber(String phones, Integer orderId) {
         String[] phone = phones.split(",");
         int numberOfTele = 0;
         for (String p : phone) {
@@ -293,7 +293,7 @@ public class KedaOrderService {
             BaseRequest param = new BaseRequest();
             param.setTel(p);
             Integer count = kedaChildOrderMapper.getCount(param);
-            if (count > 0){
+            if (count > 0) {
                 return AjaxResult.error("#号码" + p + "重复！");
             }
             JuhePhone juhePhone = JuhePhoneUtils.getPhone(p);
@@ -302,20 +302,51 @@ public class KedaOrderService {
                 numberOfTele = numberOfTele + 1;
             }
         }
+        if (orderId != null && numberOfTele > 0) {
+            KedaOrder kedaOrder = kedaOrderMapper.getKedaOrder(orderId);
+            if (StringUtils.isNotEmpty(kedaOrder.getProtocolTelecom10()) || StringUtils.isNotEmpty(kedaOrder.getProtocolTelecom20())) {
+                numberOfTele = 0;
+            }
+        }
         return AjaxResult.success(numberOfTele, "匹配成功");
     }
 
-    public void initChildOrder(List<KedaChildOrder> list,Integer oderId ){
+    public void initChildOrder(List<KedaChildOrder> list, Integer oderId) {
         for (int i = 0; i < list.size(); i++) {
             KedaChildOrder kedaChildOrder = list.get(i);
             kedaChildOrder.setCreateTime(new Date());
-            kedaChildOrder.setIsMonthly(0);
+            kedaChildOrder.setIsMonthly(9);
             kedaChildOrder.setIsRingtoneUser(1);
             kedaChildOrder.setOrderId(oderId);
             kedaChildOrder.setUserId(ShiroUtils.getSysUser().getId());
             kedaChildOrder.setOperateId(Constant.OPERATEID);
             kedaChildOrder.setStatus(Const.KEDA_UNDER_REVIEW);
-            int insert = kedaChildOrderMapper.insertKedaChildOrder(kedaChildOrder);
+            kedaChildOrderMapper.insertKedaChildOrder(kedaChildOrder);
         }
     }
+
+    /**
+     * 更新id和状态
+     *
+     * @param id
+     * @param name
+     */
+    public void updateBusinessStatus(Integer id, String name) {
+        KedaOrder kedaOrder = new KedaOrder();
+        kedaOrder.setId(id);
+        kedaOrder.setCompanyName(name);
+        r.notify("uploadOrderInfo", Event.wrap(kedaOrder));
+    }
+
+    /**
+     * 修改商户信息
+     *
+     * @param order
+     * @return
+     */
+    public AjaxResult updateKedaOrderInfo(KedaOrder order) {
+        r.notify("updateOrderInfo", Event.wrap(order));
+        return AjaxResult.error();
+    }
 }
+
