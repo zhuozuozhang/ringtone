@@ -7,7 +7,7 @@ IP：120.27.226.14
 移动：
 网址：http://211.137.107.18:8888/page/cm/login.jsp
 账号：中高俊聪
-密码：zgjc@ZG330@
+密码：zgjc@ZG330@@
 
 联通：
 网址：https://swxl.10155.com/swxl/login.html
