@@ -178,30 +178,8 @@ public class JuhePhoneUtils {
      * @return
      * @throws Exception
      */
-    public static JuhePhone getPhone(String phone) throws Exception {
+    public static JuhePhone getPhone(String phone){
         return acquiringAttribution(phone);
-//        Map<String, String> params = new HashMap<String, String>();
-//        params.put("phone", phone);//需要查询的手机号码或手机号码前7位
-//        params.put("key", APPKEY);//应用APPKEY(应用详细页查询)
-//        params.put("dtype", "");//返回数据的格式,xml或json，默认json
-//        String result = net(params);
-//        ObjectMapper mapper = new ObjectMapper();
-//        JuhePhone<JuhePhoneResult> resultJuhePhone = mapper.readValue(result, new TypeReference<JuhePhone<JuhePhoneResult>>() {
-//        });
-//        if (isFixedPhone(phone)) {
-//            resultJuhePhone = getTel(phone);
-//        }
-//        if (resultJuhePhone.getResult() == null ||StringUtils.isEmpty(resultJuhePhone.getResult().getCompany())) {
-//            if (resultJuhePhone.getResult() == null){
-//                JuhePhoneResult juhePhoneResult = new JuhePhoneResult();
-//                resultJuhePhone.setResult(juhePhoneResult);
-//            }
-//            //验证手机号是哪个运营商的
-//            JuhePhoneResult juhePhoneResult = resultJuhePhone.getResult();
-//            juhePhoneResult.setCompany(isChinaMobilePhoneNum(phone));
-//            resultJuhePhone.setResult(juhePhoneResult);
-//        }
-//        return resultJuhePhone;
     }
 
     public static JuhePhone getTel(String tel) throws Exception {

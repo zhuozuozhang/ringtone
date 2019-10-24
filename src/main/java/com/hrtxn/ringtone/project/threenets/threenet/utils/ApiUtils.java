@@ -1143,6 +1143,7 @@ public class ApiUtils {
                 }
             }
         }
+        mcardApi.toUserList(attached.getMcardId(), attached.getMcardDistributorId());
         boolean flag = mcardApi.uploadRing(ring, attached.getMcardDistributorId());
         //获取铃音id
         String ringList = mcardApi.toRingList(attached.getMcardDistributorId());
@@ -1201,7 +1202,6 @@ public class ApiUtils {
      */
     public List<ThreenetsChildOrder> addPhoneByDx(List<ThreenetsChildOrder> orders, String circleId, String distributorId) {
         List<ThreenetsChildOrder> newList = new ArrayList<>();
-        mcardApi.toUserList(circleId, distributorId);
         for (int i = 0; i < orders.size(); i++) {
             ThreenetsChildOrder childOrder = orders.get(i);
             childOrder.setOperateId(circleId);
@@ -1211,6 +1211,7 @@ public class ApiUtils {
                 newList.add(childOrder);
                 continue;
             }
+            mcardApi.toUserList(circleId, distributorId);
             McardAddPhoneRespone mcardAddPhoneRespone = mcardApi.addApersonnel(orders.get(i), distributorId);
             childOrder.setRemark(mcardAddPhoneRespone.getMessage());
             if (mcardAddPhoneRespone.getCode().equals("0000")) {
@@ -1713,7 +1714,7 @@ public class ApiUtils {
             if (childOrder.getOperator() == 1 && StringUtils.isNotEmpty(childOrder.getLinkmanTel())) {
                 miguApi.refreshCrbtStatus(childOrder.getLinkmanTel());
                 miguApi.refreshIsMonthly(childOrder.getLinkmanTel());
-                String result = miguApi.updatePhoneInfo(childOrder.getLinkmanTel(), childOrder.getOperateId());
+                String result = miguApi.updatePhoneInfo(childOrder.getLinkmanTel(), attached.getMiguId());
                 Document doc = Jsoup.parse(result);
                 Elements contents = doc.getElementsByClass("tbody_lis");
                 Elements datas = contents.get(0).getElementsByClass("tbody_lis");
@@ -1739,6 +1740,13 @@ public class ApiUtils {
                         childOrder.setIsVideoUser(false);
                     }
                     String whetherMonthlyUser = tds.get(8).text();
+                    String ringName = tds.get(9).text();// 铃音名称
+                    String remark = tds.get(10).text();
+                    if (!whetherVideoRingUser.contains("视频彩铃")){
+                        whetherMonthlyUser = tds.get(7).text();
+                        ringName = tds.get(8).text();// 铃音名称
+                        remark = tds.get(9).text();
+                    }
                     if ("包月".equals(whetherMonthlyUser)) {
                         childOrder.setIsMonthly(2);
                     } else if ("未包月".equals(whetherMonthlyUser)) {
@@ -1746,11 +1754,12 @@ public class ApiUtils {
                     } else {
                         childOrder.setIsMonthly(3);
                     }
-                    String ringName = tds.get(9).text();// 铃音名称
                     if (!"暂无".equals(ringName)) {
                         childOrder.setRingName(ringName);
+                    }else{
+                        childOrder.setRingName(null);
                     }
-                    childOrder.setRemark(tds.get(10).text());// 备注
+                    childOrder.setRemark(remark);// 备注
                     if (StringUtils.isNotEmpty(childOrder.getRingName()) && childOrder.getRemark().equals("无")) {
                         childOrder.setRemark("铃音设置成功");
                     }
@@ -1915,6 +1924,13 @@ public class ApiUtils {
                                     childOrder.setIsVideoUser(false);
                                 }
                                 String whetherMonthlyUser = tds.get(8).text();
+                                String ringName = tds.get(9).text();// 铃音名称
+                                String remark = tds.get(10).text();
+                                if (!whetherVideoRingUser.contains("视频彩铃")){
+                                    whetherMonthlyUser = tds.get(7).text();
+                                    ringName = tds.get(8).text();// 铃音名称
+                                    remark = tds.get(9).text();
+                                }
                                 if ("包月".equals(whetherMonthlyUser)) {
                                     childOrder.setIsMonthly(2);
                                 } else if ("未包月".equals(whetherMonthlyUser)) {
@@ -1922,11 +1938,12 @@ public class ApiUtils {
                                 } else {
                                     childOrder.setIsMonthly(3);
                                 }
-                                String ringName = tds.get(9).text();// 铃音名称
                                 if (!"暂无".equals(ringName)) {
                                     childOrder.setRingName(ringName);
+                                }else{
+                                    childOrder.setRingName(null);
                                 }
-                                childOrder.setRemark(tds.get(10).text());// 备注
+                                childOrder.setRemark(remark);// 备注
                                 if (StringUtils.isNotEmpty(childOrder.getRingName()) && childOrder.getRemark().equals("无")) {
                                     childOrder.setRemark("铃音设置成功");
                                 }

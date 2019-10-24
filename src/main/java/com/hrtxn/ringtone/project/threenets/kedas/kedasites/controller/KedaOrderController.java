@@ -4,12 +4,14 @@ import com.hrtxn.ringtone.common.api.KedaApi;
 import com.hrtxn.ringtone.common.constant.AjaxResult;
 import com.hrtxn.ringtone.common.domain.BaseRequest;
 import com.hrtxn.ringtone.common.domain.Page;
+import com.hrtxn.ringtone.common.utils.DateUtils;
 import com.hrtxn.ringtone.common.utils.StringUtils;
 import com.hrtxn.ringtone.freemark.config.logConfig.Log;
 import com.hrtxn.ringtone.freemark.enums.BusinessType;
 import com.hrtxn.ringtone.freemark.enums.OperatorLogType;
 import com.hrtxn.ringtone.project.threenets.kedas.kedasites.domain.KedaOrder;
 import com.hrtxn.ringtone.project.threenets.kedas.kedasites.service.KedaOrderService;
+import org.aspectj.weaver.loadtime.Aj;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -62,6 +64,7 @@ public class KedaOrderController {
      */
     @GetMapping("toNumberList/{id}/{name}")
     public String toNumberList(@PathVariable Integer id, @PathVariable String name, ModelMap map) {
+        //kedaOrderService.updateBusinessStatus(id,name);
         if (StringUtils.isNotNull(id) && id != 0) {
             map.put("id", id);
             map.put("name", name);
@@ -91,7 +94,7 @@ public class KedaOrderController {
     @ResponseBody
     @Log(title = "添加疑难杂单父级订单", businessType = BusinessType.INSERT, operatorLogType = OperatorLogType.KEDASITES)
     public AjaxResult addKedaOrder(KedaOrder kedaOrder) throws Exception {
-        return kedaOrderService.addKedaOrder(kedaOrder);
+        return kedaOrderService.addKedaOrderNew(kedaOrder);
     }
 
     /**
@@ -107,4 +110,44 @@ public class KedaOrderController {
         return kedaOrderService.deleteKedaOrder(id);
     }
 
+    /**
+     * 验证商户名称是否重复
+     *
+     * @param companyName
+     * @return
+     */
+    @PostMapping("isItRedundantByName")
+    @ResponseBody
+    public AjaxResult isItRedundantByName(String companyName){
+        Boolean itRedundantByName = kedaOrderService.isItRedundantByName(companyName);
+        if (itRedundantByName) {
+            return AjaxResult.error("商户名称不允许重复！");
+        } else {
+            return AjaxResult.success(DateUtils.getTime(), "");
+        }
+    };
+
+    /**
+     * 验证手机号
+     *
+     * @param tels
+     * @return
+     */
+    @PostMapping("formatPhoneNumber")
+    @ResponseBody
+    public AjaxResult formatPhoneNumber(String tels,Integer orderId){
+        return kedaOrderService.formatPhoneNumber(tels,orderId);
+    }
+
+    /**
+     * 修改信息
+     *
+     * @param order
+     * @return
+     */
+    @PostMapping("formatPhoneNumber")
+    @ResponseBody
+    public AjaxResult updateKedaOrderInfo(KedaOrder order){
+        return kedaOrderService.updateKedaOrderInfo(order);
+    }
 }

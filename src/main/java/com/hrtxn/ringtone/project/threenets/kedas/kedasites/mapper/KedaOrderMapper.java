@@ -41,6 +41,12 @@ public interface KedaOrderMapper {
      */
     int updateKedaOrder(KedaOrder kedaOrder);
 
+    /**
+     * 添加商户
+     *
+     * @param kedaOrder
+     * @return
+     */
     int insertKedaOrder(KedaOrder kedaOrder);
 
     /**
@@ -58,4 +64,12 @@ public interface KedaOrderMapper {
      * @return
      */
     KedaOrder getKedaOrder(@Param("id") Integer id);
+
+    /**
+     * 无分页查询商户列表
+     *
+     * @param kedaOrder
+     * @return
+     */
+    List<KedaOrder> liseOrderNoPage(KedaOrder kedaOrder);
 }

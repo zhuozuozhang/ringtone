@@ -22,6 +22,10 @@ public class KedaQueryDataResult {
     private String ringEmpNum;
     private String printEmpNum;
     private String groupType;
+    private String protocolTelecom10;
+    private String protocolTelecom20;
+    private String industry;
+
 
     public String getAgentAccount() {
         return agentAccount;
@@ -175,4 +179,23 @@ public class KedaQueryDataResult {
         this.groupType = groupType;
     }
 
+    public String getProtocolTelecom10() {
+        return protocolTelecom10;
+    }
+
+    public void setProtocolTelecom10(String protocolTelecom10) {
+        this.protocolTelecom10 = protocolTelecom10;
+    }
+
+    public String getProtocolTelecom20() {
+        return protocolTelecom20;
+    }
+
+    public void setProtocolTelecom20(String protocolTelecom20) {
+        this.protocolTelecom20 = protocolTelecom20;
+    }
+
+    public String getIndustry() { return industry; }
+
+    public void setIndustry(String industry) { this.industry = industry; }
 }

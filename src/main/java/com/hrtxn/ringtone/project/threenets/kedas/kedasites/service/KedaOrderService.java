@@ -4,10 +4,7 @@ import com.hrtxn.ringtone.common.constant.AjaxResult;
 import com.hrtxn.ringtone.common.constant.Constant;
 import com.hrtxn.ringtone.common.domain.BaseRequest;
 import com.hrtxn.ringtone.common.domain.Page;
-import com.hrtxn.ringtone.common.utils.Const;
-import com.hrtxn.ringtone.common.utils.FileUtil;
-import com.hrtxn.ringtone.common.utils.ShiroUtils;
-import com.hrtxn.ringtone.common.utils.StringUtils;
+import com.hrtxn.ringtone.common.utils.*;
 import com.hrtxn.ringtone.common.utils.juhe.JuhePhoneUtils;
 import com.hrtxn.ringtone.freemark.config.systemConfig.RingtoneConfig;
 import com.hrtxn.ringtone.project.system.json.JuhePhone;
@@ -18,7 +15,9 @@ import com.hrtxn.ringtone.project.threenets.kedas.kedasites.domain.KedaRing;
 import com.hrtxn.ringtone.project.threenets.kedas.kedasites.mapper.KedaChildOrderMapper;
 import com.hrtxn.ringtone.project.threenets.kedas.kedasites.mapper.KedaOrderMapper;
 import com.hrtxn.ringtone.project.threenets.kedas.kedasites.mapper.KedaRingMapper;
+import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreeNetsOrderAttached;
 import lombok.extern.slf4j.Slf4j;
+import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -26,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 import reactor.core.Reactor;
 import reactor.event.Event;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -72,7 +72,7 @@ public class KedaOrderService {
             }
             return AjaxResult.success(kedaOrderList, "获取数据成功！", count);
         }
-        return AjaxResult.success(false,"无数据！");
+        return AjaxResult.success(false, "无数据！");
     }
 
     /**
@@ -110,7 +110,6 @@ public class KedaOrderService {
      */
     @Transactional(rollbackFor = Exception.class)
     public AjaxResult addKedaOrder(KedaOrder kedaOrder) throws Exception {
-
         if (!StringUtils.isNotNull(kedaOrder)) return AjaxResult.error("参数格式不正确!");
         if (!StringUtils.isNotEmpty(kedaOrder.getCompanyName())) return AjaxResult.error("参数格式不正确!");
         if (!StringUtils.isNotEmpty(kedaOrder.getLinkMan())) return AjaxResult.error("参数格式不正确!");
@@ -167,6 +166,56 @@ public class KedaOrderService {
         return AjaxResult.success("添加成功！");
     }
 
+
+    /**
+     * 添加父級訂單
+     *
+     * @param kedaOrder
+     * @return
+     * @throws Exception
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public AjaxResult addKedaOrderNew(KedaOrder kedaOrder) {
+        if (!StringUtils.isNotNull(kedaOrder)) return AjaxResult.error("参数格式不正确!");
+        if (!StringUtils.isNotEmpty(kedaOrder.getCompanyName())) return AjaxResult.error("参数格式不正确!");
+        if (!StringUtils.isNotEmpty(kedaOrder.getLinkMan())) return AjaxResult.error("参数格式不正确!");
+        String[] phone = kedaOrder.getTels().split(",");
+        List<KedaChildOrder> childOrders = new ArrayList<>();
+        for (String p : phone) {
+            p = p.replace(" ", "");
+            //首先验证是固定电话还是手机号
+            JuhePhone<JuhePhoneResult> juhePhone = JuhePhoneUtils.getPhone(p);
+            KedaChildOrder kedaChildOrder = new KedaChildOrder();
+            if ("200".equals(juhePhone.getResultcode())) {
+                JuhePhoneResult result = juhePhone.getResult();
+                kedaChildOrder.setProvince(result.getProvince());
+                kedaChildOrder.setCity(result.getCity());
+                if ("移动".equals(result.getCompany())) {
+                    kedaChildOrder.setOperate(1);
+                } else if ("电信".equals(result.getCompany())) {
+                    kedaChildOrder.setOperate(2);
+                } else {
+                    kedaChildOrder.setOperate(3);
+                }
+            }
+            kedaChildOrder.setLinkTel(p);
+            kedaChildOrder.setLinkMan(p);
+            childOrders.add(kedaChildOrder);
+        }
+        // 添加父级订单
+        kedaOrder.setCerateTime(new Date());
+        kedaOrder.setUserId(ShiroUtils.getSysUser().getId());
+        kedaOrder.setLinkTel(childOrders.get(0).getLinkTel());
+        kedaOrder.setProvince(childOrders.get(0).getProvince());
+        kedaOrder.setCity(childOrders.get(0).getCity());
+        int count = kedaOrderMapper.insertKedaOrder(kedaOrder);
+        initChildOrder(childOrders, kedaOrder.getId());
+        log.info("疑难杂单创建父级订单---->" + count);
+        // 同步数据
+        r.notify("addOrderInfo", Event.wrap(kedaOrder));
+        return AjaxResult.success("添加成功！");
+    }
+
     /**
      * 疑难杂单父级订单删除
      *
@@ -209,4 +258,95 @@ public class KedaOrderService {
         log.info("删除疑难杂单父级订单---->" + count);
         return AjaxResult.success(true, "删除成功！");
     }
+
+    /**
+     * 验证商户名称是否存在
+     *
+     * @param companyName
+     * @return
+     */
+    public Boolean isItRedundantByName(String companyName) {
+        KedaOrder order = new KedaOrder();
+        order.setCompanyName(companyName);
+        List<KedaOrder> kedaOrders = kedaOrderMapper.liseOrderNoPage(order);
+        return kedaOrders.size() > 0 ? true : false;
+    }
+
+    /**
+     * 格式化手机号
+     *
+     * @param phones
+     * @return
+     * @throws Exception
+     */
+    public AjaxResult formatPhoneNumber(String phones, Integer orderId) {
+        String[] phone = phones.split(",");
+        int numberOfTele = 0;
+        for (String p : phone) {
+            p = p.replace(" ", "");
+            //首先验证是固定电话还是手机号
+            boolean mobileNO = PhoneUtils.isMobileNO(p);
+            boolean fixedPhone = PhoneUtils.isFixedPhone(p);
+            if (!mobileNO && !fixedPhone) {
+                return AjaxResult.error("#号码" + p + "不正确！");
+            }
+            BaseRequest param = new BaseRequest();
+            param.setTel(p);
+            Integer count = kedaChildOrderMapper.getCount(param);
+            if (count > 0) {
+                return AjaxResult.error("#号码" + p + "重复！");
+            }
+            JuhePhone juhePhone = JuhePhoneUtils.getPhone(p);
+            JuhePhoneResult result = (JuhePhoneResult) juhePhone.getResult();
+            if (result.getCompany().equals("电信")) {
+                numberOfTele = numberOfTele + 1;
+            }
+        }
+        if (orderId != null && numberOfTele > 0) {
+            KedaOrder kedaOrder = kedaOrderMapper.getKedaOrder(orderId);
+            if (StringUtils.isNotEmpty(kedaOrder.getProtocolTelecom10()) || StringUtils.isNotEmpty(kedaOrder.getProtocolTelecom20())) {
+                numberOfTele = 0;
+            }
+        }
+        return AjaxResult.success(numberOfTele, "匹配成功");
+    }
+
+    public void initChildOrder(List<KedaChildOrder> list, Integer oderId) {
+        for (int i = 0; i < list.size(); i++) {
+            KedaChildOrder kedaChildOrder = list.get(i);
+            kedaChildOrder.setCreateTime(new Date());
+            kedaChildOrder.setIsMonthly(9);
+            kedaChildOrder.setIsRingtoneUser(1);
+            kedaChildOrder.setOrderId(oderId);
+            kedaChildOrder.setUserId(ShiroUtils.getSysUser().getId());
+            kedaChildOrder.setOperateId(Constant.OPERATEID);
+            kedaChildOrder.setStatus(Const.KEDA_UNDER_REVIEW);
+            kedaChildOrderMapper.insertKedaChildOrder(kedaChildOrder);
+        }
+    }
+
+    /**
+     * 更新id和状态
+     *
+     * @param id
+     * @param name
+     */
+    public void updateBusinessStatus(Integer id, String name) {
+        KedaOrder kedaOrder = new KedaOrder();
+        kedaOrder.setId(id);
+        kedaOrder.setCompanyName(name);
+        r.notify("uploadOrderInfo", Event.wrap(kedaOrder));
+    }
+
+    /**
+     * 修改商户信息
+     *
+     * @param order
+     * @return
+     */
+    public AjaxResult updateKedaOrderInfo(KedaOrder order) {
+        r.notify("updateOrderInfo", Event.wrap(order));
+        return AjaxResult.error();
+    }
 }
+

@@ -49,4 +49,6 @@ public class KedaChildOrder implements Serializable {
     private String remark;
     /**父级订单ID*/
     private Integer orderId;
+
+    private String tels;
 }

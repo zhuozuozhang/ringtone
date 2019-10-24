@@ -4,6 +4,7 @@ import com.hrtxn.ringtone.common.constant.AjaxResult;
 import com.hrtxn.ringtone.common.domain.BaseRequest;
 import com.hrtxn.ringtone.common.domain.Page;
 import com.hrtxn.ringtone.common.utils.DateUtils;
+import com.hrtxn.ringtone.common.utils.PhoneUtils;
 import com.hrtxn.ringtone.common.utils.ShiroUtils;
 import com.hrtxn.ringtone.common.utils.StringUtils;
 import com.hrtxn.ringtone.common.utils.juhe.JuhePhoneUtils;
@@ -33,6 +34,8 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+
+import static com.hrtxn.ringtone.common.utils.PhoneUtils.isFixedPhone;
 
 /**
  * Author:lile
@@ -230,8 +233,8 @@ public class ThreeNetsService {
         for (String p : phone) {
             p = p.replace(" ", "");
             //首先验证是固定电话还是手机号
-            boolean mobileNO = isMobileNO(p);
-            boolean fixedPhone = isFixedPhone(p);
+            boolean mobileNO = PhoneUtils.isMobileNO(p);
+            boolean fixedPhone = PhoneUtils.isFixedPhone(p);
             if (!mobileNO && !fixedPhone) {
                 return AjaxResult.error("#号码" + p + "不正确！");
             }
@@ -258,25 +261,5 @@ public class ThreeNetsService {
             outData.put("unicomStatus", StringUtils.isEmpty(attached.getSwxlId()));
         }
         return AjaxResult.success(outData, "匹配成功");
-    }
-
-    /**
-     * 验证手机号是否正确
-     *
-     * @param mobiles
-     * @return
-     */
-    public static boolean isMobileNO(String mobiles) {
-        //String regex = "^((13[0-9])|(14[5,7,9])|(15([0-3]|[5-9]))|(166)|(17[0,1,3,5,6,7,8])|(18[0-9])|(19[8|9]))\\d{8}$";
-        String regex = "^(1[3-9])\\d{9}$";
-        Pattern p = Pattern.compile(regex);
-        Matcher m = p.matcher(mobiles);
-        return m.matches();
-    }
-
-    public static boolean isFixedPhone(String fixedPhone) {
-        String reg = "(?:(\\(\\+?86\\))(0[0-9]{2,3}\\-?)?([2-9][0-9]{6,7})+(\\-[0-9]{1,4})?)|" +
-                "(?:(86-?)?(0[0-9]{2,3}\\-?)?([2-9][0-9]{6,7})+(\\-[0-9]{1,4})?)";
-        return Pattern.matches(reg, fixedPhone);
     }
 }

@@ -75,10 +75,15 @@ public class KedaOrder implements Serializable {
     /**
      * 电信协议文件地址
      */
-    private String protocol;
-
+    private String protocolTelecom10;
+    private String protocolTelecom20;
     /**
      * 科大商户id
      */
     private String kedaId;
+
+    /**
+     * 成员手机号
+     */
+    private String tels;
 }
