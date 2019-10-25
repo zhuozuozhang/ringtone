@@ -190,11 +190,12 @@ public class McardApi {
         Map<String, String> map = new HashMap<>();
         map.put("pageSize", "100");
         map.put("pageNo", "1");
-        map.put("auserParent", "61203");
-        map.put("startTime", DateUtils.getPastDate(7));
-        map.put("endTime", DateUtils.getFetureDate(1));
+        map.put("auserParent", distributorId);
         if (StringUtils.isNotEmpty(companyName)) {
             map.put("auserName",companyName);
+        }else{
+            map.put("startTime", DateUtils.getPastDate(7));
+            map.put("endTime", DateUtils.getFetureDate(1));
         }
         return sendPost(map, normal_list, distributorId);
     }

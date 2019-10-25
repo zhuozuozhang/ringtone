@@ -68,7 +68,7 @@
             <generatedKey column="admin_id" sqlStatement="MySql" identity="true"/>
         </table>
         -->
-        <table schema="ringtone" tableName="tb_notice_record" domainObjectName="NoticeRecord" enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false"
+        <table schema="ringtone" tableName="tb_keda_order" domainObjectName="KedaOrder" enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false"
                enableSelectByExample="false" selectByExampleQueryId="false">
             <property name="useActualColumnNames" value="false"/>
             <generatedKey column="id" sqlStatement="MySql" identity="true"/>

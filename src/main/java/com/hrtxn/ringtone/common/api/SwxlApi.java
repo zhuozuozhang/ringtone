@@ -624,7 +624,7 @@ public class SwxlApi implements Serializable {
                     SwxlBaseBackMessage<SwxlAddPhoneNewResult> createGroupInfo = mapper.readValue(res, new TypeReference<SwxlBaseBackMessage<SwxlAddPhoneNewResult>>() {
                     });
                     swxlAddGroupRespone = new SwxlGroupResponse();
-                    swxlAddGroupRespone.setStatus(1);
+                    swxlAddGroupRespone.setStatus(-1);
                     if (createGroupInfo.getData() != null) {
                         List<SwxlAddPhoneFailInfo> list = createGroupInfo.getData().getFailedList();
                         StringBuffer msg = new StringBuffer("同步失败:");
