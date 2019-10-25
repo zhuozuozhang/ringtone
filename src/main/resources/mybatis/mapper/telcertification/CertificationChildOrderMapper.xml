@@ -28,7 +28,7 @@
             AND ttco.parent_order_id = #{param.parentId}
         </if>
         <if test="param != null and param.phoneNum != null and param.phoneNum != ''">
-            AND ttco.tel_child_order_phone = #{param.phoneNum}
+            AND ttco.tel_child_order_phone like '%${param.phoneNum}%'
         </if>
     </sql>
 
@@ -47,7 +47,7 @@
     <!--根据条件获取子订单-->
     <select id="findTheChildOrder" resultMap="BaseResultMap">
         select
-        <include refid="Base_Column_List"/>
+        *
         from tb_telcertification_child_order ttco
         RIGHT JOIN tb_telcertification_order tto
         ON ttco.parent_order_id = tto.id
@@ -66,7 +66,7 @@
   </select>
 <!--根据id获取所有号码认证数据-->
     <select id="getTelCerChildById" parameterType="int" resultMap="BaseResultMap">
-    SELECT * FROM tb_telcertification_child_order ttco WHERE id = #{id}
+    SELECT * FROM tb_telcertification_child_order WHERE id = #{id,jdbcType=INTEGER}
   </select>
 
 <!--    删除成员信息-->
@@ -89,6 +89,12 @@
         SELECT parent_order_id
         FROM tb_telcertification_child_order ttco
         WHERE tel_child_order_phone = #{telChildOrderPhone,jdbcType=VARCHAR}
+    </select>
+    <!--根据子订单id获取父订单id-->
+    <select id="getTelcerChildParentIdById" resultType="java.lang.Integer">
+        SELECT parent_order_id
+        FROM tb_telcertification_child_order ttco
+        WHERE id = #{id,jdbcType=VARCHAR}
     </select>
 
     <!--修改成员状态、提交时间，开通时间，到期时间-->
@@ -141,7 +147,7 @@
 
     <select id="getFallDueList" resultMap="BaseResultMap">
         SELECT
-            <include refid="Base_Column_List"/>
+            *
         FROM
             tb_telcertification_child_order ttco
         RIGHT JOIN tb_telcertification_order tto
@@ -200,8 +206,10 @@
         </if>
         AND UNIX_TIMESTAMP(NOW()) >= UNIX_TIMESTAMP(tel_child_order_expire_time)
     </select>
+<!--    验证成员号码是否重复-->
     <select id="isRepetitionByChildNum" resultMap="BaseResultMap">
-        select * from tb_telcertification_child_order
+        select *
+        from tb_telcertification_child_order ttco
         where tel_child_order_phone = #{phoneNum,jdbcType=VARCHAR}
     </select>
 

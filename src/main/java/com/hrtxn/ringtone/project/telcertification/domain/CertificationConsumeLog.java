@@ -4,6 +4,11 @@ import lombok.Data;
 
 import java.io.Serializable;
 import java.util.Date;
+/**
+ * @author yuanye
+ * Date:2019/8/24 13:22
+ * Description:号码认证消费记录
+ */
 
 @Data
 public class CertificationConsumeLog implements Serializable {

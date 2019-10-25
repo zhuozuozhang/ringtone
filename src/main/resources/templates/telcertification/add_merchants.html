@@ -1,0 +1,471 @@
+<!DOCTYPE>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<!--<head th:include="telcertification/common/include :: linkcss"></head>-->
+<head>
+    <title>商户管理</title>
+<!--    <meta name="renderer" content="webkit">-->
+<!--    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>-->
+<!--    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">-->
+<!--    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">-->
+    <link rel="stylesheet" type="text/css" th:href="@{/public/layui/css/layui.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/public/layui/css/modules/layer/default/layer.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/public/css/commer.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/public/dataTables/jquery.dataTables.min.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/client/threenets/css/announcement.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/client/threenets/css/head.css}">
+    <script type="text/javascript" th:src="@{/public/js/jquery.min.js}"></script>
+
+    <!--    <link rel="stylesheet" th:href="@{/public/layui/css/layui.css}">-->
+    <!--    <link rel="stylesheet" th:href="@{/public/layui/css/modules/layer/default/layer.css}">-->
+    <link rel="stylesheet" th:href="@{/public/layui/css/modules/laydate/default/laydate.css}">
+    <!--    <link rel="stylesheet" th:href="@{/public/css/commer.css}">-->
+    <link rel="stylesheet" th:href="@{/client/telcertification/css/boxstyle.css}">
+    <link rel="stylesheet" th:href="@{/client/telcertification/css/msgbox.css}">
+    <link rel="stylesheet" th:href="@{/client/telcertification/css/webandwxxcx.css}">
+    <link rel="stylesheet" th:href="@{/client/telcertification/css/orderform.css}">
+    <link rel="stylesheet" th:href="@{/client/telcertification/css/order.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/client/telcertification/css/add_merchant.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/client/telcertification/css/header.css}">
+
+    <style>
+        .rz_y .active {
+            background-color: #0569FD!important;
+            color: #fff!important;
+        }
+    </style>
+</head>
+<body>
+
+<div id="pop" >
+    <div class="pop_content">
+        <div class="approve_title">
+<!--            <h3>业务订购</h3>-->
+            <h4>共需支付：<span th:each="c:${configList}"><span th:if="${c.type}==1"><span id="yfje" th:text="${c.price}">80</span></span></span>元</h4>
+<!--            <div class="gban" id="cancel"><img th:src="@{/client/telcertification/images/close.png}"></div>-->
+        </div>
+        <div class="rz_y">
+            <div class="title" th:each="c:${configList}">
+                <span th:text="${c.typeName}" th:if="${c.type}!=4">泰迪熊号码认证</span><i th:if="${c.type}!=4" th:text="'¥ ' + ${c.price} + '元/年'">¥ 80元/年</i>
+                <span th:text="${c.typeName}" th:if="${c.type}==4">挂机短信</span><i th:if="${c.type}==4" th:text="'¥ ' + ${c.price} + '元/条'">¥ 0.1元/条</i>
+            </div>
+            <div class="ywxz">
+                <div class="tswz">选择业务</div>
+                <div class="choosebk">
+                    <button id="taidix" class="btn-calculate active" value="泰迪熊">泰迪熊</button>
+                    <button id="dhb" class="btn-calculate" value="电话邦">电话邦</button>
+                    <button id="caiyin" class="btn-calculate" value="彩印">彩印</button>
+                    <button id="gjdx" class="btn-calculate" value="挂机短信">挂机短信</button>
+                </div>
+                <div class="zsy"></div>
+            </div>
+            <div class="ywxz" id="tdxcon">
+                <div class="tswz">泰迪熊有效期</div>
+                <div class="choosebk year">
+                    <button class="btn-calculate active" value="1">1年</button>
+                    <button class="btn-calculate" value="2">2年</button>
+                    <button class="btn-calculate" value="3">3年</button>
+                    <button class="btn-calculate" value="4">4年</button>
+                    <button class="btn-calculate" value="5">5年</button>
+                </div>
+                <div class="zsy"></div>
+            </div>
+            <div class="ywxz bxs" id="dhbcon">
+                <div class="tswz">电话邦有效期</div>
+                <div class="choosebk dhbyear">
+                    <button class="btn-calculate active" value="1">1年</button>
+                    <button class="btn-calculate" value="2">2年</button>
+                    <button class="btn-calculate" value="3">3年</button>
+                    <button class="btn-calculate" value="4">4年</button>
+                    <button class="btn-calculate" value="5">5年</button>
+                </div>
+                <div class="zsy"></div>
+            </div>
+            <div class="ywxz bxs" id="cycon">
+                <div class="tswz">彩印有效期</div>
+                <div class="choosebk permanent">
+                    <button class="btn-allocate btn-normal active">永久有效</button>
+                </div>
+                <div class="zsy"></div>
+            </div>
+            <div class="ywxz bxs" id="gjdxcon">
+                <div class="gmdx">
+                    <label>挂机短信</label>
+                    <input id="dxsrk" type="number" placeholder="请输入整百数,例：100" step="100" min="100">
+                    <span>元<i id="dxnumber"> 0 </i>条</span></div>
+                <div class="dxsx">
+                    <div class="tswz">挂机短信上限</div>
+                    <div class="choosebk note">
+                        <button class="btn-calculate active" value="100">100条/月</button>
+                        <button class="btn-calculate" value="200">200条/月</button>
+                        <button class="btn-calculate" value="300">300条/月</button>
+                        <button class="btn-calculate" value="500">500条/月</button>
+                        <button class="btn-calculate" value="700">700条/月</button>
+                    </div>
+                    <div class="zsy"></div>
+                </div>
+            </div>
+        </div>
+        <div class="approvecon">
+            <div class="approvebk"><span><i>*</i>集团名称</span>
+                <input type="text" placeholder="需跟营业执照名称一致" required lay-verify="required" name="telCompanyNameAdd" id="telCompanyNameAdd"
+                       maxlength="32" autocomplete="off" onblur="verificationName()">
+            </div>
+            <div class="approvebk"><span><i>*</i>联系人姓名</span>
+                <input type="text" id="telLinkNameAdd" maxlength="10" autocomplete="off" name="telLinkNameAdd">
+            </div>
+            <div class="approvebk"><span><i>*</i>联系人电话</span>
+                <input type="tel" id="telLinkPhoneAdd" maxlength="12" autocomplete="off" name="telLinkPhoneAdd"
+                       onblur="vertifyTelLinkPhone()">
+            </div>
+            <div class="approvebk"><span><i>*</i>认证展示内容</span>
+                <input type="text" placeholder="请跟营业执照主体一致" id="telContentAdd" autocomplete="off" name="telContentAdd">
+            </div>
+            <div class="phonenum">
+                <div class="approvebk"><span><i>*</i>开通号码</span>
+                    <input type="text" name="phoneNum" class="layui-input numlists" value=""
+                           placeholder="如果是座机号码务必加上区号" autocomplete="off" onblur="checkNum(this)">
+                    <!--                    <input class="opennum" type="tel" placeholder="如果是座机号码务必加上区号">-->
+                    <em id="moreadd"><img th:src="@{/client/telcertification/images/addphone.png}" alt="" onclick="addLandline();"></em>
+                </div>
+                <div id="num"></div>
+                <!--                                  <input type="tel" placeholder="如果是座机号码务必加上区号" style="margin-left:180px;">-->
+                <!--                                  <em onClick="remove(this)"><img th:src="@{/client/telcertification/images/del.png}"></em>-->
+                <!--                                </div> -->
+                <!--                                <div class="zsy" id="before"></div>-->
+
+                <div class="imgbk"><span><i>*</i>上传营业执照</span>
+                    <div class="tpscbk">
+                        <div class="tpimgbka" id="businessLicenseClass"><img class="tpimga" border="0" th:src="@{/public/images/addimg.png}" test="111" style="margin:0px auto;max-height:140px;"></div>
+                        <input type="file" style="display: none;" name="businessLicense" class="tpdza" id="businessLicenseAdd">
+                    </div>
+                </div>
+                <div class="imgbk"><span><i>*</i>上传法人身份证正面</span>
+                    <div class="tpscbk">
+                        <div class="tpimgbka" id="legalPersonCardZhenClass"><img class="tpimga" border="0" th:src="@{/public/images/addimg.png}" test="111" style="margin:0px auto;max-height:140px;"></div>
+                        <input type="file" style="display: none;" name="legalPersonCardZhen" class="tpdza" id="legalPersonCardZhenAdd">
+                    </div>
+                </div>
+                <div class="imgbk"><span><i>*</i>上传法人身份证反面</span>
+                    <div class="tpscbk">
+                        <div class="tpimgbka" id="legalPersonCardFanClass"><img class="tpimga" border="0" th:src="@{/public/images/addimg.png}" test="111" style="margin:0px auto;max-height:140px;"></div>
+                        <input type="file" style="display: none;" name="legalPersonCardFan" class="tpdza" id="legalPersonCardFanAdd">
+                    </div>
+                </div>
+                <div class="imgbk"><span><i>*</i>上传LOGO</span>
+                    <div class="tpscbk">
+                        <div class="tpimgbka" id="logoClass"><img class="tpimga" border="0" th:src="@{/public/images/addimg.png}" test="111" style="margin:0px auto;max-height:140px;"></div>
+                        <input type="file" style="display: none;" name="logo" class="tpdza" id="logoAdd">
+                    </div>
+                </div>
+                <div class="approvebk"><span><i></i>上传授权书</span>
+                    <input class="scwj" type="file" placeholder="选填" id="authorizationAdd" name="authorization">
+                </div>
+                <div class="ckalbk">
+                    <div class="ckan opencase">查看示例</div>
+                    <div class="mbxz"><a th:href="@{/public/file/授权书模板.docx}">授权书模板下载</a></div>
+                </div>
+                <!--                <div class="approvebk"><span><i>*</i>上传号码证明</span>-->
+                <!--                    <input class="scwj" type="file" placeholder="缴费发票或网上营业厅电子发票" id="numberProveAdd" name="numberProve">-->
+                <!--                </div>-->
+                <!--                <div class="ckalbk">-->
+                <!--                    <div class="ckan opencase">查看案例</div>-->
+                <!--                    <div class="mbxz"><a href="http://v.130.xyz/api/auth/uploadModel?type=2">号码证明模板下载</a></div>-->
+                <!--                </div>-->
+                <input type="hidden" id="businessLicenseHidden">
+                <input type="hidden" id="legalPersonCardZhenHidden">
+                <input type="hidden" id="legalPersonCardFanHidden">
+                <input type="hidden" id="logoHidden">
+                <input type="hidden" id="authorizationHidden">
+                <input type="hidden" id="numberProveHidden">
+
+                <div class="bzbk"><span>备注</span>
+                    <textarea placeholder="" id="remarkAdd" autocomplete="off"></textarea>
+                </div>
+                <div class="approvebk"><span><i>*</i>订购协议</span>
+                    <div class="dgxy">
+                        <input type="radio" checked="checked">
+                        <span>我同意此<i class="openagreement">订购协议</i></span></div>
+                </div>
+                <!--                <div class="xgan" onClick="determine()">确认添加</div>-->
+                <div class="xgan" lay-submit lay-filter="addform" onclick="addTelCerMerchants()">确认添加</div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--查看示例-->
+<div class="back display" id="case">
+    <div class="pop_content">
+        <div class="approve_title">
+<!--            <h5>查看示例</h5>-->
+            <div class="gban" id="closecase"><img th:src="@{/client/telcertification/images/close.png}"></div>
+        </div>
+        <div class="casecon"><img th:src="@{/client/telcertification/picture/shouquanshu.png}"></div>
+    </div>
+</div>
+<!--订购协议-->
+<div th:replace="telcertification/common/agreement :: agreement"></div>
+
+<script th:src="@{/public/js/jquery-2.1.4.min.js}"></script>
+<!--<script th:src="@{/public/js/jquery-3.2.0.min.js}"></script>-->
+<script th:src="@{/public/layui/layui.js}"></script>
+<script th:src="@{/public/layui/lay/modules/laydate.js}"></script>
+<script th:src="@{/public/layui/lay/modules/layer.js}"></script>
+<script type="text/javascript" th:src="@{/public/js/numASMD.js}"></script>
+<script th:src="@{/public/js/regular.js}"></script>
+<script type="text/javascript" th:src="@{/public/dataTables/jquery.dataTables.min.js}"></script>
+<script type="text/javascript" th:src="@{/public/js/datatables.js}"></script>
+<script type="text/javascript" th:src="@{/public/js/ajax.js}"></script>
+<!--    <script th:src="@{/client/telcertification/js/merchants.js}"></script>-->
+<script type="text/javascript" th:src="@{/client/telcertification/js/add_merchants.js}"></script>
+<script type="text/javascript" th:src="@{/public/js/ajaxfileupload.js}"></script>
+
+<!--<script>-->
+
+<!--    &lt;!&ndash;添加&#45;&#45;&#45;&#45;上传图片文件 &ndash;&gt;-->
+<!--    $("body").on('click', '#businessLicenseClass', function () {-->
+<!--        valid($("#telCompanyNameAdd"),"businessLicense",$("#businessLicenseAdd"),"businessLicenseAdd",$(this));-->
+<!--    });-->
+<!--    $("body").on('click', '#legalPersonCardZhenClass', function () {-->
+<!--        valid($("#telCompanyNameAdd"),"legalPersonCardZhen",$("#legalPersonCardZhenAdd"),"legalPersonCardZhenAdd",$(this));-->
+<!--    });-->
+<!--    $("body").on('click', '#legalPersonCardFanClass', function () {-->
+<!--        valid($("#telCompanyNameAdd"),"legalPersonCardFan",$("#legalPersonCardFanAdd"),"legalPersonCardFanAdd",$(this));-->
+<!--    });-->
+<!--    $("body").on('click', '#logoClass', function () {-->
+<!--        valid($("#telCompanyNameAdd"),"logo",$("#logoAdd"), "logoAdd",$(this));-->
+<!--    });-->
+<!--    //上传授权书-->
+<!--    $('#authorizationAdd').on('change', function (e) {-->
+<!--//判断有没有填写用户名-->
+<!--//没有，给出提示信息 ，清空文件选择   给用户输入框聚焦 return false-->
+<!--        var telCompanyName = $("#telCompanyNameAdd").val();-->
+<!--        if(telCompanyName == "" || telCompanyName == null){-->
+<!--            $("#telCompanyNameAdd").focus();-->
+<!--            $("#authorizationAdd").val("");-->
+<!--            layer.msg("请先输入集团名称！");-->
+<!--            return-->
+<!--        }-->
+<!--        uploadFile("authorization","authorizationAdd",$("#telCompanyNameAdd").val())-->
+<!--    });-->
+<!--</script>-->
+
+
+</body>
+<!--<body>-->
+<!--&lt;!&ndash;订购弹窗 &ndash;&gt;-->
+<!--&lt;!&ndash;<div id="pop" class="back">&ndash;&gt;-->
+<!--&lt;!&ndash;    <div class="pop_content">&ndash;&gt;-->
+<!--        <div class="approve_title">-->
+<!--&lt;!&ndash;            <h3>业务订购</h3>&ndash;&gt;-->
+<!--            <h4>共需支付：<span th:each="c:${configList}"><span th:if="${c.type}==1"><span id="yfje" th:text="${c.price}">80</span></span></span>元</h4>-->
+<!--&lt;!&ndash;            <div class="gban" id="cancel"><img th:src="@{/client/telcertification/images/close.png}"></div>&ndash;&gt;-->
+<!--        </div>-->
+<!--        <div class="rz_y">-->
+<!--            <div class="title" th:each="c:${configList}">-->
+<!--                <span th:text="${c.typeName}" th:if="${c.type}!=4">泰迪熊号码认证</span><i th:if="${c.type}!=4" th:text="'¥ ' + ${c.price} + '元/年'">¥ 80元/年</i>-->
+<!--                <span th:text="${c.typeName}" th:if="${c.type}==4">挂机短信</span><i th:if="${c.type}==4" th:text="'¥ ' + ${c.price} + '元/条'">¥ 0.1元/条</i>-->
+<!--            </div>-->
+<!--            <div class="ywxz">-->
+<!--                <div class="tswz">选择业务</div>-->
+<!--                <div class="choosebk">-->
+<!--                    <button id="taidix" class="btn-calculate active" value="泰迪熊">泰迪熊</button>-->
+<!--                    <button id="dhb" class="btn-calculate" value="电话邦">电话邦</button>-->
+<!--                    <button id="caiyin" class="btn-calculate" value="彩印">彩印</button>-->
+<!--                    <button id="gjdx" class="btn-calculate" value="挂机短信">挂机短信</button>-->
+<!--                </div>-->
+<!--                <div class="zsy"></div>-->
+<!--            </div>-->
+<!--            <div class="ywxz" id="tdxcon">-->
+<!--                <div class="tswz">泰迪熊有效期</div>-->
+<!--                <div class="choosebk year">-->
+<!--                    <button class="btn-calculate active" value="1">1年</button>-->
+<!--                    <button class="btn-calculate" value="2">2年</button>-->
+<!--                    <button class="btn-calculate" value="3">3年</button>-->
+<!--                    <button class="btn-calculate" value="4">4年</button>-->
+<!--                    <button class="btn-calculate" value="5">5年</button>-->
+<!--                </div>-->
+<!--                <div class="zsy"></div>-->
+<!--            </div>-->
+<!--            <div class="ywxz bxs" id="dhbcon">-->
+<!--                <div class="tswz">电话邦有效期</div>-->
+<!--                <div class="choosebk dhbyear">-->
+<!--                    <button class="btn-calculate active" value="1">1年</button>-->
+<!--                    <button class="btn-calculate" value="2">2年</button>-->
+<!--                    <button class="btn-calculate" value="3">3年</button>-->
+<!--                    <button class="btn-calculate" value="4">4年</button>-->
+<!--                    <button class="btn-calculate" value="5">5年</button>-->
+<!--                </div>-->
+<!--                <div class="zsy"></div>-->
+<!--            </div>-->
+<!--            <div class="ywxz bxs" id="cycon">-->
+<!--                <div class="tswz">彩印有效期</div>-->
+<!--                <div class="choosebk permanent">-->
+<!--                    <button class="btn-allocate btn-normal active">永久有效</button>-->
+<!--                </div>-->
+<!--                <div class="zsy"></div>-->
+<!--            </div>-->
+<!--            <div class="ywxz bxs" id="gjdxcon">-->
+<!--                <div class="gmdx">-->
+<!--                    <label>挂机短信</label>-->
+<!--                    <input id="dxsrk" type="number" placeholder="请输入整百数,例：100" step="100" min="100">-->
+<!--                    <span>元<i id="dxnumber"> 0 </i>条</span></div>-->
+<!--                <div class="dxsx">-->
+<!--                    <div class="tswz">挂机短信上限</div>-->
+<!--                    <div class="choosebk note">-->
+<!--                        <button class="btn-calculate active" value="100">100条/月</button>-->
+<!--                        <button class="btn-calculate" value="200">200条/月</button>-->
+<!--                        <button class="btn-calculate" value="300">300条/月</button>-->
+<!--                        <button class="btn-calculate" value="500">500条/月</button>-->
+<!--                        <button class="btn-calculate" value="700">700条/月</button>-->
+<!--                    </div>-->
+<!--                    <div class="zsy"></div>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--        <div class="approvecon">-->
+<!--            <div class="approvebk"><span><i>*</i>集团名称</span>-->
+<!--                <input type="text" placeholder="需跟营业执照名称一致" required lay-verify="required" name="telCompanyNameAdd" id="telCompanyNameAdd"-->
+<!--                       maxlength="32" autocomplete="off" onblur="verificationName()">-->
+<!--&lt;!&ndash;                <label type="display"></label>&ndash;&gt;-->
+<!--            </div>-->
+<!--            <div class="approvebk"><span><i>*</i>联系人姓名</span>-->
+<!--                <input type="text" id="telLinkNameAdd" maxlength="10" autocomplete="off" name="telLinkNameAdd">-->
+<!--            </div>-->
+<!--            <div class="approvebk"><span><i>*</i>联系人电话</span>-->
+<!--                <input type="tel" id="telLinkPhoneAdd" maxlength="12" autocomplete="off" name="telLinkPhoneAdd"-->
+<!--                       onblur="vertifyTelLinkPhone()">-->
+<!--            </div>-->
+<!--            <div class="approvebk"><span><i>*</i>认证展示内容</span>-->
+<!--                <input type="text" placeholder="请跟营业执照主体一致" id="telContentAdd" autocomplete="off" name="telContentAdd">-->
+<!--            </div>-->
+<!--            <div class="phonenum">-->
+<!--                <div class="approvebk"><span><i>*</i>开通号码</span>-->
+<!--                    <input type="text" name="phoneNum" class="layui-input numlists" value=""-->
+<!--                           placeholder="如果是座机号码务必加上区号" autocomplete="off" onblur="checkNum(this)">-->
+<!--&lt;!&ndash;                    <input class="opennum" type="tel" placeholder="如果是座机号码务必加上区号">&ndash;&gt;-->
+<!--                    <em id="moreadd"><img th:src="@{/client/telcertification/images/addphone.png}" alt="" onclick="addLandline();"></em>-->
+<!--                </div>-->
+<!--                <div id="num"></div>-->
+<!--                <div class="imgbk"><span><i>*</i>上传营业执照</span>-->
+<!--                    <div class="tpscbk">-->
+<!--                        <div class="tpimgbka" id="businessLicenseClass">-->
+<!--                            <img class="tpimga" border="0" th:src="@{/public/images/addimg.png}" test="111" style="margin:0px auto;max-height:140px;"></div>-->
+<!--                        <input type="file" style="display: none;" name="businessLicense" class="tpdza" id="businessLicenseAdd">-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--                <div class="imgbk"><span><i>*</i>上传法人身份证正面</span>-->
+<!--                    <div class="tpscbk">-->
+<!--                        <div class="tpimgbka" id="legalPersonCardZhenClass"><img class="tpimga" border="0" th:src="@{/public/images/addimg.png}" test="111" style="margin:0px auto;max-height:140px;"></div>-->
+<!--                        <input type="file" style="display: none;" name="legalPersonCardZhen" class="tpdza" id="legalPersonCardZhenAdd">-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--                <div class="imgbk"><span><i>*</i>上传法人身份证反面</span>-->
+<!--                    <div class="tpscbk">-->
+<!--                        <div class="tpimgbka" id="legalPersonCardFanClass"><img class="tpimga" border="0" th:src="@{/public/images/addimg.png}" test="111" style="margin:0px auto;max-height:140px;"></div>-->
+<!--                        <input type="file" style="display: none;" name="legalPersonCardFan" class="tpdza" id="legalPersonCardFanAdd">-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--                <div class="imgbk"><span><i>*</i>上传LOGO</span>-->
+<!--                    <div class="tpscbk">-->
+<!--                        <div class="tpimgbka" id="logoClass"><img class="tpimga" border="0" th:src="@{/public/images/addimg.png}" test="111" style="margin:0px auto;max-height:140px;"></div>-->
+<!--                        <input type="file" style="display: none;" name="logo" class="tpdza" id="logoAdd">-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--                <div class="approvebk"><span><i></i>上传授权书</span>-->
+<!--                    <input class="scwj" type="file" placeholder="选填" id="authorizationAdd" name="authorization">-->
+<!--                </div>-->
+<!--                <div class="ckalbk">-->
+<!--                    <div class="ckan opencase">查看示例</div>-->
+<!--                    <div class="mbxz"><a th:href="@{/public/file/授权书模板.docx}">授权书模板下载</a></div>-->
+<!--                </div>-->
+<!--                <input type="hidden" id="businessLicenseHidden">-->
+<!--                <input type="hidden" id="legalPersonCardZhenHidden">-->
+<!--                <input type="hidden" id="legalPersonCardFanHidden">-->
+<!--                <input type="hidden" id="logoHidden">-->
+<!--                <input type="hidden" id="authorizationHidden">-->
+<!--                <input type="hidden" id="numberProveHidden">-->
+
+<!--                <div class="bzbk"><span>备注</span>-->
+<!--                    <textarea placeholder="" id="remarkAdd" autocomplete="off"></textarea>-->
+<!--                </div>-->
+<!--                <div class="approvebk"><span><i>*</i>订购协议</span>-->
+<!--                    <div class="dgxy">-->
+<!--                        <input type="radio" checked="checked">-->
+<!--                        <span>我同意此<i class="openagreement">订购协议</i></span></div>-->
+<!--                </div>-->
+<!--&lt;!&ndash;                <div class="xgan" onClick="determine()">确认添加</div>&ndash;&gt;-->
+<!--                            <div class="xgan" lay-submit lay-filter="addform" onclick="addTelCerMerchants()">确认添加</div>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--&lt;!&ndash;    </div>&ndash;&gt;-->
+<!--&lt;!&ndash;</div>&ndash;&gt;-->
+
+<!--&lt;!&ndash;查看示例&ndash;&gt;-->
+<!--<div class="back display" id="case">-->
+<!--        <div class="approve_title">-->
+<!--&lt;!&ndash;            <h5>查看示例</h5>&ndash;&gt;-->
+<!--            <div class="gban" id="closecase"><img th:src="@{/client/telcertification/images/close.png}"></div>-->
+<!--        </div>-->
+<!--        <div class="casecon"><img th:src="@{/client/telcertification/picture/authorization.png}"></div>-->
+<!--</div>-->
+<!--&lt;!&ndash;订购协议&ndash;&gt;-->
+<!--<div th:replace="telcertification/common/agreement :: agreement"></div>-->
+
+
+<!--<script>-->
+<!--    //验证集团名称，不能为重复的-->
+<!--    function verificationName() {-->
+<!--        var name = $("#telCompanyNameAdd").val();-->
+<!--        if (name == '' || name == null) {-->
+<!--            $("#telCompanyNameAdd").focus();-->
+<!--            layer.msg("集团名称不能为空！");-->
+<!--            return-->
+<!--        }-->
+<!--        AjaxPost("/telcertify/verificationName", {-->
+<!--            "telCompanyName": name,-->
+<!--        }, function (result) {-->
+<!--            if (result.code == 500) {-->
+<!--                // confirm(result.msg);-->
+<!--                layer.msg(result.msg,{time:3000});-->
+<!--                // $("#telCompanyNameAdd").focus();-->
+<!--                return false;-->
+<!--            } else {-->
+<!--                // confirm(result.msg);-->
+<!--                // alert("right");-->
+<!--                layer.msg(result.msg);-->
+<!--                return false;-->
+<!--            }-->
+<!--        });-->
+
+<!--    }-->
+
+<!--    //验证联系人电话-->
+<!--    function vertifyTelLinkPhone() {-->
+<!--        var phones = $("#telLinkPhoneAdd").val();-->
+<!--        var phoneregex = /^[1][3,4,5,7,8,9][0-9]{9}$/; //手机号码-->
+<!--        var tel_regex = /^(\d{3,4}\-)?\d{7,8}$/i;   //座机格式是 010-98909899 010-86551122-->
+<!--        var telregex = /^0(([1-9]\d)|([3-9]\d{2}))\d{8}$/; //没有中间那段 -的 座机格式是 01098909899-->
+
+
+<!--        AjaxPost("/telcertify/verificationTelLinkPhone", {-->
+<!--            "telLinkPhone": phones,-->
+<!--        }, function (result) {-->
+<!--            if (result.code == 500) {-->
+<!--                // $("#telLinkPhoneAdd").focus();-->
+<!--                // layer.msg(result.msg);-->
+<!--                confirm(result.msg);-->
+<!--            } else {-->
+<!--                if (!phoneregex.test(phones)) {-->
+<!--                    if (!tel_regex.test(phones)) {-->
+<!--                        if(!telregex.test(phones)){-->
+<!--                            $("#telLinkPhoneAdd").focus();-->
+<!--                            confirm('号码"'+phones+'"不正确！');-->
+<!--                        }-->
+<!--                    }-->
+<!--                }-->
+<!--            }-->
+<!--        });-->
+<!--    }-->
+<!--</script>-->
+<!--</body>-->
+</html>

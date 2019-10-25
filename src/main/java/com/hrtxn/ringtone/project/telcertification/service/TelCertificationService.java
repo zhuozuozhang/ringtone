@@ -80,22 +80,29 @@ public class TelCertificationService {
 
             if (phoneNum != null && phoneNum != "") {
                 //对联系人电话的处理
-                String regex = "^((13[0-9])|(14[5,7,9])|(15([0-3]|[5-9]))|(166)|(17[0,1,3,5,6,7,8])|(18[0-9])|(19[8|9]))\\d{8}$";
-                Pattern p = Pattern.compile(regex);
-                //成员电话号码
-                int len2 = phoneNum.length();
-                if (len2 == 11) {
-                    Matcher m = p.matcher(phoneNum);
-                    boolean isMatch = m.matches();
-                    if (!isMatch) {
-                        return AjaxResult.success(theTelCer, "手机号不正确");
-                    }
-                    //根据成员电话号查找
-                    List<CertificationChildOrder> ccList = certificationChildOrderMapper.findTheChildOrder(page, request);
-                    for (CertificationChildOrder cc : ccList) {
-                        request.setId(cc.getParentOrderId());
-                    }
+//                String regex = "^((13[0-9])|(14[5,7,9])|(15([0-3]|[5-9]))|(166)|(17[0,1,3,5,6,7,8])|(18[0-9])|(19[8|9]))\\d{8}$";
+//                Pattern p = Pattern.compile(regex);
+                //根据成员电话号查找
+                List<CertificationChildOrder> ccList = certificationChildOrderMapper.findTheChildOrder(page, request);
+                Integer[] ids = new Integer[100];
+                int i = 0;
+                for (CertificationChildOrder cc : ccList) {
+                    ids[i] = cc.getParentOrderId();
+                    i++;
+//                    request.setId(cc.getParentOrderId());
                 }
+                request.setArrayById(ids);
+                System.out.println(ids);
+                System.out.println(request.getArrayById());
+                //成员电话号码
+//                int len2 = phoneNum.length();
+//                if (len2 == 11) {
+//                    Matcher m = p.matcher(phoneNum);
+//                    boolean isMatch = m.matches();
+//                    if (!isMatch) {
+//                        return AjaxResult.success(theTelCer, "手机号不正确");
+//                    }
+//                }
             }
             if (rangeTime != null && rangeTime != "") {
                 //对时间段的处理

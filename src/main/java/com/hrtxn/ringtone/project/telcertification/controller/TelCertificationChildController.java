@@ -148,11 +148,12 @@ public class TelCertificationChildController {
      * @param map
      * @return
      */
-    @GetMapping("/toRenewPage/{phoneNum}")
-    public String toRenewPage(@PathVariable String phoneNum,ModelMap map){
-        map.put("phoneNum",phoneNum);
-        int id = telCertificationChildService.getTelcerChildParentIdByPhoneNum(phoneNum);
-        CertificationOrder certificationOrder = telCertificationService.getTelCerOrderById(id,map);
+    @GetMapping("/toRenewPage/{id}")
+    public String toRenewPage(@PathVariable String id,ModelMap map){
+        Integer idInt = Integer.parseInt(id);
+        CertificationChildOrder childOrder = telCertificationChildService.getTelCerChildById(idInt,map);
+        map.put("phoneNum",childOrder.getTelChildOrderPhone());
+        CertificationOrder certificationOrder = telCertificationService.getTelCerOrderById(childOrder.getParentOrderId(),map);
         return "telcertification/renew";
     }
 

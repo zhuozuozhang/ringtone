@@ -37,13 +37,19 @@
       AND tco.tel_company_name like '%${param.telCompanyName}%'
     </if>
     <if test="param.telLinkPhone != null and param.telLinkPhone != ''">
-      AND tco.tel_link_phone = #{param.telLinkPhone}
+      AND tco.tel_link_phone like '%${param.telLinkPhone}%'
     </if>
     <if test="param.start != null and param.start !='' and param.end != null and param.end !=''">
       AND tco.tel_order_time between #{param.start} and #{param.end}
     </if>
     <if test="param != null and param.userId != null and param.userId != ''">
       AND tco.user_id = #{param.userId}
+    </if>
+    <if test="param != null and param.arrayById != null and param.arrayById != ''">
+      AND id in
+      <foreach collection="param.arrayById" open="(" close=")" item="arrayById" separator=",">
+        #{arrayById}
+      </foreach>
     </if>
   </sql>
 
@@ -64,6 +70,19 @@
     ORDER BY tel_order_time DESC
     <include refid="page"/>
   </select>
+
+<!--  <update id="resertAlertid" parameterType="alertindexPo">-->
+<!--    <if test="po.ids != null and po.ids != ''">-->
+<!--      update alert_profile_dict-->
+<!--      set-->
+<!--      use_flag = 'f'-->
+<!--      where 1=1-->
+<!--      and id in-->
+<!--      <foreach collection="po.ids" open="(" close=")" item="item" separator=",">-->
+<!--        #{item}-->
+<!--      </foreach>-->
+<!--    </if>-->
+<!--  </update>-->
 <!--  查询号码认证订单列表总数-->
   <select id="getCount" resultType="int">
     select count(*) from tb_telcertification_order tco
