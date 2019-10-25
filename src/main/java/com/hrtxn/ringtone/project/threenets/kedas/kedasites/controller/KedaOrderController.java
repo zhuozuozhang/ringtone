@@ -94,7 +94,7 @@ public class KedaOrderController {
     @ResponseBody
     @Log(title = "添加疑难杂单父级订单", businessType = BusinessType.INSERT, operatorLogType = OperatorLogType.KEDASITES)
     public AjaxResult addKedaOrder(KedaOrder kedaOrder) throws Exception {
-        return kedaOrderService.addKedaOrderNew(kedaOrder);
+        return kedaOrderService.addKedaOrder(kedaOrder);
     }
 
     /**
@@ -145,7 +145,7 @@ public class KedaOrderController {
      * @param order
      * @return
      */
-    @PostMapping("formatPhoneNumber")
+    @PostMapping("updateKedaOrderInfo")
     @ResponseBody
     public AjaxResult updateKedaOrderInfo(KedaOrder order){
         return kedaOrderService.updateKedaOrderInfo(order);

@@ -24,6 +24,7 @@ import com.hrtxn.ringtone.project.threenets.threenet.mapper.ThreeNetsOrderAttach
 import com.hrtxn.ringtone.project.threenets.threenet.mapper.ThreenetsChildOrderMapper;
 import com.hrtxn.ringtone.project.threenets.threenet.mapper.ThreenetsOrderMapper;
 import com.hrtxn.ringtone.project.threenets.threenet.mapper.ThreenetsRingMapper;
+import lombok.Synchronized;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -1119,6 +1120,7 @@ public class ApiUtils {
      * @throws IOException
      * @throws NoLoginException
      */
+    @Synchronized
     public boolean addRingByDx(ThreenetsRing ring, ThreeNetsOrderAttached attached) {
         mcardApi.toUserList(attached.getMcardId(), attached.getMcardDistributorId());
         String ringResult = mcardApi.toRingList(attached.getMcardDistributorId());
@@ -1218,15 +1220,16 @@ public class ApiUtils {
                 childOrder.setStatus("审核成功");
                 childOrder.setRemark("添加成功");
                 newList.add(childOrder);
-            }
-            if (mcardAddPhoneRespone.getCode().equals("error")) {
+            } else if (mcardAddPhoneRespone.getCode().equals("error")) {
                 childOrder.setStatus(Const.FAILURE_REVIEW);
                 childOrder.setRemark("添加失败");
                 newList.add(childOrder);
-            }
-            if (mcardAddPhoneRespone.getCode().equals("1012")) {
+            } else if (mcardAddPhoneRespone.getCode().equals("1012")) {
                 childOrder.setStatus(Const.FAILURE_REVIEW);
                 childOrder.setRemark("员工已存在于其他商户");
+                newList.add(childOrder);
+            } else {
+                childOrder.setStatus(Const.FAILURE_REVIEW);
                 newList.add(childOrder);
             }
         }

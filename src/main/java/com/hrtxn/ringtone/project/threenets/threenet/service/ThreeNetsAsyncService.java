@@ -21,6 +21,7 @@ import com.hrtxn.ringtone.project.threenets.threenet.mapper.ThreenetsChildOrderM
 import com.hrtxn.ringtone.project.threenets.threenet.mapper.ThreenetsOrderMapper;
 import com.hrtxn.ringtone.project.threenets.threenet.mapper.ThreenetsRingMapper;
 import com.hrtxn.ringtone.project.threenets.threenet.utils.ApiUtils;
+import lombok.Synchronized;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
@@ -658,6 +659,7 @@ public class ThreeNetsAsyncService {
      * @param order
      */
     @Async
+    @Synchronized
     public void refreshTelecomMerchantInfo(ThreenetsOrder order) {
         ApiUtils apiUtils = new ApiUtils();
         ThreeNetsOrderAttached attached = threeNetsOrderAttachedMapper.selectByParentOrderId(order.getId());
