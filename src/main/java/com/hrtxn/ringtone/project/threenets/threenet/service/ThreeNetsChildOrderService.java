@@ -448,7 +448,7 @@ public class ThreeNetsChildOrderService {
         if (StringUtils.isNotNull(ringMsisdn)) {
             return apiUtils.getUserInfoByRingMsisdn(ringMsisdn);
         }
-        return AjaxResult.success(false, "参数不正确！");
+        return AjaxResult.error( "参数不正确！");
     }
 
     /**

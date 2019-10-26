@@ -1285,7 +1285,7 @@ public class ApiUtils {
             map.put("userInfo", miguApi.getUserInfoByRingMsisdn(ringMsisdn));
             return AjaxResult.success(map, "查找到了");
         }
-        return AjaxResult.success(false, "参数不正确");
+        return AjaxResult.error("参数不正确");
     }
 
     /**

@@ -9,11 +9,11 @@ function getUserInfoByRingMsisdn() {
         },function (res) {
             if(res.code == 200 && res.data){
                 var data = res.data;
-                if(data.total == 0){
-                    $(".userInfoTable").html("<td colspan='8' style='color:#F00;'>抱歉,系统没有查询到数据</td>");
-                    $(".tbody").html("<tr><td colspan='3' style='color:#F00;'>抱歉,系统没有查询到数据</td></tr>");
-                    return;
-                }
+                // if(data.total == 0){
+                //     $(".userInfoTable").html("<td colspan='8' style='color:#F00;'>抱歉,系统没有查询到数据</td>");
+                //     $(".tbody").html("<tr><td colspan='3' style='color:#F00;'>抱歉,系统没有查询到数据</td></tr>");
+                //     return;
+                // }
                 var userInfo = $.parseJSON(data.userInfo);
                 var userLog = userInfo.userLog;
                 var userCurrentInfo = userInfo.userCurrentInfo;
@@ -67,7 +67,10 @@ function getUserInfoByRingMsisdn() {
                     $(".tbody").html(str);
                 }
             }else {
-                layer(res.msg,{icon: 5,time: 3000});
+                $(".userInfoTable").html("<td colspan='8' style='color:#F00;'>抱歉,系统没有查询到数据</td>");
+                $(".tbody").html("<tr><td colspan='3' style='color:#F00;'>抱歉,系统没有查询到数据</td></tr>");
+                return;
+                // layer(res.msg,{icon: 5,time: 3000});
             }
         });
     }else{
