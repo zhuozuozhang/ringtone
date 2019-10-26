@@ -24,6 +24,15 @@
         id, link_man, link_tel, operate, province, city, create_time, status,
         operate_id, employee_id, ring_id, ring_name, is_monthly, is_ringtone_user, user_id,remark,order_id
     </sql>
+    <!-- 根据ID获取三网订单信息 -->
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM
+        tb_keda_child_order p
+        WHERE
+        p.id = #{id,jdbcType=INTEGER}
+    </select>
     <!-- 获取近5日信息-->
     <select id="getFiveData" resultType="com.hrtxn.ringtone.project.threenets.threenet.domain.PlotBarPhone">
         SELECT

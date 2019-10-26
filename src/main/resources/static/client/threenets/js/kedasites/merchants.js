@@ -105,7 +105,7 @@ function AddUser(a, c, b) {
     layer.open({
         type: 2,
         title: '添加商户',
-        area: ['650px', '350px'],
+        area: ['650px', '600px'],
         content: '/threenets/clcy/toAddmerchants',
         end: function () {
             $('#set').DataTable().ajax.reload(null,false);//弹出层结束后，刷新主页面

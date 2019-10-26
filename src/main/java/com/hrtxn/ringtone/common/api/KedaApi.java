@@ -46,6 +46,7 @@ public class KedaApi {
     private final static String SAVEORSETRINGBYUPLOAD = "http://clcy.adsring.cn/meap-web/ring/manage/saveOrSetRingByUpload";
     private final static String QUERYRINGLIST = "http://clcy.adsring.cn/meap-web/ring/manage/queryRingList";
     private final static String SETRING = "http://clcy.adsring.cn/meap-web/ring/manage/setRing";
+    private final static String SETSELECTRING = "http://clcy.adsring.cn/meap-web/ring/emp/setSelectRing";
     /**
      * 商户列表
      */
@@ -91,26 +92,18 @@ public class KedaApi {
     /**
      * 疑难杂单刷新子级订单
      *
-     * @param tel
-     * @param id
+     * @param kedaChildOrder
+     * @param kedaId
      * @return
      * @throws IOException
      */
-    public AjaxResult getMsg(String tel, Integer id) throws IOException {
+    public AjaxResult getMsg(KedaChildOrder kedaChildOrder, String kedaId) throws IOException {
         // 执行刷新是否包月以及设置状态
-        String param = "groupId=" + Constant.OPERATEID + "&businessId=&dueStartTime=&dueEndTime=&keywords=" + tel + "&empState=&businessSettingState=&businessState=&pageIndex=1&pageSize=10&province=&city=&carriesCode=0&businessType=ring";
+        String param = "groupId=" + kedaId + "&businessId=&dueStartTime=&dueEndTime=&keywords=" + kedaChildOrder.getLinkTel() + "&empState=&businessSettingState=&businessState=&pageIndex=1&pageSize=10&province=&city=&carriesCode=0&businessType=ring";
         double rm = (new Random()).nextDouble();
         String res = sendPost(GETRINGEMPLOYEELIST + "?r=" + rm, param);
-        log.info("疑难杂单获取自己订单信息 参数：{},{} 结果：{}", tel, id, res);
+        log.info("疑难杂单获取自己订单信息 参数：{},{} 结果：{}", kedaChildOrder.getLinkTel(), kedaId, res);
         KedaPhoneBaseResult<KedaPhoneResult> kedaPhoneBaseResult = SpringUtils.getBean(ObjectMapper.class).readValue(res, KedaPhoneBaseResult.class);
-        if (kedaPhoneBaseResult.getData() == null || kedaPhoneBaseResult.getData().size() == 0) {
-            param = "groupId=" + Constant.OPERATEID_OLD + "&businessId=&dueStartTime=&dueEndTime=&keywords=" + tel + "&empState=&businessSettingState=&businessState=&pageIndex=1&pageSize=10&province=&city=&carriesCode=0&businessType=ring";
-            rm = (new Random()).nextDouble();
-            res = sendPost(GETRINGEMPLOYEELIST + "?r=" + rm, param);
-            kedaPhoneBaseResult = SpringUtils.getBean(ObjectMapper.class).readValue(res, KedaPhoneBaseResult.class);
-        }
-        KedaChildOrder kedaChildOrder = new KedaChildOrder();
-        kedaChildOrder.setId(id);
         if ("000000".equals(kedaPhoneBaseResult.getRetCode())) {
             List<KedaPhoneResult> data = kedaPhoneBaseResult.getData();
             List<KedaPhoneResult> kedaPhoneResults = new ArrayList<>();
@@ -122,7 +115,7 @@ public class KedaApi {
             int l = kedaPhoneResults.size();
             for (int i = 0; i < l; i++) {
                 String businessEmpPhone = kedaPhoneResults.get(i).getBusinessEmpPhone();
-                if (businessEmpPhone.equals(tel)) {
+                if (businessEmpPhone.equals(kedaChildOrder.getLinkTel())) {
                     // 判断是否是未开通
                     if (kedaPhoneResults.get(i).getBusinessState() == 0) {
                         // 判断是否恢复短信（是）
@@ -147,6 +140,7 @@ public class KedaApi {
                         kedaChildOrder.setRemark("审核驳回[" + kedaPhoneResults.get(i).getSetRetDesc() + "]");
                     }
                     kedaChildOrder.setEmployeeId(kedaPhoneResults.get(i).getBusinessEmpId());
+                    kedaChildOrder.setRingName(kedaPhoneResults.get(i).getContentName());
                     break;
                 }
             }
@@ -154,7 +148,7 @@ public class KedaApi {
             kedaChildOrder.setRemark(kedaPhoneBaseResult.getRetMsg());
         }
         // 执行刷新是否是彩铃用户
-        String param2 = "r=" + rm + "&phone=" + tel;
+        String param2 = "r=" + rm + "&phone=" + kedaChildOrder.getLinkTel();
         String result = sendGet(QUERYRINGSTATUS, param2);
         KedaIsRingUser kedaIsRingUser = SpringUtils.getBean(ObjectMapper.class).readValue(result, KedaIsRingUser.class);
         if ("000000".equals(kedaIsRingUser.getRetCode())) {
@@ -181,9 +175,10 @@ public class KedaApi {
      * @return
      * @throws IOException
      */
-    public AjaxResult uploadRing(File source) throws IOException {
-        String s = sendRingFile(UPLOAD, source);
+    public AjaxResult uploadRing(File source,KedaRing ring) throws IOException {
+        String s = sendRingFile(UPLOAD, source,ring);
         log.info("疑难杂单铃音文件上传----->" + s);
+        //{"retCode":"000000","retMsg":"成功","exDesc":null,"data":[{"fileName":"rBBGrF2y2SmAOCMTAAj5diAHZ24083.mp3","fileSize":"574 Kb","fileType":"mp3","realName":"诚信农资3.mp3","fileUrl":"http://file.kuyinyun.com/group3/M00/8F/09/rBBGrF2y2SmAOCMTAAj5diAHZ24083.mp3"}],"data2":null}
         if (StringUtils.isNotEmpty(s)) {
             KedaBaseResult<KedaUploadRing> kedaBaseResult = SpringUtils.getBean(ObjectMapper.class).readValue(s, KedaBaseResult.class);
             if ("000000".equals(kedaBaseResult.getRetCode())) {
@@ -239,13 +234,13 @@ public class KedaApi {
      * 添加铃音
      *
      * @param fileUrl
-     * @param ringName
+     * @param kedaRing
      * @return
      * @throws IOException
      */
-    public AjaxResult addRing(String fileUrl, String ringName) throws IOException {
-        ringName = URLEncoder.encode(URLEncoder.encode(URLEncoder.encode(URLEncoder.encode(ringName, "utf-8"), "utf-8"), "utf-8"), "utf-8");
-        String param = "groupId=" + Constant.OPERATEID + "&name=" + ringName + "&ringPrice=0&ringActivePrice=0&addSetting=0&uploadMusicName=" + URLEncoder.encode(fileUrl, "UTF-8") + "&businessType=ring";
+    public AjaxResult addRing(String fileUrl, KedaRing kedaRing) throws IOException {
+        String ringName = URLEncoder.encode(URLEncoder.encode(URLEncoder.encode(URLEncoder.encode(kedaRing.getRingName(), "utf-8"), "utf-8"), "utf-8"), "utf-8");
+        String param = "groupId=" + kedaRing.getOpertateId() + "&name=" + ringName + "&ringPrice=0&ringActivePrice=0&addSetting=0&uploadMusicName=" + URLEncoder.encode(fileUrl, "UTF-8") + "&businessType=ring";
         double rm = (new Random()).nextDouble();
         String s = sendPost(SAVEORSETRINGBYUPLOAD + "?r=" + rm, param);
         log.info("铃音文件暂存------>" + s);
@@ -269,20 +264,14 @@ public class KedaApi {
      * @return
      * @throws IOException
      */
-    public List<KedaRing> refreshRingInfo(List<KedaRing> kedaRingList) throws IOException {
+    public List<KedaRing> refreshRingInfo(List<KedaRing> kedaRingList,String kedaId) throws IOException {
         if (kedaRingList.size() > 0) {
             for (int i = 0; i < kedaRingList.size(); i++) {
-                String param = "groupId=" + Constant.OPERATEID + "&pageSize=10000&pageIndex=1&name=" + kedaRingList.get(i).getRingName();
+                String param = "groupId=" + kedaId + "&pageSize=10000&pageIndex=1&name=" + kedaRingList.get(i).getRingName();
                 double rm = (new Random()).nextDouble();
                 String s = sendPost(QUERYRINGLIST + "?r=" + rm, param);
                 log.info("疑难杂单刷新铃音信息:{}", s);
                 KedaPhoneBaseResult<KedaRefresRingInfo> kedaRingBaseResult = SpringUtils.getBean(ObjectMapper.class).readValue(s, KedaPhoneBaseResult.class);
-                if (kedaRingBaseResult.getData() == null) {
-                    param = "groupId=" + Constant.OPERATEID_OLD + "&pageSize=10000&pageIndex=1&name=" + kedaRingList.get(i).getRingName();
-                    rm = (new Random()).nextDouble();
-                    s = sendPost(QUERYRINGLIST + "?r=" + rm, param);
-                    kedaRingBaseResult = SpringUtils.getBean(ObjectMapper.class).readValue(s, KedaPhoneBaseResult.class);
-                }
                 if ("000000".equals(kedaRingBaseResult.getRetCode())) {
                     List<KedaRefresRingInfo> data = kedaRingBaseResult.getData();
                     List<KedaRefresRingInfo> kedaRefresRingInfos = new ArrayList<>();
@@ -332,8 +321,8 @@ public class KedaApi {
      * @return
      * @throws IOException
      */
-    public AjaxResult setRing(String ringNum, String businessEmpIdList, String phones) throws IOException {
-        String param = "groupId=" + Constant.OPERATEID + "&id=" + ringNum + "&businessEmpIdList=" + businessEmpIdList + "&businessEmpPhoneList=" + phones + "&businessCircleEmpPhoneList=&businessType=ring";
+    public AjaxResult setRing(String ringNum, String businessEmpIdList, String phones,String kedaId) throws IOException {
+        String param = "groupId=" + kedaId + "&id=" + ringNum + "&businessEmpIdList=" + businessEmpIdList + "&businessEmpPhoneList=" + phones + "&businessCircleEmpPhoneList=&businessType=ring";
         double rm = (new Random()).nextDouble();
         String s = sendPost(SETRING + "?r=" + rm, param);
         log.info("疑难杂单设置铃音：{}", s);
@@ -352,14 +341,14 @@ public class KedaApi {
      * @return
      * @throws IOException
      */
-    public String sendRingFile(String url, File file) throws IOException {
+    public String sendRingFile(String url, File file,KedaRing ring) throws IOException {
         SystemConfig kedaCookie = ConfigUtil.getConfigByType("kedaCookie");
         String info = kedaCookie.getInfo();
         OkHttpClient client = new OkHttpClient();
         RequestBody fileBody = RequestBody.create(MediaType.parse("multipart/form-data"), file);
 
         RequestBody requestBody = new MultipartBody.Builder()
-                .addFormDataPart("groupId", Constant.OPERATEID)
+                .addFormDataPart("groupId",ring.getOpertateId())
                 .addFormDataPart("fileType", "music")
                 .addFormDataPart("files", file.getName(), fileBody)
                 .build();
@@ -567,12 +556,13 @@ public class KedaApi {
     public String addGroup(KedaOrder kedaOrder) {
         String rt = "false";
         try {
+            String name = URLEncoder.encode(URLEncoder.encode(kedaOrder.getCompanyName(),"UTF-8"),"UTF-8");
             SystemConfig kedaCookie = ConfigUtil.getConfigByType("kedaCookie");
             String info = kedaCookie.getInfo();
             HashMap<String, String> map = new HashMap<>();
             map.put("id", kedaUserId);
             map.put("agentId", kedaUserId);
-            map.put("groupName", URLEncoder.encode(kedaOrder.getCompanyName(), "UTF-8"));
+            map.put("groupName", URLEncoder.encode(name,"UTF-8"));
             map.put("adminName", "");
             map.put("adminPhone", "");
             map.put("industry", "0");
@@ -613,11 +603,18 @@ public class KedaApi {
         double rm = (new Random()).nextDouble();
         String res = sendPost(ADD_URL + "?r=" + rm, param);
         log.info("疑难杂单创建订单结果：" + res);
-        KedaBaseResult kedaBaseResult = SpringUtils.getBean(ObjectMapper.class).readValue(res, KedaBaseResult.class);
-        if ("000000".equals(kedaBaseResult.getRetCode())) {
-            return AjaxResult.success(true, "添加成功！");
-        } else {
-            return AjaxResult.error(kedaBaseResult.getRetMsg());
+        if (StringUtils.isNotEmpty(res)){
+            JSONObject jsonObject = JSONObject.fromObject(res);
+            String retCode = jsonObject.getString("retCode");
+            if ("000000".equals(retCode)) {
+                return AjaxResult.success(true, "添加成功！");
+            } else {
+                String retMsg = jsonObject.getString("retMsg");
+                return AjaxResult.error(retMsg);
+            }
+
+        }else{
+            return AjaxResult.error("添加失败");
         }
     }
 
@@ -683,6 +680,41 @@ public class KedaApi {
                 .post(requestBody)
                 .addHeader("Content-Type", "application/x-www-form-urlencoded")
                 .addHeader("Cookie", info)
+                .addHeader("Cache-Control", "no-cache")
+                .build();
+        Response response = client.newCall(request).execute();
+        return response.body().string();
+    }
+
+
+    public static void main(String[] args) {
+        try{
+            // 执行刷新是否包月以及设置状态
+            String param = "groupId=620247425334212&pageIndex=1&pageSize=50";
+            double rm = (new Random()).nextDouble();
+            String res = sendPost1(GETRINGEMPLOYEELIST + "?r=" + rm, param);
+            JSONObject jsonObject = JSONObject.fromObject(res);
+            JSONArray jsonArray = jsonObject.getJSONArray("data");
+            for (int i = 0; i < jsonArray.size(); i++) {
+                JSONObject partDaily = jsonArray.getJSONObject(i);
+                String businessEmpPhone = partDaily.getString("businessEmpPhone");
+                System.out.println(businessEmpPhone+",");
+            }
+        }catch(Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    public static String sendPost1(String url, String param) throws IOException {
+        OkHttpClient client = new OkHttpClient();
+        MediaType mediaType = MediaType.parse("application/x-www-form-urlencoded");
+        RequestBody body = RequestBody.create(mediaType, param);
+        Request request = new Request.Builder()
+                .url(url)
+                .post(body)
+                .addHeader("Content-Type", "application/x-www-form-urlencoded")
+                .addHeader("Cookie", "JSESSIONID=E0B38457E1A4F26EC1331990D957ECB4")
                 .addHeader("Cache-Control", "no-cache")
                 .build();
         Response response = client.newCall(request).execute();

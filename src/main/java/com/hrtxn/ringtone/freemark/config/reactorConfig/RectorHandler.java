@@ -135,29 +135,36 @@ public class RectorHandler {
             request.setOrderId(kedaOrder.getId());
             request.setIsMonthly(9);
             List<KedaChildOrder> list = kedaChildOrderMapper.selectByParam(request);
-            String status = kedaApi.getOrderStatusByName("信阳新媒体");
-            String id = kedaApi.getOrderIdByName("信阳新媒体");
-            kedaOrder.setStatus(status);
-            if (status.equals("审核通过")){
+            String status = kedaApi.getOrderStatusByName(kedaOrder.getCompanyName());
+            String id = kedaApi.getOrderIdByName(kedaOrder.getCompanyName());
+            kedaOrder.setKedaId(id);
+            if (status.equals("1")){
+                kedaOrder.setStatus("审核通过");
                 for (int i = 0; i < list.size(); i++) {
                     KedaChildOrder kedaChildOrder = list.get(i);
                     AjaxResult add = kedaApi.addPhone(kedaChildOrder, kedaOrder);
                     if ((int) add.get("code") == 200) {
+                        kedaChildOrder.setIsMonthly(0);
+                        kedaChildOrder.setStatus("审核通过");
                         kedaChildOrder.setStatus(Const.SUCCESSFUL_REVIEW);
                         kedaChildOrder.setRemark("添加成功！");
                     } else {
+                        kedaChildOrder.setIsMonthly(2);
+                        kedaChildOrder.setStatus("审核失败");
                         kedaChildOrder.setStatus(Const.FAILURE_REVIEW);
                         kedaChildOrder.setRemark(add.get("msg").toString());
                     }
                     // 执行修改子级订单操作
-                    int count = kedaChildOrderMapper.updatKedaChildOrder(kedaChildOrder);
+                    kedaChildOrderMapper.updatKedaChildOrder(kedaChildOrder);
                 }
-            }else if (status.equals("审核中")){
+            }else if (status.equals("2")){
+                kedaOrder.setStatus("待审核");
                 for (int i = 0; i < list.size(); i++) {
                     KedaChildOrder kedaChildOrder = list.get(i);
                     kedaChildOrder.setRemark("商户审核中，请稍后查询！");
                 }
             }else{
+                kedaOrder.setStatus("审核驳回");
                 for (int i = 0; i < list.size(); i++) {
                     KedaChildOrder kedaChildOrder = list.get(i);
                     kedaChildOrder.setRemark("审核驳回");
@@ -179,7 +186,19 @@ public class RectorHandler {
     @Selector(value = "updateOrderInfo", reactor = "@createReactor")
     public void updateOrderInfo(Event<KedaOrder> data) {
         KedaOrder kedaOrder = data.getData();
-        String s = kedaApi.editGroup(kedaOrder);
-        log.info("异步任务--添加疑难杂单订单--"+s);
+        KedaOrder order = kedaOrderMapper.getKedaOrder(kedaOrder.getId());
+        if (StringUtils.isNotEmpty(kedaOrder.getProtocolTelecom10())){
+            order.setProtocolTelecom10(kedaApi.uploadFile(new File(RingtoneConfig.getProfile() + kedaOrder.getProtocolTelecom10())));
+        }
+        if (StringUtils.isNotEmpty(kedaOrder.getProtocolTelecom20())){
+            order.setProtocolTelecom20(kedaApi.uploadFile(new File(RingtoneConfig.getProfile() + kedaOrder.getProtocolTelecom20())));
+        }
+        if (order.getKedaId().equals("") || order.getKedaId().equals("")){
+            kedaOrderMapper.updateKedaOrder(order);
+        }else{
+            String s = kedaApi.editGroup(order);
+            kedaOrderMapper.updateKedaOrder(order);
+            log.info("异步任务--添加疑难杂单订单--"+s);
+        }
     }
 }

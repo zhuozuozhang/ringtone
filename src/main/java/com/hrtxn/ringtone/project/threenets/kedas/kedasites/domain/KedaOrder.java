@@ -73,14 +73,29 @@ public class KedaOrder implements Serializable {
     private String creditFile;
 
     /**
-     * 电信协议文件地址
+     * 电信协议文件地址10元
      */
     private String protocolTelecom10;
+
+    /**
+     * 电信协议文件地址10元
+     */
     private String protocolTelecom20;
+
+    /**
+     * 本地文件文件夹
+     */
+    private String folderName;
+
     /**
      * 科大商户id
      */
     private String kedaId;
+
+    /**
+     * 科大商户名称
+     */
+    private String kedaName;
 
     /**
      * 成员手机号

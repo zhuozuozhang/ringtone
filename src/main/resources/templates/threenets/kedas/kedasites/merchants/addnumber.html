@@ -37,28 +37,44 @@
                     2.当输入框号码后面出现"#错误消息"，比如"#号码不正确"时，代表该行的号码格式错误，需要修改。修改完成后请注意去掉"#错误消息"的标识。
                 </div>
             </div>
-            <textarea onchange="mykeyup()" name="memberTels" id="member_phone" required lay-verify="required"></textarea>
+            <textarea onchange="verificationTels()" name="memberTels" id="memberTels" required lay-verify="required"></textarea>
         </div>
-        <div id="tijiao" class="newBlocPage-button" onclick="sub();">确定提交</div>
+        <div id="protocolTelecom10Div">
+            <div class="newBlocPage-con6 clear">
+                <div class="file_css2">
+                    <div class="show_input_file" id="showProtocolTelecom10"></div>
+                    <div class="file_css_button queren10">电信10元协议证书</div>
+                    <input type="file" class="input_file" id="protocolTelecom10File" name="protocolTelecom10File" required multiple="multiple" accept="image/*">
+                    <input type="hidden" name="protocolTelecom10" id="protocolTelecom10" value="">
+                </div>
+                <h6><i style="color: red"></i>电信10元协议证书</h6>
+            </div>
+        </div>
+        <div id="protocolTelecom20Div">
+            <div class="newBlocPage-con6 clear">
+                <div class="file_css2">
+                    <div class="show_input_file" id="showProtocolTelecom20"></div>
+                    <div class="file_css_button queren20">电信20元协议证书</div>
+                    <input type="file" class="input_file" id="protocolTelecom20File" name="protocolTelecom20File" required multiple="multiple" accept="image/*">
+                    <input type="hidden" name="protocolTelecom20" id="protocolTelecom20" value="">
+                </div>
+                <h6><i style="color: red"></i>电信20元协议证书</h6>
+            </div>
+        </div>
+        <input type="hidden" id="folderName" name="folderName" th:value="${orderId}">
+        <input type="hidden" id="tels" name="tels">
+        <input type="hidden" id="telNum" name="telNum">
+        <div id="tijiao" class="newBlocPage-button" onclick="subNew();">确定提交</div>
     </div>
 </form>
 </body>
 <div th:include="threenets/kedas/kedasites/common/include::footer"></div>
 <script th:src="@{/client/threenets/js/kedasites/addnumber.js}"></script>
 <script>
-    function mykeyup() {
-        var member_phone = $("#member_phone").val();
-        var phones = member_phone.split(/[\r\n]/g);
-        var myreg = /^[1][3,4,5,7,8,9][0-9]{9}$/;
-        var areg = /^0\d{2,3}-?\d{7,8}$/;
-        for (i = 0; i < phones.length; i++) {
-            if (!myreg.test(phones[i])) {
-                if (!areg.test(phones[i])) {
-                    layer.msg('号码"' + phones[i] + '"不正确!');
-                    break;
-                }
-            }
-        }
-    }
+
+    $(document).ready(function () {
+        $("#protocolTelecom10Div").hide();
+        $("#protocolTelecom20Div").hide();
+    });
 </script>
 </html>

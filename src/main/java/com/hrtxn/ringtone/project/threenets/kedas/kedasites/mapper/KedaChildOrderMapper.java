@@ -16,6 +16,14 @@ import java.util.List;
  */
 @Repository
 public interface KedaChildOrderMapper {
+
+    /**
+     * 根据id获取子订单
+     *
+     * @param id
+     * @return
+     */
+    KedaChildOrder selectByPrimaryKey(@Param("id") Integer id);
     /**
      * 获取近5日信息
      *

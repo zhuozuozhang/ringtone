@@ -12,10 +12,15 @@
         <result column="cerate_time" property="cerateTime" jdbcType="TIMESTAMP"/>
         <result column="status" property="status" jdbcType="VARCHAR"/>
         <result column="user_id" property="userId" jdbcType="INTEGER"/>
+        <result column="credit_file" jdbcType="VARCHAR" property="creditFile" />
+        <result column="protocol_telecom_10" jdbcType="VARCHAR" property="protocolTelecom10" />
+        <result column="protocol_telecom_20" jdbcType="VARCHAR" property="protocolTelecom20" />
+        <result column="folder_name" jdbcType="VARCHAR" property="folderName" />
+        <result column="keda_id" jdbcType="VARCHAR" property="kedaId" />
     </resultMap>
 
     <sql id="Base_Column_List">
-        id, company_name, link_man, link_tel, province, city, cerate_time, status, user_id,
+        id, company_name, link_man, link_tel, province, city, cerate_time, status, user_id, credit_file, protocol_telecom_10, protocol_telecom_20, folder_name,keda_id,
         (SELECT COUNT(*) FROM tb_keda_child_order WHERE order_id = p.id) as childOrderQuantity,
         (SELECT COUNT(*) FROM tb_keda_child_order WHERE order_id = p.id AND is_monthly = 1) as childOrderQuantityByMonthly,
         (SELECT user_name FROM tb_user u WHERE u.id = p.user_id ) AS userName
@@ -63,6 +68,24 @@
             <if test="status != null">
                 status = #{status,jdbcType=VARCHAR},
             </if>
+            <if test="creditFile != null">
+                credit_file = #{creditFile,jdbcType=VARCHAR},
+            </if>
+            <if test="protocolTelecom10 != null">
+                protocol_telecom_10 = #{protocolTelecom10,jdbcType=VARCHAR},
+            </if>
+            <if test="protocolTelecom20 != null">
+                protocol_telecom_20 = #{protocolTelecom20,jdbcType=VARCHAR},
+            </if>
+            <if test="folderName != null">
+                folder_name = #{folderName,jdbcType=VARCHAR},
+            </if>
+            <if test="kedaId != null">
+                keda_id = #{kedaId,jdbcType=VARCHAR},
+            </if>
+            <if test="kedaName != null">
+                keda_name = #{kedaName,jdbcType=VARCHAR},
+            </if>
         </set>
         where id = #{id,jdbcType=INTEGER}
     </update>
@@ -94,6 +117,24 @@
             <if test="userId != null">
                 user_id,
             </if>
+            <if test="creditFile != null">
+                credit_file,
+            </if>
+            <if test="protocolTelecom10 != null">
+                protocol_telecom_10,
+            </if>
+            <if test="protocolTelecom20 != null">
+                protocol_telecom_20,
+            </if>
+            <if test="folderName != null">
+                folder_name,
+            </if>
+            <if test="kedaId != null">
+                keda_id,
+            </if>
+            <if test="kedaName != null">
+                keda_name,
+            </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="companyName != null">
@@ -119,6 +160,24 @@
             </if>
             <if test="userId != null">
                 #{userId,jdbcType=INTEGER},
+            </if>
+            <if test="creditFile != null">
+                #{creditFile,jdbcType=VARCHAR},
+            </if>
+            <if test="protocolTelecom10 != null">
+                #{protocolTelecom10,jdbcType=VARCHAR},
+            </if>
+            <if test="protocolTelecom20 != null">
+                #{protocolTelecom20,jdbcType=VARCHAR},
+            </if>
+            <if test="folderName != null">
+                #{folderName,jdbcType=VARCHAR},
+            </if>
+            <if test="kedaId != null">
+                #{kedaId,jdbcType=VARCHAR},
+            </if>
+            <if test="kedaName != null">
+                #{kedaName,jdbcType=VARCHAR},
             </if>
         </trim>
     </insert>

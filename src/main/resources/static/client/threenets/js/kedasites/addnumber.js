@@ -31,6 +31,14 @@ function subNew() {
         layer.msg('员工号码不能为空');
         return;
     }
+    if ($("#protocolTelecom10").val()||$("#protocolTelecom20").val()){
+        etitGroud();
+    }
+    if ($("#telNum").val() > 0){
+        if($("#protocolTelecom10").val()=="" && $("#protocolTelecom20").val()==""){
+            layer.msg("含有电信成员必须上传电信业务单！", {icon: 5, time: 3000});
+        }
+    }
     // 执行添加子订单操作
     AjaxPost("/threenets/clcy/batchInsertKedaChildOrder", {
         tels: $("#tels").val(),
@@ -50,12 +58,17 @@ function subNew() {
     });
 }
 //上传客户确认函
-$("form").on("change", "#clientFile", function (e) {
-    $(".queren").html(this.value);
-    uploadFile()
+//上传客户确认函
+$("form").on("change", "#protocolTelecom10File", function (e) {
+    $(".queren10").html(this.value);
+    uploadFile("protocolTelecom10")
+})
+$("form").on("change", "#protocolTelecom20File", function (e) {
+    $(".queren20").html(this.value);
+    uploadFile("protocolTelecom20")
 })
 //上传文件
-function uploadFile() {
+function uploadFile(url) {
     var layuiLoding = layer.load(0, { //icon支持传入0-2
         time:false,
         shade: [0.5, '#9c9c9c'], //0.5透明度的灰色背景
@@ -68,7 +81,7 @@ function uploadFile() {
         }
     });
     $.ajax({
-        url: '/system/upload/clientFile',
+        url: '/system/upload/' + url,
         type: 'POST',
         cache: false,
         data: new FormData($('#Form')[0]),
@@ -77,7 +90,11 @@ function uploadFile() {
     }).done(function (res) {
         layer.close(layuiLoding);
         layer.msg(res.msg, {icon: 1, time: 1000});
-        $("#protocol").val(res.data)
+        if (url === "protocolTelecom20") {
+            $("#protocolTelecom20").val(res.data)
+        }else if (url === "protocolTelecom10"){
+            $("#protocolTelecom10").val(res.data)
+        }
     }).fail(function (res) {
         layer.msg(res.msg, {icon: 2, time: 1000});
     });
@@ -104,6 +121,7 @@ function verificationTels() {
             layer.msg(result.msg);
             $("#memberTels").focus();
         } else {
+            $("#telNum").val(result.data)
             if (result.data > 0) {
                 $("#protocolTelecom10Div").show();
                 $("#protocolTelecom20Div").show();
@@ -112,5 +130,15 @@ function verificationTels() {
                 $("#protocolTelecom20Div").hide();
             }
         }
+    })
+}
+
+function etitGroud() {
+    AjaxPost("/threenets/clcy/updateKedaOrderInfo", {
+        "protocolTelecom10": $("#protocolTelecom10").val(),
+        "protocolTelecom20": $("#protocolTelecom20").val(),
+        "id":$("#orderId").val()
+    }, function (result) {
+
     })
 }

@@ -104,8 +104,8 @@
                         <i style="color: red">*</i>是否免短:
                     </label>
                     <div class="layui-input-block">
-                        <input type="radio" name="mianduan" value="否" title="否" checked="">
-                        <input type="radio" name="mianduan" value="是" title="是">
+                        <input type="radio" name="mianduan" value="否" title="否" checked="" lay-filter="mdRadio">
+                        <input type="radio" name="mianduan" value="是" title="是" lay-filter="mdRadio">
                     </div>
                 </div>
             </div>
@@ -114,10 +114,10 @@
                     <label class="layui-form-label" style="width:120px;">
                         <i style="color: red">*</i>联通资费:
                     </label>
-                    <div class="layui-input-block">
-                        <input type="radio" name="umicomPay" value="5" title="5元/月">
-                        <input type="radio" name="umicomPay" value="10" title="10元/月" checked="">
-                        <input type="radio" name="umicomPay" value="20" title="20元/月">
+                    <div class="layui-input-block" id="unicomTariffRadio">
+                        <input type="radio" name="umicomPay" value="5" title="5元/月" lay-filter="unicomRadio">
+                        <input type="radio" name="umicomPay" value="10" title="10元/月" checked="" lay-filter="unicomRadio">
+                        <input type="radio" name="umicomPay" value="20" title="20元/月" lay-filter="unicomRadio">
                     </div>
                 </div>
             </div>
@@ -270,12 +270,10 @@
     floatingWindows.style.height = '1000px';
     //初始化
     $(document).ready(function () {
+        $("#sfmd").hide();
         $("#tijiao").removeClass("disable");
         //添加控制
         $("#ringName,#ringFile,#ringContent").attr("disabled", true);
-        $('input[name="mianduan"]').click(function () {
-            alert("in")
-        });
     });
 
     function verificationName() {
@@ -333,7 +331,7 @@
                 }
                 //联通
                 if (result.data.unicom > 0) {
-                    $("#fee2,#sfmd,#fee3,#fee4").show();
+                    $("#fee2,#fee3,#fee4").show();
                 }
                 $("#rsmy").show();
                 $("#phone_yidong").html(result.data.mobile)
@@ -425,6 +423,35 @@
     //表单提交
     layui.use('form', function () {
         var form = layui.form;
+        form.on('radio(unicomRadio)', function(data){
+            var val = data.value
+            if(val == 5){
+                let mdValue = $('input[name="mianduan"]:checked ').val();
+                if (mdValue === "否"){
+                    $('[name=umicomPay]').each(function(i,item){
+                        if($(item).val()==10){
+                            $(item).prop('checked',true);
+                            form.render();
+                        }
+                    });
+                    layer.msg("5元资费只有免短业务可以使用!");
+                }
+            }
+        });
+        form.on('radio(mdRadio)', function(data){
+            var val = data.value
+            if(val === "是"){
+                $("#sfmd").show();
+            }else{
+                $("#sfmd").hide();
+                $('[name=umicomPay]').each(function(i,item){
+                    if($(item).val()==10){
+                        $(item).prop('checked',true);
+                        form.render();
+                    }
+                });
+            }
+        });
         //申请高资费
         form.on('select(specialPrice)', function (data) {
             if (data.value == 8 || data.value == 10) {

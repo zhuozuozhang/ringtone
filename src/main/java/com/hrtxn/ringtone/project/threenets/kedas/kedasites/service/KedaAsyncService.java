@@ -25,15 +25,6 @@ public class KedaAsyncService {
 
     @Async
     public void updateRingtoneInformation(List<KedaRing> list){
-        log.info("疑难杂单数据同步开始 ----------->");
-        try{
-            KedaApi kedaApi = new KedaApi();
-            list = kedaApi.refreshRingInfo(list);
-            for (int i = 0; i < list.size(); i++) {
-                ringMapper.updateKedaRing(list.get(i));
-            }
-        }catch(IOException e) {
-            log.info("疑难杂单同步铃音数据错误 ----------->",e);
-        }
+
     }
 }

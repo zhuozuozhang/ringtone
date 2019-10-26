@@ -14,6 +14,8 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Author:zcy
@@ -36,9 +38,14 @@ public class KedaTimeTask {
         // 获取除已包月子订单数据（0,2,3,4）
         List<KedaChildOrder> kedaChildOrders = SpringUtils.getBean(KedaChildOrderMapper.class).selectKedaChildorder(1);
         if (kedaChildOrders.size() > 0) {
-            for (int i = 0; i < kedaChildOrders.size(); i++) {
-                AjaxResult msg = kedaApi.getMsg(kedaChildOrders.get(i).getLinkTel(), kedaChildOrders.get(i).getId());
-                log.info("疑难杂单定时器更新除已包月子订单数据：{}", msg);
+            Map<Integer, List<KedaChildOrder>> map = kedaChildOrders.stream().collect(Collectors.groupingBy(KedaChildOrder::getOrderId));
+            for (Integer id:map.keySet()){
+                KedaOrder kedaOrder = SpringUtils.getBean(KedaOrderMapper.class).getKedaOrder(id);
+                List<KedaChildOrder> list = map.get(id);
+                for (int i = 0; i < list.size(); i++) {
+                    AjaxResult msg = kedaApi.getMsg(list.get(i), kedaOrder.getKedaId());
+                    log.info("疑难杂单定时器更新除已包月子订单数据：{}", msg);
+                }
             }
         }
     }
@@ -53,9 +60,14 @@ public class KedaTimeTask {
         // 获取所有无效文件
         List<KedaChildOrder> kedaChildOrders = SpringUtils.getBean(KedaChildOrderMapper.class).selectKedaChildorder(2);
         if (kedaChildOrders.size() > 0) {
-            for (int i = 0; i < kedaChildOrders.size(); i++) {
-                AjaxResult msg = kedaApi.getMsg(kedaChildOrders.get(i).getLinkTel(), kedaChildOrders.get(i).getId());
-                log.info("疑难杂单定时器更新已包月子订单数据：{}", msg);
+            Map<Integer, List<KedaChildOrder>> map = kedaChildOrders.stream().collect(Collectors.groupingBy(KedaChildOrder::getOrderId));
+            for (Integer id:map.keySet()){
+                KedaOrder kedaOrder = SpringUtils.getBean(KedaOrderMapper.class).getKedaOrder(id);
+                List<KedaChildOrder> list = map.get(id);
+                for (int i = 0; i < list.size(); i++) {
+                    AjaxResult msg = kedaApi.getMsg(list.get(i), kedaOrder.getKedaId());
+                    log.info("疑难杂单定时器更新已包月子订单数据：{}", msg);
+                }
             }
         }
     }
