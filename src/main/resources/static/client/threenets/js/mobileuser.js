@@ -17,54 +17,63 @@ function getUserInfoByRingMsisdn() {
                 var userInfo = $.parseJSON(data.userInfo);
                 var userLog = userInfo.userLog;
                 var userCurrentInfo = userInfo.userCurrentInfo;
-                if(userLog.length == 0 && userCurrentInfo.length == 0){
-                    $(".userInfoTable").html("");
-                    $(".tbody").html("");
-                    layer.msg("无数据",{icon: 2,time: 3000});
-                    return;
-                }
-                if(userCurrentInfo.length == 0){
-                    layer.msg("用户当前信息无数据",{icon: 2,time: 3000})
-                }else{
-                    var str = "";
-                    str += "<tr>"
-                    str += "<td>" + userCurrentInfo.group + "</td>";
-                    str += "<td>" + userCurrentInfo.sa + "</td>";
-                    str += "<td>" + userCurrentInfo.ctime + "</td>";
-                    if(userCurrentInfo.closeTime == null){
-                        str += "<td>未知</td>";
+                    if((!isNotEmpty(userLog))&&(!isNotEmpty(userCurrentInfo))){
+                        // $(".userInfoTable").html("");
+                        // $(".tbody").html("");
+                        // layer.msg("无数据",{icon: 2,time: 3000});
+                        $(".userInfoTable").html("<td colspan='8' style='color:#F00;'>抱歉,系统没有查询到数据</td>");
+                        $(".tbody").html("<tr><td colspan='3' style='color:#F00;'>抱歉,系统没有查询到数据</td></tr>");
+                        return;
+                    }
+                    if(userCurrentInfo.length == 0){
+                        layer.msg("用户当前信息无数据",{icon: 2,time: 3000})
                     }else{
-                        str += "<td>" + userCurrentInfo.closeTime + "</td>";
-                    }
-                    if (userCurrentInfo.payType == "GE") {
-                        str += "<td>" + userCurrentInfo.price + "元个付</td>";
-                    }
-                    if (userCurrentInfo.applyForSmsNotification == 0) {
-                        str += "<td>否</td>";
-                    }
-                    str += "<td>" + userCurrentInfo.userRingName + "</td>";
-                    if (userCurrentInfo.freezeStatus == 0) {
-                        str += "<td>正常</td>";
-                    } else {
-                        str += "<td>欠费</td>";
-                    }
-                    str += "</tr>";
+                        var str = "";
+                        str += "<tr>"
+                        str += "<td>" + userCurrentInfo.group + "</td>";
+                        str += "<td>" + userCurrentInfo.sa + "</td>";
+                        str += "<td>" + userCurrentInfo.ctime + "</td>";
+                        if(userCurrentInfo.closeTime == null){
+                            str += "<td>未知</td>";
+                        }else{
+                            str += "<td>" + userCurrentInfo.closeTime + "</td>";
+                        }
+                        if (userCurrentInfo.payType == "GE") {
+                            str += "<td>" + userCurrentInfo.price + "元个付</td>";
+                        }
+                        if (userCurrentInfo.applyForSmsNotification == 0) {
+                            str += "<td>否</td>";
+                        }
+                        str += "<td>" + userCurrentInfo.userRingName + "</td>";
+                        if (userCurrentInfo.freezeStatus == 0) {
+                            str += "<td>正常</td>";
+                        } else {
+                            str += "<td>欠费</td>";
+                        }
+                        str += "</tr>";
 
-                    $(".userInfoTable").html(str);
-                }
+                        $(".userInfoTable").html(str);
+                    }
                 //用户操作记录
-                if (userInfo.length == 0) {
-                    layer.msg("用户操作记录列表无数据", {icon: 2, time: 3000});
+                if (userLog.length == 0) {
+                    // layer.msg("用户操作记录列表无数据", {icon: 2, time: 3000});
+                    // $(".userInfoTable").html("<td colspan='8' style='color:#F00;'>抱歉,系统没有查询到数据</td>");
+                    $(".tbody").html("<tr><td colspan='3' style='color:#F00;'>抱歉,系统没有查询到数据</td></tr>");
                 }else{
                     var str = "";
-                    for (var i = 0; i < userLog.length; i++) {
-                        str += "<tr>";
-                        str += "<td>" + userLog[i].msisdn + "</td>";
-                        str += "<td>" + userLog[i].content + "</td>";
-                        str += "<td>" + userLog[i].ctime + "</td>";
-                        str += "</tr>";
+                    if(isNotEmpty(userLog)){
+                        for (var i = 0; i < userLog.length; i++) {
+                            str += "<tr>";
+                            str += "<td>" + userLog[i].msisdn + "</td>";
+                            str += "<td>" + userLog[i].content + "</td>";
+                            str += "<td>" + userLog[i].ctime + "</td>";
+                            str += "</tr>";
+                        }
+                        $(".tbody").html(str);
+                    }else{
+                        // (".userInfoTable").html("<td colspan='8' style='color:#F00;'>抱歉,系统没有查询到数据</td>");
+                        $(".tbody").html("<tr><td colspan='3' style='color:#F00;'>抱歉,系统没有查询到数据</td></tr>");
                     }
-                    $(".tbody").html(str);
                 }
             }else {
                 $(".userInfoTable").html("<td colspan='8' style='color:#F00;'>抱歉,系统没有查询到数据</td>");
