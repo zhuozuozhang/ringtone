@@ -165,4 +165,6 @@ public class FourcertificationOrder {
 
     private String rate;
 
+    private String statusStr;
+
 }

@@ -210,10 +210,10 @@ public class NumCertificationController {
      * @date 2019-9-3 13:53
      */
     @GetMapping("/toOrderDetail/{id}")
-    public String toOrderDetail(@PathVariable Integer id, ModelMap map) {
+    public String toOrderDetail(@PathVariable Long id, ModelMap map) {
         // 根据ID获取订单信息
-        NumcertificationOrder numcertificationOrder = numCertificationService.selectById(id);
-        map.put("numcertificationOrder",numcertificationOrder);
+        FourcertificationOrder fourcertificationOrder = fourCertificationService.selectByPrimaryKey(id);
+        map.put("fourcertificationOrder",fourcertificationOrder);
         return "400/order_details";
     }
 

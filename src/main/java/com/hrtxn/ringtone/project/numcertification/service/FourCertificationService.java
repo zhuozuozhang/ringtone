@@ -274,6 +274,7 @@ public class FourCertificationService {
     public FourcertificationOrder selectByPrimaryKey(Long id){
         FourcertificationOrder fourcertificationOrder = fourcertificationOrderMapper.selectByPrimaryKey(id);
         fourcertificationOrder.setTemplateUrl(fourcertificationOrder.getTemplateUrl()+"?cgiToken="+NumApi.cgiToken);
+        fourcertificationOrder.setStatusStr(getStatus(fourcertificationOrder.getStatus()));
         List<Area> areaList = areaMapper.queryAllAreaIdAndName();
         for(Area area : areaList){
             if(area.getFourid().toString().equals(fourcertificationOrder.getUserProvince())){
