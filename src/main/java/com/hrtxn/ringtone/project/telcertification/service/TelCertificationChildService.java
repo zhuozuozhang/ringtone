@@ -193,7 +193,7 @@ public class TelCertificationChildService {
             int changeAccount = 0;
             if(Const.TEL_CER_STATUS_OPENING.equals(certificationChildOrder.getTelChildOrderStatus())) {
                 if (Const.TEL_CER_STATUS_DEFAULT_OPENING.equals(theTelCer.getTelChildOrderStatus())) {
-                    certificationChildOrder.setTelChildOrderCtime(new Date());
+                    certificationChildOrder.setTelChildOrderCtime(theTelCer.getTelChildOrderCtime());
                     certificationChildOrder.setTelChildOrderOpenTime(null);
                     certificationChildOrder.setTelChildOrderExpireTime(null);
                     changeCount = -1;
@@ -203,7 +203,7 @@ public class TelCertificationChildService {
             }
             if(Const.TEL_CER_STATUS_SUCCESS_OPENING.equals(certificationChildOrder.getTelChildOrderStatus())){
                 if(Const.TEL_CER_STATUS_OPENING.equals(theTelCer.getTelChildOrderStatus())){
-                    certificationChildOrder.setTelChildOrderCtime(new Date());
+                    certificationChildOrder.setTelChildOrderCtime(theTelCer.getTelChildOrderCtime());
                     changeAccount = 1;
                 }else {
                     return AjaxResult.error("当业务是开通中时，才可以设置开通成功");
@@ -211,7 +211,7 @@ public class TelCertificationChildService {
             }
             if(Const.TEL_CER_STATUS_DEFAULT_OPENING.equals(certificationChildOrder.getTelChildOrderStatus())){
                 if(Const.TEL_CER_STATUS_OPENING.equals(theTelCer.getTelChildOrderStatus())){
-                    certificationChildOrder.setTelChildOrderCtime(new Date());
+                    certificationChildOrder.setTelChildOrderCtime(theTelCer.getTelChildOrderCtime());
                     certificationChildOrder.setTelChildOrderOpenTime(null);
                     certificationChildOrder.setTelChildOrderExpireTime(null);
                     changeCount = -1;
@@ -225,7 +225,7 @@ public class TelCertificationChildService {
                 }else if(Const.TEL_CER_STATUS_DEFAULT_OPENING.equals(theTelCer.getTelChildOrderStatus())){
                     return AjaxResult.error("业务开通失败不可设置为续费中");
                 }else {
-                    certificationChildOrder.setTelChildOrderCtime(new Date());
+                    certificationChildOrder.setTelChildOrderCtime(theTelCer.getTelChildOrderCtime());
                     certificationChildOrder.setTelChildOrderOpenTime(theTelCer.getTelChildOrderOpenTime());
                     certificationChildOrder.setTelChildOrderExpireTime(theTelCer.getTelChildOrderExpireTime());
                     changeCount = -1;
@@ -237,13 +237,13 @@ public class TelCertificationChildService {
                 }else if(Const.TEL_CER_STATUS_DEFAULT_OPENING.equals(theTelCer.getTelChildOrderStatus())){
                     return AjaxResult.error("业务开通失败不可直接续费");
                 }else {
-                    certificationChildOrder.setTelChildOrderCtime(new Date());
+                    certificationChildOrder.setTelChildOrderCtime(theTelCer.getTelChildOrderCtime());
                     changeAccount = 2;
                 }
             }
             if(Const.TEL_CER_STATUS_DEFAULT_RENEWAL.equals(certificationChildOrder.getTelChildOrderStatus())){
                 if(Const.TEL_CER_STATUS_RENEWAL.equals(theTelCer.getTelChildOrderStatus())){
-                    certificationChildOrder.setTelChildOrderCtime(new Date());
+                    certificationChildOrder.setTelChildOrderCtime(theTelCer.getTelChildOrderCtime());
                     certificationChildOrder.setTelChildOrderOpenTime(null);
                     certificationChildOrder.setTelChildOrderExpireTime(null);
                     changeCount = -1;

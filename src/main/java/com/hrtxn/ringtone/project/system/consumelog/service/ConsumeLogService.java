@@ -140,7 +140,7 @@ public class ConsumeLogService {
                     CertificationChildOrder childOrder = new CertificationChildOrder();
                     childOrder.setTelChildOrderStatus(Const.TEL_CER_STATUS_SUCCESS_RENEWAL);
                     childOrder.setId(certificationChildOrder.getId());
-                    childOrder.setTelChildOrderCtime(new Date());
+//                    childOrder.setTelChildOrderCtime(new Date());
 
                     if(StringUtils.isNotNull(certificationChildOrder.getTelChildOrderExpireTime())){
                         long now = (new Date()).getTime();

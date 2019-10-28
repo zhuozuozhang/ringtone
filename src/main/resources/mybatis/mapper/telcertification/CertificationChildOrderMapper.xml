@@ -99,7 +99,7 @@
 
     <!--修改成员状态、提交时间，开通时间，到期时间-->
     <update id="editChildOrderIfStatusChanged" parameterType="com.hrtxn.ringtone.project.telcertification.domain.CertificationChildOrder">
-        UPDATE tb_telcertification_child_order ttco
+        UPDATE tb_telcertification_child_order
         <set>
             <if test="telChildOrderStatus != null">
                 tel_child_order_status = #{telChildOrderStatus,jdbcType=VARCHAR},
