@@ -38,4 +38,8 @@ public interface AreaMapper {
 
     public List<Area> queryAreaByCons(@Param("type") String type,@Param("pid") String pid);
 
+    public String getIdByName(@Param("name") String name );
+
+    public List<Area> queryAllAreaIdAndName();
+
 }

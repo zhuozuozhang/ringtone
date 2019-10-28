@@ -37,6 +37,24 @@ public class FileUtil {
         return returnPath;
     }
 
+
+    public static String uploadFile(MultipartFile file, String folderName) throws Exception {
+        String extensionName = getExtensionName(file.getOriginalFilename());
+        String filePath = RingtoneConfig.getProfile() + File.separator + folderName;
+        String returnPath = File.separator + folderName + File.separator + file.getOriginalFilename();
+        String path = RingtoneConfig.getProfile() + File.separator + folderName + File.separator + file.getOriginalFilename();
+        byte[] bytes = file.getBytes();
+        File targetFile = new File(filePath);
+        if (!targetFile.exists()) {
+            targetFile.mkdirs();
+        }
+        FileOutputStream out = new FileOutputStream(path);
+        out.write(bytes);
+        out.flush();
+        out.close();
+        return returnPath;
+    }
+
     /**
      * 获取文件扩展名
      *

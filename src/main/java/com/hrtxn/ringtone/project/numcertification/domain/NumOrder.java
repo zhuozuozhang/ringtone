@@ -19,7 +19,7 @@ public class NumOrder implements Serializable {
     /**
      * 类型
      */
-    private Integer category;
+    private String category;
     /**
      * 不包含数字，多个数字以英文逗号
      */

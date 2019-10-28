@@ -109,6 +109,7 @@ public class IntfController {
                         remarks = "公司名称";
                     }
                     if("true".equals(template.getCheckOperatorCardFileSuccess())){
+                        fourcertificationOrder.setLegalName(template.getLegalName());
                         fourcertificationOrder.setLegalIdentityId(template.getLegalIdentityId());
                         fourcertificationOrder.setLegalAddress(template.getLegalAddress());
                     }else{
@@ -118,6 +119,7 @@ public class IntfController {
                         remarks = remarks + "法人身份证";
                     }
                     if("true".equals(template.getCheckOperatorCardFileSuccess())){
+                        fourcertificationOrder.setLegalHandlerName(template.getLegalHandlerName());
                         fourcertificationOrder.setLegalHandlerAddress(template.getLegalHandlerAddress());
                         fourcertificationOrder.setLegalHandlerIdentityId(template.getLegalHandlerIdentityId());
                     }else{
@@ -128,8 +130,9 @@ public class IntfController {
                     }
                     if(StringUtils.isBlank(remarks)){
                         fourcertificationOrder.setStatus(Const.FOUR_ORDER_TEMPLATE_SUCCESS);
+                        fourcertificationOrder.setRemarks("");
                     }else{
-                        fourcertificationOrder.setStatus(Const.FOUR_ORDER_TEMPLATE_FAIL);
+                        fourcertificationOrder.setStatus(Const.FOUR_ORDER_TEMPLATE_SUCCESS);
                         fourcertificationOrder.setRemarks(remarks + "解析失败");
                     }
                     fourcertificationOrder.setTaskId(template.getTaskId());
@@ -160,6 +163,7 @@ public class IntfController {
                     String approveStatus = examineResult.getData().getApproveStatus();
                     if("PASS".equals(approveStatus)){
                         fourcertificationOrder.setStatus(Const.FOUR_ORDER_SUBMIT_SUCCESS);
+                        fourcertificationOrder.setRemarks("");
                     }else if("BACK".equals(approveStatus)){
                         fourcertificationOrder.setStatus(Const.FOUR_ORDER_SUBMIT_FAIL);
                     }

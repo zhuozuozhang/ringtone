@@ -9,6 +9,8 @@ import com.hrtxn.ringtone.project.numcertification.json.NumBaseDataResult;
 import com.hrtxn.ringtone.project.numcertification.json.NumBaseResult;
 import com.hrtxn.ringtone.project.numcertification.json.NumCgiTokenResult;
 import com.hrtxn.ringtone.project.numcertification.json.NumDataResult;
+import com.hrtxn.ringtone.project.numcertification.mapper.FourcertificationOrderMapper;
+import com.hrtxn.ringtone.project.threenets.threenet.mapper.ThreenetsChildOrderMapper;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -38,12 +40,12 @@ import java.util.*;
 @Component
 public class NumApi {
 
-//    public final static String LOGINNAME = "江苏中高俊聪";
-//    public final static String PASSWORD = "111111";
-//    public final static String URLPREFIX = "http://180.166.192.26:8910/";
     public final static String LOGINNAME = "江苏中高俊聪";
-    public final static String PASSWORD = "zg316316@";
-    public final static String URLPREFIX = "http://agentweb.sungoin.com/";
+    public final static String PASSWORD = "111111";
+    public final static String URLPREFIX = "http://180.166.192.26:8910/";
+//    public final static String LOGINNAME = "江苏中高俊聪";
+//    public final static String PASSWORD = "zg316316@";
+//    public final static String URLPREFIX = "http://agentweb.sungoin.com/";
     /**
      * 获取接口调用凭证
      */
@@ -51,11 +53,11 @@ public class NumApi {
     public final static String NUMBERSELECT = NumApi.URLPREFIX + "cgi/numberSelect/list";
 
     //预占接口
-    public final static String CGIOCCUPYADD = NumApi.URLPREFIX + "/cgi/occupy/add";
+    public final static String CGIOCCUPYADD = NumApi.URLPREFIX + "cgi/occupy/add";
     //接口模板
     public final static String DOWNLOADTEMPLATE = NumApi.URLPREFIX +  "cgi/material/downloadTemplate";
     //提交资料
-    public final static String CGIMATERIALSUBMIT = NumApi.URLPREFIX + "/cgi/material/submit";
+    public final static String CGIMATERIALSUBMIT = NumApi.URLPREFIX + "cgi/material/submit";
 
     public static String cgiToken = null;
 
@@ -119,6 +121,7 @@ public class NumApi {
         if (StringUtils.isNotNull(numOrder.getProvider())) {
             map.put("provider", numOrder.getProvider());
         }
+//        map.put("source","3");
         String s = sendPost(NUMBERSELECT + "?cgiToken=" + NumApi.cgiToken, map, Const.CONTENT_TYPE_JSON);
         log.info("获取数据结果{}", s);
         NumBaseResult<NumBaseDataResult> numBaseResult = SpringUtils.getBean(ObjectMapper.class).readValue(s, NumBaseResult.class);
@@ -360,12 +363,19 @@ public class NumApi {
         }
     }
 
+    /**
+     * 每隔60分钟修改预占状态
+     *
+     * @author zcy
+     * @date 2019-8-29 13:55
+     */
+    @Scheduled(fixedRate = 3600000)
     public void checkFourTime(){
         log.info("****************************开始执行查询预占订单是否有超时******************************************");
         //查询所有预占结束时间超过当前时间的号码，然后状态为10以下的
-        
+        SpringUtils.getBean(FourcertificationOrderMapper.class).updateAvailability();
+        log.info("****************************结束执行查询预占订单是否有超时******************************************");
     }
-
 
     /**
      * post封装
@@ -376,7 +386,7 @@ public class NumApi {
     public String sendPost(String url, HashMap map,String contentType) throws IOException {
         JSONObject jsonObject = JSONObject.fromObject(map);
         String param = jsonObject.toString();
-        log.info("输出的结果是：" + param);
+        log.info("参数：" + param);
         OkHttpClient client = new OkHttpClient();
         MediaType mediaType = MediaType.parse(contentType);
         RequestBody body = RequestBody.create(mediaType, param);

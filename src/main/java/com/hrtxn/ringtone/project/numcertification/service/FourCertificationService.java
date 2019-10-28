@@ -15,6 +15,8 @@ import com.hrtxn.ringtone.project.numcertification.json.NumDataResult;
 import com.hrtxn.ringtone.project.numcertification.mapper.FourcertificationOrderMapper;
 import com.hrtxn.ringtone.project.numcertification.mapper.NumCertificateionPriceMapper;
 import com.hrtxn.ringtone.project.numcertification.mapper.NumcertificationOrderMapper;
+import com.hrtxn.ringtone.project.system.area.domain.Area;
+import com.hrtxn.ringtone.project.system.area.mapper.AreaMapper;
 import com.hrtxn.ringtone.project.system.consumelog.domain.ConsumeLog;
 import com.hrtxn.ringtone.project.system.consumelog.mapper.ConsumeLogMapper;
 import com.hrtxn.ringtone.project.system.user.domain.User;
@@ -52,6 +54,9 @@ public class FourCertificationService {
 
     @Autowired
     private ConsumeLogMapper consumeLogMapper;
+
+    @Autowired
+    private AreaMapper areaMapper;
 
     private NumApi numApi = new NumApi();
 
@@ -99,12 +104,12 @@ public class FourCertificationService {
             if (StringUtils.isNull(fourcertificationOrder)) {
                 return AjaxResult.error();
             }
-            //预占申请中
+            //模板申请中
             fourcertificationOrder.setStatus(Const.FOUR_ORDER_TEMPLATE_NEW);
             fourcertificationOrder.setCreateTime(new Date());
             fourcertificationOrder.setUserId(ShiroUtils.getSysUser().getId());
             fourcertificationOrderMapper.update(fourcertificationOrder);
-            fourcertificationOrder = fourcertificationOrderMapper.selectByPrimaryKey((long)fourcertificationOrder.getId());
+            fourcertificationOrder = selectByPrimaryKey((long)fourcertificationOrder.getId());
             JSONObject jsonObject =  numApi.downloadTemplate(fourcertificationOrder);
             String code = jsonObject.get("code").toString();
             if("0".equals(code)){
@@ -114,6 +119,7 @@ public class FourCertificationService {
                 FourcertificationOrder f = new FourcertificationOrder();
                 f.setId(fourcertificationOrder.getId());
                 f.setTaskId(taskId);
+                f.setRemarks("");
                 fourcertificationOrderMapper.update(f);
             }else{
                 String msg = jsonObject.get("msg").toString();
@@ -132,7 +138,7 @@ public class FourCertificationService {
 
 
     /**
-     * 模板申请
+     * 提交申请
      * @return
      */
     public AjaxResult commit(FourcertificationOrder fourcertificationOrder){
@@ -141,12 +147,22 @@ public class FourCertificationService {
                 return AjaxResult.error();
             }
 
-            //预占申请中
+            //提交申请中
             fourcertificationOrder.setStatus(Const.FOUR_ORDER_SUBMIT_NEW);
             fourcertificationOrder.setCreateTime(new Date());
             fourcertificationOrder.setUserId(ShiroUtils.getSysUser().getId());
+            fourcertificationOrder.setRemarks("");
+            String corpCompanyProvince = areaMapper.getIdByName(fourcertificationOrder.getCorpCompanyProvince());
+            String corpCompanyCity = areaMapper.getIdByName(fourcertificationOrder.getCorpCompanyCity());
+            String corpOfficeProvince =areaMapper.getIdByName(fourcertificationOrder.getCorpOfficeProvince());
+            String corpOfficeCity=areaMapper.getIdByName(fourcertificationOrder.getCorpOfficeCity());
+            fourcertificationOrder.setCorpCompanyProvince(corpCompanyProvince);
+            fourcertificationOrder.setCorpCompanyCity(corpCompanyCity);
+            fourcertificationOrder.setCorpOfficeProvince(corpOfficeProvince);
+            fourcertificationOrder.setCorpOfficeCity(corpOfficeCity);
             fourcertificationOrderMapper.update(fourcertificationOrder);
-            fourcertificationOrder = fourcertificationOrderMapper.selectByPrimaryKey((long)fourcertificationOrder.getId());
+
+            fourcertificationOrder = selectByPrimaryKey((long)fourcertificationOrder.getId());
 
             String result =  numApi.submit(fourcertificationOrder);
             if(!"0".equals(result)){
@@ -249,12 +265,40 @@ public class FourCertificationService {
             return "资料审核失败";
         }else if("10".equals(status)){
             return "订购成功";
+        }else if("11".equals(status)){
+            return "预占超时";
         }
         return "";
     }
 
     public FourcertificationOrder selectByPrimaryKey(Long id){
-        return fourcertificationOrderMapper.selectByPrimaryKey(id);
+        FourcertificationOrder fourcertificationOrder = fourcertificationOrderMapper.selectByPrimaryKey(id);
+        fourcertificationOrder.setTemplateUrl(fourcertificationOrder.getTemplateUrl()+"?cgiToken="+NumApi.cgiToken);
+        List<Area> areaList = areaMapper.queryAllAreaIdAndName();
+        for(Area area : areaList){
+            if(area.getFourid().toString().equals(fourcertificationOrder.getUserProvince())){
+                fourcertificationOrder.setProvince(area.getName());
+            }
+            if(area.getFourid().toString().equals(fourcertificationOrder.getUserCity())){
+                fourcertificationOrder.setCity(area.getName());
+            }
+            if(area.getFourid().toString().equals(fourcertificationOrder.getCorpCompanyProvince())){
+                fourcertificationOrder.setCprovince(area.getName());
+            }
+            if(area.getFourid().toString().equals(fourcertificationOrder.getCorpCompanyCity())){
+                fourcertificationOrder.setCcity(area.getName());
+            }
+            if(area.getFourid().toString().equals(fourcertificationOrder.getCorpOfficeCity())){
+                fourcertificationOrder.setOcity(area.getName());
+            }
+            if(area.getFourid().toString().equals(fourcertificationOrder.getCorpOfficeProvince())){
+                fourcertificationOrder.setOprovince(area.getName());
+            }
+        }
+
+        return fourcertificationOrder;
     }
+
+
 
 }

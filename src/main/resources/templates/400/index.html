@@ -162,9 +162,10 @@
                             <tr>
                                 <th>序号</th>
                                 <th>400号码</th>
+                                <th>号码等级</th>
                                 <th>运营商</th>
-                                <!--<th>成本价格</th>-->
-                                <th>指导价格</th>
+                                <th>成本价格(元/年)</th>
+                                <!--<th>指导价格(元/年)</th>-->
                                 <th>操作</th>
                             </tr>
                             </thead>
@@ -192,12 +193,13 @@
         var columns = [
             {"data": null},
             {"data": "phoneNum"},
+            {"data": "category"},
             {"data": "phoneNum"},
-            // {"data": "costPrice"},
-            {"data": "guidePrice"},
+            {"data": "costPrice"},
+            // {"data": "guidePrice"},
         ];
         var columnDefs = [{
-            targets: [2],
+            targets: [3],
             render: function (data, type, row, meta) {
                 var s = data.substr(0, 4);
                 if (4001 == s || 4007 == s) { return "移动";}
@@ -205,7 +207,7 @@
                 if (4008 == s || 4009 == s) { return "电信";}
             }
         }, {
-            targets: [4],
+            targets: [5],
             render: function (data, type, row, meta) {
                 var phoneNum = row.phoneNum;
                 var agentCost = row.costPrice;

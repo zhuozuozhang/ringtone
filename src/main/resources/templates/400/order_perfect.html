@@ -157,7 +157,7 @@
                                             <div data-v-5e9a5ea3="" data-v-6608c108="" class="select-image" data-v-27737a5a="">
                                                 <label data-v-5e9a5ea3="" style="width: 170px; height: 90px;">
                                                     <input data-v-5e9a5ea3="" hidden="hidden" type="file"style="display: none;" onchange="changepic(this,'operatorCardUrl','operatorCardUrl_file')"
-                                                           accept="image/jpg,image/png,image/PNG" id="operatorCardUrl_file">
+                                                           id="operatorCardUrl_file">
                                                     <input type="hidden" th:value="${fourcertificationOrder.operatorCardUrl}" id="operatorCardUrl" name="operatorCardUrl" />
                                                     <img  th:if="${fourcertificationOrder.operatorCardUrl  == null}" th:src="@{/client/400/images/111.jpg}" alt="" width="100%" height="100%" id="img_operatorCardUrl">
                                                     <img  th:if="${fourcertificationOrder.operatorCardUrl != null}" th:src="${fourcertificationOrder.operatorCardUrl}" alt="" width="100%" height="100%" id="img_operatorCardUrl">

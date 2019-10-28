@@ -222,12 +222,16 @@
         var columnDefs = [{
             targets: [4],
             render: function (data, type, row, meta) {
+                if(data == null){
+                    return "-";
+                }
                 return data + "年";
             }
         },{
             targets: [9],
             render: function (data, type, row, meta) {
                 var id = row.id;
+                var static =  row.status;
                 return "<div class=\"cell\">\n" +
                             "<button data-v-ecae308c=\"\" type=\"button\" class=\"el-button el-button--text\" onclick=\"perfect("+id+")\">申请模板</button>" +
                     "<button data-v-ecae308c=\"\" type=\"button\" class=\"el-button el-button--text\" onclick=\"commitFile("+id+")\">完善资料</button>" +

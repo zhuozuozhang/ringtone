@@ -59,6 +59,27 @@ public class FileService {
         }
     }
 
+
+    public AjaxResult upload(MultipartFile file, String folderName) {
+        try {
+            String path = FileUtil.uploadFile(file, folderName);
+            //保存到数据库
+            Uploadfile uploadfile = new Uploadfile();
+            uploadfile.setPath(path);
+            uploadfile.setFilename(file.getOriginalFilename());
+            uploadfile.setStatus(1);
+            uploadfile.setCreatetime(new Date());
+            uploadfileMapper.insertSelective(uploadfile);
+            if(StringUtils.isNotBlank(path)){
+                path = path.replace("\\","/");
+            }
+            return AjaxResult.success(path, "文件上传成功");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return AjaxResult.error("文件上传失败");
+        }
+    }
+
     /**
      * 保存文件
      *

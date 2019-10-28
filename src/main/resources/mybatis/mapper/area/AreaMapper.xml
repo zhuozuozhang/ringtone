@@ -84,5 +84,12 @@
     where type =#{type} and pid = #{pid}
   </select>
 
+  <select id="getIdByName" resultType="String">
+    select fourid from sys_area where name =#{name}
+  </select>
+
+  <select id="queryAllAreaIdAndName" resultMap="BaseResultMap">
+    select name,fourid from  sys_area
+  </select>
 
 </mapper>

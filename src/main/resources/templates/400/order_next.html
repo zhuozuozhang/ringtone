@@ -117,7 +117,12 @@
                                             <input type="text" name="price" id="price" th:value="${fourcertificationOrder.price}" autocomplete="off" class="layui-input">
                                         </div>
                                     </div>
-
+                                    <div data-v-27737a5a="" data-v-3cb507e4="" data-v-15e66472="" class="wrap" style="width: 360px;">
+                                        <div data-v-27737a5a="" class="label" style="width: 130px;"><span data-v-27737a5a="">费率（元/分钟）</span></div>
+                                        <div class="layui-input-block">
+                                            <input type="text" name="rate" id="rate" th:value="${fourcertificationOrder.rate}" autocomplete="off" class="layui-input">
+                                        </div>
+                                    </div>
                                     <div data-v-27737a5a="" data-v-3cb507e4="" data-v-15e66472="" class="wrap" style="width: 740px;">
                                         <div data-v-27737a5a="" class="label" style="width: 130px;"><span data-v-27737a5a="">备注信息</span></div>
                                         <div class="layui-input-block">
@@ -188,6 +193,10 @@
         var price = $("#price").val();
         var remarks = $("#remarks").val();
         var contractFile = $("#contractFile").val();
+        var rate = $("#rate").val();
+        if(Number(rate) > 0.3){
+            layer.msg("费率不能高于0.3！", {icon: 5, time: 2500});return;
+        }
         var id = $("#id").val();
         if (!isNotEmpty(price)) {layer.msg("套餐金额不能为空！", {icon: 5, time: 2500});return;}
         if (!isNotEmpty(price)) {layer.msg("请上传合同文件！", {icon: 5, time: 2500});return;}

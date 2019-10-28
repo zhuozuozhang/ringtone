@@ -31,5 +31,5 @@ public class NumDataResult implements Serializable {
 
     private Integer cost;
 
-    private String agentCost;
+    private Double agentCost;
 }

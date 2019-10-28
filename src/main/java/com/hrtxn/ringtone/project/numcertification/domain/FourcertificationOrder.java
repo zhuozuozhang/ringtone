@@ -155,4 +155,14 @@ public class FourcertificationOrder {
 
     private String contractFile;
 
+    private String cprovince;
+
+    private String ccity;
+
+    private String oprovince;
+
+    private String ocity;
+
+    private String rate;
+
 }

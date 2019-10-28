@@ -68,6 +68,7 @@
     <result column="occupy_time" property="occupyTime" jdbcType="VARCHAR" />
     <result column="effective_time" property="effectiveTime" jdbcType="VARCHAR" />
     <result column="contract_file" property="contractFile" jdbcType="VARCHAR" />
+    <result column="rate" property="rate" jdbcType="VARCHAR" />
   </resultMap>
 
   <sql id="Base_Column_List" >
@@ -80,17 +81,13 @@
     a.legal_handler_name, a.legal_handler_identity_id, a.legal_handler_effective, a.legal_handler_long_effective,
     a.legal_address, a.legal_handler_address, a.yyzz, a.khxkz, a.frsfz, a.frsq, a.jbrsfz, a.jbrsq, a.jffp,
     a.sld, a.fwxy, a.aqcns, a.scsfz, a.jyyczm, a.ccyyzz, a.dxxy, a.gswjt, a.qt, a.status,a.del_flag,a.availability,a.template_url,a.remarks,a.task_id,
-    a.available,a.occupy_time,a.effective_time,a.contract_file
+    a.available,a.occupy_time,a.effective_time,a.contract_file,rate
   </sql>
 
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
     select 
-    <include refid="Base_Column_List" />,
-    p.name as "province",
-    c.name as "city"
+    <include refid="Base_Column_List" />
     from tb_fourcertification_order a
-    left join sys_area p on p.fourid = a.user_province and p.type = 'province'
-    left join sys_area c on c.fourid = a.user_city and c.type = 'city'
     where a.id = #{id}
   </select>
 
@@ -171,7 +168,7 @@
       jbrsq, jffp, sld, fwxy, 
       aqcns, scsfz, jyyczm, 
       ccyyzz, dxxy, gswjt, 
-      qt, status,del_flag,availability,template_url,remarks,task_id,available,occupy_time,effective_time,contract_file)
+      qt, status,del_flag,availability,template_url,remarks,task_id,available,occupy_time,effective_time,contract_file,rate)
     values (#{id,jdbcType=BIGINT}, #{userId,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, 
       #{provider,jdbcType=VARCHAR}, #{applyNumber,jdbcType=VARCHAR}, #{comboPattern,jdbcType=VARCHAR}, 
       #{price,jdbcType=DECIMAL}, #{ageLimit,jdbcType=INTEGER}, #{companyName,jdbcType=VARCHAR}, 
@@ -192,7 +189,7 @@
       #{aqcns,jdbcType=VARCHAR}, #{scsfz,jdbcType=VARCHAR}, #{jyyczm,jdbcType=VARCHAR}, 
       #{ccyyzz,jdbcType=VARCHAR}, #{dxxy,jdbcType=VARCHAR}, #{gswjt,jdbcType=VARCHAR}, 
       #{qt,jdbcType=VARCHAR}, #{status,jdbcType=VARCHAR},#{delFlag},#{availability},#{templateUrl},#{remarks},#{taskId},#{available}
-      ,#{occupyTime},#{effectiveTime},#{contractFile})
+      ,#{occupyTime},#{effectiveTime},#{contractFile},#{rate})
   </insert>
 
 
@@ -389,8 +386,12 @@
         effective_time = #{effectiveTime,jdbcType=TIMESTAMP},
       </if>
       <if test="contractFile != null" >
-        contract_file = #{contractFile,jdbcType=TIMESTAMP},
+        contract_file = #{contractFile,jdbcType=VARCHAR},
       </if>
+      <if test="rate != null" >
+        rate = #{rate,jdbcType=VARCHAR},
+      </if>
+
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
@@ -400,9 +401,13 @@
     update tb_fourcertification_order set status = '1' where id = #{id,jdbcType=BIGINT}
   </update>
 
-  <update id="updateAvailability">
-    update tb_fourcertification_order set availability = '1' where id = #{id,jdbcType=BIGINT}
-  </update>
+  <!--<update id="updateAvailability">-->
+    <!--update tb_fourcertification_order set availability = '1' where id = #{id,jdbcType=BIGINT}-->
+  <!--</update>-->
 
+  <update id="updateAvailability">
+    update tb_fourcertification_order set availability = '2',status ='11'
+    where availability = '1' and effective_time &lt; SYSDATE() and status != 10
+  </update>
 
 </mapper>

@@ -105,14 +105,14 @@
                                         <div data-v-27737a5a="" class="label" style="width: 130px;"><i style="color: red">*</i> <span>企业注册地省份</span></div>
                                         <div class="layui-input-block">
                                             <input type="text" name="corpCompanyProvince" id="corpCompanyProvince" autocomplete="off" class="layui-input"
-                                                   th:value="${fourcertificationOrder.corpCompanyProvince}">
+                                                   th:value="${fourcertificationOrder.cprovince}">
                                         </div>
                                     </div>
                                     <div data-v-27737a5a="" data-v-3cb507e4="" data-v-15e66472="" class="wrap" style="width: 360px;">
                                         <div data-v-27737a5a="" class="label" style="width: 130px;"><i style="color: red">*</i> <span>企业注册地城市</span></div>
                                         <div class="layui-input-block">
                                             <input type="text" name="corpCompanyCity" id="corpCompanyCity" autocomplete="off" class="layui-input"
-                                                   th:value="${fourcertificationOrder.corpCompanyCity}">
+                                                   th:value="${fourcertificationOrder.ccity}">
                                         </div>
                                     </div>
                                     <div data-v-27737a5a="" data-v-3cb507e4="" data-v-15e66472="" class="wrap" style="width: 360px;">
@@ -125,14 +125,14 @@
                                         <div data-v-27737a5a="" class="label" style="width: 130px;"><i style="color: red">*</i> <span>实际办公地省份</span></div>
                                         <div class="layui-input-block">
                                             <input type="text" name="corpOfficeProvince" id="corpOfficeProvince" autocomplete="off" class="layui-input"
-                                                   th:value="${fourcertificationOrder.corpOfficeProvince}">
+                                                   th:value="${fourcertificationOrder.oprovince}">
                                         </div>
                                     </div>
                                     <div data-v-27737a5a="" data-v-3cb507e4="" data-v-15e66472="" class="wrap" style="width: 360px;">
                                         <div data-v-27737a5a="" class="label" style="width: 130px;"><i style="color: red">*</i> <span>实际办公地城市</span></div>
                                         <div class="layui-input-block">
                                             <input type="text" name="corpOfficeCity" id="corpOfficeCity" autocomplete="off" class="layui-input"
-                                                   th:value="${fourcertificationOrder.corpOfficeCity}">
+                                                   th:value="${fourcertificationOrder.ocity}">
                                         </div>
                                     </div>
                                     <div data-v-27737a5a="" data-v-3cb507e4="" data-v-15e66472="" class="wrap" style="width: 360px;">
@@ -183,7 +183,8 @@
                                     <div data-v-27737a5a="" data-v-3cb507e4="" data-v-15e66472="" class="wrap" style="width: 360px;">
                                         <div data-v-27737a5a="" class="label" style="width: 130px;"><i style="color: red">*</i> <span data-v-27737a5a="">法人身份证有效期</span></div>
                                         <div class="layui-input-block">
-                                            <input type="text" th:value="${fourcertificationOrder.legalEffective}" id="legalEffective" name="legalEffective" autocomplete="off" class="layui-input">
+                                            <input type="text" th:value="${fourcertificationOrder.legalEffective}" placeholder="2019-01-01 - 2039-01-01"
+                                                   id="legalEffective" name="legalEffective" autocomplete="off" class="layui-input">
                                         </div>
                                     </div>
                                     <div data-v-27737a5a="" data-v-3cb507e4="" data-v-15e66472="" class="wrap" style="width: 360px;">
@@ -210,7 +211,8 @@
                                     <div data-v-27737a5a="" data-v-3cb507e4="" data-v-15e66472="" class="wrap" style="width: 360px;">
                                         <div data-v-27737a5a="" class="label" style="width: 130px;"><i style="color: red">*</i> <span data-v-27737a5a="">经办人身份证有效期</span></div>
                                         <div class="layui-input-block">
-                                            <input type="text" th:value="${fourcertificationOrder.legalHandlerEffective}" id="legalHandlerEffective" name="legalHandlerEffective" autocomplete="off" class="layui-input">
+                                            <input type="text" th:value="${fourcertificationOrder.legalHandlerEffective}" placeholder="2019-01-01 - 2039-01-01"
+                                                   id="legalHandlerEffective" name="legalHandlerEffective" autocomplete="off" class="layui-input">
                                         </div>
                                     </div>
                                     <div data-v-27737a5a="" data-v-3cb507e4="" data-v-15e66472="" class="wrap" style="width: 360px;">
@@ -300,7 +302,7 @@
                                     </div>
                                     <div data-v-27737a5a="" data-v-6608c108="" data-v-15e66472="" class="wrap" style="width: 1111px; margin-bottom: 2px;">
                                         <div data-v-27737a5a="" class="label" style="width: 180px;">
-                                            <div data-v-6608c108="" data-v-27737a5a=""><i style="color: red">*</i> 法人授权证明</div>
+                                            <div data-v-6608c108="" data-v-27737a5a="">法人授权证明</div>
                                             <div data-v-6608c108="" data-v-27737a5a="" style="font-size: 12px; color: rgb(170, 170, 170);">(格式支持jpg、png, 且大小不超过20M)</div>
                                         </div>
                                         <div data-v-27737a5a="" class="input">
@@ -690,7 +692,6 @@
         if (!isNotEmpty(legalHandlerAddress)) {layer.msg("经办人身份证地址不能为空！", {icon: 5, time: 2500});return;}
         if (!isNotEmpty(yyzz)) {layer.msg("请上传营业执照！", {icon: 5, time: 2500});return;}
         if (!isNotEmpty(frsfz)) {layer.msg("请上传法人身份证！", {icon: 5, time: 2500});return;}
-        if (!isNotEmpty(frsq)) {layer.msg("请上传法人授权证明！", {icon: 5, time: 2500});return;}
         if (!isNotEmpty(jbrsfz)) {layer.msg("请上传经办人身份证！", {icon: 5, time: 2500});return;}
         if (!isNotEmpty(jbrsq)) {layer.msg("请上传经办人授权证明！", {icon: 5, time: 2500});return;}
 

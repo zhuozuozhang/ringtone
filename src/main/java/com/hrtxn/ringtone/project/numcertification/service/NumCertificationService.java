@@ -69,8 +69,10 @@ public class NumCertificationService {
                 if (StringUtils.isNotNull(numPriceList) && numPriceList.size() > 0) {
                     NumOrder numOrder1 = new NumOrder();
                     numOrder1.setPhoneNum(numDataResultList.get(i).getPhoneNum());
-                    numOrder1.setCostPrice(numPriceList.get(0).getCostPrice());
-                    numOrder1.setGuidePrice(numPriceList.get(0).getGuidePrice());
+                    numOrder1.setCategory(numDataResultList.get(i).getCategory());
+                    numOrder1.setCostPrice(numDataResultList.get(i).getAgentCost());
+                    numOrder1.setGuidePrice(numDataResultList.get(i).getAgentCost()+numPriceList.get(0).getRaisePrice());
+//                    numOrder1.setGuidePrice(numPriceList.get(0).getGuidePrice());
                     numOrderList.add(numOrder1);
                 }
             }
