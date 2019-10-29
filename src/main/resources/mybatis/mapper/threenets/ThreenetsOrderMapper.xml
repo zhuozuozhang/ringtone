@@ -42,6 +42,22 @@
             AND p.create_time between #{param.start} and #{param.end}
         </if>
     </sql>
+
+    <sql id="noPageParam">
+        <if test="order.startTime != null and order.startTime !='' and order.endTime != null and order.endTime !=''">
+            AND p.create_time between #{order.startTime} and #{order.endTime}
+        </if>
+    </sql>
+
+    <select id="listByParamNoPage" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM
+        tb_threenets_order p
+        WHERE  1 = 1
+        <include refid="noPageParam" />
+        ORDER BY create_time DESC
+    </select>
     <!-- 查询三网商户列表信息 -->
     <select id="getAllorderList" resultMap="BaseResultMap">
         SELECT

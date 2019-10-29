@@ -167,6 +167,7 @@ public class KedaOrderService {
     }
 
 
+
     /**
      * 添加父級訂單
      *
@@ -175,7 +176,8 @@ public class KedaOrderService {
      * @throws Exception
      */
     @Transactional(rollbackFor = Exception.class)
-    public AjaxResult addKedaOrderNew(KedaOrder kedaOrder) {
+    public AjaxResult addKedaOrderNew(KedaOrder kedaOrder){
+
         if (!StringUtils.isNotNull(kedaOrder)) return AjaxResult.error("参数格式不正确!");
         if (!StringUtils.isNotEmpty(kedaOrder.getCompanyName())) return AjaxResult.error("参数格式不正确!");
         if (!StringUtils.isNotEmpty(kedaOrder.getLinkMan())) return AjaxResult.error("参数格式不正确!");
@@ -188,6 +190,8 @@ public class KedaOrderService {
             KedaChildOrder kedaChildOrder = new KedaChildOrder();
             if ("200".equals(juhePhone.getResultcode())) {
                 JuhePhoneResult result = juhePhone.getResult();
+                kedaOrder.setProvince(result.getProvince());
+                kedaOrder.setCity(result.getCity());
                 kedaChildOrder.setProvince(result.getProvince());
                 kedaChildOrder.setCity(result.getCity());
                 if ("移动".equals(result.getCompany())) {
@@ -209,9 +213,11 @@ public class KedaOrderService {
         kedaOrder.setProvince(childOrders.get(0).getProvince());
         kedaOrder.setCity(childOrders.get(0).getCity());
         int count = kedaOrderMapper.insertKedaOrder(kedaOrder);
+        initChildOrder(childOrders,kedaOrder.getId());
         initChildOrder(childOrders, kedaOrder.getId());
         log.info("疑难杂单创建父级订单---->" + count);
         // 同步数据
+        r.notify("uploadOrderInfo", Event.wrap(kedaOrder));
         r.notify("addOrderInfo", Event.wrap(kedaOrder));
         return AjaxResult.success("添加成功！");
     }
@@ -269,6 +275,8 @@ public class KedaOrderService {
         KedaOrder order = new KedaOrder();
         order.setCompanyName(companyName);
         List<KedaOrder> kedaOrders = kedaOrderMapper.liseOrderNoPage(order);
+
+
         return kedaOrders.size() > 0 ? true : false;
     }
 
@@ -349,7 +357,3 @@ public class KedaOrderService {
         return AjaxResult.error();
     }
 }
-
-//%B3%CF%D0%C5%C5%A9%D7%CA
-//%2525E8%2525AF%25259A%2525E4%2525BF%2525A1%2525E5%252586%25259C%2525E8%2525B5%252584
-//%2525E8%2525AF%25259A%2525E4%2525BF%2525A1%2525E5%252586%25259C%2525E8%2525B5%252584

@@ -137,6 +137,9 @@ public class RectorHandler {
             List<KedaChildOrder> list = kedaChildOrderMapper.selectByParam(request);
             String status = kedaApi.getOrderStatusByName(kedaOrder.getCompanyName());
             String id = kedaApi.getOrderIdByName(kedaOrder.getCompanyName());
+            if (StringUtils.isEmpty(status) && StringUtils.isEmpty(id)){
+                return;
+            }
             kedaOrder.setKedaId(id);
             if (status.equals("1")){
                 kedaOrder.setStatus("审核通过");

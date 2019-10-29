@@ -37,7 +37,8 @@
                     2.当输入框号码后面出现"#错误消息"，比如"#号码不正确"时，代表该行的号码格式错误，需要修改。修改完成后请注意去掉"#错误消息"的标识。
                 </div>
             </div>
-            <textarea onchange="verificationTels()" name="memberTels" id="memberTels" required lay-verify="required"></textarea>
+            <textarea onchange="mykeyup()" name="memberTels" id="member_phone" required lay-verify="required"></textarea>
+<!--            <textarea onchange="verificationTels()" name="memberTels" id="member_phone" required lay-verify="required"></textarea>-->
         </div>
         <div id="protocolTelecom10Div">
             <div class="newBlocPage-con6 clear">
@@ -64,14 +65,13 @@
         <input type="hidden" id="folderName" name="folderName" th:value="${orderId}">
         <input type="hidden" id="tels" name="tels">
         <input type="hidden" id="telNum" name="telNum">
-        <div id="tijiao" class="newBlocPage-button" onclick="subNew();">确定提交</div>
+        <div id="tijiao" class="newBlocPage-button" onclick="sub();">确定提交</div>
     </div>
 </form>
 </body>
 <div th:include="threenets/kedas/kedasites/common/include::footer"></div>
 <script th:src="@{/client/threenets/js/kedasites/addnumber.js}"></script>
 <script>
-
     $(document).ready(function () {
         $("#protocolTelecom10Div").hide();
         $("#protocolTelecom20Div").hide();

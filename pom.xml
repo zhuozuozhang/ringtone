@@ -10,7 +10,7 @@
     </parent>
     <groupId>com.hrtxn</groupId>
     <artifactId>ring</artifactId>
-    <version>0.0.42</version>
+    <version>0.0.45</version>
     <name>ring</name>
 <!--    <packaging>war</packaging>-->
     <description>Demo project for Spring Boot</description>

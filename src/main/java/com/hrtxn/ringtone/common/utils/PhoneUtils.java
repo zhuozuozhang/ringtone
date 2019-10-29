@@ -50,7 +50,7 @@ public final class PhoneUtils {
      * @return
      */
     public static boolean isMobileNO(String mobiles) {
-        String regex = "^(1[3-9])\\d{9}$";
+        String regex = "^1\\d{10}$";
         Pattern p = Pattern.compile(regex);
         Matcher m = p.matcher(mobiles);
         return m.matches();

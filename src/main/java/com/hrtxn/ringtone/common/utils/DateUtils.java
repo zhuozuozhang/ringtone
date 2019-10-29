@@ -408,4 +408,17 @@ public final class DateUtils {
         int days = (int) ((date2.getTime() - date1.getTime()) / (1000*3600*24));
         return days;
     }
+
+    /**
+     * 获取过去几个小时
+     * @param i
+     * @return
+     */
+    public static String getPastTime(int i){
+        Calendar calendar = Calendar.getInstance();
+        /* HOUR_OF_DAY 指示一天中的小时 */
+        calendar.set(Calendar.HOUR_OF_DAY, calendar.get(Calendar.HOUR_OF_DAY) - i);
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        return df.format(calendar.getTime());
+    }
 }

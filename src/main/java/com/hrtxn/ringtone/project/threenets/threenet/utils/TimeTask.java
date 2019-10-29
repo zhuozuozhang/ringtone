@@ -3,10 +3,7 @@ package com.hrtxn.ringtone.project.threenets.threenet.utils;
 import com.hrtxn.ringtone.common.domain.BaseRequest;
 import com.hrtxn.ringtone.common.domain.Page;
 import com.hrtxn.ringtone.common.exception.NoLoginException;
-import com.hrtxn.ringtone.common.utils.DateUtils;
-import com.hrtxn.ringtone.common.utils.FileUtil;
-import com.hrtxn.ringtone.common.utils.SpringUtils;
-import com.hrtxn.ringtone.common.utils.StringUtils;
+import com.hrtxn.ringtone.common.utils.*;
 import com.hrtxn.ringtone.freemark.config.systemConfig.RingtoneConfig;
 import com.hrtxn.ringtone.project.system.File.domain.Uploadfile;
 import com.hrtxn.ringtone.project.system.File.mapper.UploadfileMapper;
@@ -22,7 +19,10 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Author:zcy
@@ -124,16 +124,40 @@ public class TimeTask {
      * 获取未包月子账号更新信息
      */
     @Scheduled(cron = "0 30 3 ? * *")
-    public void refreshMcardMerchants(){
+    public void refreshMcardMerchants() {
         Page page = new Page();
         BaseRequest request = new BaseRequest();
         request.setOperator(2);
         request.setStart(DateUtils.getPastDate(7));
         request.setEnd(DateUtils.getFetureDate(1));
-        List<ThreenetsOrder> list = SpringUtils.getBean(ThreenetsOrderMapper.class).getAllorderList(page,request);
+        List<ThreenetsOrder> list = SpringUtils.getBean(ThreenetsOrderMapper.class).getAllorderList(page, request);
         for (int i = 0; i < list.size(); i++) {
             SpringUtils.getBean(ThreeNetsAsyncService.class).refreshTelecomMerchantInfo(list.get(i));
         }
     }
 
+    //同步钱两个小时创建电信商户，同步没有添加成功的商户到对应运营商
+    @Scheduled(cron = "0 40 10 ? * *")
+    public void checkMerchantInfo() {
+        //获取两个小时之前的商户信息，现在是14点，则获取10点到12点的数据
+        ThreenetsOrder order = new ThreenetsOrder();
+        //获取4个小时前的时间
+        order.setStartTime(DateUtils.getPastTime(4));
+        //获取两个小时前的时间
+        order.setEndTime(DateUtils.getPastTime(2));
+        List<ThreenetsOrder> list = SpringUtils.getBean(ThreenetsOrderMapper.class).listByParamNoPage(order);
+        if (list.size() > 0) {
+            for (int i = 0; i < list.size(); i++) {
+                ThreenetsOrder o = list.get(i);
+                ThreenetsChildOrder childOrder = new ThreenetsChildOrder();
+                childOrder.setParentOrderId(o.getId());
+                List<ThreenetsChildOrder> clist = SpringUtils.getBean(ThreenetsChildOrderMapper.class).listByParamNoPage(childOrder);
+                Map<Integer, List<ThreenetsChildOrder>> map = clist.stream().collect(Collectors.groupingBy(ThreenetsChildOrder::getOperator));
+                if (map.get(Const.OPERATORS_TELECOM)!= null){
+                    log.info("同步两个小时之前的电信数据----->");
+                    //SpringUtils.getBean(ThreeNetsAsyncService.class).refreshTelecomMerchantInfo(order);
+                }
+            }
+        }
+    }
 }

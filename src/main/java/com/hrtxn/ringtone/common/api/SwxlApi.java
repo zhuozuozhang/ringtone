@@ -10,6 +10,7 @@ import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreeNetsOrderAttach
 import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreenetsOrder;
 import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreenetsRing;
 import com.hrtxn.ringtone.project.threenets.threenet.json.swxl.*;
+import com.hrtxn.ringtone.project.threenets.threenet.mapper.ThreenetsOrderMapper;
 import lombok.Getter;
 import lombok.Synchronized;
 import lombok.extern.slf4j.Slf4j;
@@ -37,8 +38,13 @@ import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.params.CoreProtocolPNames;
 import org.apache.http.params.HttpParams;
 import org.apache.http.util.EntityUtils;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 import java.io.*;
+import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.util.*;
 
@@ -69,7 +75,7 @@ public class SwxlApi implements Serializable {
     public static String deleteSwxlRing_URL = "https://swxl.10155.com/swxlapi/web/ring";// 删除铃音
     public static String DELETE_PHONE_URL = "https://swxl.10155.com/swxlapi/web/member";// 删除用户
     public static String groupSetRing_URL = "https://swxl.10155.com/swxlapi/web/ring/setRing.do";// 批量设置铃音
-    public static String deleteGroup_url = "https://swxl.10155.com/swxlapi/web/group";
+    public static String selectGroup_url = "https://swxl.10155.com/swxlapi/web/group";
     public static String addChild_url = "https://swxl.10155.com/swxlapi/web/manager/child";// 增加商户url
     public static String silentMember_url = "https://swxl.10155.com/swxlapi/web/member/silentMember";//工具箱获取用户信息
     public static String systemLogList_url = "https://swxl.10155.com/swxlapi/web/systemLog/list";//工具箱获取用户信息
@@ -1073,4 +1079,51 @@ public class SwxlApi implements Serializable {
         }
     }
 
+    public String refreshOrderId(Integer orderId){
+        String id = "";
+        ThreenetsOrder order = new ThreenetsOrder();
+        try{
+            order = SpringUtils.getBean(ThreenetsOrderMapper.class).selectByPrimaryKey(orderId);
+        }catch(Exception e) {
+            e.printStackTrace();
+        }
+        DefaultHttpClient httpclient = WebClientDevWrapper.wrapClient(new DefaultHttpClient());
+        long longTime = new Date().getTime();
+        String getUrl = "https://swxl.10155.com/swxlapi/web/group?order=asc&maxresult=15&offset=0&currentpage=1&draw=1&start=0&groupName=" + order.getCompanyName() + "&msisdn=" + order.getLinkmanTel() + "&status=&noSMS=&payType=&payWay=&_=" + longTime;
+        getUrl = getUrl.replaceAll(" ", "%20");
+        HttpGet httpGet = new HttpGet(getUrl);
+        try {
+            httpclient.setCookieStore(this.getCookieStore());
+            HttpResponse response = httpclient.execute(httpGet);// 进入
+            int statusCode = response.getStatusLine().getStatusCode();
+            if (statusCode == HttpStatus.SC_OK) {
+                HttpEntity resEntity = response.getEntity();
+                String resStr = EntityUtils.toString(resEntity);
+                this.setSwxlCookie(httpclient.getCookieStore());
+                log.debug("更新号码，取得的内容：" + resStr);
+                if (resStr.contains("000000")) {
+                    ObjectMapper mapper = new ObjectMapper();
+                    //{"recode":"000000","message":"成功","data":{"recordsFiltered":1,"data":[{"id":"982c6622e0a1449aba42f8993bbbae4e","managerId":"2c6387a2f3b041c38eaad7ce5f311a0a","managerName":"江苏中高俊聪","managerMsisdn":"15601635530","groupName":"华东花卉总代209942","productId":"225","ctime":"2019-10-18 09:22:48","memberCount":1,"applyForSmsNotification":0,"status":0,"platformId":null,"remark":null,"platformQdId":null,"payType":0,"productName":"商务炫铃10元","productPrice":"10","tel":"15605226309","payWay":0,"discount":null,"days":null,"source":null}],"recordsTotal":1},"success":true}
+                    JSONObject jsonObject = JSONObject.fromObject(resStr);
+                    JSONObject data = jsonObject.getJSONObject("data");
+                    JSONArray jsonArray = data.getJSONArray("data");
+                    for (int i = 0; i < jsonArray.size(); i++) {
+                        //"platformId":null,"remark":null,"platformQdId":null,"payType":0,"productName":"商务炫铃10元","productPrice":"10","tel":"15605226309","payWay":0,"discount":null,"days":null,"source":null}
+                        JSONObject partDaily = jsonArray.getJSONObject(i);
+                        id = partDaily.getString("id");
+                    }
+                }
+            }
+        } catch (ClientProtocolException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (NoLoginException e) {
+            e.printStackTrace();
+        } finally {
+            httpGet.abort();
+            httpclient.getConnectionManager().shutdown();
+        }
+        return id;
+    }
 }

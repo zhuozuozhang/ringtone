@@ -30,6 +30,7 @@ import org.springframework.stereotype.Service;
 import javax.management.remote.rmi._RMIConnection_Stub;
 import java.io.File;
 import java.io.IOException;
+import java.sql.Struct;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -125,16 +126,20 @@ public class ThreeNetsAsyncService {
             for (Integer operator : map.keySet()) {
                 List<ThreenetsChildOrder> list = map.get(operator);
                 if (operator == 1) {
-                    ThreenetsRing threenetsRing = rings.get(0);
-                    if (ringMap.get(1) == null) {
-                        String path = fileService.cloneFile(threenetsRing);
-                        threenetsRing.setOperateId(attached.getMiguId());
-                        threenetsRing.setRingWay(path);
-                        threenetsRing.setOperate(1);
-                        threenetsRing.setRingStatus(2);
-                        threenetsRing.setRingName(path.substring(path.lastIndexOf("\\") + 1));
-                        threenetsRing.setRemark("");
-                        threenetsRingMapper.insertThreeNetsRing(threenetsRing);
+                    ThreenetsRing threenetsRing = new ThreenetsRing();
+                    threenetsRing.setOrderId(attached.getParentOrderId());
+                    if (rings.size()>0){
+                        threenetsRing =  rings.get(0);
+                        if (ringMap.get(1) == null) {
+                            String path = fileService.cloneFile(threenetsRing);
+                            threenetsRing.setOperateId(attached.getMiguId());
+                            threenetsRing.setRingWay(path);
+                            threenetsRing.setOperate(1);
+                            threenetsRing.setRingStatus(2);
+                            threenetsRing.setRingName(path.substring(path.lastIndexOf("\\") + 1));
+                            threenetsRing.setRemark("");
+                            threenetsRingMapper.insertThreeNetsRing(threenetsRing);
+                        }
                     }
                     //order.setUpLoadAgreement(new File(RingtoneConfig.getProfile() + threenetsRing.getRingWay()));
                     log.info(DateUtils.getTime() + "创建三网移动子订单开始：" + threenetsRing.getRingName());
@@ -142,16 +147,20 @@ public class ThreeNetsAsyncService {
                     batchChindOrder(list, threenetsRing, order.getUserId());
                 }
                 if (operator == 2) {
-                    ThreenetsRing threenetsRing = rings.get(0);
-                    if (ringMap.get(2) == null) {
-                        String path = fileService.cloneFile(threenetsRing);
-                        threenetsRing.setOperateId(attached.getMcardId());
-                        threenetsRing.setRingWay(path);
-                        threenetsRing.setOperate(2);
-                        threenetsRing.setRingStatus(2);
-                        threenetsRing.setRemark("");
-                        threenetsRing.setRingName(path.substring(path.lastIndexOf("\\") + 1));
-                        threenetsRingMapper.insertThreeNetsRing(threenetsRing);
+                    ThreenetsRing threenetsRing = new ThreenetsRing();
+                    threenetsRing.setOrderId(attached.getParentOrderId());
+                    if (rings.size()>0){
+                        threenetsRing =  rings.get(0);
+                        if (ringMap.get(2) == null) {
+                            String path = fileService.cloneFile(threenetsRing);
+                            threenetsRing.setOperateId(attached.getMcardId());
+                            threenetsRing.setRingWay(path);
+                            threenetsRing.setOperate(2);
+                            threenetsRing.setRingStatus(2);
+                            threenetsRing.setRemark("");
+                            threenetsRing.setRingName(path.substring(path.lastIndexOf("\\") + 1));
+                            threenetsRingMapper.insertThreeNetsRing(threenetsRing);
+                        }
                     }
                     log.info(DateUtils.getTime() + "创建三网电信子订单开始：" + threenetsRing.getRingName());
                     List<ThreenetsChildOrder> orders = addMcardByDx(order, attached, list, request, threenetsRing);
@@ -167,18 +176,25 @@ public class ThreeNetsAsyncService {
                     }
                     //各付
                     order.setPaymentType("0");
-                    ThreenetsRing threenetsRing = rings.get(0);
-                    if (ringMap.get(3) == null) {
-                        String path = fileService.cloneFile(threenetsRing);
-                        threenetsRing.setOperateId(attached.getSwxlId());
-                        threenetsRing.setRingWay(path);
-                        threenetsRing.setOperate(3);
-                        threenetsRing.setRingStatus(2);
-                        threenetsRing.setRemark("");
-                        threenetsRing.setRingName(path.substring(path.lastIndexOf("\\") + 1));
-                        threenetsRingMapper.insertThreeNetsRing(threenetsRing);
+                    ThreenetsRing threenetsRing = new ThreenetsRing();
+                    threenetsRing.setOrderId(attached.getParentOrderId());
+                    if (rings.size()>0){
+                        threenetsRing =  rings.get(0);
+                        if (ringMap.get(3) == null) {
+                            String path = fileService.cloneFile(threenetsRing);
+                            threenetsRing.setOperateId(attached.getSwxlId());
+                            threenetsRing.setRingWay(path);
+                            threenetsRing.setOperate(3);
+                            threenetsRing.setRingStatus(2);
+                            threenetsRing.setRemark("");
+                            threenetsRing.setRingName(path.substring(path.lastIndexOf("\\") + 1));
+                            threenetsRingMapper.insertThreeNetsRing(threenetsRing);
+                        }
                     }
                     log.info(DateUtils.getTime() + "创建三网联通子订单开始：" + threenetsRing.getRingName());
+                    if(StringUtils.isNotEmpty(request.getProtocolUrl())){
+                        attached.setAvoidShortAgreement(request.getProtocolUrl());
+                    }
                     list = addMemberByLt(order, attached, list, threenetsRing);
                     batchChindOrder(list, threenetsRing, order.getUserId());
                 }

@@ -17,6 +17,30 @@ import java.util.List;
 @Repository
 public interface ThreenetsOrderMapper {
 
+
+    List<ThreenetsOrder> listByParamNoPage(@Param("order") ThreenetsOrder order);
+
+    /**
+     * 查询三网商户列表信息
+     * @param page
+     * @param request
+     * @return
+     */
+    List<ThreenetsOrder> getAllorderList(@Param("page") Page page, @Param("param")BaseRequest request);
+
+    /**
+     * 查询三网商户列表总数
+     * @return
+     */
+    int getCount(@Param("param")BaseRequest request);
+
+    /**
+     * 查询名字是否重复
+     *
+     * @param name
+     * @return
+     */
+    List<ThreenetsOrder> isRepetitionByName(@Param("name") String name);
     /**
      * 查询三网订单
      * @param id
@@ -45,27 +69,7 @@ public interface ThreenetsOrderMapper {
      */
     int updateByPrimaryKey(ThreenetsOrder ThreenetsOrder);
 
-    /**
-     * 查询三网商户列表信息
-     * @param page
-     * @param request
-     * @return
-     */
-    List<ThreenetsOrder> getAllorderList(@Param("page") Page page, @Param("param")BaseRequest request);
 
-    /**
-     * 查询三网商户列表总数
-     * @return
-     */
-    int getCount(@Param("param")BaseRequest request);
-
-    /**
-     * 查询名字是否重复
-     *
-     * @param name
-     * @return
-     */
-    List<ThreenetsOrder> isRepetitionByName(@Param("name") String name);
 
     /**
      * 修改message为1（无）

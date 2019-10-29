@@ -55,4 +55,7 @@ public class ThreenetsOrder implements Serializable {
     private String paymentType;
 
     private String phones;
+
+    private String startTime;
+    private String endTime;
 }

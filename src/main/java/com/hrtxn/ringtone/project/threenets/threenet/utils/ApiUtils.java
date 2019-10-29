@@ -33,6 +33,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.nodes.Node;
 import org.jsoup.select.Elements;
+import sun.swing.StringUIClientPropertyKey;
 
 import java.io.File;
 import java.io.IOException;
@@ -570,18 +571,37 @@ public class ApiUtils {
         String msg2 = "错误信息：";
         String telErrorMessage = "";
         int failure = 0; // 发送失败数量
+        ThreeNetsOrderAttached attached = SpringUtils.getBean(ThreeNetsOrderAttachedMapper.class).selectByParentOrderId(threenetsChildOrderList.get(0).getParentOrderId());
         for (ThreenetsChildOrder t : threenetsChildOrderList) {
             if (t.getStatus().equals(Const.FAILURE_REVIEW)) {
-
                 telErrorMessage = "[" + t.getLinkmanTel() + ":发送失败，号码已存在，请先删除咪咕记录！]";
                 continue;
             }
             if (flag == 1) {
                 if (t.getOperator() == 1) { // 移动普通短信
+                    if(StringUtils.isNotEmpty(attached.getMiguId())){
+                        t.setOperateId(attached.getMiguId());
+                    }else{
+                        t.setOperateId(miguApi.refreshOrderId(t.getParentOrderId()));
+                        if(StringUtils.isEmpty(t.getOperateId())){
+                            telErrorMessage = "[" + t.getLinkmanTel() + ":商户同步未完成，请稍后再试！]";
+                            continue;
+                        }
+                    }
                     miguApi.remindOrderCrbtAndMonth(t.getLinkmanTel(), t.getOperateOrderId(), t.getOperateId(), false);
                 } else if (t.getOperator() == 2) { // 电信普通短信
 
                 } else { // 联通普通短信
+                    if(StringUtils.isNotEmpty(attached.getSwxlId())){
+                        t.setOperateId(attached.getSwxlId());
+                    }else{
+                        t.setOperateId(swxlApi.refreshOrderId(t.getParentOrderId()));
+                        if(StringUtils.isEmpty(t.getOperateId())){
+                            telErrorMessage = "[" + t.getLinkmanTel() + ":商户同步未完成，请稍后再试！]";
+                            continue;
+                        }
+                        //如果是空，说明商户没有创建成功
+                    }
                     String result = swxlApi.remindOrderCrbtAndMonth(t.getLinkmanTel(), t.getOperateId(), false);
                     if (StringUtils.isNotEmpty(result)) {
                         SwxlPubBackData info = (SwxlPubBackData) JsonUtil.getObject4JsonString(result, SwxlPubBackData.class);
@@ -853,6 +873,9 @@ public class ApiUtils {
         int failure = 0;
         if (operate == 1) { // 移动
             String result = miguApi.setCircleRingById4User(phones, threenetsRing.getOperateRingId(), threenetsRing.getOperateId());
+            if (!result.contains("msg")){
+                return AjaxResult.error("您的请求已受理，请稍后在【商户列表 ->号码管理】中点击刷新操作查看!");
+            }
             RingSetResult rsr = (RingSetResult) JsonUtil.getObject4JsonString(result, RingSetResult.class);
             if (rsr.isSuccess()) {
                 String[] phoness = phones.split(",");
@@ -2157,7 +2180,7 @@ public class ApiUtils {
                     }
                     String result = miguApi.findCircleRingPageById(attached.getMiguId());
                     if (StringUtils.isEmpty(result)) {
-                        return AjaxResult.error("刷新失败，为获取到铃音信息！");
+                        return AjaxResult.error("刷新失败，未获取到铃音信息！");
                     }
                     Document doc = Jsoup.parse(result);
                     Elements contents = doc.getElementsByClass("tbody_lis");
@@ -2219,7 +2242,7 @@ public class ApiUtils {
                     }
                     String result = swxlApi.getRingInfo(attached.getSwxlId());
                     if (StringUtils.isEmpty(result)) {
-                        return AjaxResult.error("刷新失败，为获取到铃音信息！");
+                        return AjaxResult.error("刷新失败，未获取到铃音信息！");
                     }
                     //{"recode":"000000","message":"成功","data":{"data":[{"id":"9178900020191013923588","ringFilePath":"/v1/ring/2019/10/13/2034e6f874a84dbda045be12b96f6ebe.mp3","groupId":"4b9dc1422585436ba8681205806f694d","ringName":"郑州市亚森鞋业213242","ctime":"2019-10-13 19:47:43","status":"2","remark":"铃音审核通过"}],"recordsTotal":1},"success":true}
                     JSONObject jsonObject = JSONObject.fromObject(result);

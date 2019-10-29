@@ -138,33 +138,24 @@
             <div class="newBlocPage-con5 clear">
                 <div class="file_css2">
                     <div class="show_input_file" id="showqyzz5"></div>
-                    <div class="file_css_button qiye">企业资质</div>
+                    <div class="file_css_button qiye" style="color: #13b5b1;">点击上传营业执照</div>
                     <input type="file" class="input_file" id="qyzz5" name="companyFile" required accept="image/*">
                     <input type="hidden" id="companyUrl" name="companyUrl" value="">
                 </div>
-                <h6><i style="color: red">*</i>上传企业资质</h6>
+                <h6><i style="color: red">*</i>上传营业执照</h6>
             </div>
             <div class="newBlocPage-con6 clear">
                 <div class="file_css2">
                     <div class="show_input_file" id="showqyzx5"></div>
-                    <div class="file_css_button que">客户确认函</div>
+                    <div class="file_css_button que" style="color: #13b5b1;">点击上传知晓函</div>
                     <input type="file" class="input_file" id="qyzx5" name="clientFile" required  accept="image/*">
                     <input type="hidden" name="clientUrl" id="clientUrl" value="">
                 </div>
-                <h6><i style="color: red">*</i>上传客户确认函</h6>
+                <h6><i style="color: red">*</i>上传知晓函</h6>
                 <div class="footer-newBlocPage-con6 clear">
                     <a href="http://xnh.xnhkfpt.com/uploadFiles/file/cringopenbusiness.docx"
                        style="font-size: 12px; color:#17a9ff;">知晓函模板下载</a>，填完后盖章扫描上传。<span style="color:red;"></span>
                 </div>
-            </div>
-            <div class="newBlocPage-con6 clear">
-                <div class="file_css2">
-                    <div class="show_input_file" id="IDCARDURLinput"></div>
-                    <div class="file_css_button zhu">主体证明</div>
-                    <input type="file" class="input_file" id="IDCARDURLfile" name="mainFile" required  accept="image/*">
-                    <input type="hidden" name="mainUrl" id="mainUrl" value="">
-                </div>
-                <h6><i style="color: red">*</i>电信主体证明<b style="color:red;margin-top: 10px;">(非必传项)</b></h6>
             </div>
         </div>
         <!-- 是否免短 -->
@@ -172,7 +163,7 @@
             <div class="newBlocPage-con6 clear">
                 <div class="file_css2">
                     <div class="show_input_file" id="showmdxy"></div>
-                    <div class="file_css_button mds">上传免短协议</div>
+                    <div class="file_css_button mds"style="color: #13b5b1;">点击上传免短协议</div>
                     <input type="file" class="input_file" id="mdxy" name="protocolFile" required multiple="multiple" accept="image/*">
                     <input type="hidden" name="protocolUrl" id="protocolUrl" value="">
                 </div>
@@ -196,7 +187,7 @@
                         <div class="fl selected">
                             <input type="file" name="ringFile" id="ringFile" class="" style="width:388px;" required accept=".mp3,.wav,.mp4,.mov">
                             <div class="clearfix">
-                                <p class="fr choose" style="width:388px;font-size: 14px;">点击上传铃音文件</p>
+                                <p class="fr choose" style="width:388px;font-size: 14px;">点击上传铃音文件<b style="color:red;margin-top: 10px;">(非必传项)</b></p>
                                 <input type="hidden" id="ringUrl" name="ringUrl">
                                 <div style="margin-top:20px;" class="show_input_file" id="showringurl"></div>
                             </div>
@@ -301,7 +292,7 @@
     function mykeyup() {
         var member_phone = $("#member_phone").val();
         var phones = member_phone.split(/[\r\n]/g);
-        var myreg = /^[1][3,4,5,7,8,9][0-9]{9}$/;
+        var myreg = /^1\d{10}$/;
         var areg = /^0\d{2,3}-?\d{7,8}$/;
         for (i = 0; i < phones.length; i++) {
             if (!myreg.test(phones[i])) {

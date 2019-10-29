@@ -1,9 +1,7 @@
 package com.hrtxn.ringtone.common.api;
 
 import com.hrtxn.ringtone.common.exception.NoLoginException;
-import com.hrtxn.ringtone.common.utils.ChaoJiYing;
-import com.hrtxn.ringtone.common.utils.HttpUtils;
-import com.hrtxn.ringtone.common.utils.ShiroUtils;
+import com.hrtxn.ringtone.common.utils.*;
 import com.hrtxn.ringtone.common.utils.json.JsonUtil;
 import com.hrtxn.ringtone.project.system.user.domain.User;
 import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreeNetsOrderAttached;
@@ -12,6 +10,7 @@ import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreenetsRing;
 import com.hrtxn.ringtone.project.threenets.threenet.json.migu.MiguAddGroupRespone;
 import com.hrtxn.ringtone.project.threenets.threenet.json.migu.MiguAddPhoneRespone;
 import com.hrtxn.ringtone.project.threenets.threenet.json.migu.MiguAddRingRespone;
+import com.hrtxn.ringtone.project.threenets.threenet.mapper.ThreenetsOrderMapper;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -40,6 +39,10 @@ import org.apache.http.params.HttpParams;
 import org.apache.http.util.EntityUtils;
 import org.apache.shiro.crypto.hash.Md5Hash;
 import org.apache.shiro.subject.Subject;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -880,17 +883,51 @@ public class MiguApi implements Serializable {
 
     /**
      * 重新激活铃音
+     *
      * @param ring
      * @param name
      * @return
      * @throws IOException
      * @throws NoLoginException
      */
-    public String reactivateRing(ThreenetsRing ring,String name) throws IOException, NoLoginException {
+    public String reactivateRing(ThreenetsRing ring, String name) throws IOException, NoLoginException {
         String groupName = URLEncoder.encode(name, "utf-8");
         String getUrl = ringRetryHandOut_url + "?ringID=" + ring.getOperateRingId() + "&circleID=" + ring.getOperateId() + "&groupName=" + groupName;
         String result = sendGet(getUrl);
         log.info("移动铃音重新激活 参数：{}", ring.getRingName());
         return result;
+    }
+
+
+    public String refreshOrderId(Integer orderId) {
+        String id = "";
+        try {
+            ThreenetsOrder order = SpringUtils.getBean(ThreenetsOrderMapper.class).selectByPrimaryKey(orderId);
+            String groupName = URLEncoder.encode(order.getCompanyName(), "utf-8");
+            String url = refreshRingOrder_url + "?msgProcessStatus=2&payType=0&isNormal=2&freezeStatus=2&msisdn=&groupName=" + groupName;
+            String result = sendGet(url);
+            if (StringUtils.isNotEmpty(result)) {
+                Document doc = Jsoup.parse(result);
+                Elements contents = doc.getElementsByClass("tbody_lis");
+                Elements datas = contents.get(0).getElementsByClass("tbody_lis");
+                Element ele = datas.get(0);
+                Elements trs = ele.getElementsByTag("tr");
+                if (trs.size() > 0) {// 没值的话，跳过
+                    Elements tds = trs.get(0).getElementsByTag("td");
+                    Element temp = tds.get(9).child(1);
+                    String t = temp.attr("onclick");
+                    String[] split = t.split("'");
+                    id = split[1];
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (NoLoginException e) {
+            e.printStackTrace();
+        } catch (Exception e){
+            e.printStackTrace();
+        }finally {
+            return id;
+        }
     }
 }
