@@ -426,6 +426,9 @@ AND user_id = #{userId,jdbcType=INTEGER}
       <if test="productName != null">
         product_name = #{productName,jdbcType=VARCHAR}
       </if>
+      <if test="remark != null">
+        remark = #{remark,jdbcType=VARCHAR}
+      </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
