@@ -363,6 +363,9 @@
         <if test="param != null and param.remark != null and param.remark != ''">
             AND remark like '%${param.remark}%'
         </if>
+        <if test="param != null and param.telLinkPhone != null and param.telLinkPhone != ''">
+            AND link_tel like '%${param.telLinkPhone}%'
+        </if>
     </sql>
     <!--分页-->
     <sql id="page">

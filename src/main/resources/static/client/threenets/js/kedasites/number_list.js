@@ -7,7 +7,8 @@ $(document).ready(function () {
 function showTable() {
     var params = {
         "orderId": $('#orderId').val(),
-        "isMonthly": $("#isMonthly").val()
+        "isMonthly": $("#isMonthly").val(),
+        "telLinkPhone": $("#telLinkPhone").val()
     }
     var columns = [
         {"data": "id"},

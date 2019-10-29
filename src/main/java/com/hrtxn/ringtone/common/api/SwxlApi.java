@@ -571,7 +571,7 @@ public class SwxlApi implements Serializable {
             params.setParameter(CoreProtocolPNames.HTTP_CONTENT_CHARSET, Charset.forName("UTF-8"));
             reqEntity.addPart("groupName", new StringBody(ringOrder.getCompanyName(), Charset.forName("UTF-8")));// 集团名称
             reqEntity.addPart("tel", new StringBody(ringOrder.getLinkmanTel()));//
-            reqEntity.addPart("payType", new StringBody(ringOrder.getPaymentType()));
+            reqEntity.addPart("payType", new StringBody("0"));
             String applyForSmsNotification = "0";
             if (StringUtils.isNotEmpty(attached.getAvoidShortAgreement()) && ringOrder.getMianduan().equals("1")) {
                 applyForSmsNotification = "1";

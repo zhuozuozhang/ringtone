@@ -573,6 +573,7 @@ public class ApiUtils {
         int failure = 0; // 发送失败数量
         ThreeNetsOrderAttached attached = SpringUtils.getBean(ThreeNetsOrderAttachedMapper.class).selectByParentOrderId(threenetsChildOrderList.get(0).getParentOrderId());
         for (ThreenetsChildOrder t : threenetsChildOrderList) {
+            t.setOperateId(swxlApi.refreshOrderId(t.getParentOrderId()));
             if (t.getStatus().equals(Const.FAILURE_REVIEW)) {
                 telErrorMessage = "[" + t.getLinkmanTel() + ":发送失败，号码已存在，请先删除咪咕记录！]";
                 continue;
@@ -602,7 +603,7 @@ public class ApiUtils {
                         }
                         //如果是空，说明商户没有创建成功
                     }
-                    String result = swxlApi.remindOrderCrbtAndMonth(t.getLinkmanTel(), t.getOperateId(), false);
+                    String result = null; //swxlApi.remindOrderCrbtAndMonth(t.getLinkmanTel(), t.getOperateId(), false);
                     if (StringUtils.isNotEmpty(result)) {
                         SwxlPubBackData info = (SwxlPubBackData) JsonUtil.getObject4JsonString(result, SwxlPubBackData.class);
                         if (!"000000".equals(info.getRecode()) || !info.isSuccess()) {

@@ -319,7 +319,7 @@ public class ThreeNetsOrderService {
             List<ThreenetsChildOrder> list = collect.get(operator);
             for (int i = 0; i < list.size(); i++) {
                 ThreenetsChildOrder childOrder = list.get(i);
-                childOrder.setPaymentType(Integer.parseInt(order.getPaymentType()));
+                childOrder.setPaymentType(0);
                 childOrder.setParentOrderId(threenetsOrder.getId());
                 childOrders.add(childOrder);
             }

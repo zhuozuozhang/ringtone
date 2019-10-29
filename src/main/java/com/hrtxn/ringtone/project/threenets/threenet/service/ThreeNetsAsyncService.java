@@ -88,7 +88,7 @@ public class ThreeNetsAsyncService {
                     //如果不是免短则不保存免短相关的文件
                     attached.setAvoidShortAgreement("");
                 }
-                order.setPaymentType(orderRequest.getPaymentType());
+                order.setPaymentType("0");
                 createUnicomMerchant(order, attached, childOrders);
             }
             //电信
