@@ -94,7 +94,7 @@
             <label class="layui-form-label"><span><i>*</i>认证展示内容</span></label>
             <div class="layui-input-block">
                 <input type="text" id="telContent" placeholder="请跟营业执照主体一致" autocomplete="off" name="telContent"
-                       th:value="${telCerOrder.telLinkPhone}" required
+                       th:value="${telCerOrder.telContent}" required
                        lay-verify="required" class="layui-input">
             </div>
         </div>
@@ -127,7 +127,7 @@
             </div>
         </div>
         <div class="layui-form-item">
-            <label class="layui-form-label"><span><i>*</i>上传LOGO</span></label>
+            <label class="layui-form-label"><span><i></i>上传LOGO</span></label>
             <div class="layui-input-block">
                 <div class="tpimgbka" id="logoClassEdit">
                     <img th:if="${telCerOrder.logo} != null" th:src="${telCerOrder.logo}"
@@ -154,6 +154,7 @@
                 <input type="radio" checked="checked" >
                 <span>我同意此<i class="openagreement">订购协议</i></span></div>
         </div>
+        <input type="hidden" id="sendId" th:value="${telCerOrder.id}">
         <div class="xgan" onClick="determine()">确认修改</div>
     </div>
 </div>
@@ -378,21 +379,21 @@
             layer.msg("您需要上传法人身份证反面");
             return;
         }
-        if($("#logo").html() > 0 || $("#logoHidden").val() == ""){
-            layer.msg("您需要上传LOGO");
-            return;
-        }
-        if($("#authorization").html() > 0 || $("#authorizationHidden").val() == ""){
-            layer.msg("请上传授权书");
-            return;
-        }
-        if($("#numberProve").html() > 0 || $("#numberProveHidden").val() == ""){
-            layer.msg("请上传号码证明");
-            return;
-        }
+        // if($("#logo").html() > 0 || $("#logoHidden").val() == ""){
+        //     layer.msg("您需要上传LOGO");
+        //     return;
+        // }
+        // if($("#authorization").html() > 0 || $("#authorizationHidden").val() == ""){
+        //     layer.msg("请上传授权书");
+        //     return;
+        // }
+        // if($("#numberProve").html() > 0 || $("#numberProveHidden").val() == ""){
+        //     layer.msg("请上传号码证明");
+        //     return;
+        // }
         var url = "/telcertify/editTelCerOrderById";
         AjaxPost(url,{
-            id : sendId,
+            id : $("#sendId").val(),
             telCompanyName : $("#telCompanyName").val(),
             telLinkName : $("#telLinkName").val(),
             telLinkPhone : $("#telLinkPhone").val(),

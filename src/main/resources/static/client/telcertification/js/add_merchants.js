@@ -431,10 +431,10 @@ function addTelCerMerchants(){
         layer.msg("您需要上传法人身份证反面");
         return;
     }
-    if($("#logoAdd").html() > 0 || $("#logoHidden").val() == ""){
-        layer.msg("您需要上传LOGO");
-        return;
-    }
+    // if($("#logoAdd").html() > 0 || $("#logoHidden").val() == ""){
+    //     layer.msg("您需要上传LOGO");
+    //     return;
+    // }
     AjaxPost("/telcertify/addTelCertifyOrder",{
         telCompanyName: $("#telCompanyNameAdd").val(),
         telLinkName : $("#telLinkNameAdd").val(),
