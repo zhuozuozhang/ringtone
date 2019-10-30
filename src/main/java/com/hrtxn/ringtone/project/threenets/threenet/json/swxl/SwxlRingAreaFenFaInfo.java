@@ -23,4 +23,5 @@ public class SwxlRingAreaFenFaInfo implements Serializable {
 	@Setter @Getter private String provinceName;//省份名称
 	@Setter @Getter private String responseCode;
 	@Setter @Getter private String responseDesc;
+	@Setter @Getter private String operateType;
 }

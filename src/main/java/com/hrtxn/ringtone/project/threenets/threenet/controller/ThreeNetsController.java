@@ -508,4 +508,29 @@ public class ThreeNetsController {
     public String toMiguPage() {
         return "threenets/threenet/merchants/miguPage";
     }
+
+
+    /**
+     * 进入号码管理
+     *
+     * @return
+     */
+    @GetMapping("/threenets/toMerchantsTelecomFilePage/{parentOrderId}")
+    public String toMerchantsPhonePage(ModelMap map, @PathVariable Integer parentOrderId) {
+        try {
+            ThreenetsOrder order = threeNetsChildOrderService.getOrderById(parentOrderId);
+            ThreeNetsOrderAttached attached = threeNetsOrderAttachedService.selectByParentOrderId(parentOrderId);
+            map.put("parentOrderId", parentOrderId);
+            map.put("attached",attached);
+            if (order.getCompanyName().length() <= 6) {
+                map.put("companyName", order.getCompanyName());
+            } else {
+                boolean result = order.getCompanyName().substring(order.getCompanyName().length() - 6).matches("[0-9]+");
+                map.put("companyName", result ? order.getCompanyName().substring(0, order.getCompanyName().length() - 6) : order.getCompanyName());
+            }
+        } catch (Exception e) {
+            log.error("获取集团名称失败 方法：toMerchantsPhonePage 错误信息：", e);
+        }
+        return "threenets/threenet/merchants/telecom_file_list";
+    }
 }

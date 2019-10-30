@@ -2336,7 +2336,7 @@ public class ApiUtils {
                                     }
                                     ring.setOperateRingId(ringId);
                                     SpringUtils.getBean(ThreenetsRingMapper.class).updateByPrimaryKeySelective(ring);
-                                    list.set(i,ring);
+                                    list.set(j,ring);
                                 }
                             }
                         }
@@ -2378,7 +2378,7 @@ public class ApiUtils {
                                 }
                                 ring.setOperateRingId(ringId);
                                 SpringUtils.getBean(ThreenetsRingMapper.class).updateByPrimaryKeySelective(ring);
-                                list.set(i,ring);
+                                list.set(j,ring);
                             }
                         }
                     }
