@@ -21,16 +21,16 @@ function showDistributorTable() {
             return data;
         }
     }];
-    if(param.phoneNum != "" && param.phoneNum != null){
-        if(!isTel(param.phoneNum)){
-            if(!isPhone(param.phoneNum)){
-                if(!is_Phone(param.phoneNum)){
-                    layer.msg("请输入正确的成员手机号码！",{icon: 0, time: 3000});
-                    return;
-                }
-            }
-        }
-    }
+    // if(param.phoneNum != "" && param.phoneNum != null){
+    //     if(!isTel(param.phoneNum)){
+    //         if(!isPhone(param.phoneNum)){
+    //             if(!is_Phone(param.phoneNum)){
+    //                 layer.msg("请输入正确的成员手机号码！",{icon: 0, time: 3000});
+    //                 return;
+    //             }
+    //         }
+    //     }
+    // }
     page("#distributor", 10, param, "/telcertify/getTelCerDistributor", columns, columnDefs);
 }
 

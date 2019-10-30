@@ -66,25 +66,22 @@ public class TelCertificationDistributorService {
         telCerDistributor.setTheMonthTotal(theMonthService.getTeddyNum() + theMonthService.getTelBondNum() + theMonthService.getColorPrintNum() + theMonthService.getHangupMessageNum());
         telCerDistributor.setTodayTotal(todayService.getTeddyNum() + todayService.getTelBondNum() + todayService.getColorPrintNum() + todayService.getHangupMessageNum());
 
-        if(allDisList.size() <= 0){
-            int insert = telCerDistributorMapper.insert(telCerDistributor);
-            if(insert > 0){
-                request.setDistributorId(userId);
-                theDisList = telCerDistributorMapper.getAllTelCerDistributorInfo(page,request);
-                return AjaxResult.success(theDisList,"新建成功",insert);
-            }
-        }else{
-            for (TelCerDistributor dis : allDisList) {
-                if(userId.equals(dis.getDistributorId())){
-                    int update = telCerDistributorMapper.updateByPrimaryKey(telCerDistributor);
-                    if(update > 0){
-                        request.setDistributorId(userId);
-                        theDisList = telCerDistributorMapper.getAllTelCerDistributorInfo(page,request);
-                        return AjaxResult.success(theDisList,"更新成功",update);
-                    }
-                    return AjaxResult.success(telCerDistributor,"更新失败",update);
+        for (TelCerDistributor dis : allDisList) {
+            if(userId.equals(dis.getDistributorId())){
+                int update = telCerDistributorMapper.updateByPrimaryKey(telCerDistributor);
+                if(update > 0){
+                    request.setDistributorId(userId);
+                    theDisList = telCerDistributorMapper.getAllTelCerDistributorInfo(page,request);
+                    return AjaxResult.success(theDisList,"更新成功",update);
                 }
+                return AjaxResult.success(telCerDistributor,"更新失败",update);
             }
+        }
+        int insert = telCerDistributorMapper.insert(telCerDistributor);
+        if(insert > 0){
+            request.setDistributorId(userId);
+            theDisList = telCerDistributorMapper.getAllTelCerDistributorInfo(page,request);
+            return AjaxResult.success(theDisList,"新建成功",insert);
         }
         return AjaxResult.success(500,theDisList,"查询失败",0);
     }
