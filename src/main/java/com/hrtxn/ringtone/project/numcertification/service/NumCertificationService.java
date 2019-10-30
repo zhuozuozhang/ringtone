@@ -71,7 +71,7 @@ public class NumCertificationService {
                     numOrder1.setPhoneNum(numDataResultList.get(i).getPhoneNum());
                     numOrder1.setCategory(numDataResultList.get(i).getCategory());
                     numOrder1.setCostPrice(numDataResultList.get(i).getAgentCost());
-                    numOrder1.setGuidePrice(numDataResultList.get(i).getAgentCost()+numPriceList.get(0).getRaisePrice());
+                    numOrder1.setGuidePrice(getGuidePrice(numDataResultList.get(i).getCategory(),numDataResultList.get(i).getAgentCost()));
 //                    numOrder1.setGuidePrice(numPriceList.get(0).getGuidePrice());
                     numOrderList.add(numOrder1);
                 }
@@ -79,6 +79,27 @@ public class NumCertificationService {
             return AjaxResult.success(numOrderList, "获取数据成功！", dataCount);
         }
         return data;
+    }
+
+    /**
+     * 价格
+     * @param category
+     * @param agentCost
+     * @return
+     */
+    public Double getGuidePrice(String category,Double agentCost){
+        Double result = 0d;
+        if("C类".equals(category) || "D类".equals(category)){
+            result = 1200d;
+        }else if("B类".equals(category)){
+            result=1500d;
+        }else if("A类".equals(category)){
+            result = 1800d;
+        }else{
+            result = agentCost * 2d;
+        }
+
+        return result;
     }
 
     /**

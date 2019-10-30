@@ -68,7 +68,7 @@
                                        onclick="Searchd('operator',this)" is_click="1">
                                 <span class="el-input__suffix">
                                     <span class="el-input__suffix-inner">
-                                        <i class="el-select__caret el-input__icon el-icon-arrow-up operator_icon"></i>
+                                        <i class="el-select__caret el-input__icon el-icon-arrow-up operator_icon" style="color: deepskyblue" onclick="Searchd1('operator')"></i>
                                     </span>
                                 </span>
                             </div>
@@ -104,7 +104,7 @@
                                        class="el-input__inner" id="type" data-bind="" onclick="Searchd('type',this)" is_click="1">
                                 <span class="el-input__suffix">
                                     <span class="el-input__suffix-inner">
-                                        <i class="el-select__caret el-input__icon el-icon-arrow-up type_icon"></i>
+                                        <i class="el-select__caret el-input__icon el-icon-arrow-up type_icon" style="color: deepskyblue" onclick="Searchd1('type')"></i>
                                     </span>
                                 </span>
                             </div>
@@ -116,6 +116,8 @@
                                             <li data-v-7c58087b="" class="el-select-dropdown__item selected"
                                                 onclick="SelectCity('全部',this,'type');"><span>全部</span></li>
                                             <li data-v-7c58087b="" class="el-select-dropdown__item"
+                                                onclick="SelectCity('顶级号',this,'type');"><span>顶级号</span></li>
+                                            <li data-v-7c58087b="" class="el-select-dropdown__item"
                                                 onclick="SelectCity('超级号',this,'type');"><span>超级号</span></li>
                                             <li data-v-7c58087b="" class="el-select-dropdown__item"
                                                 onclick="SelectCity('A类',this,'type');"><span>A类</span></li>
@@ -125,8 +127,6 @@
                                                 onclick="SelectCity('C类',this,'type');"><span>C类</span></li>
                                             <li data-v-7c58087b="" class="el-select-dropdown__item"
                                                 onclick="SelectCity('D类',this,'type');"><span>D类</span></li>
-                                            <li data-v-7c58087b="" class="el-select-dropdown__item"
-                                                onclick="SelectCity('顶级号',this,'type');"><span>顶级号</span></li>
                                         </ul>
                                     </div>
                                     <div class="el-scrollbar__bar is-horizontal">
@@ -165,7 +165,7 @@
                                 <th>号码等级</th>
                                 <th>运营商</th>
                                 <th>成本价格(元/年)</th>
-                                <!--<th>指导价格(元/年)</th>-->
+                                <th>指导价格(元/年)</th>
                                 <th>操作</th>
                             </tr>
                             </thead>
@@ -180,6 +180,7 @@
 <div th:include="400/common/include :: footer"></div>
 <script>
     $(document).ready(function () {
+        $("#type").attr("data-bind", 6)
         showTable();
     });
     // 展示数据
@@ -196,7 +197,7 @@
             {"data": "category"},
             {"data": "phoneNum"},
             {"data": "costPrice"},
-            // {"data": "guidePrice"},
+            {"data": "guidePrice"},
         ];
         var columnDefs = [{
             targets: [3],
@@ -207,7 +208,7 @@
                 if (4008 == s || 4009 == s) { return "电信";}
             }
         }, {
-            targets: [5],
+            targets: [6],
             render: function (data, type, row, meta) {
                 var phoneNum = row.phoneNum;
                 var agentCost = row.costPrice;
@@ -229,6 +230,23 @@
             $(this_).attr("is_click", 1);
         }
     }
+
+
+    //搜索
+    function Searchd1(obj) {
+        var is_click = $("#"+obj).attr("is_click");
+        console.log(is_click);
+        if (is_click == 1) {
+            $("." + obj + "_icon").addClass("is-reverse");
+            $("." + obj + "_d").show();
+            $("#"+obj).attr("is_click", 2);
+        } else if (is_click == 2) {
+            $("." + obj + "_icon").removeClass("is-reverse");
+            $("." + obj + "_d").hide();
+            $("#"+obj).attr("is_click", 1);
+        }
+    }
+
     //城市切换
     function SelectCity(obj, this_, id) {
         $(this_).addClass("selected").siblings("li").removeClass("selected");
