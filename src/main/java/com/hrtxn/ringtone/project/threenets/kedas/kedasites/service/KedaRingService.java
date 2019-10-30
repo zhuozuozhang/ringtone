@@ -13,8 +13,10 @@ import com.hrtxn.ringtone.freemark.config.systemConfig.RingtoneConfig;
 import com.hrtxn.ringtone.project.system.File.domain.Uploadfile;
 import com.hrtxn.ringtone.project.system.File.mapper.UploadfileMapper;
 import com.hrtxn.ringtone.project.threenets.kedas.kedasites.domain.KedaChildOrder;
+import com.hrtxn.ringtone.project.threenets.kedas.kedasites.domain.KedaOrder;
 import com.hrtxn.ringtone.project.threenets.kedas.kedasites.domain.KedaRing;
 import com.hrtxn.ringtone.project.threenets.kedas.kedasites.mapper.KedaChildOrderMapper;
+import com.hrtxn.ringtone.project.threenets.kedas.kedasites.mapper.KedaOrderMapper;
 import com.hrtxn.ringtone.project.threenets.kedas.kedasites.mapper.KedaRingMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,6 +45,8 @@ public class KedaRingService {
     @Autowired
     private UploadfileMapper uploadfileMapper;
     @Autowired
+    private KedaOrderMapper kedaOrderMapper;
+    @Autowired
     private KedaChildOrderMapper kedaChildOrderMapper;
 
     @Autowired
@@ -63,13 +67,11 @@ public class KedaRingService {
         List<KedaRing> kedaRingList = kedaRingMapper.getKedaRingList(page, baseRequest);
         // 获取铃音数量
         int count = kedaRingMapper.getCount(baseRequest);
-        kedaRingList = kedaApi.refreshRingInfo(kedaRingList);
+        KedaOrder kedaOrder = kedaOrderMapper.getKedaOrder(baseRequest.getOrderId());
+        kedaRingList = kedaApi.refreshRingInfo(kedaRingList,kedaOrder.getKedaId());
         for (int i = 0; i < kedaRingList.size(); i++) {
             kedaRingMapper.updateKedaRing(kedaRingList.get(i));
         }
-        // 执行刷新铃音操作
-        asyncService.updateRingtoneInformation(kedaRingList);
-        //asyncService.updateRingtoneInformation(kedaRingList);
         log.info("获取铃音列表 ----------->");
         return AjaxResult.success(kedaRingList, "获取数据成功！", count);
     }
@@ -87,6 +89,7 @@ public class KedaRingService {
         if (StringUtils.isEmpty(kedaRing.getRingName())) return AjaxResult.error("参数格式不正确！");
         if (StringUtils.isEmpty(kedaRing.getRingContent())) return AjaxResult.error("参数格式不正确！");
         if (StringUtils.isNull(file)) return AjaxResult.error("参数格式不正确！");
+        KedaOrder kedaOrder = kedaOrderMapper.getKedaOrder(kedaRing.getOrderId());
         // 去除空格
         String ringName = kedaRing.getRingName().replaceAll(" ", "");
         // 去除空格和其他字符
@@ -100,7 +103,7 @@ public class KedaRingService {
         List<KedaRing> kedaRingList = kedaRingMapper.getKedaRingList(null, b);
         if (kedaRingList.size() > 0) return AjaxResult.error("铃音名称重复！");
         kedaRing.setCreateTime(new Date());
-        kedaRing.setOpertateId(Constant.OPERATEID);
+        kedaRing.setOpertateId(kedaOrder.getKedaId());
         // 文件判断
         // 判断文件类型、文件大小、文件时长
         // 文件真实名称
@@ -129,12 +132,12 @@ public class KedaRingService {
 
         // 同步添加铃音信息
         // 上传文件，得到URL
-        AjaxResult ajaxResult = kedaApi.uploadRing(source);
+        AjaxResult ajaxResult = kedaApi.uploadRing(source,kedaRing);
         if ((int) ajaxResult.get("code") == 200) {
             String fileUrl = ajaxResult.get("msg").toString();
             if (StringUtils.isNotEmpty(fileUrl)) {kedaRing.setRingUrl(fileUrl);}
             // 执行暂存作品操作
-            AjaxResult a = kedaApi.addRing(fileUrl, kedaRing.getRingName());
+            AjaxResult a = kedaApi.addRing(fileUrl, kedaRing);
             if ((int) a.get("code") == 200) {
                 kedaRing.setRingNum(a.get("msg").toString());
             } else {
@@ -225,7 +228,8 @@ public class KedaRingService {
                 }
             }
         }
-        AjaxResult ajaxResult = kedaApi.setRing(kedaRingList.get(0).getRingNum(), businessEmpId, phones);
+        KedaOrder kedaOrder = kedaOrderMapper.getKedaOrder(orderId);
+        AjaxResult ajaxResult = kedaApi.setRing(kedaRingList.get(0).getRingNum(), businessEmpId, phones,kedaOrder.getKedaId());
         if ((int) ajaxResult.get("code") == 200) {
             // 执行修改子订单信息
             for (int k = 0; k < keDaChildOrderList.size(); k++) {
@@ -252,4 +256,3 @@ public class KedaRingService {
         return AjaxResult.success(kedaRingList, "获取数据成功！");
     }
 }
-

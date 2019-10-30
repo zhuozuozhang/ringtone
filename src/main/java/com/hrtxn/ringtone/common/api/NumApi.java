@@ -40,12 +40,12 @@ import java.util.*;
 @Component
 public class NumApi {
 
-//    public final static String LOGINNAME = "江苏中高俊聪";
-//    public final static String PASSWORD = "111111";
-//    public final static String URLPREFIX = "http://180.166.192.26:8910/";
     public final static String LOGINNAME = "江苏中高俊聪";
-    public final static String PASSWORD = "zg316316@";
-    public final static String URLPREFIX = "http://agentweb.sungoin.com/";
+    public final static String PASSWORD = "111111";
+    public final static String URLPREFIX = "http://180.166.192.26:8910/";
+//    public final static String LOGINNAME = "江苏中高俊聪";
+//    public final static String PASSWORD = "zg316316@";
+//    public final static String URLPREFIX = "http://agentweb.sungoin.com/";
     /**
      * 获取接口调用凭证
      */
@@ -62,8 +62,8 @@ public class NumApi {
     public static String cgiToken = null;
 
 //    @Value("${ringtone.profile-url}")
-//    private String profileUrl = "http://272p922i24.qicp.vip:24914/";
-    private String profileUrl ="http://120.27.226.14/";
+    private String profileUrl = "http://272p922i24.qicp.vip:24914/";
+//    private String profileUrl ="http://120.27.226.14/";
 //    private String profileUrl ="http://139.217.118.184/";
 
     public AjaxResult getCgiToken() throws IOException {
@@ -396,7 +396,7 @@ public class NumApi {
         Request request = new Request.Builder()
                 .url(url)
                 .post(body)
-                .addHeader("Content-Type", "application/json")
+//                .addHeader("Content-Type", "application/json")
                 .addHeader("Content-Type", contentType)
                 .addHeader("Cache-Control", "no-cache")
                 .build();

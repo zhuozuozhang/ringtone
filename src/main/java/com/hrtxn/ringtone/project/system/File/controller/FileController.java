@@ -236,7 +236,7 @@ public class FileController {
     @PostMapping("/system/upload/legalCardUrl")
     @ResponseBody
     public AjaxResult legalCardUrl(@RequestParam("legalCardUrl") MultipartFile legalCardUrl, String folderName) {
-        return fileService.upload(legalCardUrl, folderName);
+        return fileService.upload(legalCardUrl, legalCardUrl.getOriginalFilename(), folderName);
     }
 
     /**
@@ -249,7 +249,7 @@ public class FileController {
     @ResponseBody
     public AjaxResult operatorCardUrl(@RequestParam("operatorCardUrl") MultipartFile operatorCardUrl, String folderName) {
         operatorCardUrl.getName();
-        return fileService.upload(operatorCardUrl, folderName);
+        return fileService.upload(operatorCardUrl, operatorCardUrl.getOriginalFilename(), folderName);
     }
 
 
@@ -262,7 +262,7 @@ public class FileController {
     @PostMapping("/system/upload/fourFileUpload")
     @ResponseBody
     public AjaxResult fourFileUpload(@RequestParam("fourFileUpload") MultipartFile fourFileUpload, String folderName) {
-        return fileService.upload(fourFileUpload, folderName);
+        return fileService.upload(fourFileUpload, fourFileUpload.getOriginalFilename(), folderName);
     }
 
 

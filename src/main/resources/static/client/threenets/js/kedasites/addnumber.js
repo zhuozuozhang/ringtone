@@ -121,14 +121,14 @@ function verificationTels() {
             layer.msg(result.msg);
             $("#memberTels").focus();
         } else {
-            // $("#telNum").val(result.data)
-            // if (result.data > 0) {
-            //     $("#protocolTelecom10Div").show();
-            //     $("#protocolTelecom20Div").show();
-            // }else{
-            //     $("#protocolTelecom10Div").hide();
-            //     $("#protocolTelecom20Div").hide();
-            // }
+            $("#telNum").val(result.data)
+            if (result.data > 0) {
+                $("#protocolTelecom10Div").show();
+                $("#protocolTelecom20Div").show();
+            }else{
+                $("#protocolTelecom10Div").hide();
+                $("#protocolTelecom20Div").hide();
+            }
         }
     })
 }
@@ -141,19 +141,4 @@ function etitGroud() {
     }, function (result) {
 
     })
-}
-
-function mykeyup() {
-    var member_phone = $("#member_phone").val();
-    var phones = member_phone.split(/[\r\n]/g);
-    var myreg = /^[1][3,4,5,7,8,9][0-9]{9}$/;
-    var areg = /^0\d{2,3}-?\d{7,8}$/;
-    for (i = 0; i < phones.length; i++) {
-        if (!myreg.test(phones[i])) {
-            if (!areg.test(phones[i])) {
-                layer.msg('号码"' + phones[i] + '"不正确!');
-                break;
-            }
-        }
-    }
 }

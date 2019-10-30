@@ -15,11 +15,6 @@
     <link rel="stylesheet" th:href="@{/client/threenets/css/MyPlus.css}">
     <link rel="stylesheet" th:href="@{/client/threenets/css/Add.css}">
     <script type="text/javascript" th:src="@{/public/js/jquery.min.js}"></script>
-    <style>
-        .layui-input-block {
-            text-align: right;
-        }
-    </style>
 </head>
 
 <body>
@@ -27,7 +22,7 @@
     <div id="newBlocPage">
         <div class="newBlocPage-con1 clear">
             <input class="input_css1" type="text" required lay-verify="required" name="companyName" id="companyName"
-                   maxlength="32" autocomplete="off">
+                   maxlength="32" autocomplete="off" onblur="verificationName()">
             <h6><i style="color: red">*</i>集团名称</h6>
         </div>
         <div class="newBlocPage-con2 clear">
@@ -35,11 +30,54 @@
                    maxlength="32" autocomplete="off">
             <h6><i style="color: red">*</i>联 系 人</h6>
         </div>
-        <div class="newBlocPage-con3 clear">
-            <input class="input_css1" type="number" required lay-verify="required" name="linkTel" id="linkTel"
-                   maxlength="11" autocomplete="off">
-            <h6><i style="color: red">*</i>联系电话</h6>
+        <div class="newBlocPage-con4 clear">
+            <div class="right-newBlocPage-con4">
+                <div class="prompt">
+                    温馨提示：</br>
+                    1.若要添加多个号码，号码之间使用“换行符（回车）”分隔，单次最多支持20个用户。</br>
+                    2.当输入框号码后面出现"#错误消息"，比如"#号码不正确"时，代表该行的号码格式错误，需要修改。修改完成后请注意去掉"#错误消息"的标识。
+                </div>
+            </div>
+            <textarea onchange="verificationTels()" name="memberTels" id="memberTels" required
+                      lay-verify="required"></textarea>
+            <h6><i style="color: red">*</i>成员号码</h6>
         </div>
+        <div id="qualificationDiv">
+            <div class="newBlocPage-con5 clear">
+                <div class="file_css2">
+                    <div class="show_input_file" id="showqyzz5"></div>
+                    <div class="file_css_button zizhi">企业资质</div>
+                    <input type="file" class="input_file" id="businessLicense" name="businessLicense" required multiple="multiple" accept="image/*">
+                    <input type="hidden" id="creditFile" name="creditFile" value="">
+                </div>
+                <h6><i style="color: red">*</i>上传企业资质</h6>
+            </div>
+        </div>
+        <div id="protocolTelecom10Div">
+            <div class="newBlocPage-con6 clear">
+                <div class="file_css2">
+                    <div class="show_input_file" id="showProtocolTelecom10"></div>
+                    <div class="file_css_button queren10">电信10元协议证书</div>
+                    <input type="file" class="input_file" id="protocolTelecom10File" name="protocolTelecom10File" required multiple="multiple" accept="image/*">
+                    <input type="hidden" name="protocolTelecom10" id="protocolTelecom10" value="">
+                </div>
+                <h6><i style="color: red"></i>电信10元协议证书</h6>
+            </div>
+        </div>
+        <div id="protocolTelecom20Div">
+            <div class="newBlocPage-con6 clear">
+                <div class="file_css2">
+                    <div class="show_input_file" id="showProtocolTelecom20"></div>
+                    <div class="file_css_button queren20">电信20元协议证书</div>
+                    <input type="file" class="input_file" id="protocolTelecom20File" name="protocolTelecom20File" required multiple="multiple" accept="image/*">
+                    <input type="hidden" name="protocolTelecom20" id="protocolTelecom20" value="">
+                </div>
+                <h6><i style="color: red"></i>电信20元协议证书</h6>
+            </div>
+        </div>
+        <input type="hidden" id="folderName" name="folderName">
+        <input type="hidden" id="tels" name="tels">
+        <input type="hidden" id="telNum" name="telNum">
         <div id="tijiao" class="newBlocPage-button" lay-submit lay-filter="formDemo">确定提交</div>
     </div>
 </form>
@@ -47,16 +85,132 @@
 </body>
 <div th:include="threenets/kedas/kedasites/common/include::footer"></div>
 <script>
+    //页面初始化
+    $(document).ready(function () {
+        $("#protocolTelecom10Div").hide();
+        $("#protocolTelecom20Div").hide();
+        $("#companyName").focus();
+    });
+
+    function verificationName() {
+        if ($("#companyName").val() == '' || $("#companyName").val() == null) {
+            $("#companyName").focus();
+            layer.msg("集团名称不能为空！");
+            return
+        }
+        AjaxPost("/threenets/clcy/isItRedundantByName", {
+            "companyName": $("#companyName").val(),
+        }, function (result) {
+            console.log(result)
+            if (result.code == 500) {
+                layer.msg(result.msg);
+                $("#companyName").focus();
+            }else{
+                $("#folderName").val(result.data);
+            }
+        })
+    }
+
+    function verificationTels() {
+        var member_phone = $("#memberTels").val();
+        if ($("#memberTels").val() == '' || $("#memberTels").val() == null) {
+            $("#memberTels").focus();
+            layer.msg("成员号码不能为空！");
+            return
+        }
+        var phones = member_phone.split(/[\r\n]/g);
+        var tels = "";
+        for (i = 0; i < phones.length; i++) {
+            tels = phones[i] + "," + tels;
+        }
+        $("#tels").val(tels);
+        AjaxPost("/threenets/clcy/formatPhoneNumber", {
+            "tels": tels,
+        }, function (result) {
+            if (result.code == 500) {
+                layer.msg(result.msg);
+                $("#memberTels").focus();
+            } else {
+                $("#telNum").val(result.data)
+                if (result.data > 0) {
+                    $("#protocolTelecom10Div").show();
+                    $("#protocolTelecom20Div").show();
+                }else{
+                    $("#protocolTelecom10Div").hide();
+                    $("#protocolTelecom20Div").hide();
+                }
+            }
+        })
+    }
+    //上传企业资质
+    $("form").on("change", "#businessLicense", function (e) {
+        $(".zizhi").html(this.value);
+        uploadFile("businessLicense")
+    })
+    //上传客户确认函
+    $("form").on("change", "#protocolTelecom10File", function (e) {
+        $(".queren10").html(this.value);
+        uploadFile("protocolTelecom10")
+    })
+    $("form").on("change", "#protocolTelecom20File", function (e) {
+        $(".queren20").html(this.value);
+        uploadFile("protocolTelecom20")
+    })
+    //上传文件
+    function uploadFile(url) {
+        var layuiLoding = layer.load(0, { //icon支持传入0-2
+            time:false,
+            shade: [0.5, '#9c9c9c'], //0.5透明度的灰色背景
+            content: '文件上传中...',
+            success: function (layero) {
+                layero.find('.layui-layer-content').css({
+                    'padding': '39px 10px',
+                    'width': '100px'
+                });
+            }
+        });
+        $.ajax({
+            url: '/system/upload/' + url,
+            type: 'POST',
+            cache: false,
+            data: new FormData($('#Form')[0]),
+            processData: false,
+            contentType: false
+        }).done(function (res) {
+            layer.close(layuiLoding);
+            layer.msg(res.msg, {icon: 1, time: 1000});
+            if (url === "protocolTelecom20") {
+                $("#protocolTelecom20").val(res.data)
+            }else if (url === "protocolTelecom10"){
+                $("#protocolTelecom10").val(res.data)
+            } else{
+                $("#creditFile").val(res.data)
+            }
+        }).fail(function (res) {
+            layer.msg(res.msg, {icon: 2, time: 1000});
+        });
+    }
+
     //表单提交
     layui.use('form', function () {
         var form = layui.form;
         //监听提交
         form.on('submit(formDemo)', function (data) {
-            // layer.msg(JSON.stringify(data.field));
+            if ($("#telNum").val() > 0){
+                if($("#protocolTelecom10").val()=="" && $("#protocolTelecom20").val()==""){
+                    layer.msg("含有电信成员必须上传电信业务单！", {icon: 5, time: 3000});
+                }
+            }
+            layer.msg(JSON.stringify(data.field));
             AjaxPost("/threenets/clcy/addKedaOrder", {
                 companyName: data.field.companyName,
                 linkMan: data.field.linkMan,
-                linkTel: data.field.linkTel
+                creditFile: data.field.creditFile,
+                protocol: data.field.protocol,
+                tels: data.field.tels,
+                folderName:data.field.folderName,
+                protocolTelecom10:data.field.protocolTelecom10,
+                protocolTelecom20:data.field.protocolTelecom20
             }, function (res) {
                 if (res.code == 200) {
                     layer.msg(res.msg, {icon: 6, time: 3000});

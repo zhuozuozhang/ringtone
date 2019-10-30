@@ -90,7 +90,7 @@ public class KedaChildOrderController {
         long startTime = System.currentTimeMillis();//获取当前时间
         AjaxResult result = new AjaxResult();
         try {
-            result = kedaChildOrderService.batchInsertKedaChildOrder(kedaChildOrder);
+            result = kedaChildOrderService.batchInsertKedaChildOrderNew(kedaChildOrder);
         } catch (Exception e) {
             log.error("批量添加疑难杂单子级订单失败------>", e);
         } finally {

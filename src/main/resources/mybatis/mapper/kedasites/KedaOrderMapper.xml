@@ -195,7 +195,7 @@
         select * from tb_keda_order
         WHERE 1=1
         <if test="companyName != null">
-           and  company_name = #{companyName,jdbcType=VARCHAR}
+            and  company_name = #{companyName,jdbcType=VARCHAR}
         </if>
         <if test="linkTel != null">
             and link_tel = #{linkTel,jdbcType=VARCHAR}

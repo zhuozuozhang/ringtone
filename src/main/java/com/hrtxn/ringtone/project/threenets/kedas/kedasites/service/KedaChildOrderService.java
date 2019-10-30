@@ -15,8 +15,10 @@ import com.hrtxn.ringtone.project.system.json.JuhePhoneResult;
 import com.hrtxn.ringtone.project.system.user.domain.UserVo;
 import com.hrtxn.ringtone.project.system.user.mapper.UserMapper;
 import com.hrtxn.ringtone.project.threenets.kedas.kedasites.domain.KedaChildOrder;
+import com.hrtxn.ringtone.project.threenets.kedas.kedasites.domain.KedaOrder;
 import com.hrtxn.ringtone.project.threenets.kedas.kedasites.domain.KedaRing;
 import com.hrtxn.ringtone.project.threenets.kedas.kedasites.mapper.KedaChildOrderMapper;
+import com.hrtxn.ringtone.project.threenets.kedas.kedasites.mapper.KedaOrderMapper;
 import com.hrtxn.ringtone.project.threenets.kedas.kedasites.mapper.KedaRingMapper;
 import com.hrtxn.ringtone.project.threenets.threenet.domain.PlotBarPhone;
 import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreenetsChildOrder;
@@ -44,6 +46,8 @@ import java.util.List;
 @Slf4j
 public class KedaChildOrderService {
 
+    @Autowired
+    private KedaOrderMapper KedaOrderMapper;
     @Autowired
     private KedaChildOrderMapper kedaChildOrderMapper;
     @Autowired
@@ -185,11 +189,10 @@ public class KedaChildOrderService {
      */
     public AjaxResult getPhoneInfo(Integer id) throws IOException {
         if (!StringUtils.isNotNull(id) || id <= 0) return AjaxResult.error("参数格式不正确！");
-        BaseRequest baseRequest = new BaseRequest();
-        baseRequest.setId(id);
-        List<KedaChildOrder> keDaChildOrderBacklogList = kedaChildOrderMapper.getKeDaChildOrderBacklogList(null, baseRequest);
-        if (keDaChildOrderBacklogList.size() <= 0) return AjaxResult.error("无数据！");
-        return kedaApi.getMsg(keDaChildOrderBacklogList.get(0).getLinkTel(), id);
+        KedaChildOrder childOrder = kedaChildOrderMapper.selectByPrimaryKey(id);
+        KedaOrder kedaOrder = KedaOrderMapper.getKedaOrder(childOrder.getOrderId());
+        if (childOrder == null) return AjaxResult.error("无数据！");
+        return kedaApi.getMsg(childOrder, kedaOrder.getKedaId());
     }
 
     /**
@@ -204,9 +207,10 @@ public class KedaChildOrderService {
         BaseRequest baseRequest = new BaseRequest();
         baseRequest.setOrderId(id);
         List<KedaChildOrder> list = kedaChildOrderMapper.getKeDaChildOrderBacklogList(null, baseRequest);
+        KedaOrder kedaOrder = KedaOrderMapper.getKedaOrder(id);
         if (list.size() <= 0) return AjaxResult.error("无数据！");
         for (int i = 0; i < list.size(); i++) {
-            AjaxResult msg = kedaApi.getMsg(list.get(i).getLinkTel(), list.get(i).getId());
+            AjaxResult msg = kedaApi.getMsg(list.get(i), kedaOrder.getKedaId());
             if ("刷新失败！".equals(msg.get("msg").toString())){
                 return msg;
             }
@@ -488,9 +492,11 @@ public class KedaChildOrderService {
         BaseRequest b = new BaseRequest();
         b.setId(ringId);
         List<KedaRing> kedaRingList = kedaRingMapper.getKedaRingList(null, b);
-        if (kedaRingList.size() <= 0 || StringUtils.isEmpty(kedaRingList.get(0).getRingNum()))
+        if (kedaRingList.size() <= 0 || StringUtils.isEmpty(kedaRingList.get(0).getRingNum())) {
             return AjaxResult.error("参数格式不正确！");
-        AjaxResult ajaxResult = kedaApi.setRing(kedaRingList.get(0).getRingNum(), employeeId, linkTel);
+        }
+        KedaOrder kedaOrder = KedaOrderMapper.getKedaOrder(kedaRingList.get(0).getOrderId());
+        AjaxResult ajaxResult = kedaApi.setRing(kedaRingList.get(0).getRingNum(), employeeId, linkTel,kedaOrder.getKedaId());
         if ((int) ajaxResult.get("code") == 200) {
             // 执行修改子订单信息
             b.setId(childOrderId);
@@ -514,7 +520,7 @@ public class KedaChildOrderService {
      * @return
      * @throws Exception
      */
-    public AjaxResult batchInsertKedaChildOrderNew(KedaChildOrder kedaChildOrder) throws Exception {
+    public AjaxResult batchInsertKedaChildOrderNew(KedaChildOrder kedaChildOrder) {
         if (!StringUtils.isNotNull(kedaChildOrder)) {return AjaxResult.error("请输入成员号码!");}
         if (!StringUtils.isNotEmpty(kedaChildOrder.getLinkTel())) {return AjaxResult.error("成员号码不能为空!");}
         String[] phone = kedaChildOrder.getTels().split(",");
@@ -539,7 +545,7 @@ public class KedaChildOrderService {
             childOrder.setLinkTel(p);
             childOrder.setLinkMan(p);
             childOrder.setCreateTime(new Date());
-            childOrder.setIsMonthly(0);
+            childOrder.setIsMonthly(9);
             childOrder.setIsRingtoneUser(1);
             childOrder.setOrderId(kedaChildOrder.getOrderId());
             childOrder.setUserId(ShiroUtils.getSysUser().getId());
@@ -548,9 +554,9 @@ public class KedaChildOrderService {
             kedaChildOrderMapper.insertKedaChildOrder(kedaChildOrder);
             childOrders.add(childOrder);
         }
-        r.notify("batchInsertKedaorder", Event.wrap(childOrders));
+        KedaOrder kedaOrder = KedaOrderMapper.getKedaOrder(kedaChildOrder.getOrderId());
+        r.notify("uploadOrderInfo", Event.wrap(kedaOrder));
         // 执行添加子订单操作
         return AjaxResult.success(true, "创建子订单成功！");
     }
 }
-

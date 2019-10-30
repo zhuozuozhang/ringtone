@@ -39,8 +39,6 @@ public class KedaOrderController {
     @ResponseBody
     @PostMapping("getKeDaOrderList")
     public AjaxResult getKeDaOrderList(Page page, BaseRequest baseRequest) {
-//        KedaApi kedaApi = new KedaApi();
-//        kedaApi.editGroup(null);
         return kedaOrderService.getKeDaOrderList(page, baseRequest);
     }
 
@@ -66,7 +64,7 @@ public class KedaOrderController {
      */
     @GetMapping("toNumberList/{id}/{name}")
     public String toNumberList(@PathVariable Integer id, @PathVariable String name, ModelMap map) {
-        //kedaOrderService.updateBusinessStatus(id,name);
+        kedaOrderService.updateBusinessStatus(id,name);
         if (StringUtils.isNotNull(id) && id != 0) {
             map.put("id", id);
             map.put("name", name);
@@ -96,7 +94,7 @@ public class KedaOrderController {
     @ResponseBody
     @Log(title = "添加疑难杂单父级订单", businessType = BusinessType.INSERT, operatorLogType = OperatorLogType.KEDASITES)
     public AjaxResult addKedaOrder(KedaOrder kedaOrder) throws Exception {
-        return kedaOrderService.addKedaOrder(kedaOrder);
+        return kedaOrderService.addKedaOrderNew(kedaOrder);
     }
 
     /**
