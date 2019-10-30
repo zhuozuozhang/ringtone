@@ -10,6 +10,7 @@ ringtone:
   profile: C:/profile
   #文件访问地址
   profile-url: http://120.27.226.14/
+#  profile-url: http://139.217.118.184/
 #  profile-url: http://127.0.0.1/
   # 获取ip地址开关
   addressEnabled: true

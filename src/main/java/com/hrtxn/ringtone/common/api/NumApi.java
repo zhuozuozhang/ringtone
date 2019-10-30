@@ -64,6 +64,7 @@ public class NumApi {
 //    @Value("${ringtone.profile-url}")
 //    private String profileUrl = "http://272p922i24.qicp.vip:24914/";
     private String profileUrl ="http://120.27.226.14/";
+//    private String profileUrl ="http://139.217.118.184/";
 
     public AjaxResult getCgiToken() throws IOException {
         HashMap map = new HashMap();
@@ -160,7 +161,9 @@ public class NumApi {
                 map.put("occupyCompany",numcertificationOrder.getCompanyName());
             }
             if(StringUtils.isNotEmpty(numcertificationOrder.getProvince())){
-                map.put("useProvince",numcertificationOrder.getProvince());
+                map.put("useProvince",numcertificationOrder.getProvince(
+
+                ));
             }
             if(StringUtils.isNotEmpty(numcertificationOrder.getCity())){
                 map.put("useCity",numcertificationOrder.getCity());
