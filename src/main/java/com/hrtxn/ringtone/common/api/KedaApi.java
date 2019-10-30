@@ -58,8 +58,8 @@ public class KedaApi {
 
     private final static String kedaUserId = "2330109049291018";
 
-    private final static String profileUrl = "http://272p922i24.qicp.vip:24914/";
-//    private String profileUrl ="http://120.27.226.14/";
+//    private final static String profileUrl = "http://272p922i24.qicp.vip:24914/";
+    private String profileUrl ="http://120.27.226.14/";
 
     /**
      * 创建疑难杂单订单
