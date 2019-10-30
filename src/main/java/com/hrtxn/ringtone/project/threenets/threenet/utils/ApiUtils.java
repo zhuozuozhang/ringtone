@@ -875,7 +875,7 @@ public class ApiUtils {
         if (operate == 1) { // 移动
             String result = miguApi.setCircleRingById4User(phones, threenetsRing.getOperateRingId(), threenetsRing.getOperateId());
             if (!result.contains("msg")){
-                return AjaxResult.error("您的请求已受理，请稍后在【商户列表 ->号码管理】中点击刷新操作查看!");
+                return AjaxResult.success("您的请求已受理，请稍后在【商户列表 ->号码管理】中点击刷新操作查看!");
             }
             RingSetResult rsr = (RingSetResult) JsonUtil.getObject4JsonString(result, RingSetResult.class);
             if (rsr.isSuccess()) {
