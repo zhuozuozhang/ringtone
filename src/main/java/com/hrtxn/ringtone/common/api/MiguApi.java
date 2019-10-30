@@ -693,7 +693,7 @@ public class MiguApi implements Serializable {
         builder.addTextBody("singer", "");
         builder.addTextBody("songName", "");
         builder.addTextBody("RingContentController", ring.getRingContent(), ContentType.TEXT_PLAIN.withCharset("UTF-8"));
-        builder.addTextBody("autoSetType", "0");
+        builder.addTextBody("autoSetType", "1");
         HttpEntity httpEntity = builder.build();
         httppost.setEntity(httpEntity);
         HttpResponse response = httpclient.execute(httppost);
