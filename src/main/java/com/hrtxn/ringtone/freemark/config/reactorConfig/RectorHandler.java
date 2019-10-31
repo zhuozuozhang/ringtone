@@ -138,7 +138,7 @@ public class RectorHandler {
             String status = kedaApi.getOrderStatusByName(kedaOrder.getCompanyName());
             String id = kedaApi.getOrderIdByName(kedaOrder.getCompanyName());
             kedaOrder.setKedaId(id);
-            if (status.equals("1")){
+            if ("1".equals(status)){
                 kedaOrder.setStatus("审核通过");
                 for (int i = 0; i < list.size(); i++) {
                     KedaChildOrder kedaChildOrder = list.get(i);
@@ -157,7 +157,7 @@ public class RectorHandler {
                     // 执行修改子级订单操作
                     kedaChildOrderMapper.updatKedaChildOrder(kedaChildOrder);
                 }
-            }else if (status.equals("2")){
+            }else if ("2".equals(status)){
                 kedaOrder.setStatus("待审核");
                 for (int i = 0; i < list.size(); i++) {
                     KedaChildOrder kedaChildOrder = list.get(i);
