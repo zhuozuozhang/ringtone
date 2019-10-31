@@ -603,7 +603,7 @@ public class ApiUtils {
                         }
                         //如果是空，说明商户没有创建成功
                     }
-                    String result = null; //swxlApi.remindOrderCrbtAndMonth(t.getLinkmanTel(), t.getOperateId(), false);
+                    String result = swxlApi.remindOrderCrbtAndMonth(t.getLinkmanTel(), t.getOperateId(), false);
                     if (StringUtils.isNotEmpty(result)) {
                         SwxlPubBackData info = (SwxlPubBackData) JsonUtil.getObject4JsonString(result, SwxlPubBackData.class);
                         if (!"000000".equals(info.getRecode()) || !info.isSuccess()) {
@@ -2401,5 +2401,14 @@ public class ApiUtils {
         } catch (NoLoginException e) {
             e.printStackTrace();
         }
+    }
+
+    public void updateOrderCertification(ThreeNetsOrderAttached attached) {
+        //获取客户信息
+        String s = mcardApi.updateUser(attached);
+        //处理客户信息
+        String auserLinkName = "";
+        String auserPhone = "";
+        mcardApi.updateUserAuth(attached, auserLinkName, auserPhone);
     }
 }

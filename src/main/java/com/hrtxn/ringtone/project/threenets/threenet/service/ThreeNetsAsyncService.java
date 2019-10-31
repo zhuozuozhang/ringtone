@@ -168,7 +168,7 @@ public class ThreeNetsAsyncService {
                 }
                 if (operator == 3) {
                     order.setMianduan("0");
-                    if (StringUtils.isNotEmpty(request.getMianduan()) && request.getMianduan().equals("是")) {
+                    if ((StringUtils.isNotEmpty(request.getMianduan()) && request.getMianduan().equals("是"))||StringUtils.isNotEmpty(attached.getAvoidShortAgreement())) {
                         order.setMianduan("1");
                         for (int i = 0; i < list.size(); i++) {
                             list.get(i).setIsExemptSms(Const.IS_EXEMPT_SMS_YES);

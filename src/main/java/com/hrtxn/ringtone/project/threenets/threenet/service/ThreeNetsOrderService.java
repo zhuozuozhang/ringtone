@@ -336,4 +336,25 @@ public class ThreeNetsOrderService {
         threeNetsAsyncService.saveOnlineOrder(threenetsOrder, attached, order);
         return AjaxResult.success("保存成功！");
     }
+
+    /**
+     * 电信重新上传审核文件
+     *
+     * @param request
+     * @return
+     */
+    public AjaxResult updateOrderCertification(BaseRequest request) {
+        ThreeNetsOrderAttached attached = threeNetsOrderAttachedService.selectByParentOrderId(request.getParentOrderId());
+        ApiUtils apiUtils = new ApiUtils();
+        if (StringUtils.isNotEmpty(request.getCompanyUrl())){
+            String path = apiUtils.mcardUploadFile(new File(RingtoneConfig.getProfile() + request.getCompanyUrl()), attached.getMcardDistributorId());
+            attached.setBusinessLicense(path);
+        }
+        if (StringUtils.isNotEmpty(request.getClientUrl())){
+            String path = apiUtils.mcardUploadFile(new File(RingtoneConfig.getProfile() + request.getClientUrl()), attached.getMcardDistributorId());
+            attached.setConfirmLetter(path);
+        }
+        apiUtils.updateOrderCertification(attached);
+        return AjaxResult.success("d");
+    }
 }

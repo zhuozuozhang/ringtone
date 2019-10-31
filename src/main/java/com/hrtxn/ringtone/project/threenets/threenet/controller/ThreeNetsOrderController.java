@@ -141,5 +141,17 @@ public class ThreeNetsOrderController {
         }
     }
 
+    /**
+     * 修改电信认证文件
+     *
+     * @param request
+     * @return
+     */
+    @PostMapping("/threenets/updateOrderCertification")
+    @ResponseBody
+    @Log(title = "修改三网订单", businessType = BusinessType.UPDATE, operatorLogType = OperatorLogType.THREENETS)
+    public AjaxResult updateOrderCertification(BaseRequest request) {
+        return  threeNetsOrderService.updateOrderCertification(request);
+    }
 
 }
