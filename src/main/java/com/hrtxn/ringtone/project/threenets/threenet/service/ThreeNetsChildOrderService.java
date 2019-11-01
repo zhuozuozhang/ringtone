@@ -648,4 +648,24 @@ public class ThreeNetsChildOrderService {
         }
         return apiUtils.openingBusiness(threenetsChildOrder);
     }
+
+    /**
+     * 查询手机号个数
+     *
+     * @param phone
+     * @return
+     */
+    public int getThreenetsChildOrderByPhone(String phone) {
+        return threenetsChildOrderMapper.getThreenetsChildOrderByPhone(phone);
+    }
+
+    /**
+     * 无分页查询子订单
+     *
+     * @param childOrder
+     * @return
+     */
+    public List<ThreenetsChildOrder> listByParamNoPage(ThreenetsChildOrder childOrder) {
+        return threenetsChildOrderMapper.listByParamNoPage(childOrder);
+    }
 }

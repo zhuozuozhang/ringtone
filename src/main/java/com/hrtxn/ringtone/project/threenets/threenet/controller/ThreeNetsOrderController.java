@@ -86,7 +86,7 @@ public class ThreeNetsOrderController {
      */
     @PostMapping("/threenets/verificationName")
     @ResponseBody
-    public AjaxResult verificationName(String companyName){
+    public AjaxResult verificationName(String companyName) {
         return threeNetsOrderService.isRepetitionByName(companyName);
     }
 
@@ -103,7 +103,7 @@ public class ThreeNetsOrderController {
         long startTime = System.currentTimeMillis();//获取当前时间
         try {
             return threeNetsOrderService.save(order);
-        }catch (Exception e){
+        } catch (Exception e) {
             log.error("保存三网订单失败 方法：saveThreeNetsOrder 错误信息", e);
             return AjaxResult.error("添加失败");
         } finally {
@@ -113,7 +113,6 @@ public class ThreeNetsOrderController {
 
 
     /**
-     *
      * @return
      */
     @GetMapping("/threenets/checkPhone")
@@ -135,11 +134,28 @@ public class ThreeNetsOrderController {
     public AjaxResult deleteThreeNetsOrder(Integer id) {
         try {
             return threeNetsOrderService.delete(id);
-        }catch (Exception e){
+        } catch (Exception e) {
             log.error("删除订单及子订单 方法：deleteThreeNetsOrder 错误信息", e);
             return AjaxResult.error("删除失败");
         }
     }
 
+    /**
+     * 修改电信认证文件
+     *
+     * @param request
+     * @return
+     */
+    @PostMapping("/threenets/updateOrderCertification")
+    @ResponseBody
+    @Log(title = "修改三网订单", businessType = BusinessType.UPDATE, operatorLogType = OperatorLogType.THREENETS)
+    public AjaxResult updateOrderCertification(BaseRequest request) {
+        try {
+            return threeNetsOrderService.updateOrderCertification(request);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return AjaxResult.error("商户认证文件提交审核失败！");
+        }
+    }
 
 }

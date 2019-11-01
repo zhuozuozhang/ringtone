@@ -603,7 +603,7 @@ public class ApiUtils {
                         }
                         //如果是空，说明商户没有创建成功
                     }
-                    String result = null; //swxlApi.remindOrderCrbtAndMonth(t.getLinkmanTel(), t.getOperateId(), false);
+                    String result = swxlApi.remindOrderCrbtAndMonth(t.getLinkmanTel(), t.getOperateId(), false);
                     if (StringUtils.isNotEmpty(result)) {
                         SwxlPubBackData info = (SwxlPubBackData) JsonUtil.getObject4JsonString(result, SwxlPubBackData.class);
                         if (!"000000".equals(info.getRecode()) || !info.isSuccess()) {
@@ -2115,7 +2115,7 @@ public class ApiUtils {
             if (StringUtils.isNotEmpty(result)) {
                 SwxlPubBackData info = (SwxlPubBackData) JsonUtil.getObject4JsonString(result, SwxlPubBackData.class);
                 if (!"000000".equals(info.getRecode()) || !info.isSuccess()) {
-                    message = "开通业务失败!";
+                    message = "正在审核中，请稍等!";
                 }
             }
         } catch (IOException e) {
@@ -2401,5 +2401,34 @@ public class ApiUtils {
         } catch (NoLoginException e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * 修改电信商户认证
+     *
+     * @param attached
+     */
+    public void updateOrderCertification(ThreeNetsOrderAttached attached) {
+        //处理客户信息
+        String auserLinkName = "";
+        String auserPhone = "";
+        //获取客户信息
+        String result = mcardApi.updateUser(attached);
+        if (StringUtils.isNotEmpty(result)) {
+            Document doc = Jsoup.parse(result);
+            Elements contents = doc.getElementsByClass("auth-info");
+            Elements datas = contents.get(0).getElementsByClass("form-control");
+            for (int i = 0; i < datas.size(); i++) {
+                Element element = datas.get(i);
+                String label = element.getElementsByTag("label").text();
+                if (label.equals("手机号码：")){
+                    auserPhone = element.getElementsByTag("input").val();
+                }
+                if (label.equals("联系人：")){
+                    auserLinkName = element.getElementsByTag("input").val();
+                }
+            }
+        }
+        mcardApi.updateUserAuth(attached, auserLinkName, auserPhone);
     }
 }

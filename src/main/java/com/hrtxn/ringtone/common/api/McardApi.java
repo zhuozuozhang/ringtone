@@ -57,6 +57,8 @@ public class McardApi {
 
     private static String code_url = "https://mcard.imusic.cn/code/imageCode";
 
+    private static String update_user = "https://mcard.imusic.cn/auth/updateUser";
+    private static String update_user_auth = "https://mcard.imusic.cn/auth/updateUserAuth";
     /**
      * 电信GET封装
      *
@@ -507,4 +509,52 @@ public class McardApi {
         return result;
     }
 
+    /**
+     * 获取商户信息
+     *
+     * @param att
+     * @return
+     */
+    public String updateUser(ThreeNetsOrderAttached att){
+        String url = update_user + "?userId=" + att.getMcardId();
+        return sendGet(url, att.getMcardDistributorId());
+    }
+
+    /**
+     * 修改商户信息
+     *
+     * @param att
+     * @return
+     */
+    public McardAddGroupRespone updateUserAuth(ThreeNetsOrderAttached att,String auserLinkName,String auserPhone){
+        McardAddGroupRespone groupRespone = new McardAddGroupRespone();
+        try {
+            Map<String, String> map = new HashMap<>();
+            map.put("userId", att.getMcardId());
+            map.put("auserLinkName", auserLinkName);
+            map.put("auserBlicenceUrl", att.getBusinessLicense());
+            map.put("auserPhone", auserPhone);
+            map.put("auserCardidPath", "");
+            map.put("auserFilePath", att.getConfirmLetter());
+            String result = sendPost(map, update_user_auth, att.getMcardDistributorId());
+            log.info("电信修改商户结果--->" + result);
+            JSONObject jsonObject = JSONObject.fromObject(result);
+            String code = jsonObject.getString("code");
+            if (code.equals("0000")) {
+                JSONObject data = jsonObject.getJSONObject("data");
+                groupRespone = (McardAddGroupRespone) JSONObject.toBean(data, McardAddGroupRespone.class);
+                groupRespone.setCode(jsonObject.getString("code"));
+                groupRespone.setMessage(jsonObject.getString("message"));
+            } else {
+                groupRespone.setCode(Const.ILLEFAL_AREA);
+                groupRespone.setMessage(jsonObject.getString("message"));
+            }
+        } catch (Exception e) {
+            log.info("电信添加商户失败" + e);
+            groupRespone.setCode(Const.ILLEFAL_AREA);
+            groupRespone.setMessage("添加失败");
+        } finally {
+            return groupRespone;
+        }
+    }
 }

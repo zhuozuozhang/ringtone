@@ -64,9 +64,6 @@ public class ThreeNetsOrderService {
     @Autowired
     private ThreeNetsAsyncService threeNetsAsyncService;
 
-    @Autowired
-    private ThreenetsChildOrderMapper threenetsChildOrderMapperl;
-
     /**
      * 根据id查询
      *
@@ -220,7 +217,7 @@ public class ThreeNetsOrderService {
                 }else{
                     list.add(phone) ;
                 }
-                int count = threenetsChildOrderMapperl.getThreenetsChildOrderByPhone(phone);
+                int count = threeNetsChildOrderService.getThreenetsChildOrderByPhone(phone);
                 if(count>0){
                     return phone + "号码重复！";
                 }
@@ -335,5 +332,38 @@ public class ThreeNetsOrderService {
         //保存线上
         threeNetsAsyncService.saveOnlineOrder(threenetsOrder, attached, order);
         return AjaxResult.success("保存成功！");
+    }
+
+    /**
+     * 电信重新上传审核文件
+     *
+     * @param request
+     * @return
+     */
+    public AjaxResult updateOrderCertification(BaseRequest request) throws Exception{
+        ThreenetsOrder order = threenetsOrderMapper.selectByPrimaryKey(request.getParentOrderId());
+        ThreeNetsOrderAttached attached = threeNetsOrderAttachedService.selectByParentOrderId(request.getParentOrderId());
+        ApiUtils apiUtils = new ApiUtils();
+        //验证客户修改了认证文件
+        if (StringUtils.isNotEmpty(request.getCompanyUrl()) && request.getCompanyUrl().contains(order.getFolderName())){
+            String path = apiUtils.mcardUploadFile(new File(RingtoneConfig.getProfile() + request.getCompanyUrl()), attached.getMcardDistributorId());
+            attached.setBusinessLicense(path);
+        }
+        if (StringUtils.isNotEmpty(request.getClientUrl()) && request.getClientUrl().contains(order.getFolderName())){
+            String path = apiUtils.mcardUploadFile(new File(RingtoneConfig.getProfile() + request.getClientUrl()), attached.getMcardDistributorId());
+            attached.setConfirmLetter(path);
+        }
+        if (StringUtils.isNotEmpty(attached.getMcardId())){
+            apiUtils.updateOrderCertification(attached);
+        }else{
+//            ThreenetsChildOrder childOrder = new ThreenetsChildOrder();
+//            childOrder.setParentOrderId(request.getParentOrderId());
+//            childOrder.setOperator(Const.OPERATORS_TELECOM);
+//            childOrder.setStatus(Const.PENDING_REVIEW);
+//            List<ThreenetsChildOrder> list = threeNetsChildOrderService.listByParamNoPage(childOrder);
+            //不存在商户id表明商户不存在
+            apiUtils.addOrderByDx(order,attached);
+        }
+        return AjaxResult.success("商户认证以重新提交审核，请等待审核完成！");
     }
 }

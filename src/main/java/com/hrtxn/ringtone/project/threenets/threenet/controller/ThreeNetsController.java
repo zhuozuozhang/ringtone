@@ -8,6 +8,7 @@ import com.hrtxn.ringtone.common.utils.MD5Utils;
 import com.hrtxn.ringtone.common.utils.ShiroUtils;
 import com.hrtxn.ringtone.common.utils.StringUtils;
 import com.hrtxn.ringtone.freemark.config.logConfig.Log;
+import com.hrtxn.ringtone.freemark.config.systemConfig.RingtoneConfig;
 import com.hrtxn.ringtone.freemark.enums.BusinessType;
 import com.hrtxn.ringtone.freemark.enums.OperatorLogType;
 import com.hrtxn.ringtone.project.system.notice.domain.Notice;
@@ -285,9 +286,9 @@ public class ThreeNetsController {
      * @return
      */
     @GetMapping("/threenets/threeNetsAnnunciate")
-    public String getThreeNetsAnnunciate(ModelMap map,String type) {
+    public String getThreeNetsAnnunciate(ModelMap map, String type) {
         try {
-            String model = StringUtils.isNotEmpty(type)?Const.MODUL_KEDA:Const.MODUL_THREENETS;
+            String model = StringUtils.isNotEmpty(type) ? Const.MODUL_KEDA : Const.MODUL_THREENETS;
             List<Notice> noticeList = noticeService.findNoticeListByModul(model);
             Notice notice = noticeList.size() > 0 ? noticeList.get(0) : new Notice();
             map.put("noticeList", noticeList);
@@ -300,6 +301,7 @@ public class ThreeNetsController {
 
     /**
      * 新公告列表
+     *
      * @param map
      * @param type
      * @param page
@@ -309,33 +311,33 @@ public class ThreeNetsController {
      * @return
      */
     @GetMapping("/threenets/threeNotice/{type}/{page}/{pageSize}/{noticeType}")
-    public String threeNotice(ModelMap map, @PathVariable String type, @PathVariable Integer page,@PathVariable Integer pageSize
-            ,@PathVariable String noticeType, String noticeTitle) {
+    public String threeNotice(ModelMap map, @PathVariable String type, @PathVariable Integer page, @PathVariable Integer pageSize
+            , @PathVariable String noticeType, String noticeTitle) {
         try {
             int pe = page;
-            Page p = new Page(page,pageSize);
-            if(p.getPage() == null){
-                p = new Page(1,5);
+            Page p = new Page(page, pageSize);
+            if (p.getPage() == null) {
+                p = new Page(1, 5);
             }
-            String model = StringUtils.isNotEmpty(type)?Const.MODUL_KEDA:Const.MODUL_THREENETS;
+            String model = StringUtils.isNotEmpty(type) ? Const.MODUL_KEDA : Const.MODUL_THREENETS;
             Notice notice = new Notice();
             notice.setNoticeModule(0);
             notice.setNoticeType(noticeType);
             notice.setNoticeTitle(noticeTitle);
             notice.setUserId(ShiroUtils.getSysUser().getId());
-            List<Notice> noticeList = noticeService.PageNoticeList(p,notice);
+            List<Notice> noticeList = noticeService.PageNoticeList(p, notice);
             map.put("noticeList", noticeList);
             // 获取公告数量
             int count = noticeService.pageNoticeCount(notice);
 //            map.put("count", count);
-            int pageCount = count/p.getPagesize();
-            if(count%p.getPagesize() != 0){
+            int pageCount = count / p.getPagesize();
+            if (count % p.getPagesize() != 0) {
                 pageCount = pageCount + 1;
             }
             map.put("pageCount", pageCount);
             map.put("page", pe);
-            map.put("noticeType",noticeType);
-            map.put("noticeTitle",noticeTitle);
+            map.put("noticeType", noticeType);
+            map.put("noticeTitle", noticeTitle);
 
         } catch (Exception e) {
             log.error("获取三网公告列表,方法：getThreeNetsAnnunciate,错误信息", e);
@@ -502,6 +504,7 @@ public class ThreeNetsController {
 
     /**
      * 跳转到移动商户页
+     *
      * @return
      */
     @GetMapping("/threenets/toMiguPage")
@@ -521,13 +524,24 @@ public class ThreeNetsController {
             ThreenetsOrder order = threeNetsChildOrderService.getOrderById(parentOrderId);
             ThreeNetsOrderAttached attached = threeNetsOrderAttachedService.selectByParentOrderId(parentOrderId);
             map.put("parentOrderId", parentOrderId);
-            map.put("attached",attached);
+            //"http://pic.ctmus.cn/pic.diy.v1/nets/mcard/DiyFile/image/2019/10/30/518800dd-587d-4165-8fa9-627598e9faea.jpg">
+            if (StringUtils.isNotEmpty(attached.getBusinessLicense())){
+                map.put("businessLicense", "http://pic.ctmus.cn/" + attached.getBusinessLicense());
+            }else{
+                map.put("businessLicense", "/public/images/addimg.png");
+            }
+            if (StringUtils.isNotEmpty(attached.getConfirmLetter())){
+                map.put("confirmLetter", "http://pic.ctmus.cn/" + attached.getConfirmLetter());
+            }else{
+                map.put("confirmLetter", "/public/images/addimg.png");
+            }
             if (order.getCompanyName().length() <= 6) {
                 map.put("companyName", order.getCompanyName());
             } else {
                 boolean result = order.getCompanyName().substring(order.getCompanyName().length() - 6).matches("[0-9]+");
                 map.put("companyName", result ? order.getCompanyName().substring(0, order.getCompanyName().length() - 6) : order.getCompanyName());
             }
+            map.put("folderName",order.getFolderName());
         } catch (Exception e) {
             log.error("获取集团名称失败 方法：toMerchantsPhonePage 错误信息：", e);
         }
