@@ -258,9 +258,6 @@ public class ThreeNetsService {
         if (attached != null) {
             outData.put("mobileStatus", StringUtils.isEmpty(attached.getMiguId()));
             outData.put("telecomStatus", StringUtils.isEmpty(attached.getMcardId()));
-            if (StringUtils.isNotEmpty(attached.getBusinessLicense()) && StringUtils.isNotEmpty(attached.getConfirmLetter())){
-                outData.put("telecomStatus", true);
-            }
             outData.put("unicomStatus", StringUtils.isEmpty(attached.getSwxlId()));
         }
         return AjaxResult.success(outData, "匹配成功");
