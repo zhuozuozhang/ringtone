@@ -103,4 +103,6 @@ public interface CertificationOrderMapper {
     List<CertificationOrder> getHangUpListsTheMonth(Integer userId);
 
     List<CertificationOrder> getHangUpListsToday(Integer userId);
+
+    void examine(CertificationOrder certificationOrder);
 }

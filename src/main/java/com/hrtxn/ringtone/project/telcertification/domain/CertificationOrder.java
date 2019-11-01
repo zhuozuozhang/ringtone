@@ -43,7 +43,7 @@ public class CertificationOrder implements Serializable {
     private Float unitPrice;
     //用户ID
     private Integer userId;
-    //号码认证订单状态（1.开通中/2.开通成功/3.开通失败/4.续费中/5.续费成功/6.续费失败）
+    //号码认证订单状态（1.审核中/2.开通中/3.审核失败/4.开通成功/5.续费成功/6.续费失败）
     private Integer telOrderStatus;
     //订单创建时间
     private Date telOrderTime;
@@ -57,4 +57,8 @@ public class CertificationOrder implements Serializable {
     private String statusName;
     //成员电话号
     private String phoneNum;
+
+    private String userName;
+
+    private String statusStr;
 }

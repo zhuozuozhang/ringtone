@@ -141,6 +141,27 @@ public class   TelCertificationController {
     }
 
     /**
+     * 商户审核
+     * @return
+     */
+    @GetMapping("/toTeldetailsOneExamine/{id}")
+    public String toTeldetailsOneExamine(@PathVariable Integer id, ModelMap map){
+        CertificationOrder telcerOrder = telCertificationService.getTelCerOrderById(id,map);
+        return "telcertification/examine";
+    }
+
+    /**
+     * 审核商户
+     * @param telcerOrder
+     * @return
+     */
+    @PostMapping("/examine")
+    @ResponseBody
+    public AjaxResult examine(CertificationOrder telcerOrder){
+        return telCertificationService.examine(telcerOrder);
+    }
+
+    /**
      * 进入添加商户页面
      * @return
      */
@@ -223,6 +244,7 @@ public class   TelCertificationController {
             return AjaxResult.error("保存失败");
         }
     }
+
 
     /**
      * 验证商户名称是否重复

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <base href=".">
+    <title>审核</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link rel="stylesheet" th:href="@{/public/layui/css/layui.css}">
+    <link rel="stylesheet" th:href="@{/public/layui/css/modules/layer/default/layer.css}">
+    <link rel="stylesheet" th:href="@{/client/threenets/css/ThunderBase2.css}">
+    <link rel="stylesheet" th:href="@{/client/threenets/css/common.css}">
+    <link rel="stylesheet" th:href="@{/client/threenets/css/Addmerchants.css}">
+    <link rel="stylesheet" th:href="@{/client/threenets/css/enterpriseBell.css}">
+    <link rel="stylesheet" th:href="@{/client/threenets/css/MyPlus.css}">
+    <link rel="stylesheet" th:href="@{/client/threenets/css/Add.css}">
+    <script type="text/javascript" th:src="@{/public/js/jquery.min.js}"></script>
+    <style>
+        .layui-input-block {
+            text-align: right;
+        }
+    </style>
+</head>
+
+<body>
+<form action="" name="Form" id="Form" method="post" class="layui-form">
+    <div>
+        <input type="hidden" id="id" th:value="${telCerOrder.id}" />
+        <div class="layui-form-item">
+            <label class="layui-form-label">审核</label>
+            <div class="layui-input-block">
+                <select id="status" class="layui-select">
+                    <option value="2">通过</option>
+                    <option value="3">不通过</option>
+                </select>
+            </div>
+        </div>
+        <p hidden="20px;">  </p>
+        <div class="layui-form-item">
+            <label class="layui-form-label">备注</label>
+            <div class="layui-input-block">
+                <textarea id="remark" class="layui-textarea" placeholder="请输入内容">1111111111111123421</textarea>
+            </div>
+        </div>
+        <div id="tijiao" class="newBlocPage-button" lay-submit lay-filter="formDemo">确定提交</div>
+    </div>
+</form>
+</body>
+<div th:include="threenets/kedas/kedasites/common/include::footer"></div>
+<script>
+    //表单提交
+    layui.use('form', function () {
+        var form = layui.form;
+
+        //监听提交
+        form.on('submit(formDemo)', function (data) {
+            var status = $("#status").val();
+            var remark = $("#remark").val();
+            var id = $("#id").val();
+            AjaxPost("/telcertify/examine", {
+                id:id,
+                telOrderStatus: status,
+                remark: remark
+            }, function (res) {
+                if (res.code == 200) {
+
+                    layer.msg(res.msg, {icon: 6, time: 3000});
+                    setTimeout(function () {
+                        // 获得frame索引
+                        var index = parent.layer.getFrameIndex(window.name);
+                        //关闭当前frame
+                        parent.layer.close(index);
+                        window.parent.location.reload();//刷新父页面
+                    }, 2000);
+                } else {
+                    layer.msg(res.msg, {icon: 5, time: 3000});
+                }
+            });
+            return false;
+        });
+    });
+</script>
+</html>

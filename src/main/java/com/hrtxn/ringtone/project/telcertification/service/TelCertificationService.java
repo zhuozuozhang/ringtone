@@ -126,12 +126,25 @@ public class TelCertificationService {
             formatParamFromDatabase(c);
             int member = certificationChildOrderMapper.getMemberCountByParentId(c.getId());
             c.setMemberNum(member);
+            c.setStatusStr(getStatusStr(c.getTelOrderStatus()));
         }
         if (allTelCer.size() > 0 && allTelCer != null) {
             return AjaxResult.success(allTelCer, "获取到了", totalCount);
         }
         return AjaxResult.success(theTelCer, "未获取到",totalCount);
     }
+
+    public String getStatusStr(Integer status){
+        if(Const.TEL_ORDER_IN_AUDIT == status){
+            return "审核中";
+        }else if(Const.TEL_ORDER_IN_OPENING == status){
+            return "审核成功";
+        }else if(Const.TEL_ORDER_FAILURE_TO_OPEN == status){
+            return "审核失败";
+        }
+        return "";
+    }
+
 
     /**
      * 通过订单id获取订单信息
@@ -165,6 +178,18 @@ public class TelCertificationService {
             return certificationOrder;
         }
         return null;
+    }
+
+
+    public AjaxResult examine(CertificationOrder telcerOrder){
+        certificationOrderMapper.examine(telcerOrder);
+        CertificationChildOrder certificationChildOrder = new CertificationChildOrder();
+        if(Const.TEL_ORDER_IN_OPENING == telcerOrder.getTelOrderStatus()){
+            certificationChildOrder.setTelChildOrderStatus(telcerOrder.getTelOrderStatus());
+            certificationChildOrder.setParentOrderId(telcerOrder.getId());
+            certificationChildOrderMapper.updateExamine(certificationChildOrder);
+        }
+        return AjaxResult.success("审核成功！");
     }
 
     /**

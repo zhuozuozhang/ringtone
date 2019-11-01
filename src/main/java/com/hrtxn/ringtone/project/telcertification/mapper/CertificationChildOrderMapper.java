@@ -56,4 +56,7 @@ public interface CertificationChildOrderMapper {
     int getDueListCount(@Param("page") Page page,@Param("param") BaseRequest request);
 
     List<CertificationChildOrder> isRepetitionByChildNum(@Param("phoneNum") String phoneNum);
+
+    void updateExamine(CertificationChildOrder certificationChildOrder);
+    void updateExamineById(CertificationChildOrder certificationChildOrder);
 }

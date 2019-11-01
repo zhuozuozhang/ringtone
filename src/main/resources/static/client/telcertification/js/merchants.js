@@ -50,6 +50,7 @@ function showTelCerTable() {
     var columns = [
         {"data": null},
         {"data": "telCompanyName"},
+        {"data": "userName"},
         {"data": "telContent"},
         {"data": "telLinkName"},
         {"data": "telLinkPhone"},
@@ -58,10 +59,11 @@ function showTelCerTable() {
         {"data": "unitPrice"},
         {"data": "telOrderTime"},
         {"data": "productName"},
+        {"data": "statusStr"},
         {"data": "remark"}
     ];
     var columnDefs = [{
-        targets:[8],
+        targets:[9],
         render: function (data, type, row, meta) {
             var productName = row.productName;
             var product = $.parseJSON(productName);
@@ -77,12 +79,17 @@ function showTelCerTable() {
             return str;
         }
     }, {
-        targets:[10],
+        targets:[12],
         render: function (data, type, row, meta) {
             var id = row.id;
-            return "<i class='layui-icon layui-icon-edit' title='编辑' onclick='editTelCerOrder("+id+");'></i>"
-                + "<i class='layui-icon layui-icon-log' title='详情' onclick='ckeckDetails("+id+");'></i>"
+            var loginName = $("#loginName").val();
+            var result = "<i class='layui-icon layui-icon-edit' title='编辑' onclick='editTelCerOrder("+id+");'></i>";
+            if(loginName == '江苏中高俊聪'){
+                result = result + "<i class='layui-icon layui-icon-util' title='审核' onclick='examine("+id+");'></i>"
+            }
+            result = result+ "<i class='layui-icon layui-icon-log' title='详情' onclick='ckeckDetails("+id+");'></i>"
                 + "<a href='/telcertify/toTelMembersPage/"+id+"'><i class='layui-icon layui-icon-username' title='成员管理'></i></a>";
+            return result;
         }
     }];
     page("#merchants", 10, param, "/telcertify/getTelCerOrderList", columns, columnDefs);
@@ -198,6 +205,16 @@ function ckeckDetails(id) {
         title: '详情',
         content: '/telcertify/toTeldetailsPage/'+id,
         area: ['500px', '680px']
+    });
+}
+
+
+function examine(id) {
+    layer.open({
+        type: 2,
+        title: '审核',
+        content: '/telcertify/toTeldetailsOneExamine/'+id,
+        area: ['600px', '400px']
     });
 }
 

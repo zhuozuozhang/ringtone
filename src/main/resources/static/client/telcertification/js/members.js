@@ -25,17 +25,19 @@ function showTelCerMemberTable() {
             var status = row.telChildOrderStatus;
             //号码认证子订单状态（1.开通中/2.开通成功/3.开通失败/4.续费中/5.续费成功/6.续费失败）
             if(status == 1){
-                return "<span>开通中</span>";
+                return "<span>审核中</span>";
             }else if(status == 2){
-                return "<span>开通成功</span>";
+                return "<span>开通中</span>";
             }else if(status == 3){
-                return "<span>开通失败</span>";
+                return "<span>开通成功</span>";
             } else if(status == 4){
                 return "<span>续费中</span>";
             }else if(status == 5){
                 return "<span>续费成功</span>";
             }else if(status == 6){
                 return "<span>续费失败</span>";
+            }else if(status == 7){
+                return "<span>余额不足,请充值</span>";
             }else{
                 return "<span>未知</span>";
             }
@@ -54,8 +56,11 @@ function showTelCerMemberTable() {
         render: function (data, type, row, meta) {
             var id = row.id;
             var phoneNum = row.telChildOrderPhone;
-            return "<a href='javascript:;'><i class='layui-icon layui-icon-rmb' title='续费' onclick='Renewal("+id+");'></i></a>"
-                + "<a href='/telcertify/toTelCostPage/"+phoneNum+"'><i class='layui-icon layui-icon-form' title='费用支出记录'></i></a>"
+            var result ="<a href='javascript:;'><i class='layui-icon layui-icon-util' title='开通' onclick='Opening("+id+");'></i></a>";
+            result = result + "<a href='javascript:;'><i class='layui-icon layui-icon-rmb' title='续费' onclick='Renewal("+id+");'></i></a>"
+                + "<a href='/telcertify/toTelCostPage/"+phoneNum+"'><i class='layui-icon layui-icon-form' title='费用支出记录'></i></a>";
+
+            return result;
         }
     }];
 
@@ -82,6 +87,28 @@ function closePanel(){
     back.css('display',"none");
     $("body").css("overflow","auto");
 }
+
+/**
+ * 开通
+ * @param id
+ * @constructor
+ */
+function Opening(id){
+    AjaxPost("/telcertify/opening",{
+        id: id
+    },function (res) {
+        if(res.code == 200 && res.data){
+            layer.confirm(res.msg,{
+                btn:'确定'
+            },function () {
+                window.parent.location.reload();//刷新父页面
+            });
+        }else {
+            layer.msg(res.msg, {icon: 5, time: 3000});
+        }
+    });
+}
+
 //续费
 function Renewal(id){
     layer.open({

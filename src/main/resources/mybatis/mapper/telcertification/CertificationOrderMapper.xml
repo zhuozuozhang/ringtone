@@ -29,6 +29,12 @@
     number_prove, remark, unit_price, user_id, tel_order_status, tel_order_time, product_name
   </sql>
 
+  <sql id="Base_Column_List_tco" >
+    tco.id, tco.tel_order_num, tco.tel_company_name, tco.tel_link_name, tco.tel_link_phone, tco.tel_content,
+    tco.business_license, tco.legal_person_card_zhen, tco.legal_person_card_fan, tco.logo, tco.authorization,
+    tco.number_prove, tco.remark, tco.unit_price, tco.user_id, tco.tel_order_status, tco.tel_order_time, tco.product_name
+  </sql>
+
   <sql id="parameters">
     <if test="param.id != null and param.id != ''">
       AND tco.id = #{param.id}
@@ -62,9 +68,11 @@
 <!--  获取全部或者按条件查找商户信息-->
   <select id="findAllTelCertification" resultMap="BaseResultMap">
     SELECT
-        <include refid="Base_Column_List"/>
+        <include refid="Base_Column_List_tco"/>,
+      u.user_name "userName"
     FROM
         tb_telcertification_order tco
+    left join tb_user u on tco.user_id = u.id
     WHERE 1 = 1
     <include refid="parameters"/>
     ORDER BY tel_order_time DESC
@@ -432,4 +440,10 @@ AND user_id = #{userId,jdbcType=INTEGER}
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
+
+  <update id="examine" parameterType="com.hrtxn.ringtone.project.telcertification.domain.CertificationOrder" >
+    update tb_telcertification_order set tel_order_status = #{telOrderStatus} , remark = #{remark}
+    where id = #{id}
+  </update>
+
 </mapper>

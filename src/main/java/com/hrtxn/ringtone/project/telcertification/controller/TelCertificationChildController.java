@@ -157,6 +157,14 @@ public class TelCertificationChildController {
         return "telcertification/renew";
     }
 
+    @PostMapping("/opening")
+    @ResponseBody
+    @Log(title = "开通子订单订单", businessType = BusinessType.INSERT, operatorLogType = OperatorLogType.TELCERTIFICATION)
+    public AjaxResult opening( String id){
+
+        return telCertificationChildService.opening(Integer.parseInt(id));
+    }
+
     /**
      * 添加续费记录
      * @param consumeLog

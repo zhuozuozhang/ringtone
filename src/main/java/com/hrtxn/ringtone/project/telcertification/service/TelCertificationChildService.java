@@ -62,7 +62,9 @@ public class TelCertificationChildService {
      */
     public AjaxResult findTheChildOrder(Page page, BaseRequest request) {
         page.setPage((page.getPage() - 1) * page.getPagesize());
-        request.setUserId(ShiroUtils.getSysUser().getId());
+        if(ShiroUtils.getSysUser().getId() != 16){
+            request.setUserId(ShiroUtils.getSysUser().getId());
+        }
         List<CertificationChildOrder> allChildOrderList = certificationChildOrderMapper.findTheChildOrder(page, request);
         CertificationOrder certificationOrder = certificationOrderMapper.getTelCerOrderById(request.getParentId());
         String productJson = certificationOrder.getProductName();
@@ -440,4 +442,56 @@ public class TelCertificationChildService {
         }
         return AjaxResult.error("参数不正确");
     }
+
+    public AjaxResult opening(Integer id){
+        try {
+            //根据id获取子订单
+            CertificationChildOrder certificationChildOrder = certificationChildOrderMapper.getTelCerChildById(id);
+            //查询用户账户余额是否充足
+            //扣款金额
+            Float price = certificationChildOrder.getPrice();
+            CertificationOrder certificationOrder = certificationOrderMapper.getTelCerOrderById(certificationChildOrder.getParentOrderId());
+            User user = userMapper.findUserById(certificationOrder.getUserId());
+            if(price > user.getTelcertificationAccount()){
+                certificationChildOrder.setTelChildOrderStatus(7);
+                certificationChildOrderMapper.updateExamineById(certificationChildOrder);
+                return AjaxResult.error("开通失败，余额不足");
+            }
+            //余额足，开通业务，扣款，并记录明细
+            certificationChildOrder.setTelChildOrderStatus(3);
+            certificationChildOrder.setTelChildOrderOpenTime(new Date());
+            //开通年限
+            Integer years = certificationChildOrder.getYears();
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(new Date());
+            cal.add(Calendar.YEAR, 1);//增加一年
+            certificationChildOrder.setTelChildOrderExpireTime(cal.getTime());
+            certificationChildOrderMapper.updateExamineById(certificationChildOrder);
+            //扣款
+            Float money = user.getTelcertificationAccount() - price;
+            user.setTelcertificationAccount(money);
+            userMapper.updateUserById(user);
+            //记录消费明细
+            ConsumeLog consumeLog = new ConsumeLog();
+            consumeLog.setConsumePrice(price);
+            consumeLog.setConsumeTime(new Date());
+            consumeLog.setConsumeMoney(money);
+            consumeLog.setConsumeOperator(ShiroUtils.getSysUser().getUserName());
+            consumeLog.setUserName(ShiroUtils.getSysUser().getUserName());
+            consumeLog.setUserTel(certificationChildOrder.getTelChildOrderPhone());
+            consumeLog.setConsumeType(Const.SYS_CONSUME_LOG_TYPE_TEL_CER);
+            consumeLog.setUserId(ShiroUtils.getSysUser().getId());
+            consumeLog.setConsumeRemark("");
+            consumeLog.setTelConsumeLogType(Const.TEL_CER_CONSUME_LOG_TYPE_FIRST);
+            consumeLog.setTelConsumeLogStatus(Const.TEL_CER_STATUS_SUCCESS_OPENING);
+            consumeLog.setTelConsumeLogOpenTime(new Date());
+            consumeLog.setTelConsumeLogExpireTime(cal.getTime());
+            int insertConsumeLog = consumeLogMapper.insert(consumeLog);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return AjaxResult.success("开通成功！");
+    }
+
 }

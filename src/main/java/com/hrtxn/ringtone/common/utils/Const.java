@@ -207,4 +207,21 @@ public final class Const implements Serializable {
      */
     public static final Integer IS_EXEMPT_SMS_YES = 1;
     public static final Integer IS_EXEMPT_SMS_NO = 0;
+
+
+    /**
+     * 号码认证订单状态
+     */
+    public static final Integer TEL_ORDER_IN_AUDIT = 1;//审核中
+    public static final Integer TEL_ORDER_IN_OPENING = 2;//审核成功
+    public static final Integer TEL_ORDER_FAILURE_TO_OPEN = 3;//审核失败
+
+    /**
+     * 号码认证子订单状态
+     */
+    public static final Integer TEL_ORDER_CHILD_IN_AUDIT = 1;//审核中
+    public static final Integer TEL_ORDER_CHILD_IN_OPENING = 2;//开通中
+    public static final Integer TEL_ORDER_CHILD_SUCCESS = 3;//开通成功
+
+
 }

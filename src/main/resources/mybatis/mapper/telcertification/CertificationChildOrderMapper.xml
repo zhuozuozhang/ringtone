@@ -345,4 +345,29 @@
       consume_log_id = #{consumeLogId,jdbcType=INTEGER}
     where id = #{id,jdbcType=INTEGER}
   </update>
+
+    <update id="updateExamine" parameterType="com.hrtxn.ringtone.project.telcertification.domain.CertificationChildOrder">
+        update tb_telcertification_child_order
+          set tel_child_order_status = #{telChildOrderStatus,jdbcType=INTEGER}
+        <if test="telChildOrderOpenTime != null">
+            tel_child_order_open_time = #{telChildOrderOpenTime,jdbcType=TIMESTAMP},
+        </if>
+        <if test="telChildOrderExpireTime != null">
+            tel_child_order_expire_time = #{telChildOrderExpireTime,jdbcType=TIMESTAMP},
+        </if>
+        where parent_order_id = #{parentOrderId,jdbcType=INTEGER}
+    </update>
+
+    <update id="updateExamineById" parameterType="com.hrtxn.ringtone.project.telcertification.domain.CertificationChildOrder">
+        update tb_telcertification_child_order
+        set tel_child_order_status = #{telChildOrderStatus,jdbcType=INTEGER}
+        <if test="telChildOrderOpenTime != null">
+            ,tel_child_order_open_time = #{telChildOrderOpenTime,jdbcType=TIMESTAMP},
+        </if>
+        <if test="telChildOrderExpireTime != null">
+            tel_child_order_expire_time = #{telChildOrderExpireTime,jdbcType=TIMESTAMP}
+        </if>
+        where id = #{id}
+    </update>
+
 </mapper>
