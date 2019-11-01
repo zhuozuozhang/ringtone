@@ -52,13 +52,13 @@ function showTable() {
     }, {
         targets: [3],
         render: function (data, type, row, meta) {
-            data = isNotEmpty(data)?data:"";
+            data = isNotEmpty(data) ? data : "";
             return "<div style='text-overflow:ellipsis;overflow:hidden;white-space:nowrap;width:150px;' title='" + data + "'>" + data + "</div>";
         }
     }, {
         targets: [5],
         render: function (data, type, row, meta) {
-            var result = "<a><span onclick=\"openPlayer('"+data+"');\" style='color:#0569FD'>试听</span></a>";
+            var result = "<a><span onclick=\"openPlayer('" + data + "');\" style='color:#0569FD'>试听</span></a>";
             return result;
         }
     }, {
@@ -81,7 +81,7 @@ function showTable() {
     }, {
         targets: [7],
         render: function (data, type, row, meta) {
-            data = isNotEmpty(data)?data:"";
+            data = isNotEmpty(data) ? data : "";
             return "<div style='width:150px;' title='" + data + "'>" + data + "</div>";
         }
     }, {
@@ -92,10 +92,10 @@ function showTable() {
             var operate = row.operate;
             var setRing = "";
             var reactivate = '';
-            if(ringStatus == 3 || ringStatus == 4 || ringStatus == 5){
-                setRing = "<a href='/threenets/toSetingRing/"+id+"/"+operate+"/" + $("#orderId").val() + "/" + $("#companyName").val()+ "'><i class='layui-icon layui-icon-set' title='设置铃音'></i></a>";
+            if (ringStatus == 3 || ringStatus == 4 || ringStatus == 5) {
+                setRing = "<a href='/threenets/toSetingRing/" + id + "/" + operate + "/" + $("#orderId").val() + "/" + $("#companyName").val() + "'><i class='layui-icon layui-icon-set' title='设置铃音'></i></a>";
             }
-            if (operate ==  1 && ringStatus == 6){
+            if (operate == 1 && ringStatus == 6) {
                 reactivate = '<i class="layui-icon layui-icon-refresh" title="重新激活" onclick="reactivateRing(' + id + ')"></i>';
             }
             return '<i class="layui-icon" title="复制铃音" onclick="cloneRing(' + id + ')"><img src="../../client/threenets/images/copy.png" alt=""></i>' +
@@ -109,13 +109,22 @@ function showTable() {
 
 //添加铃音
 function addRing() {
+    if ($("#set").find("tr").length >= 4) {
+        layer.confirm("铃音文件不允许超过三个！", {
+            btn: ["确定", "取消"] //按钮
+        }, function () {
+            return;
+        }, function () {
+            return;
+        });
+    }
     var orderId = $("#orderId").val();
     var companyName = $("#companyName").val();
     layer.open({
         type: 2,
         title: '上传铃音',
-        area: ['650px', '550px'],
-        content: '/threenets/toAddMerchantsRingPage?orderId=' + orderId+"&companyName="+companyName
+        area: ['670px', '590px'],
+        content: '/threenets/toAddMerchantsRingPage?orderId=' + orderId + "&companyName=" + companyName
     });
 }
 
@@ -159,14 +168,14 @@ function cloneRing(id) {
     }, function () {
         AjaxPost("/threenets/cloneRing/" + id, {}, function (result) {
             layer.closeAll('dialog');//关闭弹层
-            layer.msg(result.msg + "!", {icon: result.code == 500 ? 2 : 1, time: 1000});
+            layer.msg(result.msg + "!", {icon: result.code == 500 ? 2 : 1, time: 2000});
             $("#set").DataTable().ajax.reload(null, false);
         })
     }, function () {
     });
 }
 
-//克隆铃音
+//重新激活
 function reactivateRing(id) {
     layer.confirm("是否重新激活铃音?", {
         btn: ["确定", "取消"] //按钮

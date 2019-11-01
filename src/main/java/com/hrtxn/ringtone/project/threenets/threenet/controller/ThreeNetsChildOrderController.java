@@ -104,7 +104,9 @@ public class ThreeNetsChildOrderController {
     public String toMerchantsPhonePage(ModelMap map, @PathVariable Integer parentOrderId) {
         try {
             ThreenetsOrder order = threeNetsChildOrderService.getOrderById(parentOrderId);
+            boolean b = threeNetsChildOrderService.isContainingTelecomOrder(parentOrderId);
             map.put("parentOrderId", parentOrderId);
+            map.put("isShow",b);
             if (order.getCompanyName().length() <= 6) {
                 map.put("companyName", order.getCompanyName());
             } else {

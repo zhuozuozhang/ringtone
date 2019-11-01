@@ -60,7 +60,7 @@
                     <li class="clearfix upload">
                         <span class="fl"><i style="color: red">*</i>铃音上传文件</span>
                         <div class="fl selected">
-                            <input type="file" name="ringFile" id="file" class="" style="width:388px;" required lay-verify="required" accept=".mp3,.wav,.mp4,.mov">
+                            <input type="file" name="ringFile" id="file" class="" style="width:388px;" required lay-verify="required" accept=".mp3,.wav">
                             <div class="clearfix">
                                 <p class="fr choose" style="width:388px;font-size: 14px;">点击上传铃音文件</p>
                                 <input type="hidden" id="ringurl" name="ringurl">
@@ -73,10 +73,18 @@
                  <br>2.视频文件&lt;40M，时长&lt;48秒，格式需为mp4或mov
                  </span>）
                 </div>
-                <li class="clearfix bellContent">
+                <li class="clearfix bellContent" style="margin-bottom: 0px;">
                     <span class="fl" style="margin-right: 5px;"><i style="color: red">*</i>铃音内容</span>
                     <div class="fl">
                         <textarea placeholder="请输入铃音内容......" name="ringContent" id="ringContent" maxlength="200" required lay-verify="required"></textarea>
+                    </div>
+                </li>
+                <li class="clearfix" style="display: flex;flex-direction: row">
+                    <span class="fl" style="margin-right: 5px;margin-top: 12px"><i style="color: red">*</i>是否自动设置铃音</span>
+                    <div class="">
+                        <input type="radio" name="autoSetType" value="0" title="为未设置铃音的成员设置" lay-filter="unicomRadio">
+                        <input type="radio" name="autoSetType" value="1" title="为全体成员设置" checked=""  lay-filter="unicomRadio">
+                        <input type="radio" name="autoSetType" value="2" title="不自动设置" lay-filter="unicomRadio">
                     </div>
                 </li>
             </ul>

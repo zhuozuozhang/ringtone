@@ -102,8 +102,8 @@ public class ThreeNetsRingService {
     public AjaxResult getChildOrderList(Page page, BaseRequest request) throws NoLoginException, IOException {
         page.setPage((page.getPage() - 1) * page.getPagesize());
         List<ThreenetsRing> ringList = threenetsRingMapper.getRingList(page, request);
-        for(ThreenetsRing ts : ringList){
-            ts.setFileUrl(url+"profile/"+ts.getRingWay().replace("\\","/"));
+        for (ThreenetsRing ts : ringList) {
+            ts.setFileUrl(url + "profile/" + ts.getRingWay().replace("\\", "/"));
         }
         // 刷新当前铃音列表
         ThreeNetsOrderAttached attached = attachedMapper.selectByParentOrderId(request.getId());
@@ -157,7 +157,7 @@ public class ThreeNetsRingService {
                 String path = fileService.cloneFile(ring);
                 ring.setRingWay(path);
                 ring.setRingName(path.substring(path.lastIndexOf("\\") + 1));
-            }else{
+            } else {
                 ring.setRingName(ring.getRingName() + DateUtils.getTimeRadom() + extensionsName);
             }
             if (operator == 1) {
@@ -236,6 +236,38 @@ public class ThreeNetsRingService {
         }
         if (ring.getOperate() == 2) {
             threeNetsAsyncService.ringToneUploadByTelecom(ring);
+        }
+    }
+
+
+    /**
+     * 克隆铃音
+     *
+     * @param id
+     * @return
+     */
+    public AjaxResult cloneRing1(Integer id) throws Exception {
+        ThreenetsRing ring = threenetsRingMapper.selectByPrimaryKey(id);
+        List<ThreenetsRing> list = threenetsRingMapper.listByOrderIdAndOperator(ring.getOrderId(), ring.getOperate());
+        if (list.size() >= 3) {
+            return AjaxResult.error("克隆失败，铃音文件不允许超过三个");
+        }else{
+            String path = fileService.cloneFile(ring);
+            ring.setRingName(path.substring(path.lastIndexOf("\\") + 1));
+            ring.setRingWay(path);
+            ring.setRingStatus(2);
+            ring.setRemark("");
+            threenetsRingMapper.insertThreeNetsRing(ring);
+            if (ring.getOperate() == 3) {
+                threeNetsAsyncService.ringToneUploadByUnicom(ring);
+            }
+            if (ring.getOperate() == 1) {
+                threeNetsAsyncService.ringToneUploadByMobile(ring);
+            }
+            if (ring.getOperate() == 2) {
+                threeNetsAsyncService.ringToneUploadByTelecom(ring);
+            }
+            return AjaxResult.success("克隆成功！");
         }
     }
 
@@ -322,12 +354,28 @@ public class ThreeNetsRingService {
      * @param id
      */
     public void reactivateRing(Integer id) {
-        try{
+        try {
             ThreenetsRing threenetsRings = threenetsRingMapper.selectByPrimaryKey(id);
             ThreenetsOrder order = threenetsOrderMapper.selectByPrimaryKey(threenetsRings.getOrderId());
-            apiUtils.reactivateRing(threenetsRings,order.getCompanyName());
-        }catch(Exception e) {
+            apiUtils.reactivateRing(threenetsRings, order.getCompanyName());
+        } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+
+    /**
+     * 验证是否存在电信订单
+     *
+     * @param id
+     * @return
+     */
+    public boolean isContainingTelecomOrder(Integer id) {
+        ThreeNetsOrderAttached attached = attachedMapper.selectByParentOrderId(id);
+        if (StringUtils.isNotEmpty(attached.getMcardId()) || (StringUtils.isNotEmpty(attached.getBusinessLicense()) && StringUtils.isNotEmpty(attached.getConfirmLetter()))) {
+            return true;
+        } else {
+            return false;
         }
     }
 }

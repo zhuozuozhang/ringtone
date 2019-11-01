@@ -330,7 +330,8 @@ public class SwxlApi implements Serializable {
      * @throws IOException
      */
     public String getRingInfo(String operateId) throws NoLoginException, IOException {
-        String url = getGroupRingInfo_URL + "?groupId=" + operateId;
+        long longTime = new Date().getTime();
+        String url = getGroupRingInfo_URL + "?order=asc&maxresult=5&offset=0&currentpage=1&draw=1&start=0&groupId=" + operateId+"&_="+longTime;
         String result = sendGet(url);
         log.info("获取铃音信息 参数：{} 结果：{}", operateId, result);
         return result;

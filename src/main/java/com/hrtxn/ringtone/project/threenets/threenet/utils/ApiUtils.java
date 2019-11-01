@@ -2408,7 +2408,7 @@ public class ApiUtils {
      *
      * @param attached
      */
-    public void updateOrderCertification(ThreeNetsOrderAttached attached) {
+    public AjaxResult updateOrderCertification(ThreeNetsOrderAttached attached) {
         //处理客户信息
         String auserLinkName = "";
         String auserPhone = "";
@@ -2429,6 +2429,6 @@ public class ApiUtils {
                 }
             }
         }
-        mcardApi.updateUserAuth(attached, auserLinkName, auserPhone);
+        return mcardApi.updateUserAuth(attached, auserLinkName, auserPhone);
     }
 }

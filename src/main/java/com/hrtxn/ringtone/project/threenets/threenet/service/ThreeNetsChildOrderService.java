@@ -9,7 +9,6 @@ import com.hrtxn.ringtone.common.utils.DateUtils;
 import com.hrtxn.ringtone.common.utils.ShiroUtils;
 import com.hrtxn.ringtone.common.utils.StringUtils;
 import com.hrtxn.ringtone.common.utils.juhe.JuhePhoneUtils;
-import com.hrtxn.ringtone.project.system.File.service.FileService;
 import com.hrtxn.ringtone.project.system.json.JuhePhone;
 import com.hrtxn.ringtone.project.system.json.JuhePhoneResult;
 import com.hrtxn.ringtone.project.threenets.threenet.domain.*;
@@ -43,11 +42,10 @@ public class ThreeNetsChildOrderService {
 
     @Autowired
     private ThreeNetsOrderAttachedService threeNetsOrderAttachedService;
+
     @Autowired
     private ThreeNetsAsyncService threeNetsAsyncService;
 
-    @Autowired
-    private FileService fileService;
     private ApiUtils apiUtils = new ApiUtils();
 
     /**
@@ -667,5 +665,20 @@ public class ThreeNetsChildOrderService {
      */
     public List<ThreenetsChildOrder> listByParamNoPage(ThreenetsChildOrder childOrder) {
         return threenetsChildOrderMapper.listByParamNoPage(childOrder);
+    }
+
+    /**
+     * 验证是否存在电信订单
+     *
+     * @param id
+     * @return
+     */
+    public boolean isContainingTelecomOrder(Integer id){
+        ThreeNetsOrderAttached attached = threeNetsOrderAttachedService.selectByParentOrderId(id);
+        if (StringUtils.isNotEmpty(attached.getMcardId())||(StringUtils.isNotEmpty(attached.getBusinessLicense())&&StringUtils.isNotEmpty(attached.getConfirmLetter()))){
+            return true;
+        }else{
+            return false;
+        }
     }
 }

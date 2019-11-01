@@ -1,5 +1,6 @@
 package com.hrtxn.ringtone.common.api;
 
+import com.hrtxn.ringtone.common.constant.AjaxResult;
 import com.hrtxn.ringtone.common.exception.NoLoginException;
 import com.hrtxn.ringtone.common.utils.*;
 import com.hrtxn.ringtone.common.utils.json.JsonUtil;
@@ -526,8 +527,7 @@ public class McardApi {
      * @param att
      * @return
      */
-    public McardAddGroupRespone updateUserAuth(ThreeNetsOrderAttached att,String auserLinkName,String auserPhone){
-        McardAddGroupRespone groupRespone = new McardAddGroupRespone();
+    public AjaxResult updateUserAuth(ThreeNetsOrderAttached att,String auserLinkName,String auserPhone){
         try {
             Map<String, String> map = new HashMap<>();
             map.put("userId", att.getMcardId());
@@ -538,23 +538,18 @@ public class McardApi {
             map.put("auserFilePath", att.getConfirmLetter());
             String result = sendPost(map, update_user_auth, att.getMcardDistributorId());
             log.info("电信修改商户结果--->" + result);
-            JSONObject jsonObject = JSONObject.fromObject(result);
-            String code = jsonObject.getString("code");
-            if (code.equals("0000")) {
-                JSONObject data = jsonObject.getJSONObject("data");
-                groupRespone = (McardAddGroupRespone) JSONObject.toBean(data, McardAddGroupRespone.class);
-                groupRespone.setCode(jsonObject.getString("code"));
-                groupRespone.setMessage(jsonObject.getString("message"));
+            if (result.equals("time_out")){
+                return AjaxResult.success("商户认证以重新提交审核，请等待审核完成！");
+            }
+            if (result.contains("0000")) {
+                return AjaxResult.success("商户认证以重新提交审核，请等待审核完成！");
             } else {
-                groupRespone.setCode(Const.ILLEFAL_AREA);
-                groupRespone.setMessage(jsonObject.getString("message"));
+                return AjaxResult.error("请求超时，请稍后再试！");
             }
         } catch (Exception e) {
-            log.info("电信添加商户失败" + e);
-            groupRespone.setCode(Const.ILLEFAL_AREA);
-            groupRespone.setMessage("添加失败");
-        } finally {
-            return groupRespone;
+            log.info("电信提交认证文件失败 ------>");
+            e.printStackTrace();
+            return AjaxResult.error("请求超时，请稍后再试！");
         }
     }
 }

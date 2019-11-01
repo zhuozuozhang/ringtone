@@ -734,6 +734,7 @@ public class ThreeNetsAsyncService {
                     }
                     threenetsChildOrderMapper.updateThreeNetsChidOrder(childOrder);
                 }
+                threeNetsOrderAttachedMapper.updateByPrimaryKeySelective(attached);
             }
         } catch (Exception e) {
             log.info("电信刷新信息上传用户失败" + e);

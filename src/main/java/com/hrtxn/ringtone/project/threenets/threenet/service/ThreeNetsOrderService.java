@@ -354,16 +354,16 @@ public class ThreeNetsOrderService {
             attached.setConfirmLetter(path);
         }
         if (StringUtils.isNotEmpty(attached.getMcardId())){
-            apiUtils.updateOrderCertification(attached);
+            return apiUtils.updateOrderCertification(attached);
         }else{
-//            ThreenetsChildOrder childOrder = new ThreenetsChildOrder();
-//            childOrder.setParentOrderId(request.getParentOrderId());
-//            childOrder.setOperator(Const.OPERATORS_TELECOM);
-//            childOrder.setStatus(Const.PENDING_REVIEW);
-//            List<ThreenetsChildOrder> list = threeNetsChildOrderService.listByParamNoPage(childOrder);
+            ThreenetsChildOrder childOrder = new ThreenetsChildOrder();
+            childOrder.setParentOrderId(request.getParentOrderId());
+            childOrder.setOperator(Const.OPERATORS_TELECOM);
+            childOrder.setStatus(Const.PENDING_REVIEW);
+            List<ThreenetsChildOrder> list = threeNetsChildOrderService.listByParamNoPage(childOrder);
             //不存在商户id表明商户不存在
-            apiUtils.addOrderByDx(order,attached);
+            McardAddGroupRespone respone = apiUtils.addOrderByDx(order, attached);
+            return AjaxResult.success("商户认证以重新提交审核，请等待审核完成！");
         }
-        return AjaxResult.success("商户认证以重新提交审核，请等待审核完成！");
     }
 }

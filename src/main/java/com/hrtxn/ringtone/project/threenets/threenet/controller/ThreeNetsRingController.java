@@ -50,7 +50,9 @@ public class ThreeNetsRingController {
     public String toMerchantsChildPage(ModelMap map, @PathVariable Integer orderId) {
         try {
             ThreenetsOrder order = threeNetsRingService.getOrderById(orderId);
+            boolean b = threeNetsRingService.isContainingTelecomOrder(orderId);
             map.put("orderId", orderId);
+            map.put("isShow",b);
             if (order.getCompanyName().length() <= 6) {
                 map.put("companyName", order.getCompanyName());
             } else {
@@ -150,8 +152,9 @@ public class ThreeNetsRingController {
     @ResponseBody
     public AjaxResult cloneRing(@PathVariable Integer id) {
         try {
-            threeNetsRingService.cloneRing(id);
-            return AjaxResult.success(true, "克隆成功！");
+//            threeNetsRingService.cloneRing(id);
+//            return AjaxResult.success(true, "克隆成功！");
+            return threeNetsRingService.cloneRing1(id);
         } catch (Exception e) {
             log.error("下载铃音失败 方法：cloneRing 错误信息", e);
             return AjaxResult.error("克隆失败！");

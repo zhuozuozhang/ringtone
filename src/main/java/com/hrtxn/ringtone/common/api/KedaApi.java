@@ -43,6 +43,7 @@ public class KedaApi {
     private final static String GETRINGEMPLOYEELIST = "http://clcy.adsring.cn/meap-web/ring/emp/getRingEmployeeList";
     private final static String QUERYRINGSTATUS = "http://clcy.adsring.cn/meap-web/ring/emp/queryRingStatus";
     private final static String UPLOAD = "http://clcy.adsring.cn/meap-web/group/upload";
+    private final static String NEW_UP_LOAD = "http://clcy.adsring.cn/meap-web/file/upload";
     private final static String SAVEORSETRINGBYUPLOAD = "http://clcy.adsring.cn/meap-web/ring/manage/saveOrSetRingByUpload";
     private final static String QUERYRINGLIST = "http://clcy.adsring.cn/meap-web/ring/manage/queryRingList";
     private final static String SETRING = "http://clcy.adsring.cn/meap-web/ring/manage/setRing";
@@ -183,7 +184,7 @@ public class KedaApi {
      * @throws IOException
      */
     public AjaxResult uploadRing(File source) throws IOException {
-        String s = sendRingFile(UPLOAD, source);
+        String s = sendRingFile(NEW_UP_LOAD, source);
         log.info("疑难杂单铃音文件上传----->" + s);
         if (StringUtils.isNotEmpty(s)) {
             KedaBaseResult<KedaUploadRing> kedaBaseResult = SpringUtils.getBean(ObjectMapper.class).readValue(s, KedaBaseResult.class);

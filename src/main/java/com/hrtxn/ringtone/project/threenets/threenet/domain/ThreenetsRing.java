@@ -50,4 +50,7 @@ public class ThreenetsRing implements Serializable {
 
     private String fileUrl;
 
+    //自动设置铃音
+    private String autoSetType;
+
 }

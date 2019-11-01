@@ -21,9 +21,9 @@
                     <li id="ring" class="selected">
                         <a th:href="@{'/threenets/toMerchantsRingPage/'+${orderId}}">铃音管理</a>
                     </li>
-<!--                    <li id="telecomFile">-->
-<!--                        <a th:href="@{'/threenets/toMerchantsTelecomFilePage/'+${orderId}}">商户认证</a>-->
-<!--                    </li>-->
+                    <li id="telecomFile" th:if="${isShow}">
+                        <a th:href="@{'/threenets/toMerchantsTelecomFilePage/'+${orderId}}">商户认证</a>
+                    </li>
                 </ul>
             </div>
         </div>
