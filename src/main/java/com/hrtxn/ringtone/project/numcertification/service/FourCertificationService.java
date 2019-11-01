@@ -180,9 +180,11 @@ public class FourCertificationService {
     }
 
 
-
-
-
+    /**
+     * 根据400号码查询订单
+     * @param applyNumber
+     * @return
+     */
     public FourcertificationOrder getOrderByApplyNumber(String applyNumber){
         return fourcertificationOrderMapper.getOrderByApplyNumber(applyNumber);
     }
@@ -192,6 +194,11 @@ public class FourCertificationService {
     }
 
 
+    /**
+     * 订购套餐
+     * @param fourcertificationOrder
+     * @return
+     */
     public AjaxResult setMealSave(FourcertificationOrder fourcertificationOrder){
         try {
             fourcertificationOrder.setStatus(Const.FOUR_ORDER_SET_MEAL);
@@ -231,6 +238,10 @@ public class FourCertificationService {
         page.setPage((page.getPage() - 1) * page.getPagesize());
         // 获取订单
         BaseRequest b = new BaseRequest();
+        User user = ShiroUtils.getSysUser();
+        if(user.getId() != 16){
+            b.setUserId(user.getId());
+        }
         b.setUserId(ShiroUtils.getSysUser().getId());
         List<FourcertificationOrder> fourcertificationOrders = fourcertificationOrderMapper.queryOrderPage(page, b);
         for (int i = 0; i < fourcertificationOrders.size(); i++) {
@@ -271,6 +282,11 @@ public class FourCertificationService {
         return "";
     }
 
+    /**
+     * 根据id查询订单信息
+     * @param id
+     * @return
+     */
     public FourcertificationOrder selectByPrimaryKey(Long id){
         FourcertificationOrder fourcertificationOrder = fourcertificationOrderMapper.selectByPrimaryKey(id);
         fourcertificationOrder.setTemplateUrl(fourcertificationOrder.getTemplateUrl()+"?cgiToken="+NumApi.cgiToken);
