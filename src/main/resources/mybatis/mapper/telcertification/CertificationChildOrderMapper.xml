@@ -370,4 +370,8 @@
         where id = #{id}
     </update>
 
+    <select id="queryPriceByPid" resultType="Float">
+        select count(price) price from tb_telcertification_child_order where parent_order_id = #{pid} and tel_child_order_status != 3
+    </select>
+
 </mapper>

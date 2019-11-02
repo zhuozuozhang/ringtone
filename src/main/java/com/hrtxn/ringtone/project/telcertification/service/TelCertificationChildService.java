@@ -19,6 +19,7 @@ import com.hrtxn.ringtone.project.telcertification.domain.CertificationOrder;
 import com.hrtxn.ringtone.project.telcertification.domain.TelCerDistributor;
 import com.hrtxn.ringtone.project.telcertification.mapper.CertificationChildOrderMapper;
 import com.hrtxn.ringtone.project.telcertification.mapper.CertificationOrderMapper;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -492,6 +493,16 @@ public class TelCertificationChildService {
         }
 
         return AjaxResult.success("开通成功！");
+    }
+
+
+    /**
+     * 审核总价
+     * @param pid
+     * @return
+     */
+    Float queryPriceByPid(Integer pid){
+        return certificationChildOrderMapper.queryPriceByPid(pid);
     }
 
 }

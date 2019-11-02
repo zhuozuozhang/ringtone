@@ -59,4 +59,6 @@ public interface CertificationChildOrderMapper {
 
     void updateExamine(CertificationChildOrder certificationChildOrder);
     void updateExamineById(CertificationChildOrder certificationChildOrder);
+
+    Float queryPriceByPid(@Param("pid") Integer pid);
 }
