@@ -381,7 +381,8 @@ public class TelCertificationChildService {
                 String productName = certificationOrder.getProductName();
                 String[] a = productName.split("periodOfValidity")[1].split("年")[0].split("\"");
                 childOrder.setYears(Integer.parseInt(a[2]));
-                childOrder.setPrice(certificationOrder.getUnitPrice());
+                Float price = certificationOrder.getUnitPrice();
+                childOrder.setPrice(price);
                 childOrder.setTelChildOrderStatus(Const.TEL_CER_STATUS_OPENING);
                 childOrder.setBusinessFeedback("暂无");
                 childOrder.setTelChildOrderCtime(new Date());

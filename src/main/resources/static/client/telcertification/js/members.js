@@ -56,7 +56,11 @@ function showTelCerMemberTable() {
         render: function (data, type, row, meta) {
             var id = row.id;
             var phoneNum = row.telChildOrderPhone;
-            var result ="<a href='javascript:;'><i class='layui-icon layui-icon-util' title='开通' onclick='Opening("+id+");'></i></a>";
+            var loginName = $("#loginName").val();
+            var result = "";
+            if(loginName == '江苏中高俊聪'){
+                result = "<a href='javascript:;'><i class='layui-icon layui-icon-util' title='开通' onclick='Opening("+id+");'></i></a>";
+            }
             result = result + "<a href='javascript:;'><i class='layui-icon layui-icon-rmb' title='续费' onclick='Renewal("+id+");'></i></a>"
                 + "<a href='/telcertify/toTelCostPage/"+phoneNum+"'><i class='layui-icon layui-icon-form' title='费用支出记录'></i></a>";
 
