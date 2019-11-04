@@ -4,7 +4,6 @@ $(document).ready(function(){
 });
 function showTelCerMemberTable() {
     var param = {
-        "parentId": $("#id").val(),
         "phoneNum": $("#phoneNum").val().trim()
     }
     var columns = [

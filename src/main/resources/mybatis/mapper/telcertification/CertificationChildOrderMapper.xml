@@ -383,6 +383,9 @@
             left join tb_telcertification_order t on t.id = tco.parent_order_id
 		left join tb_user u on t.user_id = u.id
         where tel_child_order_status in (1,2,3,5,7)
+        <if test="param != null and param.phoneNum != null and param.phoneNum != ''">
+            AND tco.tel_child_order_phone like '%${param.phoneNum}%'
+        </if>
         ORDER BY tco.tel_child_order_ctime DESC
         <include refid="page"/>
     </select>
@@ -393,6 +396,9 @@
             left join tb_telcertification_order t on t.id = tco.parent_order_id
 		left join tb_user u on t.user_id = u.id
         where tel_child_order_status in (1,2,3,5,7)
+        <if test="param != null and param.phoneNum != null and param.phoneNum != ''">
+            AND tco.tel_child_order_phone like '%${param.phoneNum}%'
+        </if>
     </select>
 
 </mapper>
