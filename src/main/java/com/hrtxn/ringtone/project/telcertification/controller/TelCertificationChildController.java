@@ -49,6 +49,26 @@ public class TelCertificationChildController {
     }
 
     /**
+     * 进入成员管理页面
+     * @return
+     */
+    @GetMapping("/todoTelMembersPage")
+    public String todoTelMembersPage(ModelMap map){
+        return "telcertification/todoMembers";
+    }
+
+
+    /**
+     * 进入成员管理页面
+     * @return
+     */
+    @PostMapping("/todoTelMemberList")
+    @ResponseBody
+    public AjaxResult todoTelMemberList(Page page,BaseRequest request){
+        return telCertificationChildService.todoChildOrderList(page,request);
+    }
+
+    /**
      * 获取所有成员 或者 获取商户的所有成员
      * @param page
      * @param request

@@ -63,6 +63,14 @@ function showTelCerTable() {
         {"data": "remark"}
     ];
     var columnDefs = [{
+        targets:[2],
+        render: function (data, type, row, meta) {
+            var userName = row.userName;
+            var ye = row.ye;
+            var iocn =userName + " (<i class='layui-icon layui-icon-rmb'></i> " +ye +")";
+            return iocn;
+        }
+    },{
         targets:[9],
         render: function (data, type, row, meta) {
             var productName = row.productName;

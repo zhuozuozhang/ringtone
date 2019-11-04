@@ -4,13 +4,12 @@ $(document).ready(function(){
 });
 function showTelCerMemberTable() {
     var param = {
-        "parentId": $("#id").val(),
         "phoneNum": $("#phoneNum").val().trim()
     }
     var columns = [
         {"data": null},
         {"data": "telChildOrderPhone"},
-        // {"data": "product"},
+        {"data": "userName"},
         {"data": "years"},
         {"data": "price"},
         {"data": "telChildOrderStatus"},
@@ -20,7 +19,15 @@ function showTelCerMemberTable() {
         {"data": "telChildOrderExpireTime"}
     ];
     var columnDefs = [{
-        targets:[4],
+        targets:[2],
+        render: function(data, type, row, meta){
+            var userName = row.userName;
+            var ye = row.userPrice;
+            var iocn =userName + " (<i class='layui-icon layui-icon-rmb'></i> " +ye +")";
+            return iocn;
+        }
+    },{
+        targets:[5],
         render: function(data, type, row, meta){
             var status = row.telChildOrderStatus;
             //号码认证子订单状态（1.开通中/2.开通成功/3.开通失败/4.续费中/5.续费成功/6.续费失败）
@@ -52,9 +59,10 @@ function showTelCerMemberTable() {
             }
         }
     }, {
-        targets:[9],
+        targets:[10],
         render: function (data, type, row, meta) {
             var id = row.id;
+            var pid = row.parentOrderId;
             var phoneNum = row.telChildOrderPhone;
             var loginName = $("#loginName").val();
             var result = "";
@@ -62,13 +70,14 @@ function showTelCerMemberTable() {
                 result = "<a href='javascript:;'><i class='layui-icon layui-icon-util' title='开通' onclick='Opening("+id+");'></i></a>";
             }
             result = result + "<a href='javascript:;'><i class='layui-icon layui-icon-rmb' title='续费' onclick='Renewal("+id+");'></i></a>"
-                + "<a href='/telcertify/toTelCostPage/"+phoneNum+"'><i class='layui-icon layui-icon-form' title='费用支出记录'></i></a>";
+                + "<a href='/telcertify/toTelCostPage/"+phoneNum+"'><i class='layui-icon layui-icon-form' title='费用支出记录'></i></a>"
+                + "<i class='layui-icon layui-icon-log' title='详情' onclick='ckeckDetails("+pid+");'></i>";
 
             return result;
         }
     }];
 
-    var url = "/telcertify/getTelCerMembersList";
+    var url = "/telcertify/todoTelMemberList";
     page("#members", 15, param, url, columns, columnDefs);
 }
 
@@ -243,5 +252,16 @@ function addPhoneNumList(){
         }else{
             layer.msg(res.msg, {icon: 5, time: 3000});
         }
+    });
+
+
+}
+//我的订单查看详情
+function ckeckDetails(id) {
+    layer.open({
+        type: 2,
+        title: '详情',
+        content: '/telcertify/toTeldetailsPage/'+id,
+        area: ['500px', '680px']
     });
 }

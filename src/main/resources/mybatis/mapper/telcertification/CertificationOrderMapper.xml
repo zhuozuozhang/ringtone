@@ -69,7 +69,7 @@
   <select id="findAllTelCertification" resultMap="BaseResultMap">
     SELECT
         <include refid="Base_Column_List_tco"/>,
-      u.user_name "userName"
+      u.user_name "userName",u.telcertification_account "ye"
     FROM
         tb_telcertification_order tco
     left join tb_user u on tco.user_id = u.id

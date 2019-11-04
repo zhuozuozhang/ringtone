@@ -59,4 +59,11 @@ public interface CertificationChildOrderMapper {
 
     void updateExamine(CertificationChildOrder certificationChildOrder);
     void updateExamineById(CertificationChildOrder certificationChildOrder);
+
+    Float queryPriceByPid(@Param("pid") Integer pid);
+
+    List<CertificationChildOrder> todoChildOrderList(@Param("page") Page page, @Param("param") BaseRequest request);
+
+    int getTodoCount(@Param("param") BaseRequest request);
+
 }

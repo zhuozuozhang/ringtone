@@ -2205,6 +2205,9 @@ public class ApiUtils {
                         for (int j = 0; j < list.size(); j++) {
                             ThreenetsRing ring = list.get(j);
                             String name = StringUtils.subString(ring.getRingName(), '.');
+                            if(StringUtils.isNotBlank(name)){
+                                name = name.trim();
+                            }
                             String id = ring.getOperateRingId();
                             if (ringName.equals(name) || ringId.equals(id)) {
                                 Element el2 = tds.get(4);

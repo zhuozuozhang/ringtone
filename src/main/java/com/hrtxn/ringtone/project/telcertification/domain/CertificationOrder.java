@@ -61,4 +61,6 @@ public class CertificationOrder implements Serializable {
     private String userName;
 
     private String statusStr;
+    //商户余额
+    private String ye;
 }

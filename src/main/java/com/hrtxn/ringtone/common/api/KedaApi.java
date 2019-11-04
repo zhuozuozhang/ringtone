@@ -184,7 +184,7 @@ public class KedaApi {
      * @throws IOException
      */
     public AjaxResult uploadRing(File source) throws IOException {
-        String s = sendRingFile(NEW_UP_LOAD, source);
+        String s = sendRingFile(UPLOAD, source);
         log.info("疑难杂单铃音文件上传----->" + s);
         if (StringUtils.isNotEmpty(s)) {
             KedaBaseResult<KedaUploadRing> kedaBaseResult = SpringUtils.getBean(ObjectMapper.class).readValue(s, KedaBaseResult.class);

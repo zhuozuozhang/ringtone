@@ -19,7 +19,7 @@
 
     <sql id="Base_Column_List">
     ttco.id, tel_child_order_num, tel_child_order_phone, years, price, tel_child_order_status, business_feedback,
-    tel_child_order_ctime, tel_child_order_open_time, tel_child_order_expire_time, parent_order_id, 
+    tel_child_order_ctime, tel_child_order_open_time, tel_child_order_expire_time, parent_order_id,
     consume_log_id
   </sql>
 
@@ -369,5 +369,36 @@
         </if>
         where id = #{id}
     </update>
+
+    <select id="queryPriceByPid" resultType="Float">
+        select count(price) price from tb_telcertification_child_order where parent_order_id = #{pid} and tel_child_order_status != 3
+    </select>
+
+    <select id="todoChildOrderList" resultMap="BaseResultMap">
+        select tco.id, tco.tel_child_order_num, tco.tel_child_order_phone, tco.years, tco.price,
+        tco.tel_child_order_status, tco.business_feedback,
+        tco.tel_child_order_ctime, tco.tel_child_order_open_time, tco.tel_child_order_expire_time, tco.parent_order_id,
+        tco.consume_log_id,u.user_name userName,u.telcertification_account userPrice
+            from tb_telcertification_child_order tco
+            left join tb_telcertification_order t on t.id = tco.parent_order_id
+		left join tb_user u on t.user_id = u.id
+        where tel_child_order_status in (1,2,3,5,7)
+        <if test="param != null and param.phoneNum != null and param.phoneNum != ''">
+            AND tco.tel_child_order_phone like '%${param.phoneNum}%'
+        </if>
+        ORDER BY tco.tel_child_order_ctime DESC
+        <include refid="page"/>
+    </select>
+    <select id="getTodoCount" resultType="int">
+        SELECT
+        COUNT(*)
+        from tb_telcertification_child_order tco
+            left join tb_telcertification_order t on t.id = tco.parent_order_id
+		left join tb_user u on t.user_id = u.id
+        where tel_child_order_status in (1,2,3,5,7)
+        <if test="param != null and param.phoneNum != null and param.phoneNum != ''">
+            AND tco.tel_child_order_phone like '%${param.phoneNum}%'
+        </if>
+    </select>
 
 </mapper>

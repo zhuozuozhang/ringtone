@@ -19,6 +19,7 @@ import com.hrtxn.ringtone.project.telcertification.domain.CertificationOrder;
 import com.hrtxn.ringtone.project.telcertification.domain.TelCerDistributor;
 import com.hrtxn.ringtone.project.telcertification.mapper.CertificationChildOrderMapper;
 import com.hrtxn.ringtone.project.telcertification.mapper.CertificationOrderMapper;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -380,7 +381,8 @@ public class TelCertificationChildService {
                 String productName = certificationOrder.getProductName();
                 String[] a = productName.split("periodOfValidity")[1].split("年")[0].split("\"");
                 childOrder.setYears(Integer.parseInt(a[2]));
-                childOrder.setPrice(certificationOrder.getUnitPrice());
+                Float price = certificationOrder.getUnitPrice();
+                childOrder.setPrice(price);
                 childOrder.setTelChildOrderStatus(Const.TEL_CER_STATUS_OPENING);
                 childOrder.setBusinessFeedback("暂无");
                 childOrder.setTelChildOrderCtime(new Date());
@@ -493,5 +495,37 @@ public class TelCertificationChildService {
 
         return AjaxResult.success("开通成功！");
     }
+
+
+    /**
+     * 审核总价
+     * @param pid
+     * @return
+     */
+    Float queryPriceByPid(Integer pid){
+        return certificationChildOrderMapper.queryPriceByPid(pid);
+    }
+
+
+    /**
+     * 获取所有成员信息或者根据条件获取
+     *
+     * @param page
+     * @param request
+     * @return
+     */
+    public AjaxResult todoChildOrderList(Page page, BaseRequest request) {
+        page.setPage((page.getPage() - 1) * page.getPagesize());
+        if(ShiroUtils.getSysUser().getId() != 16){
+            request.setUserId(ShiroUtils.getSysUser().getId());
+        }
+        List<CertificationChildOrder> allChildOrderList = certificationChildOrderMapper.todoChildOrderList(page, request);
+        Integer count = certificationChildOrderMapper.getTodoCount(request);
+        if(count > 0){
+            return AjaxResult.success(allChildOrderList, "获取成功！", count);
+        }
+        return AjaxResult.success(false,"未获取到成员信息",count);
+    }
+
 
 }

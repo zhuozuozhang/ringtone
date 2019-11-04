@@ -13,6 +13,8 @@ import com.hrtxn.ringtone.freemark.config.systemConfig.RingtoneConfig;
 import com.hrtxn.ringtone.project.system.File.domain.Uploadfile;
 import com.hrtxn.ringtone.project.system.File.mapper.UploadfileMapper;
 import com.hrtxn.ringtone.project.system.File.service.FileService;
+import com.hrtxn.ringtone.project.system.user.domain.User;
+import com.hrtxn.ringtone.project.system.user.mapper.UserMapper;
 import com.hrtxn.ringtone.project.telcertification.domain.*;
 import com.hrtxn.ringtone.project.telcertification.mapper.CertificationChildOrderMapper;
 import com.hrtxn.ringtone.project.telcertification.mapper.CertificationConfigMapper;
@@ -45,6 +47,9 @@ public class TelCertificationService {
     private CertificationChildOrderMapper certificationChildOrderMapper;
     @Autowired
     private CertificationConfigMapper certificationConfigMapper;
+
+    @Autowired
+    private UserMapper userMapper;
 
 
     /**
@@ -182,12 +187,29 @@ public class TelCertificationService {
 
 
     public AjaxResult examine(CertificationOrder telcerOrder){
-        certificationOrderMapper.examine(telcerOrder);
-        CertificationChildOrder certificationChildOrder = new CertificationChildOrder();
-        if(Const.TEL_ORDER_IN_OPENING == telcerOrder.getTelOrderStatus()){
-            certificationChildOrder.setTelChildOrderStatus(telcerOrder.getTelOrderStatus());
-            certificationChildOrder.setParentOrderId(telcerOrder.getId());
-            certificationChildOrderMapper.updateExamine(certificationChildOrder);
+        try {
+            CertificationOrder certificationOrder = certificationOrderMapper.getTelCerOrderById(telcerOrder.getId());
+            if(Const.TEL_ORDER_IN_OPENING == telcerOrder.getTelOrderStatus()){
+                Float price = certificationChildOrderMapper.queryPriceByPid(telcerOrder.getId());
+                User user = userMapper.findUserById(certificationOrder.getUserId());
+                if(user.getTelcertificationAccount() < price){
+                    telcerOrder.setTelOrderStatus(Const.TEL_ORDER_FAILURE_TO_OPEN);
+                    telcerOrder.setRemark("余额不足，请联系管理员充值！");
+                    certificationOrderMapper.examine(telcerOrder);
+                    return AjaxResult.error("审核失败，余额不足！");
+                }
+            }
+
+            certificationOrderMapper.examine(telcerOrder);
+
+            CertificationChildOrder certificationChildOrder = new CertificationChildOrder();
+            if(Const.TEL_ORDER_IN_OPENING == telcerOrder.getTelOrderStatus()){
+                certificationChildOrder.setTelChildOrderStatus(telcerOrder.getTelOrderStatus());
+                certificationChildOrder.setParentOrderId(telcerOrder.getId());
+                certificationChildOrderMapper.updateExamine(certificationChildOrder);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
         return AjaxResult.success("审核成功！");
     }

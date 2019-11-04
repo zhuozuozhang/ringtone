@@ -78,4 +78,8 @@ public class CertificationChildOrder implements Serializable {
      */
     private String product;
 
+    private String userName;
+
+    private String userPrice;
+
 }
