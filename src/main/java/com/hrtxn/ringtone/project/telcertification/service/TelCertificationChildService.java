@@ -506,4 +506,26 @@ public class TelCertificationChildService {
         return certificationChildOrderMapper.queryPriceByPid(pid);
     }
 
+
+    /**
+     * 获取所有成员信息或者根据条件获取
+     *
+     * @param page
+     * @param request
+     * @return
+     */
+    public AjaxResult todoChildOrderList(Page page, BaseRequest request) {
+        page.setPage((page.getPage() - 1) * page.getPagesize());
+        if(ShiroUtils.getSysUser().getId() != 16){
+            request.setUserId(ShiroUtils.getSysUser().getId());
+        }
+        List<CertificationChildOrder> allChildOrderList = certificationChildOrderMapper.todoChildOrderList(page, request);
+        Integer count = certificationChildOrderMapper.getTodoCount(request);
+        if(count > 0){
+            return AjaxResult.success(allChildOrderList, "获取成功！", count);
+        }
+        return AjaxResult.success(false,"未获取到成员信息",count);
+    }
+
+
 }
