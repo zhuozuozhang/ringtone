@@ -67,10 +67,9 @@
         <!-- 我的订单 -->
         <div class="myorder">
             成员号码：<input type="text" name="phoneNum" id="phoneNum" autocomplete="off" maxlength="13" style="margin:0 10px;width: 180px;height: 36px;border: 1px solid #ddd;">
-            <div class="number_search">
-                <button class="layui-btn layui-btn-normal" onclick="showTelCerMemberTable()">搜索</button>
-                <button class="new_busi" onclick="Edits();">添加号码</button>
-            </div>
+            <button class="layui-btn layui-btn-normal" onclick="showTelCerMemberTable()">搜索</button>
+            <button class="new_busi" onclick="Edits();">添加号码</button>
+            <span style="font-size: 18px;">认证展示内容：</span> <span style="font-size: 18px;" th:text="${telCerOrder.telContent}"></span>
             <div class="number_list">
                 <input type="hidden" id="id" th:value="${parentId}">
                 <table class="layui-table" id="members" style="width:1200px;">
@@ -91,8 +90,15 @@
                 </table>
             </div>
         </div>
+        <div class="contents" style="margin-top: 150px;">
+            <p>营业执照<img th:src="${telCerOrder.businessLicense}"  alt=""></p>
+            <p>法人身份证正面<img th:src="${telCerOrder.legalPersonCardZhen}" alt=""></p>
+            <p>法人身份证反面<img th:src="${telCerOrder.legalPersonCardFan}" alt=""></p>
+            <p>logo<img th:src="${telCerOrder.logo}" alt=""></p>
+        </div>
     </div>
 </div>
+
 <!-- 添加号码 -->
 <div id="cover"></div>
 <form action="/telcertify/insertTelCerChild" name="Form" id="Form" method="post" class="layui-form">
@@ -129,6 +135,9 @@
             <button type="button" class="subs" lay-submit lay-filter="formDemo" onclick="addPhoneNumList();">提交</button>
         </div>
     </div>
+
+
+
 </div>
 </form>
 </body>
