@@ -353,6 +353,10 @@ public class ThreeNetsOrderService {
             String path = apiUtils.mcardUploadFile(new File(RingtoneConfig.getProfile() + request.getClientUrl()), attached.getMcardDistributorId());
             attached.setConfirmLetter(path);
         }
+        if (StringUtils.isNotEmpty(request.getMainUrl()) && request.getMainUrl().contains(order.getFolderName())){
+            String path = apiUtils.mcardUploadFile(new File(RingtoneConfig.getProfile() + request.getMainUrl()), attached.getMcardDistributorId());
+            attached.setSubjectProve(path);
+        }
         if (StringUtils.isNotEmpty(attached.getMcardId())){
             return apiUtils.updateOrderCertification(attached);
         }else{

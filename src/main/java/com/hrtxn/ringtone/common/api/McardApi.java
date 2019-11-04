@@ -534,7 +534,7 @@ public class McardApi {
             map.put("auserLinkName", auserLinkName);
             map.put("auserBlicenceUrl", att.getBusinessLicense());
             map.put("auserPhone", auserPhone);
-            map.put("auserCardidPath", "");
+            map.put("auserCardidPath", att.getSubjectProve());
             map.put("auserFilePath", att.getConfirmLetter());
             String result = sendPost(map, update_user_auth, att.getMcardDistributorId());
             log.info("电信修改商户结果--->" + result);

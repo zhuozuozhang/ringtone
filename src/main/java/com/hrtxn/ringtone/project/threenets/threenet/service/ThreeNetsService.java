@@ -3,30 +3,31 @@ package com.hrtxn.ringtone.project.threenets.threenet.service;
 import com.hrtxn.ringtone.common.constant.AjaxResult;
 import com.hrtxn.ringtone.common.domain.BaseRequest;
 import com.hrtxn.ringtone.common.domain.Page;
-import com.hrtxn.ringtone.common.utils.DateUtils;
-import com.hrtxn.ringtone.common.utils.PhoneUtils;
-import com.hrtxn.ringtone.common.utils.ShiroUtils;
-import com.hrtxn.ringtone.common.utils.StringUtils;
+import com.hrtxn.ringtone.common.utils.*;
 import com.hrtxn.ringtone.common.utils.juhe.JuhePhoneUtils;
+import com.hrtxn.ringtone.freemark.config.systemConfig.RingtoneConfig;
 import com.hrtxn.ringtone.project.system.json.JuhePhone;
 import com.hrtxn.ringtone.project.system.json.JuhePhoneResult;
 import com.hrtxn.ringtone.project.system.user.domain.User;
 import com.hrtxn.ringtone.project.system.user.domain.UserVo;
 import com.hrtxn.ringtone.project.system.user.mapper.UserMapper;
-import com.hrtxn.ringtone.project.threenets.threenet.domain.PlotBarPhone;
-import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreeNetsOrderAttached;
-import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreenetsChildOrder;
+import com.hrtxn.ringtone.project.threenets.threenet.domain.*;
+import com.hrtxn.ringtone.project.threenets.threenet.json.mcard.McardAddGroupRespone;
+import com.hrtxn.ringtone.project.threenets.threenet.json.mcard.McardBaseRespone;
 import com.hrtxn.ringtone.project.threenets.threenet.mapper.ThreeNetsOrderAttachedMapper;
 import com.hrtxn.ringtone.project.threenets.threenet.mapper.ThreenetsChildOrderMapper;
 import com.hrtxn.ringtone.project.threenets.threenet.mapper.ThreenetsOrderMapper;
+import com.hrtxn.ringtone.project.threenets.threenet.utils.ApiUtils;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.json.JSONObject;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.ui.ModelMap;
 
 import javax.servlet.http.HttpSession;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -261,5 +262,46 @@ public class ThreeNetsService {
             outData.put("unicomStatus", StringUtils.isEmpty(attached.getSwxlId()));
         }
         return AjaxResult.success(outData, "匹配成功");
+    }
+
+    /**
+     *
+     * @param id
+     * @return
+     */
+    public McardBaseRespone getTelcomOrderInfo(Integer id) throws Exception {
+        McardBaseRespone respone = new McardBaseRespone();
+        ThreenetsOrder order = threenetsOrderMapper.selectByPrimaryKey(id);
+        ThreeNetsOrderAttached attached = threeNetsOrderAttachedMapper.selectByParentOrderId(id);
+        ApiUtils apiUtils = new ApiUtils();
+        McardAddGroupRespone mrespone = apiUtils.normalBusinessInfo(order);
+        if (StringUtils.isNotEmpty(attached.getBusinessLicense())){
+            respone.setBusinessLicense("http://pic.ctmus.cn/" + attached.getBusinessLicense());
+        }else{
+            respone.setBusinessLicense("/public/images/addimg.png");
+        }
+        if (StringUtils.isNotEmpty(attached.getConfirmLetter())){
+            respone.setConfirmLetter("http://pic.ctmus.cn/" + attached.getConfirmLetter());
+        }else{
+            respone.setConfirmLetter("/public/images/addimg.png");
+        }
+        if(StringUtils.isNotEmpty(attached.getSubjectProve())){
+            respone.setSubjectProve("http://pic.ctmus.cn/" + attached.getSubjectProve());
+        }else{
+            respone.setSubjectProve("/public/images/addimg.png");
+        }
+        if (order.getCompanyName().length() <= 6) {
+            respone.setCompanyName(order.getCompanyName());
+        } else {
+            boolean result = order.getCompanyName().substring(order.getCompanyName().length() - 6).matches("[0-9]+");
+            respone.setCompanyName(result ? order.getCompanyName().substring(0, order.getCompanyName().length() - 6) : order.getCompanyName());
+        }
+        respone.setFolderName(order.getFolderName());
+        if(mrespone.getCode().equals("0000")){
+            respone.setMessage("审核通过");
+        }else{
+            respone.setMessage(mrespone.getMessage());
+        }
+        return respone;
     }
 }

@@ -78,6 +78,7 @@
                     <input type="hidden" id="folderName" th:value="${folderName}">
                     <input type="hidden" id="companyFile" name="companyFile">
                     <input type="hidden" id="clientFile" name="clientFile">
+                    <input type="hidden" id="mainFile" name="mainFile">
                     <div class="title-bar clearfix">
                         <h1 class="pull-cnter">
                             您正在以 <span style="color: red;" th:text="${companyName}"></span> 的管理员身份进行操作。
@@ -87,14 +88,24 @@
                         <div class="telecomDiv">
                             <p>营业执照：</p>
                             <img class="telecomImg" th:src="${businessLicense}" id="businessLicense">
-                            <input type="file" style="display: none;" name="companyFile" class="tpdza"
-                                   id="businessLicenseAdd">
+                            <input type="file" style="display: none;" name="companyFile" class="tpdza" id="businessLicenseAdd" accept="image/*">
                         </div>
                         <div class="telecomDiv">
                             <p>业务协议：</p>
                             <img class="telecomImg" th:src="${confirmLetter}" id="confirmLetter">
-                            <input type="file" style="display: none;" name="clientFile" class="tpdza"
-                                   id="confirmLetterAdd">
+                            <input type="file" style="display: none;" name="clientFile" class="tpdza" id="confirmLetterAdd" accept="image/*">
+                        </div>
+                        <div class="telecomDiv">
+                            <p>主体证明：</p>
+                            <img class="telecomImg" th:src="${subjectProve}" id="subjectProve">
+                            <input type="file" style="display: none;" name="mainFile" class="tpdza" id="subjectProveAdd" accept="image/*">
+                        </div>
+                        <div class="telecomDiv">
+                            <p>认证结果：</p>
+                            <p id="telcomStatus">
+                                <span th:if="${message} == 审核通过" style="color:#17A9FF">审核通过</span>
+                                <span th:if="${message} == 审核未通过" style="color:red">审核未通过:<i th:text="${message}"></i></span>
+                            </p>
                         </div>
                     </div>
                     <div style="padding-left: 160px">
@@ -120,7 +131,9 @@
     $("body").on('click', '#confirmLetter', function () {
         valid("clientFile", $("#confirmLetterAdd"), "confirmLetterAdd", $(this));
     });
-
+    $("body").on('click', '#subjectProve', function () {
+        valid("mainFile", $("#subjectProveAdd"), "subjectProveAdd", $(this));
+    });
     function valid(url, pictureId, fileId, ts) {
         ts.next().click(); //隐藏了input:file样式后，点击头像就可以本地上传
         ts.next().on("change", function () {
@@ -200,6 +213,8 @@
                         $("#companyFile").val(data)
                     } else if (url === "clientFile") {
                         $("#clientFile").val(data)
+                    } else if (url === "mainFile"){
+                        $("#mainFile").val(data)
                     }
                     layer.close(layuiLoding);
                     layer.msg("上传成功！", {icon: 1, time: 3000});
@@ -213,13 +228,20 @@
     }
 
     function sub() {
+        var status = $("#telcomStatus").text();
+        status = status.replace(/\s+/g,"");
+        if (status === "审核通过"){
+            layer.msg("审核通过的商户无需重新提交！", {icon: 1, time: 3000})
+            return;
+        }
         layer.confirm("修改认证文件会导致商户重新审核，是否提交？", {
             btn: ["确定", "取消"] //按钮
         }, function () {
             AjaxPost("/threenets/updateOrderCertification/", {
                 "parentOrderId": $("#parentOrderId").val(),
                 "companyUrl": $("#companyFile").val() ,
-                "clientUrl":$("#clientFile").val()
+                "clientUrl":$("#clientFile").val(),
+                "mainUrl":$("#mainFile").val()
             }, function (result) {
                 layer.closeAll('dialog');//关闭弹层
                 layer.msg(result.msg + "!", {icon: result.code == 500 ? 2 : 1, time: 1000});

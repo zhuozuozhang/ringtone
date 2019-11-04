@@ -19,6 +19,7 @@ import com.hrtxn.ringtone.project.threenets.threenet.domain.PlotBarPhone;
 import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreeNetsOrderAttached;
 import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreenetsChildOrder;
 import com.hrtxn.ringtone.project.threenets.threenet.domain.ThreenetsOrder;
+import com.hrtxn.ringtone.project.threenets.threenet.json.mcard.McardBaseRespone;
 import com.hrtxn.ringtone.project.threenets.threenet.mapper.ThreenetsOrderMapper;
 import com.hrtxn.ringtone.project.threenets.threenet.service.ThreeNetsChildOrderService;
 import com.hrtxn.ringtone.project.threenets.threenet.service.ThreeNetsOrderAttachedService;
@@ -521,27 +522,14 @@ public class ThreeNetsController {
     @GetMapping("/threenets/toMerchantsTelecomFilePage/{parentOrderId}")
     public String toMerchantsPhonePage(ModelMap map, @PathVariable Integer parentOrderId) {
         try {
-            ThreenetsOrder order = threeNetsChildOrderService.getOrderById(parentOrderId);
-            ThreeNetsOrderAttached attached = threeNetsOrderAttachedService.selectByParentOrderId(parentOrderId);
+            McardBaseRespone info = threeNetsService.getTelcomOrderInfo(parentOrderId);
             map.put("parentOrderId", parentOrderId);
-            //"http://pic.ctmus.cn/pic.diy.v1/nets/mcard/DiyFile/image/2019/10/30/518800dd-587d-4165-8fa9-627598e9faea.jpg">
-            if (StringUtils.isNotEmpty(attached.getBusinessLicense())){
-                map.put("businessLicense", "http://pic.ctmus.cn/" + attached.getBusinessLicense());
-            }else{
-                map.put("businessLicense", "/public/images/addimg.png");
-            }
-            if (StringUtils.isNotEmpty(attached.getConfirmLetter())){
-                map.put("confirmLetter", "http://pic.ctmus.cn/" + attached.getConfirmLetter());
-            }else{
-                map.put("confirmLetter", "/public/images/addimg.png");
-            }
-            if (order.getCompanyName().length() <= 6) {
-                map.put("companyName", order.getCompanyName());
-            } else {
-                boolean result = order.getCompanyName().substring(order.getCompanyName().length() - 6).matches("[0-9]+");
-                map.put("companyName", result ? order.getCompanyName().substring(0, order.getCompanyName().length() - 6) : order.getCompanyName());
-            }
-            map.put("folderName",order.getFolderName());
+            map.put("businessLicense", info.getBusinessLicense());
+            map.put("confirmLetter", info.getConfirmLetter());
+            map.put("subjectProve", info.getSubjectProve());
+            map.put("companyName", info.getCompanyName());
+            map.put("folderName",info.getFolderName());
+            map.put("message",info.getMessage());
         } catch (Exception e) {
             log.error("获取集团名称失败 方法：toMerchantsPhonePage 错误信息：", e);
         }
