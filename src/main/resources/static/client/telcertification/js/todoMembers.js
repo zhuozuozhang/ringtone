@@ -20,7 +20,7 @@ function showTelCerMemberTable() {
         {"data": "telChildOrderExpireTime"}
     ];
     var columnDefs = [{
-        targets:[3],
+        targets:[2],
         render: function(data, type, row, meta){
             var userName = row.userName;
             var ye = row.userPrice;
