@@ -189,20 +189,21 @@ public class TelCertificationService {
     public AjaxResult examine(CertificationOrder telcerOrder){
         try {
             CertificationOrder certificationOrder = certificationOrderMapper.getTelCerOrderById(telcerOrder.getId());
-            Float price = certificationChildOrderMapper.queryPriceByPid(telcerOrder.getId());
-            User user = userMapper.findUserById(certificationOrder.getUserId());
-            if(user.getTelcertificationAccount() < price){
-                telcerOrder.setTelOrderStatus(Const.TEL_ORDER_FAILURE_TO_OPEN);
-                telcerOrder.setRemark("余额不足，请联系管理员充值！");
-                certificationOrderMapper.examine(telcerOrder);
-                return AjaxResult.error("审核失败，余额不足！");
+            if(Const.TEL_ORDER_IN_OPENING == telcerOrder.getTelOrderStatus()){
+                Float price = certificationChildOrderMapper.queryPriceByPid(telcerOrder.getId());
+                User user = userMapper.findUserById(certificationOrder.getUserId());
+                if(user.getTelcertificationAccount() < price){
+                    telcerOrder.setTelOrderStatus(Const.TEL_ORDER_FAILURE_TO_OPEN);
+                    telcerOrder.setRemark("余额不足，请联系管理员充值！");
+                    certificationOrderMapper.examine(telcerOrder);
+                    return AjaxResult.error("审核失败，余额不足！");
+                }
             }
 
             certificationOrderMapper.examine(telcerOrder);
 
             CertificationChildOrder certificationChildOrder = new CertificationChildOrder();
             if(Const.TEL_ORDER_IN_OPENING == telcerOrder.getTelOrderStatus()){
-
                 certificationChildOrder.setTelChildOrderStatus(telcerOrder.getTelOrderStatus());
                 certificationChildOrder.setParentOrderId(telcerOrder.getId());
                 certificationChildOrderMapper.updateExamine(certificationChildOrder);
